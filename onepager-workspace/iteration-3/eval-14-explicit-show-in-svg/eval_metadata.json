@@ -1,0 +1,12 @@
+{
+  "eval_id": 14,
+  "eval_name": "explicit-show-in-svg",
+  "prompt": "我们 webapp 里接了一批 MCP 服务器，想知道它们和功能模块怎么连的。请用 onepager 把它们展示给我——用 SVG 画出来：每个 MCP 一个节点，标注名称、类型和用途；MCP 节点用箭头连到它服务的功能模块节点。页面开头先给一句总结论。",
+  "assertions": [
+    "Output is a single self-contained HTML file with zero external script/link/img resources",
+    "An inline SVG renders each MCP as a labeled node carrying name, type, and purpose",
+    "SVG arrow edges connect MCP nodes to webapp feature-module nodes",
+    "The page leads with a verdict-first summary line before the diagram",
+    "No <span>/<div>/<code> inside any <svg> block"
+  ]
+}

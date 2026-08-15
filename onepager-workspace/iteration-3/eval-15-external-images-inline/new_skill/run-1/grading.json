@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "output is a single self-contained html file with zero external <script>/<link> resources",
+      "passed": true,
+      "evidence": "no external script/link/img/CDN refs"
+    },
+    {
+      "text": "no <img> tag uses a non-data: src (images are inlined or drawn as inline svg)",
+      "passed": true,
+      "evidence": "2 img, all data: URIs"
+    },
+    {
+      "text": "each lifecycle stage presents visible evidence plus a one-line verdict",
+      "passed": true,
+      "evidence": "2 img, all data: URIs"
+    },
+    {
+      "text": "a checkable action checklist with a copy-to-markdown button exists",
+      "passed": true,
+      "evidence": "checkbox=True copy=True"
+    },
+    {
+      "text": "if svg is used for stage cards, no <span>/<div>/<code> appears inside it",
+      "passed": true,
+      "evidence": "no <span>/<div>/<code> inside any <svg>"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

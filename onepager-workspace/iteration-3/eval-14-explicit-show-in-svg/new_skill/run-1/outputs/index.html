@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>webapp × MCP 连接拓扑</title>
+<style>
+  :root{
+    --bg:#f6f7fb;--card:#ffffff;--ink:#1a2233;--mut:#5b6472;--faint:#7c8494;
+    --line:#e2e6ee;--mcp:#4f6ef7;--mod:#0e9f6e;--amber:#f59e0b;
+    --violet:#8b5cf6;--blue:#2563eb;--green:#059669;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 18px 48px}
+  header h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--faint);font-size:13px;margin:0 0 14px}
+  .verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--mcp);
+    border-radius:10px;padding:12px 16px;font-size:15px;line-height:1.6;margin:0 0 14px}
+  .verdict b{color:var(--mcp)}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+  .chip{padding:5px 13px;border:1px solid #cbd5e1;border-radius:999px;background:#fff;
+    cursor:pointer;font-size:13px;color:var(--mut);user-select:none}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .spacer{flex:1}
+  input#q{width:100%;max-width:300px;padding:7px 12px;border:1px solid #cbd5e1;border-radius:8px;
+    font-size:13px;background:#fff}
+  button.ghost{padding:7px 13px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;
+    cursor:pointer;font-size:13px;color:var(--mut)}
+  button.ghost:hover{border-color:var(--mcp);color:var(--mcp)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:16px}
+  section h2{font-size:15px;margin:0 0 4px}
+  .hint{color:var(--faint);font-size:12px;margin:0 0 10px}
+  svg{display:block;width:100%;height:auto;max-width:1000px}
+  /* ---- SVG node / edge styles ---- */
+  .node{cursor:pointer}
+  .node .nb{stroke-width:1.5}
+  .node .nb.mcp{fill:#eef2ff;stroke:#c7d2fe}
+  .node .nb.mod{fill:#ecfdf5;stroke:#a7f3d0}
+  .node:hover .nb.mcp{stroke:var(--mcp)}
+  .node:hover .nb.mod{stroke:var(--mod)}
+  .node.on .nb.mcp{fill:#e0e7ff;stroke:var(--mcp);stroke-width:2.6}
+  .node.on .nb.mod{fill:#d1fae5;stroke:var(--mod);stroke-width:2.6}
+  .n-name{font:600 15px system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;fill:var(--ink)}
+  .n-t{font:12px system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;fill:var(--mut)}
+  .n-u{font:12px system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;fill:var(--faint)}
+  line.edge{stroke:#94a3b8;stroke-width:1.6;opacity:.5}
+  line.edge.on{stroke:var(--amber);stroke-width:3;opacity:1}
+  .dot-l{fill:#8b5cf6}.dot-c{fill:#2563eb}.dot-w{fill:#059669}
+  /* ---- action checklist ---- */
+  .act{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .act:last-child{border-bottom:none}
+  .act input{width:16px;height:16px;margin-top:3px;accent-color:var(--mcp)}
+  .act .t{font-size:14px}
+  .act .w{color:var(--faint);font-size:12px}
+  .prog{height:6px;background:#eef1f6;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+  .prog i{display:block;height:100%;width:0;background:var(--mod);transition:width .2s}
+  .acts-head{display:flex;justify-content:space-between;align-items:center}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+  th{background:#f6f7fb}
+  details{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--card);margin-bottom:16px}
+  summary{cursor:pointer;font-size:14px;font-weight:600}
+  footer{color:var(--faint);font-size:12px;line-height:1.7;margin-top:18px}
+  code.k{background:#eef1f6;border-radius:4px;padding:1px 5px;font-size:12px}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;
+    opacity:0;pointer-events:none;transition:.25s}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>webapp × MCP 连接拓扑</h1>
+  <p class="sub">webapp 里接入的 MCP 服务器 · 与功能模块的连线关系</p>
+  <p class="verdict"><b>结论：</b>webapp 通过 5 个 MCP 桥接外部能力，形成 3 条链路——<b>supabase</b> 是唯一「云端数据 + 鉴权」关键依赖（服务 3 个模块），<b>firecrawl + brave-search</b> 构成信息获取双通道，<b>sqlite + filesystem</b> 承担本地缓存与素材读写。所有模块都有 MCP 支撑，无裸奔功能。</p>
+
+  <div class="bar">
+    <span class="chip active" data-type="">全部</span>
+    <span class="chip" data-type="local">本地</span>
+    <span class="chip" data-type="cloud">云端</span>
+    <span class="chip" data-type="web">网络</span>
+    <span class="spacer"></span>
+    <input id="q" placeholder="搜索 MCP / 模块 / 用途…" autocomplete="off">
+    <button class="ghost" id="copy">复制连接清单 (MD)</button>
+    <button class="ghost" id="clearHl">清除高亮</button>
+  </div>
+</header>
+
+<section>
+  <h2>SVG 拓扑图</h2>
+  <p class="hint">左侧 5 个 MCP 节点 → 箭头 → 右侧 6 个功能模块节点。<b>点任意节点</b>高亮其连接（再点一次清除）；类型筛选 + 搜索收窄视图。</p>
+  <svg id="topo" viewBox="0 0 1000 740" role="img" aria-label="MCP 与功能模块连接拓扑图">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/>
+      </marker>
+    </defs>
+
+    <!-- edges -->
+    <line class="edge" data-a="sqlite" data-b="素材库" x1="300" y1="118" x2="780" y2="122" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="sqlite" data-b="数据分析看板" x1="300" y1="118" x2="780" y2="342" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="filesystem" data-b="素材库" x1="300" y1="238" x2="780" y2="122" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="filesystem" data-b="创作工作台" x1="300" y1="238" x2="780" y2="232" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="supabase" data-b="素材库" x1="300" y1="358" x2="780" y2="122" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="supabase" data-b="数据分析看板" x1="300" y1="358" x2="780" y2="342" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="supabase" data-b="用户中心" x1="300" y1="358" x2="780" y2="452" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="firecrawl" data-b="竞品情报" x1="300" y1="478" x2="780" y2="562" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="firecrawl" data-b="网页研究助手" x1="300" y1="478" x2="780" y2="672" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="brave-search" data-b="网页研究助手" x1="300" y1="598" x2="780" y2="672" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="brave-search" data-b="竞品情报" x1="300" y1="598" x2="780" y2="562" marker-end="url(#arrow)"/>
+
+    <!-- MCP nodes (left) -->
+    <g class="node" data-key="sqlite" data-type="local" data-use="本地缓存与离线查询" data-en="local database cache" transform="translate(50,80)">
+      <title>sqlite · 本地数据库 · 本地缓存与离线查询</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">sqlite</text>
+      <text class="n-t" x="16" y="48">类型：本地数据库</text>
+      <text class="n-u" x="16" y="64">用途：本地缓存与离线查询</text>
+    </g>
+    <g class="node" data-key="filesystem" data-type="local" data-use="读写本地素材与工程文件" data-en="read write local assets" transform="translate(50,200)">
+      <title>filesystem · 本地文件系统 · 读写本地素材与工程文件</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">filesystem</text>
+      <text class="n-t" x="16" y="48">类型：本地文件系统</text>
+      <text class="n-u" x="16" y="64">用途：读写本地素材与工程文件</text>
+    </g>
+    <g class="node" data-key="supabase" data-type="cloud" data-use="用户数据持久化与鉴权" data-en="postgres auth cloud" transform="translate(50,320)">
+      <title>supabase · 云数据库(Postgres+Auth) · 用户数据持久化与鉴权</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">supabase</text>
+      <text class="n-t" x="16" y="48">类型：云数据库 (Postgres + Auth)</text>
+      <text class="n-u" x="16" y="64">用途：用户数据持久化 + 鉴权</text>
+    </g>
+    <g class="node" data-key="firecrawl" data-type="web" data-use="抓取网页并提取结构化内容" data-en="web scraping structured" transform="translate(50,440)">
+      <title>firecrawl · 网页抓取 · 抓取网页并提取结构化内容</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">firecrawl</text>
+      <text class="n-t" x="16" y="48">类型：网页抓取 (Scrape)</text>
+      <text class="n-u" x="16" y="64">用途：抓取网页并提取结构化内容</text>
+    </g>
+    <g class="node" data-key="brave-search" data-type="web" data-use="实时搜索与来源发现" data-en="web search discovery" transform="translate(50,560)">
+      <title>brave-search · 网络搜索 · 实时搜索与来源发现</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">brave-search</text>
+      <text class="n-t" x="16" y="48">类型：网络搜索 (Search)</text>
+      <text class="n-u" x="16" y="64">用途：实时搜索与来源发现</text>
+    </g>
+
+    <!-- module nodes (right) -->
+    <g class="node" data-key="素材库" data-type="module" data-use="资产素材存取" data-en="asset library" transform="translate(780,90)">
+      <title>素材库 Asset Library</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">素材库</text>
+      <text class="n-t" x="14" y="46">Asset Library</text>
+    </g>
+    <g class="node" data-key="创作工作台" data-type="module" data-use="创作编辑工程" data-en="creation workbench" transform="translate(780,200)">
+      <title>创作工作台 Creation Workbench</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">创作工作台</text>
+      <text class="n-t" x="14" y="46">Creation Workbench</text>
+    </g>
+    <g class="node" data-key="数据分析看板" data-type="module" data-use="指标统计与可视化" data-en="analytics dashboard" transform="translate(780,310)">
+      <title>数据分析看板 Analytics Dashboard</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">数据分析看板</text>
+      <text class="n-t" x="14" y="46">Analytics Dashboard</text>
+    </g>
+    <g class="node" data-key="用户中心" data-type="module" data-use="账户与权限" data-en="user auth" transform="translate(780,420)">
+      <title>用户中心 User &amp; Auth</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">用户中心</text>
+      <text class="n-t" x="14" y="46">User &amp; Auth</text>
+    </g>
+    <g class="node" data-key="竞品情报" data-type="module" data-use="竞品监测与分析" data-en="competitor intel" transform="translate(780,530)">
+      <title>竞品情报 Competitor Intel</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">竞品情报</text>
+      <text class="n-t" x="14" y="46">Competitor Intel</text>
+    </g>
+    <g class="node" data-key="网页研究助手" data-type="module" data-use="检索聚合与信息研究" data-en="web research" transform="translate(780,640)">
+      <title>网页研究助手 Web Research</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">网页研究助手</text>
+      <text class="n-t" x="14" y="46">Web Research</text>
+    </g>
+
+    <!-- legend -->
+    <g transform="translate(50,700)">
+      <circle class="dot-l" cx="10" cy="6" r="5"/><text class="n-t" x="22" y="10">本地 · 云端 · 网络 = MCP 类型</text>
+    </g>
+  </svg>
+</section>
+
+<section>
+  <h2>每 MCP 服务模块数</h2>
+  <p class="hint">supabase 同时服务 3 个模块——它是拓扑里唯一的「关键单点依赖」，挂掉会影响素材 / 看板 / 账户三条线。</p>
+  <svg id="bars" viewBox="0 0 340 148" role="img" aria-label="每个 MCP 服务的模块数量柱状图">
+    <line x1="10" y1="112" x2="330" y2="112" stroke="#e2e6ee" stroke-width="1.5"/>
+    <rect x="20" y="56" width="44" height="56" rx="4" fill="#8b5cf6"/>
+    <text class="n-t" x="42" y="46" text-anchor="middle">2</text>
+    <text class="n-t" x="42" y="128" text-anchor="middle">sqlite</text>
+    <rect x="80" y="56" width="44" height="56" rx="4" fill="#8b5cf6"/>
+    <text class="n-t" x="102" y="46" text-anchor="middle">2</text>
+    <text class="n-t" x="102" y="128" text-anchor="middle">filesystem</text>
+    <rect x="140" y="28" width="44" height="84" rx="4" fill="#2563eb"/>
+    <text class="n-t" x="162" y="18" text-anchor="middle">3</text>
+    <text class="n-t" x="162" y="128" text-anchor="middle">supabase</text>
+    <rect x="200" y="56" width="44" height="56" rx="4" fill="#059669"/>
+    <text class="n-t" x="222" y="46" text-anchor="middle">2</text>
+    <text class="n-t" x="222" y="128" text-anchor="middle">firecrawl</text>
+    <rect x="260" y="56" width="44" height="56" rx="4" fill="#059669"/>
+    <text class="n-t" x="282" y="46" text-anchor="middle">2</text>
+    <text class="n-t" x="282" y="128" text-anchor="middle">brave-search</text>
+  </svg>
+</section>
+
+<section>
+  <div class="acts-head">
+    <h2>行动清单</h2>
+    <button class="ghost" id="copyActs">复制已勾选 (MD)</button>
+  </div>
+  <div class="prog"><i id="progBar"></i></div>
+  <div id="progCnt" class="hint">0 / 3</div>
+  <div class="act"><input type="checkbox" id="a1"><div><div class="t">给 supabase 建立 RLS 策略审计与只读 key 收敛（关键依赖，优先）</div><div class="w">影响：素材库 · 数据分析看板 · 用户中心</div></div></div>
+  <div class="act"><input type="checkbox" id="a2"><div><div class="t">为 firecrawl 增加抓取限流与失败重试，避免上游 429</div><div class="w">影响：竞品情报 · 网页研究助手</div></div></div>
+  <div class="act"><input type="checkbox" id="a3"><div><div class="t">sqlite 本地缓存补过期 / 失效策略，防止脏数据回流看板</div><div class="w">影响：素材库 · 数据分析看板</div></div></div>
+</section>
+
+<details>
+  <summary>全量连接清单（11 条）· 点击展开</summary>
+  <table>
+    <thead><tr><th>MCP</th><th>类型</th><th>用途</th><th>服务的功能模块</th></tr></thead>
+    <tbody>
+      <tr><td>sqlite</td><td>本地数据库</td><td>本地缓存与离线查询</td><td>素材库、数据分析看板</td></tr>
+      <tr><td>filesystem</td><td>本地文件系统</td><td>读写本地素材与工程文件</td><td>素材库、创作工作台</td></tr>
+      <tr><td>supabase</td><td>云数据库 (Postgres + Auth)</td><td>用户数据持久化 + 鉴权</td><td>素材库、数据分析看板、用户中心</td></tr>
+      <tr><td>firecrawl</td><td>网页抓取 (Scrape)</td><td>抓取网页并提取结构化内容</td><td>竞品情报、网页研究助手</td></tr>
+      <tr><td>brave-search</td><td>网络搜索 (Search)</td><td>实时搜索与来源发现</td><td>竞品情报、网页研究助手</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<footer>
+  来源：onepager skill（eval-14 · explicit-show-in-svg）· 生成于 2026-08-12 · 输出目录：
+  <code class="k">/Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/outputs/</code><br>
+  诚实声明：本页 5 个 MCP（sqlite / filesystem / supabase / firecrawl / brave-search）与 6 个功能模块均为<b>虚构示意数据</b>，用于演示「MCP → 功能模块」连线图，不代表本 webapp 真实工程拓扑。单文件自包含，无 CDN / 无外链，离线可开。
+</footer>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var EDGES = [
+  {a:'sqlite',b:'素材库'},{a:'sqlite',b:'数据分析看板'},
+  {a:'filesystem',b:'素材库'},{a:'filesystem',b:'创作工作台'},
+  {a:'supabase',b:'素材库'},{a:'supabase',b:'数据分析看板'},{a:'supabase',b:'用户中心'},
+  {a:'firecrawl',b:'竞品情报'},{a:'firecrawl',b:'网页研究助手'},
+  {a:'brave-search',b:'网页研究助手'},{a:'brave-search',b:'竞品情报'}
+];
+var META = {
+  sqlite:['本地数据库','本地缓存与离线查询'],
+  filesystem:['本地文件系统','读写本地素材与工程文件'],
+  supabase:['云数据库 (Postgres + Auth)','用户数据持久化 + 鉴权'],
+  firecrawl:['网页抓取 (Scrape)','抓取网页并提取结构化内容'],
+  'brave-search':['网络搜索 (Search)','实时搜索与来源发现']
+};
+
+var activeType = null;
+var q = document.getElementById('q');
+var chips = [].slice.call(document.querySelectorAll('.chip[data-type]'));
+
+function applyFilter(){
+  var s = q.value.trim().toLowerCase();
+  [].slice.call(document.querySelectorAll('#topo g.node')).forEach(function(g){
+    var text = (g.dataset.key + ' ' + g.dataset.use + ' ' + g.dataset.en).toLowerCase();
+    var ok = (!activeType || g.dataset.type === activeType) && (!s || text.indexOf(s) >= 0);
+    g.style.display = ok ? '' : 'none';
+  });
+  [].slice.call(document.querySelectorAll('#topo line.edge')).forEach(function(e){
+    var a = document.querySelector('#topo g.node[data-key="' + e.dataset.a + '"]');
+    var b = document.querySelector('#topo g.node[data-key="' + e.dataset.b + '"]');
+    e.style.display = (a && b && a.style.display !== 'none' && b.style.display !== 'none') ? '' : 'none';
+  });
+}
+chips.forEach(function(c){ c.addEventListener('click', function(){
+  chips.forEach(function(x){ x.classList.remove('active'); });
+  if (activeType === c.dataset.type) { activeType = null; }
+  else { activeType = c.dataset.type; c.classList.add('active'); }
+  applyFilter();
+});});
+q.addEventListener('input', applyFilter);
+
+[].slice.call(document.querySelectorAll('#topo g.node')).forEach(function(g){
+  g.addEventListener('click', function(){
+    var k = g.dataset.key;
+    var wasOn = g.classList.contains('on');
+    [].slice.call(document.querySelectorAll('#topo g.node')).forEach(function(x){ x.classList.remove('on'); });
+    [].slice.call(document.querySelectorAll('#topo line.edge')).forEach(function(x){ x.classList.remove('on'); });
+    if (!wasOn) {
+      g.classList.add('on');
+      [].slice.call(document.querySelectorAll('#topo line.edge')).forEach(function(e){
+        if (e.dataset.a === k || e.dataset.b === k) e.classList.add('on');
+      });
+      EDGES.forEach(function(ed){
+        if (ed.a === k || ed.b === k) {
+          var other = ed.a === k ? ed.b : ed.a;
+          var n = document.querySelector('#topo g.node[data-key="' + other + '"]');
+          if (n) n.classList.add('on');
+        }
+      });
+    }
+  });
+});
+document.getElementById('clearHl').addEventListener('click', function(){
+  [].slice.call(document.querySelectorAll('#topo g.node,#topo line.edge')).forEach(function(x){ x.classList.remove('on'); });
+});
+
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 1600);
+}
+function buildMd(){
+  var by = {};
+  EDGES.forEach(function(ed){ (by[ed.a] = by[ed.a] || []).push(ed.b); });
+  var rows = ['| MCP | 类型 | 用途 | 服务模块 |', '|---|---|---|---|'];
+  Object.keys(by).forEach(function(m){ rows.push('| ' + m + ' | ' + META[m][0] + ' | ' + META[m][1] + ' | ' + by[m].join('、') + ' |'); });
+  return rows.join('\n');
+}
+document.getElementById('copy').addEventListener('click', function(){
+  navigator.clipboard.writeText(buildMd()).then(function(){ toast('已复制连接清单 (Markdown)'); });
+});
+
+var acts = [document.getElementById('a1'), document.getElementById('a2'), document.getElementById('a3')];
+function upd(){
+  var n = acts.filter(function(i){ return i.checked; }).length;
+  document.getElementById('progBar').style.width = (n / acts.length * 100) + '%';
+  document.getElementById('progCnt').textContent = n + ' / ' + acts.length;
+}
+acts.forEach(function(i){ i.addEventListener('change', upd); });
+document.getElementById('copyActs').addEventListener('click', function(){
+  var lines = ['## 行动清单'];
+  acts.forEach(function(i){ if (i.checked) lines.push('- [x] ' + i.closest('.act').querySelector('.t').textContent); });
+  navigator.clipboard.writeText(lines.join('\n')).then(function(){ toast('已复制勾选行动 (Markdown)'); });
+});
+</script>
+</body>
+</html>

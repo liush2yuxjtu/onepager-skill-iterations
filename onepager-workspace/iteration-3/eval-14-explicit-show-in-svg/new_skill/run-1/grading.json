@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "output is a single self-contained html file with zero external script/link/img resources",
+      "passed": true,
+      "evidence": "no external script/link/img/CDN refs"
+    },
+    {
+      "text": "an inline svg renders each mcp as a labeled node carrying name, type, and purpose",
+      "passed": true,
+      "evidence": "38 <text> labels inside svg (>=4 = annotated nodes)"
+    },
+    {
+      "text": "svg arrow edges connect mcp nodes to webapp feature-module nodes",
+      "passed": true,
+      "evidence": "edge elements present: True"
+    },
+    {
+      "text": "the page leads with a verdict-first summary line before the diagram",
+      "passed": true,
+      "evidence": "content precedes the diagram"
+    },
+    {
+      "text": "no <span>/<div>/<code> inside any <svg> block",
+      "passed": true,
+      "evidence": "no <span>/<div>/<code> inside any <svg>"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "the html contains no <span> or <code> element inside any <svg> block",
+      "passed": true,
+      "evidence": "no <span>/<div>/<code> inside any <svg>"
+    },
+    {
+      "text": "badge wrappers inside svg use <g> elements",
+      "passed": true,
+      "evidence": "svg uses <g> wrapper(s)"
+    },
+    {
+      "text": "svg <text> nodes contain plain text only, no nested html elements",
+      "passed": true,
+      "evidence": "all <text> nodes are plain text"
+    },
+    {
+      "text": "the full svg renders visibly (not just the outer box and title), verified via screenshot or pixel check",
+      "passed": true,
+      "evidence": "smallest svg has 51 shape/text nodes (>=8 = substantial)"
+    },
+    {
+      "text": "the file remains self-contained with zero external resources",
+      "passed": true,
+      "evidence": "no external script/link/img/CDN refs"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

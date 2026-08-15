@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 专家 WebApp · 双路径 onepager（A 表单 / B 对话）</title>
+<style>
+  :root{
+    --ink:#1b2330; --mut:#5b6673; --line:#e3e8ef; --bg:#f6f8fb; --card:#ffffff;
+    --a:#2563eb; --a-bg:#eef4ff; --a-line:#bcd4ff;
+    --b:#7c3aed; --b-bg:#f5f0ff; --b-line:#dccbff;
+    --ab:#0d9488; --ab-bg:#e7f7f4; --ab-line:#b3e5df;
+    --gold:#f59e0b; --ok:#059669; --bad:#e11d48;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 16px 60px}
+  a{color:var(--a)}
+
+  /* sticky top bar */
+  header{position:sticky;top:0;z-index:50;background:rgba(246,248,251,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line)}
+  .topbar{max-width:1120px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .logo{font-weight:700;letter-spacing:.2px}
+  .logo small{color:var(--mut);font-weight:400;margin-left:8px}
+  nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  nav a{text-decoration:none;font-size:13px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);white-space:nowrap}
+  nav a:hover{border-color:var(--a);color:var(--a)}
+  .btn{font:inherit;cursor:pointer;border-radius:8px;padding:6px 12px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+  .btn.primary{background:var(--a);border-color:var(--a);color:#fff}
+  .btn:hover{filter:brightness(1.05)}
+
+  /* badges (HTML chips, outside svg) */
+  .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+  .chip-a{background:var(--a-bg);color:var(--a);border:1px solid var(--a-line)}
+  .chip-b{background:var(--b-bg);color:var(--b);border:1px solid var(--b-line)}
+  .chip-ab{background:var(--ab-bg);color:var(--ab);border:1px solid var(--ab-line)}
+  .chip i{font-style:normal;background:#fff;border-radius:50%;width:15px;height:15px;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+
+  /* hero / TLDR */
+  .hero{background:linear-gradient(135deg,#eef4ff 0%,#f5f0ff 55%,#e7f7f4 100%);
+    border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:20px 0 8px}
+  .hero h1{margin:0 0 8px;font-size:24px;line-height:1.3}
+  .tldr{margin:0;font-size:14.5px;color:#26303d}
+  .tldr b{color:var(--a)}
+  .tldr b.v{color:var(--b)}
+  .tldr b.g{color:var(--ab)}
+
+  .sec{margin-top:34px}
+  .sec h2{font-size:18px;display:flex;align-items:center;gap:10px;margin:0 0 6px}
+  .sec .lead{color:var(--mut);margin:0 0 16px;max-width:860px}
+
+  /* overview svg + lane dim */
+  #overview{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);
+    border-radius:16px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+  .ov-node{cursor:pointer}
+  .ov-node .ndA{fill:var(--a-bg);stroke:var(--a);stroke-width:1.4}
+  .ov-node .ndB{fill:var(--b-bg);stroke:var(--b);stroke-width:1.4}
+  .ov-node .ndAB{fill:var(--ab-bg);stroke:var(--ab);stroke-width:1.4}
+  .ov-node:hover .ndA,.ov-node:hover .ndB,.ov-node:hover .ndAB{stroke-width:2.6}
+  .ov-t{font-size:14px;font-weight:600}
+  .ov-s{font-size:11.5px;fill:#5b6673}
+  .lane.dimmed,.base.dimmed{opacity:.22;transition:opacity .2s}
+  .ov-badge rect{stroke-width:1}
+  .ov-badge text{font-size:11px;font-weight:700;fill:#fff}
+
+  /* mock cards grid */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+  .card-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;transition:box-shadow .2s}
+  .card-wrap:hover{box-shadow:0 4px 14px rgba(16,24,40,.08)}
+  .card-cap{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 8px}
+  .card-cap .tt{font-weight:700;font-size:13.5px}
+  .card-cap .tag{font-size:11px;color:var(--mut)}
+  .mockcard{width:100%;height:auto;display:block}
+  details{margin:8px 2px 0;font-size:12.5px;color:var(--mut)}
+  details summary{cursor:pointer;color:var(--a)}
+  .flash{animation:fl 1.5s ease}
+  @keyframes fl{0%{box-shadow:0 0 0 3px var(--gold);border-color:var(--gold)}
+    60%{box-shadow:0 0 0 7px rgba(245,158,11,.35)}100%{box-shadow:none;border-color:var(--line)}}
+
+  /* contrast table */
+  .tbox{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .tbox .tfilter{border:none;border-bottom:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;align-items:center}
+  .tfilter input{flex:1;min-width:160px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);font:inherit}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+  th{background:#f8fafc;font-size:12.5px}
+  tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:600;white-space:nowrap;width:88px}
+  td.k{width:88px}
+  .nohit{display:none;padding:18px;text-align:center;color:var(--mut)}
+
+  /* decision checklist (narrow gateway: action loop) */
+  .act{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+  .act .prog{height:6px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:6px 0 12px}
+  .act .prog i{display:block;height:100%;width:0;background:var(--ok);transition:width .2s}
+  .act label{display:flex;gap:10px;align-items:flex-start;padding:8px;border-radius:10px;cursor:pointer}
+  .act label:hover{background:#f8fafc}
+  .act input{margin-top:3px;accent-color:var(--ok)}
+  .act .bars{margin-left:auto}
+
+  footer{margin-top:44px;color:var(--mut);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+  footer code{background:#eef1f5;border-radius:5px;padding:1px 6px;font-size:11.5px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  @media(max-width:640px){
+    .hero h1{font-size:20px}
+    .topbar nav{margin-left:0}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="logo">AI 专家 WebApp <small>双路径 onepager</small></div>
+    <nav>
+      <a href="#sec-overview">总览</a>
+      <a href="#sec-a">路径 A</a>
+      <a href="#sec-b">路径 B</a>
+      <a href="#sec-ab">汇合点</a>
+      <a href="#sec-compare">异同对照</a>
+    </nav>
+    <button class="btn" onclick="copyTLDR()" title="复制 TL;DR">复制结论</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ 结论前置 ============ -->
+  <div class="hero">
+    <h1>一个 WebApp，两条使用路径，汇合于同一产物</h1>
+    <p class="tldr">
+      路径 <b>A</b> 用 <b>GUI 表单</b>分步创建：<b>表单阶段 0 次后端调用</b> → <b>审阅按 Enter 才执行</b> → <b>发布走专家 API</b>。
+      路径 <b class="v">B</b> 与 <b class="v">expert-creator / expert-fixer</b> 专家<b class="v">纯对话</b>（无表单、自然语言创建或改进技能）。
+      两条路径在「发布」环节共用<b class="g">同一专家 API</b>，最终收敛于同构产物：<b class="g">已发布专家 + evals 快照</b>。
+      差异只在「入口与执行」，发布与交付物完全一致。
+    </p>
+  </div>
+
+  <!-- ============ 总览 SVG ============ -->
+  <section class="sec" id="sec-overview">
+    <h2>总览 <span class="chip chip-ab"><i>SVG</i>分支 → 汇合</span></h2>
+    <p class="lead">单一入口分支成 A / B 两条路径，各自走完 3 段后在底部汇合。悬停任意节点可聚焦该路径，点击节点跳转到对应的界面 mock 卡片。</p>
+
+    <svg id="overview" viewBox="0 0 960 620" role="img" aria-label="双路径总览：共享入口分支为路径A与路径B并汇合到已发布专家与evals快照">
+      <defs>
+        <marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker>
+        <marker id="arB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7c3aed"/></marker>
+        <marker id="arAB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0d9488"/></marker>
+      </defs>
+
+      <!-- 入口 (base) -->
+      <g class="base">
+        <rect x="350" y="40" width="260" height="58" rx="29" fill="#1b2330"/>
+        <text x="480" y="64" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">用户 · 创建 / 改进一个 AI 专家</text>
+        <text x="480" y="85" text-anchor="middle" font-size="12" fill="#cbd5e1">WebApp 入口 · 两条路径任选其一</text>
+      </g>
+
+      <!-- 分支箭头 -->
+      <g class="base">
+        <path d="M480,98 C470,122 300,140 260,164" fill="none" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arA)"/>
+        <path d="M480,98 C490,122 660,140 700,164" fill="none" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arB)"/>
+      </g>
+
+      <!-- 路径 A 车道 -->
+      <g class="lane lane-A">
+        <rect x="150" y="136" width="220" height="26" rx="13" fill="#eef4ff" stroke="#2563eb" stroke-width="1"/>
+        <text x="260" y="153" text-anchor="middle" font-size="12" font-weight="700" fill="#2563eb">路径 A · GUI 表单驱动</text>
+
+        <g class="ov-node" data-lane="A" data-card="card-a1">
+          <rect class="ndA" x="130" y="167" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="342" y="176" width="30" height="20" rx="10" fill="#2563eb"/><text x="357" y="190" text-anchor="middle">A</text></g>
+          <text class="ov-t" x="260" y="202" text-anchor="middle">① 表单填写</text>
+          <text class="ov-s" x="260" y="222" text-anchor="middle">结构化字段 · 校验即时反馈</text>
+          <text class="ov-s" x="260" y="240" text-anchor="middle">0 次后端调用 · 本地草稿</text>
+          <title>路径 A ① 表单填写：零后端调用</title>
+        </g>
+
+        <g class="ov-node" data-lane="A" data-card="card-a2">
+          <rect class="ndA" x="130" y="287" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="342" y="296" width="30" height="20" rx="10" fill="#2563eb"/><text x="357" y="310" text-anchor="middle">A</text></g>
+          <text class="ov-t" x="260" y="322" text-anchor="middle">② 审阅 · 按 Enter 才执行</text>
+          <text class="ov-s" x="260" y="342" text-anchor="middle">审阅面板 + diff 预览</text>
+          <text class="ov-s" x="260" y="360" text-anchor="middle">未确认不落库 / 不发布</text>
+          <title>路径 A ② 审阅执行：按 Enter 才执行</title>
+        </g>
+
+        <g class="ov-node" data-lane="A" data-card="card-a3">
+          <rect class="ndA" x="130" y="407" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="330" y="416" width="42" height="20" rx="10" fill="#0d9488"/><text x="351" y="430" text-anchor="middle">A+B</text></g>
+          <text class="ov-t" x="260" y="442" text-anchor="middle">③ 发布</text>
+          <text class="ov-s" x="260" y="462" text-anchor="middle">POST /expert-api/publish</text>
+          <text class="ov-s" x="260" y="480" text-anchor="middle">生成 evals 快照</text>
+          <title>发布：走专家 API（与路径 B 共用）</title>
+        </g>
+
+        <path class="ov-line" d="M260,253 L260,284" fill="none" stroke="#2563eb" stroke-width="1.6" marker-end="url(#arA)"/>
+        <path class="ov-line" d="M260,373 L260,404" fill="none" stroke="#2563eb" stroke-width="1.6" marker-end="url(#arA)"/>
+      </g>
+
+      <!-- 路径 B 车道 -->
+      <g class="lane lane-B">
+        <rect x="590" y="136" width="220" height="26" rx="13" fill="#f5f0ff" stroke="#7c3aed" stroke-width="1"/>
+        <text x="700" y="153" text-anchor="middle" font-size="12" font-weight="700" fill="#7c3aed">路径 B · 专家纯对话</text>
+
+        <g class="ov-node" data-lane="B" data-card="card-b1">
+          <rect class="ndB" x="570" y="167" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="782" y="176" width="30" height="20" rx="10" fill="#7c3aed"/><text x="797" y="190" text-anchor="middle">B</text></g>
+          <text class="ov-t" x="700" y="202" text-anchor="middle">① 纯对话 · 无表单</text>
+          <text class="ov-s" x="700" y="222" text-anchor="middle">聊天框输入自然语言</text>
+          <text class="ov-s" x="700" y="240" text-anchor="middle">一句话描述创建 / 改进意图</text>
+          <title>路径 B ① 纯对话：无表单</title>
+        </g>
+
+        <g class="ov-node" data-lane="B" data-card="card-b2">
+          <rect class="ndB" x="570" y="287" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="782" y="296" width="30" height="20" rx="10" fill="#7c3aed"/><text x="797" y="310" text-anchor="middle">B</text></g>
+          <text class="ov-t" x="700" y="322" text-anchor="middle">② 专家代建 / 代改</text>
+          <text class="ov-s" x="700" y="342" text-anchor="middle">expert-creator 创建技能</text>
+          <text class="ov-s" x="700" y="360" text-anchor="middle">expert-fixer 改进 / 修复</text>
+          <title>路径 B ② expert-creator / expert-fixer 代建代改</title>
+        </g>
+
+        <g class="ov-node" data-lane="B" data-card="card-b3">
+          <rect class="ndB" x="570" y="407" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="770" y="416" width="42" height="20" rx="10" fill="#0d9488"/><text x="791" y="430" text-anchor="middle">A+B</text></g>
+          <text class="ov-t" x="700" y="442" text-anchor="middle">③ 发布</text>
+          <text class="ov-s" x="700" y="462" text-anchor="middle">POST /expert-api/publish</text>
+          <text class="ov-s" x="700" y="480" text-anchor="middle">对话确认后提交</text>
+          <title>发布：走专家 API（与路径 A 共用）</title>
+        </g>
+
+        <path class="ov-line" d="M700,253 L700,284" fill="none" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#arB)"/>
+        <path class="ov-line" d="M700,373 L700,404" fill="none" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#arB)"/>
+      </g>
+
+      <!-- 汇合 -->
+      <g class="base">
+        <path d="M260,493 C280,512 420,520 462,526" fill="none" stroke="#0d9488" stroke-width="1.8" marker-end="url(#arAB)"/>
+        <path d="M700,493 C680,512 540,520 498,526" fill="none" stroke="#0d9488" stroke-width="1.8" marker-end="url(#arAB)"/>
+        <rect x="428" y="504" width="104" height="22" rx="11" fill="#e7f7f4" stroke="#0d9488" stroke-width="1"/>
+        <text x="480" y="519" text-anchor="middle" font-size="11" font-weight="700" fill="#0d9488">汇合点 · A+B</text>
+      </g>
+
+      <g class="ov-node" data-lane="AB" data-card="card-ab">
+        <rect class="ndAB" x="320" y="530" width="320" height="58" rx="29"/>
+        <text class="ov-t" x="480" y="554" text-anchor="middle" font-size="15">已发布专家 + evals 快照</text>
+        <text class="ov-s" x="480" y="575" text-anchor="middle">两条路径在此汇合 · 产物同构 · 可复现</text>
+        <title>汇合：已发布专家 + evals 快照</title>
+      </g>
+    </svg>
+  </section>
+
+  <!-- ============ 路径 A 卡片 ============ -->
+  <section class="sec" id="sec-a">
+    <h2>路径 A <span class="chip chip-a"><i>A</i>GUI 表单驱动</span></h2>
+    <p class="lead">结构化、分步、可审阅。核心窄门：<b>表单阶段 0 次后端调用</b> → <b>审阅按 Enter 才执行</b> → <b>发布走专家 API</b>。</p>
+    <div class="cards">
+
+      <div class="card-wrap" id="card-a1">
+        <div class="card-cap"><span class="tt">A1 · 表单填写</span><span class="chip chip-a">A</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="路径A卡片1：表单填写界面">
+          <title>A1 · 表单填写（零后端调用）</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">A1 · 表单填写</text>
+          <g class="ov-badge"><rect x="320" y="6" width="34" height="22" rx="11" fill="#2563eb"/><text x="337" y="21" text-anchor="middle">A</text></g>
+          <text x="16" y="64" font-size="12" fill="#5b6673">技能名称</text>
+          <rect x="16" y="72" width="328" height="26" rx="6" fill="#fff" stroke="#cbd5e1"/>
+          <text x="24" y="89" font-size="11.5" fill="#94a3b8">zhuizhen-diagnosis</text>
+          <text x="16" y="120" font-size="12" fill="#5b6673">一句话描述 · 触发场景</text>
+          <rect x="16" y="126" width="328" height="44" rx="6" fill="#fff" stroke="#cbd5e1"/>
+          <text x="24" y="144" font-size="11.5" fill="#94a3b8">用户提问「追帧诊断」时自动触发…</text>
+          <text x="16" y="190" font-size="12" fill="#5b6673">触发词（可选）</text>
+          <rect x="16" y="196" width="328" height="26" rx="6" fill="#fff" stroke="#cbd5e1"/>
+          <circle cx="22" cy="241" r="4" fill="#059669"/>
+          <text x="34" y="245" font-size="11" fill="#059669">本地草稿 · 表单阶段 0 次后端调用</text>
+          <text x="344" y="245" text-anchor="end" font-size="11" fill="#94a3b8">未落库</text>
+        </svg>
+        <details><summary>为什么零后端调用</summary>表单只是纯前端草稿：字段本地校验、即时反馈，不触网。真正的网络动作被推迟到「审阅执行」与「发布」两扇窄门之后。</details>
+      </div>
+
+      <div class="card-wrap" id="card-a2">
+        <div class="card-cap"><span class="tt">A2 · 审阅执行</span><span class="chip chip-a">A</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="路径A卡片2：审阅执行界面">
+          <title>A2 · 审阅执行（按 Enter 才执行）</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">A2 · 审阅执行</text>
+          <g class="ov-badge"><rect x="320" y="6" width="34" height="22" rx="11" fill="#2563eb"/><text x="337" y="21" text-anchor="middle">A</text></g>
+          <rect x="16" y="44" width="328" height="26" rx="6" fill="#f8fafc" stroke="#e3e8ef"/>
+          <text x="28" y="61" font-size="12" font-weight="600" fill="#1b2330">审阅清单 · 待确认</text>
+          <rect x="16" y="76" width="328" height="24" rx="6" fill="#f0fdf4" stroke="#bbf7d0"/>
+          <text x="28" y="92" font-size="11.5" fill="#15803d">+ skills/zhuizhen-diagnosis/SKILL.md</text>
+          <rect x="16" y="104" width="328" height="24" rx="6" fill="#f0fdf4" stroke="#bbf7d0"/>
+          <text x="28" y="120" font-size="11.5" fill="#15803d">+ references/diagnosis-rules.md</text>
+          <rect x="16" y="140" width="328" height="44" rx="10" fill="#fff7ed" stroke="#fdba74"/>
+          <text x="180" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#c2410c">按 Enter 执行 ▸</text>
+          <text x="180" y="175" text-anchor="middle" font-size="10.5" fill="#9a3412">未确认前 · 不落库 / 不发布</text>
+          <text x="16" y="236" font-size="11" fill="#5b6673">审阅是执行窄门：只有按 Enter 才触发动作。</text>
+        </svg>
+        <details><summary>为什么按 Enter 才执行</summary>审阅面板展示将写入的文件与 diff，确认动作由用户按 Enter 触发，杜绝「填完就执行」的意外副作用。Enter 是唯一的执行窄门。</details>
+      </div>
+
+      <div class="card-wrap" id="card-a3">
+        <div class="card-cap"><span class="tt">A3 · 发布（专家 API）</span><span class="chip chip-ab">A+B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="发布卡片：走专家API">
+          <title>A3 · 发布：POST /expert-api/publish</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">A3 · 发布（专家 API）</text>
+          <g class="ov-badge"><rect x="310" y="6" width="44" height="22" rx="11" fill="#0d9488"/><text x="332" y="21" text-anchor="middle">A+B</text></g>
+          <rect x="16" y="46" width="328" height="28" rx="8" fill="#f1f5f9" stroke="#e3e8ef"/>
+          <text x="28" y="65" font-size="12" class="mono" fill="#1b2330">POST /expert-api/publish</text>
+          <text x="16" y="106" font-size="11" fill="#5b6673">发布进度</text>
+          <rect x="16" y="114" width="328" height="12" rx="6" fill="#e2e8f0"/>
+          <rect x="16" y="114" width="328" height="12" rx="6" fill="#0d9488"/>
+          <text x="344" y="124" text-anchor="end" font-size="11" font-weight="600" fill="#0d9488">100%</text>
+          <circle cx="22" cy="156" r="9" fill="#e7f7f4" stroke="#0d9488"/>
+          <text x="22" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#0d9488">✓</text>
+          <text x="38" y="160" font-size="12" font-weight="600" fill="#065f46">已发布</text>
+          <text x="16" y="186" font-size="11.5" fill="#5b6673">同步生成 evals 快照（版本可复现）</text>
+          <text x="16" y="236" font-size="11" fill="#5b6673">入口：表单审阅通过 → 提交专家 API。</text>
+        </svg>
+        <details><summary>发布细节</summary>A 侧发布 = 表单审阅通过后的提交动作，走与 B 侧完全相同的专家 API，产物落到「已发布专家 + evals 快照」。</details>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 路径 B 卡片 ============ -->
+  <section class="sec" id="sec-b">
+    <h2>路径 B <span class="chip chip-b"><i>B</i>专家纯对话</span></h2>
+    <p class="lead">无表单、自然语言。expert-creator 负责<b>创建</b>技能、expert-fixer 负责<b>改进 / 修复</b>，全程对话驱动，发布同样走专家 API。</p>
+    <div class="cards">
+
+      <div class="card-wrap" id="card-b1">
+        <div class="card-cap"><span class="tt">B1 · 纯对话（无表单）</span><span class="chip chip-b">B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="路径B卡片1：对话界面">
+          <title>B1 · 纯对话：无表单，自然语言</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">B1 · 纯对话（无表单）</text>
+          <g class="ov-badge"><rect x="320" y="6" width="34" height="22" rx="11" fill="#7c3aed"/><text x="337" y="21" text-anchor="middle">B</text></g>
+          <rect x="16" y="44" width="328" height="168" rx="10" fill="#fbfcfe" stroke="#e3e8ef"/>
+          <rect x="130" y="58" width="200" height="40" rx="12" fill="#7c3aed"/>
+          <text x="230" y="76" text-anchor="middle" font-size="11.5" fill="#fff">帮我建个技能：用户问</text>
+          <text x="230" y="92" text-anchor="middle" font-size="11.5" fill="#fff">「追帧诊断」就触发</text>
+          <rect x="24" y="112" width="210" height="48" rx="12" fill="#2563eb"/>
+          <text x="38" y="133" font-size="11.5" fill="#fff">收到，我是 expert-creator，</text>
+          <text x="38" y="151" font-size="11.5" fill="#fff">开始创建技能骨架…</text>
+          <rect x="16" y="222" width="328" height="26" rx="13" fill="#f1f5f9" stroke="#e3e8ef"/>
+          <text x="34" y="239" font-size="11.5" fill="#94a3b8">输入你的需求…（无表单）</text>
+          <circle cx="328" cy="235" r="6" fill="#7c3aed"/>
+        </svg>
+        <details><summary>为什么没有表单</summary>对话本身就是窄门：用户只给一句话意图，其余由 expert-creator / expert-fixer 补齐细节，按需追问，不强迫填写完整表单。</details>
+      </div>
+
+      <div class="card-wrap" id="card-b2">
+        <div class="card-cap"><span class="tt">B2 · expert-creator / expert-fixer</span><span class="chip chip-b">B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="路径B卡片2：专家活动界面">
+          <title>B2 · 专家代建代改</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">B2 · expert-creator / expert-fixer</text>
+          <g class="ov-badge"><rect x="320" y="6" width="34" height="22" rx="11" fill="#7c3aed"/><text x="337" y="21" text-anchor="middle">B</text></g>
+          <rect x="16" y="44" width="328" height="180" rx="10" fill="#0f172a"/>
+          <text x="32" y="68" font-size="11.5" class="mono" fill="#94a3b8">$ expert-creator 创建技能</text>
+          <text x="32" y="90" font-size="11.5" class="mono" fill="#4ade80">✓ SKILL.md 生成</text>
+          <text x="32" y="112" font-size="11.5" class="mono" fill="#4ade80">✓ 触发描述校验通过</text>
+          <text x="32" y="134" font-size="11.5" class="mono" fill="#94a3b8">$ expert-fixer 改进技能</text>
+          <text x="32" y="156" font-size="11.5" class="mono" fill="#4ade80">✓ references 修复</text>
+          <text x="32" y="178" font-size="11.5" class="mono" fill="#4ade80">✓ evals 3/3 通过</text>
+          <text x="16" y="240" font-size="11" fill="#5b6673">生成即执行 · 对话内可反复修正。</text>
+        </svg>
+        <details><summary>两个专家的分工</summary>创建走 expert-creator（搭骨架 + 校验描述），改进 / 修复走 expert-fixer（修 references、补 evals）。都在对话内即时执行，无需表单。</details>
+      </div>
+
+      <div class="card-wrap" id="card-b3">
+        <div class="card-cap"><span class="tt">B3 · 发布（专家 API）</span><span class="chip chip-ab">A+B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="发布卡片：对话确认后走专家API">
+          <title>B3 · 发布：POST /expert-api/publish</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">B3 · 发布（专家 API）</text>
+          <g class="ov-badge"><rect x="310" y="6" width="44" height="22" rx="11" fill="#0d9488"/><text x="332" y="21" text-anchor="middle">A+B</text></g>
+          <rect x="16" y="46" width="328" height="28" rx="8" fill="#f1f5f9" stroke="#e3e8ef"/>
+          <text x="28" y="65" font-size="12" class="mono" fill="#1b2330">POST /expert-api/publish</text>
+          <text x="16" y="106" font-size="11" fill="#5b6673">发布进度</text>
+          <rect x="16" y="114" width="328" height="12" rx="6" fill="#e2e8f0"/>
+          <rect x="16" y="114" width="328" height="12" rx="6" fill="#0d9488"/>
+          <text x="344" y="124" text-anchor="end" font-size="11" font-weight="600" fill="#0d9488">100%</text>
+          <circle cx="22" cy="156" r="9" fill="#e7f7f4" stroke="#0d9488"/>
+          <text x="22" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#0d9488">✓</text>
+          <text x="38" y="160" font-size="12" font-weight="600" fill="#065f46">已发布</text>
+          <text x="16" y="186" font-size="11.5" fill="#5b6673">同步生成 evals 快照（版本可复现）</text>
+          <text x="16" y="236" font-size="11" fill="#5b6673">入口：对话确认 → 提交专家 API。</text>
+        </svg>
+        <details><summary>与 A 侧发布的差异</summary>仅入口不同（对话确认 vs 表单审阅），网络请求、API、落库产物完全一致——这就是「发布环节两条路径同构」的依据。</details>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 汇合点 ============ -->
+  <section class="sec" id="sec-ab">
+    <h2>汇合点 <span class="chip chip-ab"><i>A+B</i>已发布专家 + evals 快照</span></h2>
+    <p class="lead">无论从哪条路径进来，终点都是同一份可复现产物：一个已发布的专家 + 与之绑定的 evals 评测快照。</p>
+    <div class="cards">
+
+      <div class="card-wrap" id="card-ab">
+        <div class="card-cap"><span class="tt">汇合 · 最终产物</span><span class="chip chip-ab">A+B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="汇合卡片：已发布专家与evals快照">
+          <title>汇合：已发布专家 + evals 快照</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">汇合 · 已发布专家 + evals 快照</text>
+          <g class="ov-badge"><rect x="310" y="6" width="44" height="22" rx="11" fill="#0d9488"/><text x="332" y="21" text-anchor="middle">A+B</text></g>
+          <rect x="16" y="52" width="140" height="88" rx="12" fill="#e7f7f4" stroke="#b3e5df"/>
+          <circle cx="34" cy="72" r="8" fill="#0d9488"/>
+          <text x="34" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">✓</text>
+          <text x="48" y="76" font-size="12" font-weight="700" fill="#065f46">已发布专家</text>
+          <text x="26" y="100" font-size="10.5" fill="#0f766e">可被引用 / 对话调用</text>
+          <text x="26" y="118" font-size="10.5" fill="#0f766e">含 skills + references</text>
+          <rect x="204" y="52" width="140" height="88" rx="12" fill="#e7f7f4" stroke="#b3e5df"/>
+          <circle cx="222" cy="72" r="8" fill="#0d9488"/>
+          <text x="222" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">✓</text>
+          <text x="236" y="76" font-size="12" font-weight="700" fill="#065f46">evals 快照</text>
+          <text x="214" y="100" font-size="10.5" fill="#0f766e">同一版本 · 可复现</text>
+          <text x="214" y="118" font-size="10.5" fill="#0f766e">评测结果留档</text>
+          <text x="180" y="96" text-anchor="middle" font-size="18" font-weight="700" fill="#0d9488">⇣</text>
+          <text x="16" y="176" font-size="11.5" fill="#5b6673">两条路径的交付物可互换、可复现、可审计。</text>
+          <text x="16" y="236" font-size="11" fill="#5b6673">汇合不是二选一，而是同一条终点线。</text>
+        </svg>
+        <details><summary>汇合点如何保证一致</summary>两条路径都向同一专家 API 提交、绑定同一 evals 快照 schema，因此「表单建的专家」与「对话建的专家」在发布后不可区分。</details>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 异同对照表 ============ -->
+  <section class="sec" id="sec-compare">
+    <h2>两条路径在 表单 / 执行 / 发布 环节的异同</h2>
+    <p class="lead">搜索框为窄网关：输入关键词即过滤行（如「零后端」「Enter」「API」「对话」）。</p>
+
+    <div class="tbox">
+      <div class="tfilter">
+        <span>🔍</span>
+        <input id="tfilter" type="text" placeholder="过滤对照表，例如：零后端 / Enter / API / 对话…" oninput="filterTable()">
+      </div>
+      <table id="ctable">
+        <thead>
+          <tr>
+            <th>环节</th>
+            <th><span class="chip chip-a">A</span> GUI 表单驱动</th>
+            <th><span class="chip chip-b">B</span> 专家纯对话</th>
+            <th>异 / 同</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="tr">
+            <td>表单 / 入口</td>
+            <td>结构化表单：字段 + 即时校验；<b>0 次后端调用</b>，纯前端本地草稿。</td>
+            <td>无表单：聊天框自然语言一句话；由 expert-creator / expert-fixer 理解意图。</td>
+            <td><span class="chip chip-a">异</span>入口形态完全不同</td>
+          </tr>
+          <tr class="tr">
+            <td>执行</td>
+            <td>审阅面板 + 按 <b>Enter</b> 才执行；未确认不落库 / 不发布。</td>
+            <td>专家即时代建 / 代改技能文件；生成即执行，对话内可反复修正。</td>
+            <td><span class="chip chip-a">异</span>触发方式不同（确认闸门 vs 即时）</td>
+          </tr>
+          <tr class="tr">
+            <td>发布</td>
+            <td>表单审阅通过 → 提交 <b class="mono">POST /expert-api/publish</b>。</td>
+            <td>对话确认 → 提交 <b class="mono">POST /expert-api/publish</b>。</td>
+            <td><span class="chip chip-ab">同</span>同一专家 API</td>
+          </tr>
+          <tr class="tr">
+            <td>汇合产物</td>
+            <td>已发布专家 + evals 快照。</td>
+            <td>已发布专家 + evals 快照。</td>
+            <td><span class="chip chip-ab">同</span>产物同构可复现</td>
+          </tr>
+          <tr class="tr">
+            <td>适用</td>
+            <td>需要精确字段、逐步审阅、防误操作（新手 / 生产提交）。</td>
+            <td>快速试探、改进既有技能、一句话起建（探索 / 迭代）。</td>
+            <td><span class="chip chip-a">异</span>由场景决定</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="nohit" id="nohit">没有匹配的对照行。</div>
+    </div>
+  </section>
+
+  <!-- ============ 决策行动（窄门行动闭环） ============ -->
+  <section class="sec" id="sec-action">
+    <h2>下一步：选哪条路径</h2>
+    <p class="lead">勾选你的决策，进度自动推进，可一键复制为 Markdown 回传协作方。</p>
+    <div class="act">
+      <div class="prog"><i id="progbar"></i></div>
+      <label><input type="checkbox" data-check onchange="tick()">
+        <span><b>选 A</b>：需要精确字段 + 逐环节审阅 + 防误操作 —— 从表单开始，按 Enter 确认执行。</span></label>
+      <label><input type="checkbox" data-check onchange="tick()">
+        <span><b>选 B</b>：想快速试探 / 改进既有技能 —— 直接找 expert-creator / expert-fixer 对话，一句话起建。</span></label>
+      <label><input type="checkbox" data-check onchange="tick()">
+        <span><b>B → A 固化</b>：先在对话里定稿，再回到表单复现与审阅，最后走专家 API 发布。</span></label>
+      <div class="bars"><button class="btn" onclick="copyActions()">复制决策 Markdown</button></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>来源：<code>onepager</code> skill（old-skill-snapshot）· 生成于 eval-11 <code>svg-path-diagrams</code>（old_skill）· 2026-08-12。</div>
+    <div>产物：<code>/Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-11-svg-path-diagrams/old_skill/outputs/onepager-ai-expert-two-paths.html</code></div>
+    <div>内联声明：全页 8 个内联 <code>&lt;svg&gt;</code>（1 总览 + 7 界面 mock 卡片），零外链 script/link/img，离线可开。</div>
+    <div>校验：<code class="mono">grep -c '&lt;svg' file</code> → 8；SVG 内部未使用 span/div/code。</div>
+  </footer>
+
+</div>
+
+<script>
+  // 总览：悬停聚焦路径、点击跳转卡片
+  var ov = document.getElementById('overview');
+  ov.addEventListener('mouseover', function(e){
+    var n = e.target.closest('.ov-node'); if(!n) return;
+    var lane = n.getAttribute('data-lane');
+    ov.querySelectorAll('.lane,.base').forEach(function(g){ g.classList.toggle('dimmed', g.classList.contains('lane-'+lane) === false); });
+  });
+  ov.addEventListener('mouseout', function(e){
+    if(!e.target.closest('.ov-node')) return;
+    ov.querySelectorAll('.lane,.base').forEach(function(g){ g.classList.remove('dimmed'); });
+  });
+  ov.addEventListener('click', function(e){
+    var n = e.target.closest('.ov-node'); if(!n) return;
+    var id = n.getAttribute('data-card'); if(!id) return;
+    var el = document.getElementById(id); if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  });
+
+  // 对照表过滤（窄网关）
+  function filterTable(){
+    var q = (document.getElementById('tfilter').value||'').trim().toLowerCase();
+    var rows = document.querySelectorAll('#ctable .tr'); var hit = 0;
+    rows.forEach(function(r){
+      var m = !q || r.textContent.toLowerCase().indexOf(q) > -1;
+      r.style.display = m ? '' : 'none'; if(m) hit++;
+    });
+    document.getElementById('nohit').style.display = hit ? 'none' : 'block';
+  }
+
+  // 复制工具
+  function copy(text){
+    if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand('copy'); }catch(_){}
+    document.body.removeChild(ta);
+  }
+  var TLDR = 'AI 专家 WebApp 双路径结论：\n'+
+    '- 路径 A（GUI 表单）：表单阶段 0 次后端调用 → 审阅按 Enter 才执行 → 发布走专家 API。\n'+
+    '- 路径 B（专家对话）：与 expert-creator / expert-fixer 纯对话，无表单、自然语言创建或改进技能。\n'+
+    '- 汇合：两条路径发布共用同一专家 API，最终收敛于「已发布专家 + evals 快照」，产物同构。\n'+
+    '- 差异只在表单/执行（表单 vs 对话、确认闸门 vs 即时），发布与交付物一致。';
+  function copyTLDR(){ copy(TLDR); }
+  function copyActions(){
+    var lines = ['下一步路径决策：'];
+    document.querySelectorAll('[data-check]').forEach(function(c){ if(c.checked) lines.push('- [x] ' + c.parentElement.textContent.trim()); });
+    if(lines.length === 1) lines.push('- （尚未勾选）');
+    copy(lines.join('\n'));
+  }
+
+  // 行动闭环进度
+  function tick(){
+    var cs = document.querySelectorAll('[data-check]');
+    var done = Array.prototype.filter.call(cs, function(c){ return c.checked; }).length;
+    var pct = Math.round(done / cs.length * 100);
+    document.getElementById('progbar').style.width = pct + '%';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>机器散热诊断 onepager</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; background: #11111b; color: #cdd6f4; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  .verdict { background: #1e1e2e; border-left: 4px solid #a6e3a1; padding: 12px 14px; border-radius: 8px; margin-bottom: 18px; }
+  .card { background: #181825; border: 1px solid #313244; border-radius: 12px; padding: 16px; margin-bottom: 18px; }
+  h2 { font-size: 16px; margin: 0 0 12px; color: #a6e3a1; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #11111b; background: #f38ba8; }
+  .badge.ok { background: #a6e3a1; }
+  input[type=search] { width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; border: 1px solid #45475a; background: #11111b; color: #cdd6f4; margin-bottom: 10px; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 7px 8px; text-align: left; border-bottom: 1px solid #313244; }
+  th { color: #a6adc8; cursor: pointer; user-select: none; }
+  th:hover { color: #cdd6f4; }
+  .actions { margin-top: 12px; }
+  .actions label { display: block; padding: 6px 0; cursor: pointer; }
+  .actions input { margin-right: 8px; }
+  .progress { height: 8px; border-radius: 999px; background: #313244; margin: 8px 0; overflow: hidden; }
+  .progress > span { display: block; height: 100%; background: #a6e3a1; width: 0; transition: width .2s; }
+  button { background: #313244; color: #cdd6f4; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer; }
+  button:hover { background: #45475a; }
+  details { border: 1px solid #313244; border-radius: 8px; padding: 10px 12px; margin-top: 14px; }
+  summary { cursor: pointer; color: #a6adc8; font-size: 13px; }
+  footer { margin-top: 24px; font-size: 12px; color: #7f849c; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>机器散热诊断</h1>
+  <div class="verdict"><strong>结论：</strong>机器散热健康；唯一热源 = opencode 多会话（71% CPU，内存 6.8G）。其余进程均正常，瞬时尖峰已标注「非持续」。</div>
+
+  <div class="card">
+    <h2>热源分布</h2>
+    <!-- 已修复：徽标用 <g> 包裹，<text> 只放纯文本，不嵌 HTML 元素 -->
+    <svg viewBox="0 0 400 230" role="img" aria-label="热源分布横向条" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="400" height="230" rx="10" fill="#11111b" stroke="#313244"/>
+      <text x="20" y="30" font-size="15" font-weight="700" fill="#cdd6f4">热源分布</text>
+
+      <g transform="translate(20,64)">
+        <rect x="0" y="0" width="40" height="20" rx="10" fill="#f38ba8"/>
+        <text x="20" y="14" font-size="11" font-weight="700" fill="#11111b" text-anchor="middle">HOT</text>
+      </g>
+      <rect x="76" y="70" width="284" height="12" rx="6" fill="#f38ba8"/>
+      <text x="20" y="110" font-size="13" fill="#cdd6f4">opencode · 71%</text>
+
+      <g transform="translate(20,130)">
+        <rect x="0" y="0" width="40" height="20" rx="10" fill="#a6e3a1"/>
+        <text x="20" y="14" font-size="11" font-weight="700" fill="#11111b" text-anchor="middle">OK</text>
+      </g>
+      <rect x="76" y="136" width="56" height="12" rx="6" fill="#a6e3a1"/>
+      <text x="20" y="176" font-size="13" fill="#cdd6f4">chrome · 14%</text>
+
+      <g transform="translate(20,196)">
+        <rect x="0" y="0" width="40" height="20" rx="10" fill="#89b4fa"/>
+        <text x="20" y="14" font-size="11" font-weight="700" fill="#11111b" text-anchor="middle">OK</text>
+      </g>
+      <rect x="76" y="202" width="24" height="12" rx="6" fill="#89b4fa"/>
+      <text x="20" y="222" font-size="13" fill="#cdd6f4">其余 · 6%</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <h2>进程榜</h2>
+    <input type="search" id="q" placeholder="过滤进程…" aria-label="过滤进程">
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th data-k="proc">进程</th>
+          <th data-k="cpu">CPU</th>
+          <th data-k="mem">内存</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>opencode</td><td>71</td><td>6.8G</td></tr>
+        <tr><td>chrome</td><td>14</td><td>2.1G</td></tr>
+        <tr><td>其余</td><td>6</td><td>0.9G</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>行动清单</h2>
+    <div class="progress"><span id="bar"></span></div>
+    <div class="actions">
+      <label><input type="checkbox" data-action="重启闲置会话"> 重启或合并 idle 的 opencode 会话，释放 6.8G 内存</label>
+      <label><input type="checkbox" data-action="观察 chrome 尖峰"> 观察 chrome 14% 是否瞬时尖峰（非持续）</label>
+      <label><input type="checkbox" data-action="7 天后复查"> 7 天后复查热源分布</label>
+    </div>
+    <button id="copy">复制已勾选行动为 Markdown</button>
+  </div>
+
+  <details>
+    <summary>证据与方法（点击展开）</summary>
+    <p style="font-size:13px; color:#a6adc8;">采样命令：<code>ps -eo %cpu,rss,comm | sort -k1 -rn | head</code>。原始进程榜与采集时间戳见上表；本文档为单次采样，非持续尖峰已标注。</p>
+  </details>
+
+  <footer>
+    来源项目：opencode 多会话采样<br>
+    来源路径：/tmp/eval12/diagnostics<br>
+    会话 ID：implicit-session-12<br>
+    生成方式：AI onepager（窄门单页），内联 SVG 已按 onepager 纪律修复——徽标用 <code>&lt;g&gt;</code> 包裹、<code>&lt;text&gt;</code> 内仅纯文本、无 <code>&lt;span&gt;</code>/<code>&lt;div&gt;</code>/<code>&lt;code&gt;</code> 进入 SVG 命名空间。
+  </footer>
+</div>
+
+<script>
+(function () {
+  var q = document.getElementById('q');
+  var tbody = document.querySelector('#tbl tbody');
+  var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+  q.addEventListener('input', function () {
+    var k = q.value.trim().toLowerCase();
+    tbody.innerHTML = '';
+    rows.forEach(function (r) {
+      if (!k || r.textContent.toLowerCase().indexOf(k) !== -1) tbody.appendChild(r);
+    });
+  });
+
+  var ths = Array.prototype.slice.call(document.querySelectorAll('#tbl th'));
+  var asc = {};
+  ths.forEach(function (th) {
+    th.addEventListener('click', function () {
+      var k = th.getAttribute('data-k');
+      var dir = asc[k] = !asc[k];
+      var sorted = rows.slice().sort(function (a, b) {
+        var av = a.querySelector('td:nth-child(' + (ths.indexOf(th) + 1) + ')').textContent;
+        var bv = b.querySelector('td:nth-child(' + (ths.indexOf(th) + 1) + ')').textContent;
+        var numA = parseFloat(av), numB = parseFloat(bv);
+        var cmp = (!isNaN(numA) && !isNaN(numB)) ? numA - numB : av.localeCompare(bv, 'zh');
+        return dir ? cmp : -cmp;
+      });
+      tbody.innerHTML = '';
+      sorted.forEach(function (r) { tbody.appendChild(r); });
+      ths.forEach(function (x) { x.textContent = x.textContent.replace(/ [↑↓]$/, ''); });
+      th.textContent += dir ? ' ↓' : ' ↑';
+    });
+  });
+
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('input[data-action]'));
+  var bar = document.getElementById('bar');
+  function update() {
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    bar.style.width = (done / boxes.length * 100) + '%';
+  }
+  boxes.forEach(function (b) { b.addEventListener('change', update); });
+
+  document.getElementById('copy').addEventListener('click', function () {
+    var lines = boxes.filter(function (b) { return b.checked; })
+      .map(function (b) { return '- [ ] ' + b.getAttribute('data-action'); });
+    var text = lines.length ? lines.join('\n') : '（未勾选行动）';
+    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
+      .catch(function () {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+      });
+  });
+})();
+</script>
+</body>
+</html>

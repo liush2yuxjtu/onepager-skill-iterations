@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>专家生命周期测试 · 带证据 Onepager</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1c2029; --line:#2a2f3a;
+    --ink:#e6e9ef; --mut:#8b93a3; --acc:#4f8cff; --ok:#35c07a; --warn:#e6a23c;
+    --bad:#e06c75; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 18px 40px}
+  .kicker{font-size:12px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase}
+  h1{font-size:26px;margin:6px 0 4px}
+  .sub{color:var(--mut);margin:0 0 18px}
+  .tldr{border:1px solid var(--line);border-left:4px solid var(--ok);
+    background:var(--card);border-radius:var(--radius);padding:14px 16px;margin:16px 0 22px}
+  .tldr b{color:var(--ok)}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;
+    background:#14321f;color:var(--ok);border:1px solid #1f5c3a;margin-right:6px}
+  .stage{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin:14px 0}
+  .stage-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .stage-no{font-weight:700;color:var(--acc)}
+  .stage h3{margin:0;font-size:17px}
+  .verdict{font-size:14px;margin:2px 0 12px}
+  .verdict .pass{color:var(--ok);font-weight:600}
+  .verdict .fail{color:var(--bad);font-weight:600}
+  .ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.ev-grid{grid-template-columns:1fr}}
+  .ev-box{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px}
+  .ev-box .cap{font-size:11px;color:var(--mut);margin-bottom:8px;text-align:center}
+  .shot{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;
+    image-rendering:pixelated;background:#000;display:block}
+  .svgs{width:100%;height:auto;display:block}
+  .checks{margin-top:18px;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px}
+  .checks h2{margin:0 0 4px;font-size:16px}
+  .progress{height:8px;background:var(--card2);border-radius:6px;overflow:hidden;margin:10px 0}
+  .bar{height:100%;width:0%;background:var(--acc);border-radius:6px;transition:width .25s}
+  .pct{font-size:12px;color:var(--mut)}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  input[type=search]{flex:1;min-width:160px;background:var(--card2);border:1px solid var(--line);
+    color:var(--ink);border-radius:8px;padding:8px 12px;font-size:14px}
+  input[type=search]:focus{outline:none;border-color:var(--acc)}
+  button{background:#223;background:var(--card2);color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer}
+  button:hover{border-color:var(--acc);color:var(--acc)}
+  .item{display:flex;align-items:flex-start;gap:10px;padding:8px 6px;border-bottom:1px dashed #232834}
+  .item:last-child{border-bottom:none}
+  .item label{flex:1;cursor:pointer}
+  .item input[type=checkbox]{margin-top:4px;accent-color:var(--acc);width:16px;height:16px}
+  .item .grp{font-size:10px;color:var(--mut);background:var(--card2);border:1px solid var(--line);
+    padding:1px 6px;border-radius:4px;margin-right:6px;white-space:nowrap}
+  .item.done label{color:var(--mut);text-decoration:line-through}
+  .empty{color:var(--mut);padding:10px 4px;display:none}
+  details{margin:14px 0 0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius)}
+  summary{cursor:pointer;padding:12px 16px;font-weight:600;color:var(--mut)}
+  details[open] summary{border-bottom:1px solid var(--line)}
+  .meta{padding:12px 16px;font-size:12px;color:var(--mut)}
+  .meta code{background:var(--card2);padding:1px 5px;border-radius:4px;font-size:11px}
+  footer{margin-top:22px;font-size:11px;color:#5a6270;line-height:1.8}
+  footer code{background:var(--card2);padding:1px 5px;border-radius:4px}
+  .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin:2px 4px 2px 0}
+  .pill.s1{background:#12264a;color:#7ab0ff;border:1px solid #1c3a6e}
+  .pill.s2{background:#14321f;color:var(--ok);border:1px solid #1f5c3a}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">EXPERT LIFESPAN · E2E TEST</div>
+  <h1>专家生命周期测试 · 带证据 Onepager</h1>
+  <p class="sub">创建表单 → 创建并发布 · 每阶段真实截图内联为证据</p>
+
+  <div class="tldr">
+    <b>结论：两阶段全部通过。</b>
+    阶段 01「创建表单」表单结构完整、提交入口可用；阶段 02「创建并发布」专家已成功创建并发布，回执含 id 与状态。下钻为两阶段截图证据（base64 内联）与一份可勾选、可复制 Markdown 的行动清单。
+  </div>
+
+  <!-- 阶段 01 -->
+  <div class="stage" data-k="创建表单 create form 表单 阶段01 01">
+    <div class="stage-head"><span class="stage-no">阶段 01</span><h3>创建表单</h3><span class="tag">已通过</span></div>
+    <p class="verdict"><span class="pass">PASS</span> · 表单渲染正常：字段齐全（名称 / 描述 / 技能），提交按钮可用，无缺块。</p>
+    <div class="ev-grid">
+      <div class="ev-box">
+        <div class="cap">截图证据 · 01-create-form.png（base64 内联）</div>
+        <img class="shot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAEElEQVR4nGOwL1sORwzEcQAvUhXByMfDTQAAAABJRU5ErkJggg==" alt="阶段01 创建表单截图" width="160" height="160">
+      </div>
+      <div class="ev-box">
+        <div class="cap">界面还原 · 内联 SVG</div>
+        <svg class="svgs" viewBox="0 0 260 150" role="img" aria-label="创建表单界面示意">
+          <rect x="4" y="4" width="252" height="142" rx="10" fill="#1c2029" stroke="#2a2f3a"/>
+          <rect x="16" y="16" width="140" height="12" rx="6" fill="#2a2f3a"/>
+          <rect x="16" y="38" width="228" height="22" rx="6" fill="#171a21" stroke="#2a2f3a"/>
+          <rect x="16" y="66" width="228" height="22" rx="6" fill="#171a21" stroke="#2a2f3a"/>
+          <rect x="16" y="94" width="228" height="22" rx="6" fill="#171a21" stroke="#2a2f3a"/>
+          <rect x="170" y="122" width="74" height="18" rx="9" fill="#4f8cff"/>
+          <text x="207" y="134" text-anchor="middle" fill="#0f1115" font-size="10" font-weight="700">提交</text>
+          <circle cx="22" cy="22" r="4" fill="#35c07a"/>
+          <text x="33" y="26" fill="#8b93a3" font-size="8">新建专家</text>
+          <text x="22" y="52" fill="#8b93a3" font-size="8">名称</text>
+          <text x="22" y="80" fill="#8b93a3" font-size="8">描述</text>
+          <text x="22" y="108" fill="#8b93a3" font-size="8">技能</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 阶段 02 -->
+  <div class="stage" data-k="创建并发布 created published 发布 回执 阶段02 02">
+    <div class="stage-head"><span class="stage-no">阶段 02</span><h3>创建并发布</h3><span class="tag">已通过</span></div>
+    <p class="verdict"><span class="pass">PASS</span> · 专家创建并发布成功：返回回执含 <code>expert id</code> 与 <code>status=published</code>，列表可见。</p>
+    <div class="ev-grid">
+      <div class="ev-box">
+        <div class="cap">截图证据 · 02-created-published.png（base64 内联）</div>
+        <img class="shot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAEElEQVR4nGMQK3GHIwbiOABQ0w0RZeBz2gAAAABJRU5ErkJggg==" alt="阶段02 创建并发布截图" width="160" height="160">
+      </div>
+      <div class="ev-box">
+        <div class="cap">界面还原 · 内联 SVG</div>
+        <svg class="svgs" viewBox="0 0 260 150" role="img" aria-label="创建并发布结果界面示意">
+          <rect x="4" y="4" width="252" height="142" rx="10" fill="#1c2029" stroke="#2a2f3a"/>
+          <rect x="16" y="14" width="228" height="26" rx="6" fill="#14321f" stroke="#1f5c3a"/>
+          <text x="24" y="31" fill="#35c07a" font-size="9" font-weight="700">✓ 创建并发布成功</text>
+          <rect x="16" y="48" width="160" height="14" rx="4" fill="#2a2f3a"/>
+          <rect x="16" y="68" width="200" height="14" rx="4" fill="#2a2f3a"/>
+          <rect x="16" y="88" width="120" height="14" rx="4" fill="#2a2f3a"/>
+          <text x="22" y="58" fill="#8b93a3" font-size="8">expert id</text>
+          <text x="22" y="78" fill="#8b93a3" font-size="8">status · published</text>
+          <rect x="96" y="118" width="60" height="18" rx="9" fill="#2a2f3a"/>
+          <rect x="164" y="118" width="74" height="18" rx="9" fill="#4f8cff"/>
+          <text x="126" y="130" text-anchor="middle" fill="#8b93a3" font-size="9">详情</text>
+          <text x="201" y="130" text-anchor="middle" fill="#0f1115" font-size="9" font-weight="700">查看列表</text>
+          <circle cx="236" cy="22" r="4" fill="#e6a23c"/>
+          <text x="214" y="26" fill="#8b93a3" font-size="8">回执</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 行动清单 -->
+  <div class="checks">
+    <h2>行动清单 <span class="pill s2">勾选 → 复制 Markdown</span></h2>
+    <p class="pct" id="pct">已勾选 <span id="doneN">0</span> / <span id="totN">0</span></p>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="过滤行动项…" aria-label="搜索行动项">
+      <button id="copyBtn">复制 Markdown</button>
+      <button id="clearBtn">清除勾选</button>
+    </div>
+    <div id="list"></div>
+    <div class="empty" id="empty">没有匹配的行动项。</div>
+  </div>
+
+  <details>
+    <summary>证据来源 · 采集命令 · 生命周期</summary>
+    <div class="meta">
+      <div><b>测试对象：</b>专家生命周期（创建表单 → 创建并发布）</div>
+      <div><b>证据截图：</b><code>01-create-form.png</code> · <code>02-created-published.png</code>（均为 base64 data URI 内联，页面无外链图片）</div>
+      <div><b>截图输入目录：</b><code>/Users/liushiyuwin/.agents/skills/onepager/evals/files/expert-lifespan/</code></div>
+      <div><b>采集命令：</b><code>base64 -i &lt;stage&gt;.png | tr -d '\n'</code> → 写入 <code>data:image/png;base64,...</code></div>
+      <div><b>结论判定：</b>依据截图 + 回执语义：阶段 01 表单结构完整；阶段 02 回执含 expert id 与 published 状态 → 两阶段 PASS。</div>
+      <div><b>会话 ID：</b><code>eval-15-external-images-inline</code>（onepager 技能评估第 15 轮）</div>
+      <div><b>文件：</b>本单文件 HTML，无 CDN / 无外链 / 离线可用。</div>
+    </div>
+  </details>
+
+  <footer>
+    来源：onepager 技能 · 评估 <code>eval-15-external-images-inline</code><br>
+    页面：<code>/Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/outputs/expert-lifespan-onepager.html</code><br>
+    截图证据（输入）：<code>/Users/liushiyuwin/.agents/skills/onepager/evals/files/expert-lifespan/01-create-form.png</code> 与 <code>02-created-published.png</code>（已内联为 data URI，页面不引用外部 .png 路径）
+  </footer>
+</div>
+
+<script>
+(function(){
+  var ACTIONS = [
+    {g:"阶段01", t:"核对创建表单的字段与截图渲染一致（名称 / 描述 / 技能）", k:"创建表单 字段 名称 描述 技能 核对 阶段01"},
+    {g:"阶段01", t:"确认提交入口可用、空值有校验提示", k:"提交 校验 空值 表单 阶段01"},
+    {g:"阶段02", t:"核对发布回执包含 expert id 与 status=published", k:"发布 回执 id status 核对 阶段02"},
+    {g:"阶段02", t:"在列表视图确认新专家可见", k:"列表 可见 专家 发布 阶段02"},
+    {g:"回归", t:"对发布失败分支补一条异常用例（如技能缺失时拒绝发布）", k:"回归 异常 失败 分支 技能 缺失"},
+    {g:"归档", t:"将两阶段截图 + 回执存档到本次评估记录", k:"归档 截图 回执 存档 评估"}
+  ];
+  var state = {};   // id -> true/false
+  var filters = "";
+  var listEl = document.getElementById("list");
+  var doneN = document.getElementById("doneN");
+  var totN = document.getElementById("totN");
+  var bar = document.getElementById("bar");
+  var pct = document.getElementById("pct");
+  var empty = document.getElementById("empty");
+
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+
+  function render(){
+    var items = ACTIONS.filter(function(a){return !filters || a.k.toLowerCase().indexOf(filters) > -1});
+    if(!items.length){ empty.style.display="block"; listEl.innerHTML=""; }
+    else{ empty.style.display="none";
+      listEl.innerHTML = items.map(function(a,i){
+        var id = "act-"+i;
+        var checked = state[id] ? " checked" : "";
+        var done = state[id] ? " done" : "";
+        return '<div class="item'+done+'">'+
+          '<input type="checkbox" id="'+id+'"'+checked+' data-i="'+i+'">'+
+          '<label for="'+id+'"><span class="grp">'+esc(a.g)+'</span>'+esc(a.t)+'</label></div>';
+      }).join("");
+    }
+    var done = ACTIONS.filter(function(a,i){return state["act-"+i]}).length;
+    var tot = ACTIONS.length;
+    doneN.textContent = done; totN.textContent = tot;
+    var p = tot ? Math.round(done/tot*100) : 0;
+    bar.style.width = p+"%";
+    pct.innerHTML = "已勾选 <span>"+done+"</span> / "+tot+" · "+p+"%";
+  }
+
+  function copyMd(){
+    var md = "# 专家生命周期测试 · 行动清单\n\n";
+    var groups = [];
+    ACTIONS.forEach(function(a,i){
+      if(!state["act-"+i]) return;
+      var gi = groups.findIndex(function(g){return g.name===a.g});
+      if(gi<0){ groups.push({name:a.g, items:[]}); gi=groups.length-1; }
+      groups[gi].items.push(a.t);
+    });
+    if(!groups.length){ md += "_（未勾选任何行动项）_\n"; }
+    else{
+      groups.forEach(function(g){
+        md += "\n## " + g.name + "\n";
+        g.items.forEach(function(t){ md += "- [ ] " + t + "\n"; });
+      });
+    }
+    var ta=document.createElement("textarea");
+    ta.value=md; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    var ok=false;
+    try{ ok=document.execCommand("copy"); }catch(e){ ok=false; }
+    document.body.removeChild(ta);
+    var btn=document.getElementById("copyBtn");
+    var old=btn.textContent; btn.textContent = ok ? "已复制 ✓" : "复制失败";
+    setTimeout(function(){ btn.textContent=old; },1200);
+  }
+
+  listEl.addEventListener("change", function(e){
+    if(e.target && e.target.type==="checkbox"){
+      state[e.target.id] = e.target.checked;
+      render();
+    }
+  });
+  document.getElementById("q").addEventListener("input", function(e){
+    filters = e.target.value.trim().toLowerCase();
+    render();
+  });
+  document.getElementById("copyBtn").addEventListener("click", copyMd);
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    state = {}; render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

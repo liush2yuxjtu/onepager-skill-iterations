@@ -1,0 +1,12 @@
+{
+  "eval_id": 13,
+  "eval_name": "process-flow-onepager-svg",
+  "prompt": "为一个 AI 专家的完整生命周期做一份 onepager：创建（可用表单或用对话）→ 测试 → 发布（同时生成 evals 快照）→ 对话演进（expert-fixer 改进）→ 版本归档。请把整个生命周期画成一张内联 SVG 流程图或泳道图，每个阶段节点标注阶段名和一句产物/结果说明，并给一张可勾选、可复制 Markdown 的行动清单。",
+  "assertions": [
+    "Output is a single self-contained HTML file with zero external script/link/img resources",
+    "The lifecycle is drawn as an inline SVG flow or swimlane diagram with arrow-connected stage nodes",
+    "Each SVG stage node carries a stage label and a short product/outcome annotation",
+    "A checkable action checklist with a copy-to-markdown button exists",
+    "No <span>/<div>/<code> element appears inside any <svg> block"
+  ]
+}

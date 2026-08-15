@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>素材生产流水线 · 状态总览</title>
+<style>
+  :root{--bg:#1e1e2e;--panel:#313244;--panel2:#45475a;--fg:#cdd6f4;--dim:#a6adc8;--faint:#6c7086;--blue:#89b4fa;--green:#a6e3a1;--yellow:#f9e2af;--red:#f38ba8;--lav:#b4befe;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,'PingFang SC','Hiragino Sans GB',Menlo,monospace;line-height:1.5}
+  .wrap{max-width:980px;margin:0 auto;padding:18px}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:12px;letter-spacing:2px}
+  .verdict{background:var(--panel);border:1px solid var(--green);border-left:4px solid var(--green);border-radius:8px;padding:12px 14px;margin:14px 0}
+  .verdict b{color:var(--green)}
+  h2{font-size:15px;margin:22px 0 8px;color:var(--blue)}
+  .items{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+  .items li{display:flex;align-items:center;gap:10px;background:var(--panel);border-radius:8px;padding:10px 12px;border:1px solid var(--panel2)}
+  .items .name{font-weight:bold;min-width:110px}
+  .items .op{margin-left:auto;color:var(--blue);text-decoration:none;border:1px solid var(--blue);border-radius:12px;padding:2px 10px;font-size:12px}
+  .details{color:var(--faint);font-size:11px;margin-top:4px}
+  footer{margin-top:26px;padding-top:10px;border-top:1px solid var(--panel2);color:var(--faint);font-size:11px}
+  .svg-card{background:var(--panel);border:1px solid var(--panel2);border-radius:10px;padding:10px}
+  svg{width:100%;height:auto;display:block}
+  /* SVG 内组合元素用类控制配色：<g class="badge">，内部 <rect>+<text>，绝不用 <span>/<code> */
+  .badge rect{fill:#a6e3a1}
+  .badge text{fill:#11111b;font-size:10px;font-weight:bold;text-anchor:middle;dominant-baseline:central}
+  .badge.warn rect{fill:#f9e2af}
+  .badge.err rect{fill:#f38ba8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>素材生产流水线 · 状态总览</h1>
+  <div class="sub">MATERIAL PIPELINE STATUS</div>
+
+  <div class="verdict">
+    <b>结论：</b>主链路 3/4 阶段全绿，仅「转码」队列瞬时积压 12 条（非持续，30 分钟内消化）。今日无阻塞，无需人工介入。
+  </div>
+
+  <h2>流水线拓扑</h2>
+  <div class="svg-card">
+  <svg viewBox="0 0 960 470" role="img" aria-label="素材生产流水线四阶段拓扑图" font-family="Menlo, -apple-system, 'PingFang SC', monospace">
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#f9e2af"/>
+      </marker>
+    </defs>
+
+    <!-- outer frame -->
+    <rect x="6" y="6" width="948" height="458" rx="14" fill="#11111b" stroke="#45475a" stroke-width="2"/>
+
+    <!-- title block -->
+    <text x="480" y="42" fill="#f9e2af" font-size="19" font-weight="bold" text-anchor="middle">素材生产流水线</text>
+    <text x="480" y="64" fill="#a6adc8" font-size="11" text-anchor="middle" letter-spacing="4">LIVE · 采集 → 清洗 → 转码 → 质检</text>
+
+    <g class="badge" transform="translate(862,30)">
+      <rect width="52" height="18" rx="9"/>
+      <text x="26" y="10">LIVE</text>
+    </g>
+
+    <text x="56" y="128" fill="#89b4fa" font-size="13" font-weight="bold"><tspan font-family="Menlo, monospace">collect</tspan> 采集</text>
+    <rect x="56" y="138" width="190" height="120" rx="10" fill="#313244" stroke="#a6e3a1" stroke-width="2"/>
+    <text x="72" y="164" fill="#cdd6f4" font-size="12">拉取 1,240 素材</text>
+    <text x="72" y="184" fill="#a6adc8" font-size="11">队列 0</text>
+    <g class="badge" transform="translate(192,146)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">✓ 健康</text>
+    </g>
+
+    <text x="292" y="128" fill="#89b4fa" font-size="13" font-weight="bold"><tspan font-family="Menlo, monospace">clean</tspan> 清洗</text>
+    <rect x="292" y="138" width="190" height="120" rx="10" fill="#313244" stroke="#a6e3a1" stroke-width="2"/>
+    <text x="308" y="164" fill="#cdd6f4" font-size="12">去重 / 质检规则</text>
+    <text x="308" y="184" fill="#a6adc8" font-size="11">耗时 3.2s</text>
+    <g class="badge" transform="translate(428,146)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">✓ 健康</text>
+    </g>
+
+    <text x="528" y="128" fill="#89b4fa" font-size="13" font-weight="bold"><tspan font-family="Menlo, monospace">transcode</tspan> 转码</text>
+    <rect x="528" y="138" width="190" height="120" rx="10" fill="#313244" stroke="#f9e2af" stroke-width="2"/>
+    <text x="544" y="164" fill="#cdd6f4" font-size="12">H.264 → H.265</text>
+    <text x="544" y="184" fill="#a6adc8" font-size="11">积压 12 条</text>
+    <g class="badge warn" transform="translate(664,146)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">! 积压</text>
+    </g>
+
+    <text x="764" y="128" fill="#89b4fa" font-size="13" font-weight="bold"><tspan font-family="Menlo, monospace">qc</tspan> 质检</text>
+    <rect x="764" y="138" width="190" height="120" rx="10" fill="#313244" stroke="#a6e3a1" stroke-width="2"/>
+    <text x="780" y="164" fill="#cdd6f4" font-size="12">分辨率 / 帧率</text>
+    <text x="780" y="184" fill="#a6adc8" font-size="11">通过率 99.2%</text>
+    <g class="badge" transform="translate(900,146)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">✓ 健康</text>
+    </g>
+
+    <!-- 箭头 -->
+    <path d="M246,198 L286,198" stroke="#f9e2af" stroke-width="2" marker-end="url(#arr)"/>
+    <path d="M482,198 L522,198" stroke="#f9e2af" stroke-width="2" marker-end="url(#arr)"/>
+    <path d="M718,198 L758,198" stroke="#f9e2af" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- 底部图例 -->
+    <text x="480" y="322" fill="#a6adc8" font-size="11" text-anchor="middle">图例</text>
+    <g class="badge" transform="translate(393,332)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">✓ 健康</text>
+    </g>
+    <g class="badge warn" transform="translate(455,332)">
+      <rect width="52" height="18" rx="9"/>
+      <text x="26" y="10">! 积压</text>
+    </g>
+    <g class="badge err" transform="translate(515,332)">
+      <rect width="52" height="18" rx="9"/>
+      <text x="26" y="10">✗ 异常</text>
+    </g>
+
+    <text x="56" y="406" fill="#6c7086" font-size="10">ps -A -o %cpu,rss,comm | sort -nr | head</text>
+    <text x="56" y="424" fill="#6c7086" font-size="10">curl -s localhost:8791/api/pipeline</text>
+    <text x="56" y="442" fill="#6c7086" font-size="10">采集时间 2026-08-12 14:30:00 · 仅瞬时一次</text>
+  </svg>
+  </div>
+
+  <h2>热源明细 · 每项一扇门</h2>
+  <ul class="items">
+    <li><span class="name">转码队列</span><span>积压 12 条（瞬时）</span><a class="op" href="javascript:void(0)">详情 ▾</a></li>
+    <li><span class="name">采集管道</span><span>1,240 素材 / 批</span><a class="op" href="javascript:void(0)">详情 ▾</a></li>
+    <li><span class="name">质检通过率</span><span>99.2%</span><a class="op" href="javascript:void(0)">详情 ▾</a></li>
+  </ul>
+  <p class="details">证据完整清单在折叠区：<a href="javascript:void(0)">展开全量证据 →</a></p>
+
+  <h2>行动清单</h2>
+  <div id="actions" style="background:var(--panel);border:1px solid var(--panel2);border-radius:8px;padding:12px">
+    <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" data-act> 复核转码队列 12 条是否消化</label>
+    <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" data-act> 如持续积压 &gt; 1h 则扩容 2 worker</label>
+    <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" data-act> 更新 onepager 采集命令到脚注</label>
+    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <span id="prog" style="color:var(--dim);font-size:12px">0/3</span>
+      <button onclick="copyMD()" style="background:var(--blue);color:#11111b;border:0;border-radius:12px;padding:4px 12px;font-size:12px;cursor:pointer">复制 Markdown</button>
+    </div>
+  </div>
+
+  <footer>
+    来源：素材生产流水线监控 · 绝对路径 /srv/pipeline/status · 会话 onepager-eval-12<br>
+    命令：<code>ps -A -o %cpu,rss,comm | sort -nr | head</code> · <code>curl -s localhost:8791/api/pipeline</code>
+  </footer>
+</div>
+<script>
+  document.querySelectorAll('#actions [data-act]').forEach(c=>c.addEventListener('change',()=>{
+    document.getElementById('prog').textContent = document.querySelectorAll('#actions [data-act]:checked').length + '/3';
+  }));
+  function copyMD(){
+    const s=[...document.querySelectorAll('#actions [data-act]:checked')].map(c=>'- [x] '+c.closest('label').childNodes[0].textContent.trim()).join('\n');
+    navigator.clipboard.writeText(s||'- [ ] 复核转码队列 12 条是否消化\n- [ ] 如持续积压 > 1h 则扩容 2 worker\n- [ ] 更新 onepager 采集命令到脚注');
+    alert('已复制');
+  }
+</script>
+</body>
+</html>

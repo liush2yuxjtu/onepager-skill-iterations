@@ -1,0 +1,368 @@
+{
+  "metadata": {
+    "skill_name": "onepager",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-08-12T07:04:14Z",
+    "evals_run": [
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 11,
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 166.8,
+        "tokens": 74169,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "output is a single self-contained html file with no external script/link/img resources",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        },
+        {
+          "text": "an overview svg branches a shared entry point into path a and path b and converges on published expert + evals snapshot",
+          "passed": true,
+          "evidence": "2 svg block(s); A=True B=True converge-evidence=True"
+        },
+        {
+          "text": "each screen mock card is labeled with a path badge (a, b, or a+b)",
+          "passed": true,
+          "evidence": "path badge labels (A/B/A+B) present"
+        },
+        {
+          "text": "a contrast table distinguishes the two paths on form stage (form vs chat), execution, and publish",
+          "passed": true,
+          "evidence": "table=True form=True exec=True publish=True"
+        },
+        {
+          "text": "all svg is inline, with zero external assets",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 12,
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 234.1,
+        "tokens": 78779,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "the html contains no <span> or <code> element inside any <svg> block",
+          "passed": true,
+          "evidence": "no <span>/<div>/<code> inside any <svg>"
+        },
+        {
+          "text": "badge wrappers inside svg use <g> elements",
+          "passed": true,
+          "evidence": "svg uses <g> wrapper(s)"
+        },
+        {
+          "text": "svg <text> nodes contain plain text only, no nested html elements",
+          "passed": true,
+          "evidence": "all <text> nodes are plain text"
+        },
+        {
+          "text": "the full svg renders visibly (not just the outer box and title), verified via screenshot or pixel check",
+          "passed": true,
+          "evidence": "smallest svg has 17 shape/text nodes (>=8 = substantial)"
+        },
+        {
+          "text": "the file remains self-contained with zero external resources",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 13,
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 148.7,
+        "tokens": 74045,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "output is a single self-contained html file with zero external script/link/img resources",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        },
+        {
+          "text": "the lifecycle is drawn as an inline svg flow or swimlane diagram with arrow-connected stage nodes",
+          "passed": true,
+          "evidence": "svg nodes(rect/g)=15 arrows/markers=True"
+        },
+        {
+          "text": "each svg stage node carries a stage label and a short product/outcome annotation",
+          "passed": true,
+          "evidence": "35 <text> labels inside svg (>=4 = annotated nodes)"
+        },
+        {
+          "text": "a checkable action checklist with a copy-to-markdown button exists",
+          "passed": true,
+          "evidence": "checkbox=True copy=True"
+        },
+        {
+          "text": "no <span>/<div>/<code> element appears inside any <svg> block",
+          "passed": true,
+          "evidence": "no <span>/<div>/<code> inside any <svg>"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 14,
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 127.4,
+        "tokens": 72026,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "output is a single self-contained html file with zero external script/link/img resources",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        },
+        {
+          "text": "an inline svg renders each mcp as a labeled node carrying name, type, and purpose",
+          "passed": true,
+          "evidence": "38 <text> labels inside svg (>=4 = annotated nodes)"
+        },
+        {
+          "text": "svg arrow edges connect mcp nodes to webapp feature-module nodes",
+          "passed": true,
+          "evidence": "edge elements present: True"
+        },
+        {
+          "text": "the page leads with a verdict-first summary line before the diagram",
+          "passed": true,
+          "evidence": "content precedes the diagram"
+        },
+        {
+          "text": "no <span>/<div>/<code> inside any <svg> block",
+          "passed": true,
+          "evidence": "no <span>/<div>/<code> inside any <svg>"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 15,
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 174.6,
+        "tokens": 72298,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "output is a single self-contained html file with zero external <script>/<link> resources",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        },
+        {
+          "text": "no <img> tag uses a non-data: src (images are inlined or drawn as inline svg)",
+          "passed": true,
+          "evidence": "2 img, all data: URIs"
+        },
+        {
+          "text": "each lifecycle stage presents visible evidence plus a one-line verdict",
+          "passed": true,
+          "evidence": "2 img, all data: URIs"
+        },
+        {
+          "text": "a checkable action checklist with a copy-to-markdown button exists",
+          "passed": true,
+          "evidence": "checkbox=True copy=True"
+        },
+        {
+          "text": "if svg is used for stage cards, no <span>/<div>/<code> appears inside it",
+          "passed": true,
+          "evidence": "no <span>/<div>/<code> inside any <svg>"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 11,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 223.2,
+        "tokens": 81583,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "output is a single self-contained html file with no external script/link/img resources",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        },
+        {
+          "text": "an overview svg branches a shared entry point into path a and path b and converges on published expert + evals snapshot",
+          "passed": true,
+          "evidence": "8 svg block(s); A=True B=True converge-evidence=True"
+        },
+        {
+          "text": "each screen mock card is labeled with a path badge (a, b, or a+b)",
+          "passed": true,
+          "evidence": "path badge labels (A/B/A+B) present"
+        },
+        {
+          "text": "a contrast table distinguishes the two paths on form stage (form vs chat), execution, and publish",
+          "passed": true,
+          "evidence": "table=True form=True exec=True publish=True"
+        },
+        {
+          "text": "all svg is inline, with zero external assets",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 12,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 301.6,
+        "tokens": 86194,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "the html contains no <span> or <code> element inside any <svg> block",
+          "passed": true,
+          "evidence": "no <span>/<div>/<code> inside any <svg>"
+        },
+        {
+          "text": "badge wrappers inside svg use <g> elements",
+          "passed": true,
+          "evidence": "svg uses <g> wrapper(s)"
+        },
+        {
+          "text": "svg <text> nodes contain plain text only, no nested html elements",
+          "passed": true,
+          "evidence": "all <text> nodes are plain text"
+        },
+        {
+          "text": "the full svg renders visibly (not just the outer box and title), verified via screenshot or pixel check",
+          "passed": true,
+          "evidence": "smallest svg has 51 shape/text nodes (>=8 = substantial)"
+        },
+        {
+          "text": "the file remains self-contained with zero external resources",
+          "passed": true,
+          "evidence": "no external script/link/img/CDN refs"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "new_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 170.32,
+        "stddev": 40.0255,
+        "min": 127.4,
+        "max": 234.1
+      },
+      "tokens": {
+        "mean": 74263.4,
+        "stddev": 2707.213,
+        "min": 72026,
+        "max": 78779
+      }
+    },
+    "old_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 262.4,
+        "stddev": 55.4372,
+        "min": 223.2,
+        "max": 301.6
+      },
+      "tokens": {
+        "mean": 83888.5,
+        "stddev": 3260.4694,
+        "min": 81583,
+        "max": 86194
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "-92.1",
+      "tokens": "-9625"
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "output is a single self-contained html file with no external script/link/img resources",
+      "passed": true,
+      "evidence": "no external script/link/img/CDN refs"
+    },
+    {
+      "text": "an overview svg branches a shared entry point into path a and path b and converges on published expert + evals snapshot",
+      "passed": true,
+      "evidence": "2 svg block(s); A=True B=True converge-evidence=True"
+    },
+    {
+      "text": "each screen mock card is labeled with a path badge (a, b, or a+b)",
+      "passed": true,
+      "evidence": "path badge labels (A/B/A+B) present"
+    },
+    {
+      "text": "a contrast table distinguishes the two paths on form stage (form vs chat), execution, and publish",
+      "passed": true,
+      "evidence": "table=True form=True exec=True publish=True"
+    },
+    {
+      "text": "all svg is inline, with zero external assets",
+      "passed": true,
+      "evidence": "no external script/link/img/CDN refs"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

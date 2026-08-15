@@ -1,0 +1,12 @@
+{
+  "eval_id": 11,
+  "eval_name": "svg-path-diagrams",
+  "prompt": "为一个 AI 专家 WebApp 做一份 onepager，说明它有两种使用路径：路径 A 用 GUI 表单驱动（表单阶段零后端调用、审阅按 Enter 才执行、发布后走专家 API），路径 B 直接与 expert-creator / expert-fixer 专家纯对话（无表单、自然语言创建或改进技能）。两条路径最终都汇合到「已发布专家 + evals 快照」。请给出单文件交互式 HTML，用内联 SVG 把两条路径都画出来，每条路径的界面 mock 卡片要标注路径徽标，并说明两条路径在表单/执行/发布环节的异同。",
+  "assertions": [
+    "Output is a single self-contained HTML file with no external script/link/img resources",
+    "An overview SVG branches a shared entry point into path A and path B and converges on published expert + evals snapshot",
+    "Each screen mock card is labeled with a path badge (A, B, or A+B)",
+    "A contrast table distinguishes the two paths on form stage (form vs chat), execution, and publish",
+    "All SVG is inline, with zero external assets"
+  ]
+}

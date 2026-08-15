@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 专家 WebApp · 双路径 onepager</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --ink:#1c2333; --mut:#5b6478; --line:#e2e6ee; --card:#ffffff;
+    --a:#2563eb; --a-soft:#eef4ff;
+    --b:#059669; --b-soft:#e9f9f1;
+    --conv:#7c3aed; --conv-soft:#f3efff;
+    --warn:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:980px; margin:0 auto; padding:28px 20px 60px;}
+  .badge{display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.04em;}
+  .badge-a{background:var(--a); color:#fff;}
+  .badge-b{background:var(--b); color:#fff;}
+  .badge-conv{background:var(--conv); color:#fff;}
+
+  /* verdict */
+  .verdict{border-left:4px solid var(--conv); background:var(--conv-soft);
+    padding:14px 18px; border-radius:10px; margin:16px 0 8px;}
+  .verdict b{color:var(--conv);}
+  .sub{margin:6px 0 0; color:var(--mut);}
+
+  /* focus buttons — narrow gateway */
+  .focusbar{display:flex; gap:8px; align-items:center; margin:14px 0 4px; flex-wrap:wrap;}
+  .focusbar .lbl{color:var(--mut); font-size:12px;}
+  .focusbtn{border:1px solid var(--line); background:#fff; color:var(--ink);
+    padding:5px 12px; border-radius:8px; font-size:12.5px; cursor:pointer; transition:all .15s;}
+  .focusbtn.on-a{border-color:var(--a); background:var(--a); color:#fff;}
+  .focusbtn.on-b{border-color:var(--b); background:var(--b); color:#fff;}
+  .focusbtn.on-all{border-color:var(--conv); background:var(--conv-soft);}
+
+  /* dimming via focus state */
+  [data-focus="a"] [data-path="b"],[data-focus="a"] [data-path="conv"],
+  [data-focus="b"] [data-path="a"],[data-focus="b"] [data-path="conv"]{opacity:.16; filter:saturate(.3);}
+  [data-focus="a"] [data-path="a"],[data-focus="b"] [data-path="b"]{opacity:1;}
+  .lane{transition:opacity .25s, filter .25s;}
+
+  h2{font-size:17px; margin:34px 0 6px;}
+  .hint{color:var(--mut); font-size:12.5px; margin:0 0 12px;}
+
+  /* svg cards */
+  .diagram-card, .matrix-card{background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:14px; margin:10px 0;}
+  svg{max-width:100%; height:auto; display:block;}
+  svg .node{cursor:pointer;}
+  svg .nrect{transition:filter .2s;}
+  svg .nrect:hover{filter:brightness(.97);}
+
+  /* mock cards */
+  .mocks{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:10px 0;}
+  @media(max-width:760px){ .mocks{grid-template-columns:1fr;} }
+  .mock{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:0; overflow:hidden; display:flex; flex-direction:column; transition:opacity .25s,filter .25s,box-shadow .2s;}
+  .mock.a{border-top:3px solid var(--a);}
+  .mock.b{border-top:3px solid var(--b);}
+  .mock-head{display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line); background:#fafbfe;}
+  .mock-title{font-weight:700; font-size:13px;}
+  .mock-tag{margin-left:auto; color:var(--mut); font-size:11px; background:#eef1f6; padding:1px 8px; border-radius:999px;}
+  .form-fields{padding:12px; display:flex; flex-direction:column; gap:9px;}
+  .form-fields label{font-size:11.5px; color:var(--mut); display:flex; flex-direction:column; gap:3px;}
+  .form-fields input,.form-fields textarea,.chat-input{
+    border:1px solid var(--line); border-radius:8px; padding:7px 9px; font-size:12.5px;
+    font-family:inherit; color:var(--ink); background:#fff; width:100%;}
+  .form-fields .file{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; color:var(--a);}
+  .chat{padding:12px; display:flex; flex-direction:column; gap:8px;}
+  .msg{max-width:86%; border-radius:12px; padding:7px 11px; font-size:12.5px;}
+  .msg.user{align-self:flex-end; background:var(--a); color:#fff;}
+  .msg.ai{align-self:flex-start; background:#eef1f6;}
+  .mock-foot{display:flex; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--line);}
+  .mock-foot .ghost{border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 12px; border-radius:8px; font-size:12.5px;}
+  .mock-foot .primary{border:none; background:var(--conv); color:#fff; padding:6px 14px; border-radius:8px; font-size:12.5px;}
+  .kbd{font-size:11px; color:var(--mut); background:#eef1f6; padding:4px 8px; border-radius:6px; margin-left:auto;}
+  .mock-note{padding:8px 12px 12px; font-size:11.5px; color:var(--mut); margin:0; border-top:1px dashed var(--line);}
+  .mock-note b{color:var(--ink);}
+
+  /* conv card */
+  .mock.conv{border-top:3px solid var(--conv); padding:16px;}
+  .mock.conv h3{margin:10px 0 4px; color:var(--conv); font-size:15px;}
+  .mock.conv p{margin:0; color:var(--mut); font-size:12.5px;}
+
+  /* comparison table */
+  table.cmp{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; font-size:12.5px;}
+  table.cmp th,table.cmp td{border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top;}
+  table.cmp th{background:#fafbfe; font-size:12px; color:var(--mut);}
+  table.cmp tr:last-child td{border-bottom:none;}
+  table.cmp .pill{font-size:11px; font-weight:700; padding:1px 9px; border-radius:999px; white-space:nowrap;}
+  .pill.same{background:var(--b-soft); color:var(--b);}
+  .pill.diff{background:#fef3e2; color:#b45309;}
+  code.t{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11.5px; background:#eef1f6; padding:1px 5px; border-radius:5px;}
+
+  details.notes{border:1px solid var(--line); background:var(--card); border-radius:12px; padding:12px 14px; margin-top:12px;}
+  details.notes summary{cursor:pointer; font-weight:600; font-size:13px;}
+  details.notes ul{margin:10px 0 0; padding-left:18px; color:var(--mut);}
+  details.notes li{margin:5px 0;}
+
+  /* action checklist */
+  .actions{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px;}
+  .actions .bar{display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .actions progress{flex:1; height:8px; accent-color:var(--conv);}
+  .actions .cnt{font-size:12px; color:var(--mut); min-width:52px;}
+  .actions label{display:flex; gap:10px; align-items:flex-start; padding:6px 0; cursor:pointer; font-size:13px;}
+  .actions label input{margin-top:3px;}
+  .copy{border:1px solid var(--conv); color:var(--conv); background:#fff; padding:7px 14px; border-radius:8px; font-size:12.5px; cursor:pointer;}
+  .copy:active{transform:scale(.97);}
+
+  footer{margin-top:36px; padding-top:14px; border-top:1px solid var(--line); color:var(--mut); font-size:11.5px;}
+  footer code{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11px; background:#eef1f6; padding:1px 5px; border-radius:4px;}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--mut); margin-top:8px;}
+  .legend .sw{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>AI 专家 WebApp · 双路径 onepager</h1>
+
+  <div class="verdict">
+    <b>结论：两条路径，一个终点。</b>
+    路径 A（GUI 表单）表单阶段零后端调用、审阅按 Enter 才执行、发布走专家 API；路径 B（与 expert-creator / expert-fixer 纯对话）无表单、自然语言直接创建或改进技能。两者在发布环节共用同一专家 API，最终汇合为「已发布专家 + evals 快照」。
+    <p class="sub">差异只在 表单 / 执行 / 发布 三个环节的自动化方式，终点契约唯一。</p>
+  </div>
+
+  <div class="focusbar">
+    <span class="lbl">窄门：聚焦一条路径查看</span>
+    <button class="focusbtn on-all" data-focus="all" onclick="focusPath('all')">全图</button>
+    <button class="focusbtn" data-focus="a" onclick="focusPath('a')">路径 A · 表单</button>
+    <button class="focusbtn" data-focus="b" onclick="focusPath('b')">路径 B · 对话</button>
+  </div>
+
+  <!-- ============ 双路径 SVG 流程图 ============ -->
+  <div class="diagram-card">
+    <svg viewBox="0 0 940 604" role="img" aria-label="双路径流程图：路径A与路径B从不同入口汇合到已发布专家">
+      <defs>
+        <marker id="ma" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2563eb"/></marker>
+        <marker id="mb" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#059669"/></marker>
+        <marker id="mc" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#7c3aed"/></marker>
+      </defs>
+
+      <g id="lane-a" class="lane" data-path="a">
+        <!-- 路径 A 节点 -->
+        <g class="node" data-path="a" onclick="focusPath('a')">
+          <rect class="nrect" x="100" y="40" width="200" height="54" rx="12" fill="#eef4ff" stroke="#2563eb" stroke-width="1.5"/>
+          <circle cx="116" cy="60" r="11" fill="#2563eb"/>
+          <text x="116" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">A</text>
+          <text x="140" y="62" font-size="13" font-weight="700" fill="#1c2333">路径 A · GUI 表单</text>
+          <text x="140" y="80" font-size="11" fill="#5b6478">表单驱动 · 无对话</text>
+        </g>
+        <g class="node" data-path="a" onclick="focusPath('a')">
+          <rect class="nrect" x="100" y="140" width="200" height="66" rx="12" fill="#ffffff" stroke="#2563eb"/>
+          <text x="200" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">① 表单阶段</text>
+          <text x="200" y="188" text-anchor="middle" font-size="12" fill="#1c2333">零后端调用</text>
+        </g>
+        <g class="node" data-path="a" onclick="focusPath('a')">
+          <rect class="nrect" x="100" y="248" width="200" height="66" rx="12" fill="#ffffff" stroke="#2563eb"/>
+          <text x="200" y="274" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">② 审阅阶段</text>
+          <text x="200" y="296" text-anchor="middle" font-size="12" fill="#1c2333">按 Enter 才执行</text>
+        </g>
+        <g class="node" data-path="a" onclick="focusPath('a')">
+          <rect class="nrect" x="100" y="356" width="200" height="66" rx="12" fill="#ffffff" stroke="#2563eb"/>
+          <text x="200" y="382" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">③ 发布阶段</text>
+          <text x="200" y="404" text-anchor="middle" font-size="12" fill="#1c2333">专家 API</text>
+        </g>
+        <!-- 路径 A 箭头 -->
+        <line x1="200" y1="94" x2="200" y2="140" stroke="#2563eb" stroke-width="2" marker-end="url(#ma)"/>
+        <line x1="200" y1="206" x2="200" y2="248" stroke="#2563eb" stroke-width="2" marker-end="url(#ma)"/>
+        <line x1="200" y1="314" x2="200" y2="356" stroke="#2563eb" stroke-width="2" marker-end="url(#ma)"/>
+        <path d="M200,422 L200,470 L470,470 L470,492" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mc)"/>
+      </g>
+
+      <g id="lane-b" class="lane" data-path="b">
+        <!-- 路径 B 节点 -->
+        <g class="node" data-path="b" onclick="focusPath('b')">
+          <rect class="nrect" x="640" y="40" width="200" height="54" rx="12" fill="#e9f9f1" stroke="#059669" stroke-width="1.5"/>
+          <circle cx="656" cy="60" r="11" fill="#059669"/>
+          <text x="656" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">B</text>
+          <text x="680" y="62" font-size="13" font-weight="700" fill="#1c2333">路径 B · 专家对话</text>
+          <text x="680" y="80" font-size="11" fill="#5b6478">无表单 · 自然语言</text>
+        </g>
+        <g class="node" data-path="b" onclick="focusPath('b')">
+          <rect class="nrect" x="640" y="140" width="200" height="78" rx="12" fill="#ffffff" stroke="#059669"/>
+          <text x="740" y="168" text-anchor="middle" font-size="13" font-weight="700" fill="#059669">① 对话阶段</text>
+          <text x="740" y="190" text-anchor="middle" font-size="11.5" fill="#1c2333">expert-creator 创建</text>
+          <text x="740" y="206" text-anchor="middle" font-size="11.5" fill="#1c2333">expert-fixer 改进</text>
+        </g>
+        <g class="node" data-path="b" onclick="focusPath('b')">
+          <rect class="nrect" x="640" y="260" width="200" height="66" rx="12" fill="#ffffff" stroke="#059669"/>
+          <text x="740" y="286" text-anchor="middle" font-size="13" font-weight="700" fill="#059669">② 发布阶段</text>
+          <text x="740" y="308" text-anchor="middle" font-size="12" fill="#1c2333">专家 API</text>
+        </g>
+        <!-- 路径 B 箭头 -->
+        <line x1="740" y1="94" x2="740" y2="140" stroke="#059669" stroke-width="2" marker-end="url(#mb)"/>
+        <line x1="740" y1="218" x2="740" y2="260" stroke="#059669" stroke-width="2" marker-end="url(#mb)"/>
+        <path d="M740,326 L740,470 L470,470 L470,492" fill="none" stroke="#059669" stroke-width="2" marker-end="url(#mc)"/>
+      </g>
+
+      <!-- 汇合 -->
+      <g id="lane-conv" class="lane" data-path="conv">
+        <circle cx="470" cy="470" r="4" fill="#7c3aed"/>
+        <g class="node" data-path="conv" onclick="focusPath('all')">
+          <rect class="nrect" x="260" y="500" width="420" height="70" rx="14" fill="#f3efff" stroke="#7c3aed" stroke-width="2"/>
+          <text x="470" y="531" text-anchor="middle" font-size="14" font-weight="700" fill="#7c3aed">已发布专家 + evals 快照</text>
+          <text x="470" y="552" text-anchor="middle" font-size="11.5" fill="#1c2333">两条路径在此汇合 · 同一份发布契约</text>
+        </g>
+      </g>
+    </svg>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--a)"></span>路径 A · GUI 表单（3 阶段）</span>
+      <span><span class="sw" style="background:var(--b)"></span>路径 B · 专家对话（2 阶段）</span>
+      <span><span class="sw" style="background:var(--conv)"></span>汇合终点（共享）</span>
+    </div>
+  </div>
+
+  <!-- ============ Mock 界面卡片（带路径徽标） ============ -->
+  <h2>两条路径的界面形态</h2>
+  <p class="hint">下方是两套使用界面的 mock。点击卡片可聚焦对应路径。</p>
+
+  <div class="mocks">
+    <article class="mock a" data-path="a" onclick="focusPath('a')" style="cursor:pointer">
+      <header class="mock-head">
+        <span class="badge badge-a">路径 A</span>
+        <span class="mock-title">专家编辑 · GUI 表单</span>
+        <span class="mock-tag">草稿 · 零后端</span>
+      </header>
+      <div class="form-fields">
+        <label>专家名称 <input value="内容质检专家" disabled></label>
+        <label>一句话简介 <input value="审核视频文案合规" disabled></label>
+        <label>技能文件 <span class="file">SKILL.md · 已绑定</span></label>
+        <label>触发描述 <textarea rows="2" disabled>在对话中触发生成技能</textarea></label>
+      </div>
+      <footer class="mock-foot">
+        <button class="ghost">保存草稿</button>
+        <span class="kbd">按 Enter 审阅执行</span>
+        <button class="primary">发布</button>
+      </footer>
+      <p class="mock-note"><b>零后端</b>：表单阶段不产生任何 API 调用，未按 Enter 前只有浏览器本地草稿；审阅确认（Enter）才真正执行。</p>
+    </article>
+
+    <article class="mock b" data-path="b" onclick="focusPath('b')" style="cursor:pointer">
+      <header class="mock-head">
+        <span class="badge badge-b">路径 B</span>
+        <span class="mock-title">与专家对话</span>
+        <span class="mock-tag">无表单 · 自然语言</span>
+      </header>
+      <div class="chat">
+        <div class="msg user">帮我创建一个「发布前校验」专家</div>
+        <div class="msg ai">已生成技能草稿：校验规则 3 条，描述就绪。</div>
+        <div class="msg ai">expert-fixer 复核：修正 1 处规则冲突，其余通过。</div>
+      </div>
+      <footer class="mock-foot">
+        <input class="chat-input" value="继续对话…" disabled>
+        <button class="primary">回车发布</button>
+      </footer>
+      <p class="mock-note"><b>对话即执行</b>：无表单、无显式确认门，expert-creator / expert-fixer 边聊边生成或改进技能。</p>
+    </article>
+  </div>
+
+  <div class="mock conv" data-path="conv" style="cursor:pointer" onclick="focusPath('all')">
+    <span class="badge badge-conv">汇合</span>
+    <h3>已发布专家 + evals 快照</h3>
+    <p>两条路径发布后都落到同一份契约：可被专家 API 调用的已发布专家，并附带一份可复现的 evals 快照（能力评估结果随发布一同落库）。</p>
+  </div>
+
+  <!-- ============ 三环节异同 ============ -->
+  <h2>表单 / 执行 / 发布 三环节异同</h2>
+  <p class="hint">形态各异，终点相同：输入方式不同、执行门不同、发布通道唯一。</p>
+
+  <div class="matrix-card">
+    <svg viewBox="0 0 820 200" role="img" aria-label="三环节异同矩阵">
+      <text x="12" y="26" font-size="13" font-weight="700" fill="#1c2333">环节</text>
+      <text x="290" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">路径 A · 表单</text>
+      <text x="620" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#059669">路径 B · 对话</text>
+      <text x="782" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#5b6478">判定</text>
+
+      <!-- 行1 表单/输入 -->
+      <text x="12" y="72" font-size="12.5" fill="#1c2333">表单/输入</text>
+      <rect x="140" y="48" width="300" height="40" rx="10" fill="#eef4ff" stroke="#2563eb"/>
+      <text x="290" y="73" text-anchor="middle" font-size="12.5" fill="#1c2333">结构化表单 · 零后端调用</text>
+      <rect x="470" y="48" width="300" height="40" rx="10" fill="#e9f9f1" stroke="#059669"/>
+      <text x="620" y="73" text-anchor="middle" font-size="12.5" fill="#1c2333">自然语言对话 · 无表单</text>
+      <circle cx="776" cy="68" r="12" fill="#f59e0b"/><text x="776" y="72.5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">异</text>
+
+      <!-- 行2 执行/审阅 -->
+      <text x="12" y="124" font-size="12.5" fill="#1c2333">执行/审阅</text>
+      <rect x="140" y="100" width="300" height="40" rx="10" fill="#eef4ff" stroke="#2563eb"/>
+      <text x="290" y="125" text-anchor="middle" font-size="12.5" fill="#1c2333">审阅界面按 Enter 才执行</text>
+      <rect x="470" y="100" width="300" height="40" rx="10" fill="#e9f9f1" stroke="#059669"/>
+      <text x="620" y="125" text-anchor="middle" font-size="12.5" fill="#1c2333">对话即执行 · 边聊边改</text>
+      <circle cx="776" cy="120" r="12" fill="#f59e0b"/><text x="776" y="124.5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">异</text>
+
+      <!-- 行3 发布 -->
+      <text x="12" y="176" font-size="12.5" fill="#1c2333">发布</text>
+      <rect x="140" y="152" width="300" height="40" rx="10" fill="#f3efff" stroke="#7c3aed"/>
+      <text x="290" y="177" text-anchor="middle" font-size="12.5" fill="#1c2333">专家 API 发布</text>
+      <rect x="470" y="152" width="300" height="40" rx="10" fill="#f3efff" stroke="#7c3aed"/>
+      <text x="620" y="177" text-anchor="middle" font-size="12.5" fill="#1c2333">专家 API 发布（同）</text>
+      <circle cx="776" cy="172" r="12" fill="#059669"/><text x="776" y="176.5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">同</text>
+    </svg>
+    <p class="hint" style="margin-bottom:0">发布环节两路共用同一专家 API → 汇合为同一条契约，并落一份 evals 快照。</p>
+  </div>
+
+  <table class="cmp">
+    <tr><th style="width:84px">环节</th><th style="width:36%">路径 A · GUI 表单</th><th style="width:36%">路径 B · 专家对话</th><th style="width:56px">判定</th></tr>
+    <tr>
+      <td><b>表单</b></td>
+      <td>结构化表单即 schema：字段 = 专家属性，草稿可本地保存。<code class="t">零后端</code>：未按 Enter 前不产生任何 API 调用。</td>
+      <td>无表单。直接用自然语言向 <code class="t">expert-creator</code>（创建）/ <code class="t">expert-fixer</code>（改进）描述需求，由专家解析为技能草稿。</td>
+      <td><span class="pill diff">异</span></td>
+    </tr>
+    <tr>
+      <td><b>执行</b></td>
+      <td>显式确认门：审阅界面 <code class="t">按 Enter</code> 才触发后端执行；执行前可无限改草稿，零副作用。</td>
+      <td>隐式执行：对话本身即执行，边聊边生成/修改，无单独的确认门。</td>
+      <td><span class="pill diff">异</span></td>
+    </tr>
+    <tr>
+      <td><b>发布</b></td>
+      <td>发布数据来自表单 JSON，调用专家 API。</td>
+      <td>发布数据来自对话产物，调用同一专家 API。</td>
+      <td><span class="pill same">同</span></td>
+    </tr>
+    <tr>
+      <td><b>汇合</b></td>
+      <td colspan="2">发布成功 → 写入「已发布专家 + evals 快照」：同一份发布契约、同一份可复现评估记录。</td>
+      <td><span class="pill same">同</span></td>
+    </tr>
+  </table>
+
+  <details class="notes">
+    <summary>环节细则（按需下钻）</summary>
+    <ul>
+      <li><b>表单阶段零后端</b>：路径 A 的表单校验、字段映射全部在浏览器本地完成；后端只在 Enter 审阅执行后收到一次结构化 payload。</li>
+      <li><b>Enter = 执行闸门</b>：路径 A 把「审阅」与「执行」解耦，Enter 是唯一的执行触发器，天然防误触，也便于审阅人逐字段复核。</li>
+      <li><b>对话无闸门</b>：路径 B 的每次助手回复都可能触发一次技能生成/改进，适合探索型需求；确定性弱于 A，但上手更快。</li>
+      <li><b>同一条专家 API</b>：无论产物来自表单 JSON 还是对话文本，发布都走同一个专家 API 通道，产物规范、校验、落库逻辑完全一致。</li>
+      <li><b>evals 快照</b>：发布时强制生成或复用一次 evals 评估，作为该专家可复现的能力基线，后续改进可对照快照回归。</li>
+    </ul>
+  </details>
+
+  <!-- ============ 行动闭环 ============ -->
+  <h2>行动闭环</h2>
+  <div class="actions">
+    <div class="bar">
+      <span>已确认</span>
+      <progress id="prog" max="4" value="0"></progress>
+      <span class="cnt" id="cnt">0/4</span>
+      <button class="copy" onclick="copyMD()">复制 Markdown ✓</button>
+    </div>
+    <label><input type="checkbox" data-item="路径 A 确认：填表后审阅，按 Enter 才执行（表单阶段零后端调用）">路径 A 确认：填表后审阅，按 Enter 才执行（表单阶段零后端调用）</label>
+    <label><input type="checkbox" data-item="路径 B 确认：直接与 expert-creator / expert-fixer 纯对话，无表单、自然语言创建或改进">路径 B 确认：直接与 expert-creator / expert-fixer 纯对话，无表单、自然语言创建或改进</label>
+    <label><input type="checkbox" data-item="发布走专家 API：数据来自表单 JSON 或对话产物，调用同一发布通道">发布走专家 API：数据来自表单 JSON 或对话产物，调用同一发布通道</label>
+    <label><input type="checkbox" data-item="发布后核对 evals 快照已落库，作为该专家的可复现能力基线">发布后核对 evals 快照已落库，作为该专家的可复现能力基线</label>
+  </div>
+
+  <footer>
+    来源：onepager skill（双路径流程 onepager）· 交付文件：
+    <code>/Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/outputs/ai-expert-onepager-two-paths.html</code>
+    <br>生成时间：2026-08-12 · 生成器：onepager（窄门哲学 · SMALL_INTERFACE）
+    · 自包含承诺：无 CDN、无外链图片/SVG，SVG 全部内联，离线可开。
+  </footer>
+</div>
+
+<script>
+  function focusPath(p){
+    document.body.dataset.focus = p;
+    document.querySelectorAll('.focusbtn').forEach(function(b){
+      b.className = 'focusbtn' + (b.dataset.focus === p ? (p==='a' ? ' on-a' : p==='b' ? ' on-b' : ' on-all') : '');
+    });
+  }
+
+  document.querySelectorAll('.actions input').forEach(function(c){
+    c.addEventListener('change', function(){
+      var n = document.querySelectorAll('.actions input:checked').length;
+      document.getElementById('prog').value = n;
+      document.getElementById('cnt').textContent = n + '/4';
+    });
+  });
+
+  function copyMD(){
+    var checked = Array.prototype.filter.call(document.querySelectorAll('.actions input:checked'), function(c){ return c.checked; });
+    var lines = ['## AI 专家 WebApp 双路径 · 已确认项'];
+    checked.forEach(function(c){ lines.push('- [x] ' + c.dataset.item); });
+    var md = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(md).then(function(){ flash('已复制 ' + checked.length + ' 项'); });
+    } else {
+      prompt('复制以下 Markdown：', md);
+    }
+  }
+  function flash(m){ alert(m); }
+</script>
+</body>
+</html>

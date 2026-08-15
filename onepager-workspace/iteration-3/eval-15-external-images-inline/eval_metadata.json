@@ -1,0 +1,12 @@
+{
+  "eval_id": 15,
+  "eval_name": "external-images-inline",
+  "prompt": "为一次专家生命周期测试做一份带证据的 onepager：每阶段有一张截图（在输入目录），页面要把每阶段截图作为可见证据展示，并给出阶段结论 + 可勾选复制 Markdown 的行动清单。",
+  "assertions": [
+    "Output is a single self-contained HTML file with zero external <script>/<link> resources",
+    "No <img> tag uses a non-data: src (images are inlined or drawn as inline SVG)",
+    "Each lifecycle stage presents visible evidence plus a one-line verdict",
+    "A checkable action checklist with a copy-to-markdown button exists",
+    "If SVG is used for stage cards, no <span>/<div>/<code> appears inside it"
+  ]
+}

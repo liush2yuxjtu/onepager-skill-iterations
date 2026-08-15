@@ -1,0 +1,12 @@
+{
+  "eval_id": 12,
+  "eval_name": "svg-render-fix",
+  "prompt": "我的一份 onepager HTML 里的内联 SVG 只渲染出了最外层外框和标题，下面一大片区域全空白。代码里 SVG 的徽标用了 <span> 包裹、<text> 里还嵌了 <code>。请修复这个 HTML，让它整个 SVG 都正常渲染，并确保同类问题不再出现。",
+  "assertions": [
+    "The HTML contains no <span> or <code> element inside any <svg> block",
+    "Badge wrappers inside SVG use <g> elements",
+    "SVG <text> nodes contain plain text only, no nested HTML elements",
+    "The full SVG renders visibly (not just the outer box and title), verified via screenshot or pixel check",
+    "The file remains self-contained with zero external resources"
+  ]
+}
