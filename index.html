@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>众门陈列 · Gallery of Gates — onepager 产物画廊</title>
+<meta name="description" content="/onepager 窄门单页技能的产物画廊：每份自包含交互式 HTML 都是一扇门，展示迭代与真实评测产物。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Noto+Serif+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ——— 墨（dark，默认） ——— */
+  --bg:#14100A; --bg2:#1C1610; --bg3:#261E13;
+  --ink:#EDE3CC; --ink-soft:#B4A68A; --ink-faint:#7C7058;
+  --line:rgba(237,227,204,.15);
+  --seal:#D05A41; --seal-deep:#E2775C; --seal-wash:rgba(208,90,65,.16);
+  --gold:#D5A53C; --gold-wash:rgba(213,165,60,.16);
+  --celadon:#7FB287; --celadon-wash:rgba(127,178,135,.14);
+  --paper:#F2E9D2; --paper-ink:#22190E;
+  --grid:rgba(237,227,204,.045);
+  --focus:rgba(226,119,92,.55);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 44px rgba(0,0,0,.5);
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F2EADA; --bg2:#EBE0C8; --bg3:#DFD1B2;
+    --ink:#241A0E; --ink-soft:#5E5139; --ink-faint:#96876B;
+    --line:rgba(36,26,14,.15);
+    --seal:#A93B25; --seal-deep:#8A2E1B; --seal-wash:rgba(169,59,37,.11);
+    --gold:#A27A1B; --gold-wash:rgba(162,122,27,.15);
+    --celadon:#4C7658; --celadon-wash:rgba(76,118,88,.12);
+    --paper:#221A0E; --paper-ink:#F2EADA;
+    --grid:rgba(36,26,14,.05);
+    --focus:rgba(169,59,37,.45);
+    --shadow:0 1px 2px rgba(36,26,14,.07),0 12px 36px rgba(36,26,14,.10);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F2EADA; --bg2:#EBE0C8; --bg3:#DFD1B2;
+  --ink:#241A0E; --ink-soft:#5E5139; --ink-faint:#96876B;
+  --line:rgba(36,26,14,.15);
+  --seal:#A93B25; --seal-deep:#8A2E1B; --seal-wash:rgba(169,59,37,.11);
+  --gold:#A27A1B; --gold-wash:rgba(162,122,27,.15);
+  --celadon:#4C7658; --celadon-wash:rgba(76,118,88,.12);
+  --paper:#221A0E; --paper-ink:#F2EADA;
+  --grid:rgba(36,26,14,.05);
+  --focus:rgba(169,59,37,.45);
+  --shadow:0 1px 2px rgba(36,26,14,.07),0 12px 36px rgba(36,26,14,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Fraunces","Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  font-size:16.5px;line-height:1.8;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--grid) 1px,transparent 1px),var(--grain);
+  background-size:26px 26px,auto;
+}
+::selection{background:var(--seal);color:var(--paper-ink)}
+a{color:var(--seal);text-decoration:none}
+a:hover{color:var(--seal-deep)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:960px;margin:0 auto;padding:0 26px}
+
+/* ——— 顶栏 ——— */
+.topbar{position:sticky;top:0;z-index:60;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
+.topbar-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.14em;color:var(--ink-soft);text-transform:uppercase}
+.seal-mini{width:24px;height:24px;border-radius:5px;background:var(--seal);color:var(--paper-ink);display:grid;place-items:center;font-size:.78rem;font-family:"Noto Serif SC",serif}
+.top-actions{display:flex;gap:10px;align-items:center}
+.top-actions a.repo{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:5px 13px;letter-spacing:.04em}
+.top-actions a.repo:hover{color:var(--seal);border-color:var(--seal)}
+.theme-switch{display:flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--bg2)}
+.theme-switch button{border:0;background:transparent;color:var(--ink-faint);font-size:.68rem;padding:3px 10px;border-radius:999px;cursor:pointer;font-family:"IBM Plex Mono",monospace;letter-spacing:.06em}
+.theme-switch button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* ——— hero ——— */
+.hero{padding:84px 0 26px;text-align:center;position:relative}
+.hero .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.32em;color:var(--seal);text-transform:uppercase;margin:0 0 18px}
+.hero h1{margin:0;font-weight:500;font-size:clamp(2.6rem,7.4vw,4.4rem);line-height:1.08;letter-spacing:.01em}
+.hero h1 .cn{font-family:"Noto Serif SC","Songti SC",serif;font-weight:700}
+.hero h1 .en{display:block;font-style:italic;font-weight:300;font-size:.42em;letter-spacing:.06em;color:var(--ink-faint);margin-top:.18em}
+.hero .sub{margin:22px auto 0;max-width:44ch;color:var(--ink-soft);font-size:1.02rem}
+.hero .sub b{color:var(--ink)}
+.stats{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;margin-top:26px}
+.stat{display:flex;flex-direction:column;align-items:center;padding:0 6px}
+.stat .n{font-size:1.5rem;font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.1}
+.stat .n .u{font-size:.62em;color:var(--ink-faint);font-family:"IBM Plex Mono",monospace}
+.stat .l{font-size:.66rem;letter-spacing:.18em;color:var(--ink-faint);text-transform:uppercase;font-family:"IBM Plex Mono",monospace;margin-top:2px}
+.hero-gate{max-width:340px;width:100%;height:auto;margin:34px auto 0;display:block}
+
+/* ——— 节标题 ——— */
+section{padding:54px 0 10px}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+.sec-head .idx{font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:var(--seal);letter-spacing:.1em}
+.sec-head h2{margin:0;font-size:1.7rem;font-weight:500}
+.sec-head h2 em{font-style:italic;color:var(--ink-faint);font-weight:300}
+.sec-desc{color:var(--ink-soft);font-size:.95rem;max-width:62ch;margin:0 0 26px}
+
+/* ——— 门（section divider） ——— */
+.gate-divider{display:flex;align-items:center;gap:14px;margin:14px 0 0;color:var(--ink-faint)}
+.gate-divider svg{flex:none;opacity:.8}
+.gate-divider .t{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint)}
+.gate-divider .ln{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+/* ——— 迭代卡 ——— */
+.iters{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.iter{position:relative;border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:22px 22px 18px;overflow:hidden;box-shadow:var(--shadow);transition:transform .22s,border-color .22s}
+.iter:hover{transform:translateY(-3px);border-color:var(--seal)}
+.iter .i-num{position:absolute;top:14px;right:18px;font-family:"Fraunces",serif;font-style:italic;font-size:2.6rem;line-height:1;color:var(--seal);opacity:.5}
+.iter h3{margin:0 0 4px;font-size:1.12rem;font-weight:500}
+.iter .meta{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.06em;color:var(--ink-faint);margin-bottom:12px}
+.iter .what{font-size:.88rem;color:var(--ink-soft);min-height:3.6em;margin:0 0 14px}
+.iter .kpis{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.iter .kpi{font-family:"IBM Plex Mono",monospace;font-size:.72rem;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.iter .kpi.good{color:var(--celadon);border-color:color-mix(in srgb,var(--celadon) 45%,var(--line))}
+.iter .kpi.hot{color:var(--seal);border-color:color-mix(in srgb,var(--seal) 45%,var(--line))}
+.iter .foot{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--ink-faint)}
+.iter .foot a{color:var(--gold)}
+.iter .foot a:hover{color:var(--seal)}
+
+/* ——— 画廊 ——— */
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.item{position:relative;border:1px solid var(--line);border-radius:16px;background:var(--bg2);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .22s,border-color .22s;display:flex;flex-direction:column}
+.item:hover{transform:translateY(-4px);border-color:var(--gold)}
+.item .cover{aspect-ratio:5/3;background:linear-gradient(160deg,var(--bg3),var(--bg2));display:block;width:100%;height:auto;padding:8px;transition:opacity .2s}
+.item:hover .cover{opacity:.92}
+.item .body{padding:15px 18px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.item .body .t{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.item h4{margin:0;font-size:1rem;font-weight:500;line-height:1.4}
+.item .badge{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.06em;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));border-radius:999px;padding:2px 8px;white-space:nowrap;flex:none}
+.item p{font-size:.8rem;color:var(--ink-soft);margin:0;line-height:1.6}
+.item .open{margin-top:auto;padding-top:10px;display:inline-flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.08em;color:var(--seal);text-transform:uppercase}
+.item .open::after{content:"↗";transition:transform .18s}
+.item:hover .open::after{transform:translate(2px,-2px)}
+.item[data-empty]{opacity:.55;pointer-events:none}
+
+/* ——— 法则条 ——— */
+.laws-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 20px;border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:20px 22px;box-shadow:var(--shadow)}
+.laws-strip li{list-style:none;font-size:.85rem;color:var(--ink-soft);padding:3px 0;display:flex;gap:10px;align-items:baseline}
+.laws-strip li .n{font-family:"Fraunces",serif;font-style:italic;color:var(--seal);flex:none;width:1.6em;font-size:.9em}
+.laws-strip li b{color:var(--ink);font-weight:500}
+
+/* ——— footer ——— */
+footer{border-top:1px solid var(--line);margin-top:64px;padding:30px 0 48px;color:var(--ink-faint);font-size:.8rem}
+footer .row{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+footer a{color:var(--ink-soft)}
+footer a:hover{color:var(--seal)}
+footer .sep{color:var(--ink-faint);opacity:.5}
+.src{font-family:"IBM Plex Mono",monospace;font-size:.72rem;line-height:1.9;word-break:break-all;color:var(--ink-faint);margin-top:14px}
+
+/* ——— 灯箱 ——— */
+.lightbox{position:fixed;inset:0;z-index:90;background:rgba(10,8,5,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:4vh 4vw}
+.lightbox.open{display:flex;animation:lbIn .22s ease}
+@keyframes lbIn{from{opacity:0}to{opacity:1}}
+.lb-frame{position:relative;width:min(1180px,94vw);height:88vh;background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6);animation:lbFrame .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes lbFrame{from{transform:translateY(18px) scale(.985);opacity:0}to{transform:none;opacity:1}}
+.lb-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--bg)}
+.lb-top .t{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.06em;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-close{border:1px solid var(--line);background:transparent;color:var(--ink-soft);border-radius:999px;width:32px;height:32px;cursor:pointer;font-size:15px;flex:none;transition:.15s}
+.lb-close:hover{color:var(--seal);border-color:var(--seal)}
+.lb-frame iframe{width:100%;height:calc(100% - 57px);border:0;display:block;background:#fff}
+
+/* ——— 动效 ——— */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.8,.2,1),transform .6s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.hero .stagger{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.05s}.d2{animation-delay:.13s}.d3{animation-delay:.21s}.d4{animation-delay:.3s}.d5{animation-delay:.42s}.d6{animation-delay:.54s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal,.hero .stagger{opacity:1;transform:none}}
+
+/* ——— 窄屏 ——— */
+@media (max-width:760px){
+  .iters,.gallery,.laws-strip{grid-template-columns:1fr}
+  .hero{padding-top:56px}
+  .wrap{padding:0 18px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 门：窄门 -->
+    <symbol id="sym-gate" viewBox="0 0 200 120">
+      <rect x="10" y="8" width="180" height="104" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+      <path d="M10 34 H190 M10 60 H190 M10 86 H190" stroke="var(--line)" stroke-width="1"/>
+      <rect x="84" y="20" width="32" height="92" rx="3" fill="var(--gold)" opacity=".55"/>
+      <rect x="84" y="20" width="5" height="92" fill="var(--paper)" opacity=".35"/>
+    </symbol>
+    <!-- 诊断 -->
+    <symbol id="sym-diag" viewBox="0 0 200 120">
+      <rect x="16" y="22" width="44" height="76" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+      <rect x="33" y="46" width="10" height="34" rx="3" fill="var(--seal)" opacity=".7"/>
+      <rect x="98" y="40" width="14" height="58" rx="3" fill="var(--celadon)" opacity=".7"/>
+      <rect x="122" y="28" width="14" height="70" rx="3" fill="var(--gold)" opacity=".7"/>
+      <rect x="146" y="52" width="14" height="46" rx="3" fill="var(--ink-faint)" opacity=".6"/>
+      <line x1="16" y1="20" x2="190" y2="20" stroke="var(--line)"/>
+      <circle cx="38" cy="40" r="8" fill="none" stroke="var(--seal)" stroke-width="2"/>
+      <line x1="38" y1="48" x2="38" y2="66" stroke="var(--seal)" stroke-width="2"/>
+      <circle cx="38" cy="74" r="4" fill="var(--seal)"/>
+    </symbol>
+    <!-- 归集 -->
+    <symbol id="sym-recap" viewBox="0 0 200 120">
+      <rect x="20" y="16" width="160" height="88" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+      <rect x="34" y="34" width="90" height="8" rx="4" fill="var(--ink-faint)" opacity=".6"/>
+      <rect x="34" y="52" width="70" height="8" rx="4" fill="var(--ink-faint)" opacity=".4"/>
+      <rect x="34" y="70" width="80" height="8" rx="4" fill="var(--ink-faint)" opacity=".4"/>
+      <rect x="138" y="30" width="30" height="22" rx="4" fill="var(--gold)" opacity=".7"/>
+      <circle cx="153" cy="41" r="4" fill="var(--bg3)"/>
+      <rect x="138" y="62" width="30" height="30" rx="4" fill="var(--celadon)" opacity=".7"/>
+      <path d="M144 78 l4 4 7-8" fill="none" stroke="var(--bg3)" stroke-width="2.4"/>
+    </symbol>
+    <!-- 交接 -->
+    <symbol id="sym-handoff" viewBox="0 0 200 120">
+      <rect x="16" y="26" width="58" height="68" rx="5" fill="var(--bg3)" stroke="var(--line)"/>
+      <rect x="26" y="38" width="38" height="6" rx="3" fill="var(--ink-faint)" opacity=".6"/>
+      <rect x="126" y="26" width="58" height="68" rx="5" fill="var(--bg3)" stroke="var(--line)"/>
+      <rect x="136" y="38" width="38" height="6" rx="3" fill="var(--ink-faint)" opacity=".6"/>
+      <path d="M78 60 H122 M118 52 l8 8 -8 8" fill="none" stroke="var(--seal)" stroke-width="2.4"/>
+    </symbol>
+    <!-- 空态 -->
+    <symbol id="sym-empty" viewBox="0 0 200 120">
+      <rect x="30" y="18" width="140" height="84" rx="6" fill="var(--bg3)" stroke="var(--line)" stroke-dasharray="5 4"/>
+      <circle cx="100" cy="52" r="12" fill="none" stroke="var(--ink-faint)" opacity=".7"/>
+      <line x1="96" y1="52" x2="104" y2="52" stroke="var(--ink-faint)" opacity=".7"/>
+      <line x1="100" y1="48" x2="100" y2="56" stroke="var(--ink-faint)" opacity=".7"/>
+      <rect x="46" y="80" width="108" height="7" rx="3.5" fill="var(--ink-faint)" opacity=".35"/>
+    </symbol>
+    <!-- SVG 数据 -->
+    <symbol id="sym-svg" viewBox="0 0 200 120">
+      <rect x="20" y="20" width="160" height="80" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+      <path d="M34 84 L52 70 L68 74 L84 52 L100 58 L118 38 L138 44 L160 24" fill="none" stroke="var(--celadon)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M34 84 L52 70 L68 74 L84 52 L100 58 L118 38 L138 44 L160 24 L160 84 Z" fill="var(--celadon-wash)"/>
+      <circle cx="160" cy="24" r="4" fill="var(--celadon)"/>
+      <rect x="118" y="58" width="26" height="20" rx="4" fill="var(--seal)" opacity=".55"/>
+      <text x="131" y="72" text-anchor="middle" font-size="11" fill="var(--paper-ink)" font-family="'IBM Plex Mono',monospace">1</text>
+    </symbol>
+    <!-- 生命周期 -->
+    <symbol id="sym-life" viewBox="0 0 200 120">
+      <circle cx="100" cy="60" r="42" fill="none" stroke="var(--line)" stroke-width="2"/>
+      <path d="M100 18 A42 42 0 0 1 136 74" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M136 74 L128 64 M136 74 L144 62" fill="none" stroke="var(--gold)" stroke-width="2.4"/>
+      <circle cx="100" cy="60" r="14" fill="var(--seal)"/>
+      <text x="100" y="64" text-anchor="middle" font-size="12" fill="var(--paper-ink)" font-family="'IBM Plex Mono',monospace">门</text>
+    </symbol>
+    <!-- 证据 -->
+    <symbol id="sym-evidence" viewBox="0 0 200 120">
+      <rect x="24" y="22" width="152" height="78" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+      <rect x="34" y="32" width="58" height="40" rx="4" fill="var(--celadon-wash)" stroke="var(--celadon)" stroke-opacity=".6"/>
+      <circle cx="52" cy="50" r="7" fill="var(--gold)" opacity=".7"/>
+      <rect x="98" y="32" width="70" height="7" rx="3.5" fill="var(--ink-faint)" opacity=".5"/>
+      <rect x="98" y="46" width="54" height="7" rx="3.5" fill="var(--ink-faint)" opacity=".4"/>
+      <rect x="98" y="60" width="60" height="7" rx="3.5" fill="var(--ink-faint)" opacity=".4"/>
+      <path d="M34 96 l20-14 14 10 16-12 26 16" fill="none" stroke="var(--celadon)" stroke-width="2"/>
+    </symbol>
+    <!-- 改动预览 -->
+    <symbol id="sym-changes" viewBox="0 0 200 120">
+      <rect x="16" y="22" width="168" height="76" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+      <rect x="16" y="22" width="168" height="18" rx="6" fill="var(--ink)" opacity=".06"/>
+      <rect x="26" y="26" width="90" height="8" rx="4" fill="var(--ink-faint)" opacity=".6"/>
+      <circle cx="152" cy="30" r="6" fill="var(--seal)" opacity=".8"/>
+      <rect x="34" y="52" width="120" height="8" rx="4" fill="var(--ink-faint)" opacity=".35"/>
+      <rect x="34" y="70" width="96" height="8" rx="4" fill="var(--gold)" opacity=".7"/>
+      <path d="M34 84 l14-6 10 4 14-8" fill="none" stroke="var(--seal)" stroke-width="2.4"/>
+    </symbol>
+    <!-- 凭据 -->
+    <symbol id="sym-hitl" viewBox="0 0 200 120">
+      <rect x="24" y="26" width="152" height="68" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+      <rect x="36" y="40" width="128" height="14" rx="4" fill="var(--bg)" stroke="var(--line)"/>
+      <circle cx="44" cy="47" r="2.4" fill="var(--ink-faint)" opacity=".8"/>
+      <circle cx="52" cy="47" r="2.4" fill="var(--ink-faint)" opacity=".8"/>
+      <circle cx="60" cy="47" r="2.4" fill="var(--ink-faint)" opacity=".8"/>
+      <rect x="36" y="64" width="128" height="14" rx="4" fill="var(--bg)" stroke="var(--line)"/>
+      <rect x="36" y="64" width="84" height="14" rx="4" fill="var(--celadon-wash)"/>
+      <rect x="140" y="40" width="22" height="14" rx="4" fill="var(--seal)" opacity=".8"/>
+      <rect x="36" y="84" width="66" height="8" rx="4" fill="var(--gold)" opacity=".6"/>
+    </symbol>
+    <!-- 展示 -->
+    <symbol id="sym-showcase" viewBox="0 0 200 120">
+      <rect x="20" y="16" width="160" height="88" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+      <rect x="34" y="30" width="80" height="9" rx="4.5" fill="var(--ink-faint)" opacity=".55"/>
+      <rect x="34" y="48" width="58" height="9" rx="4.5" fill="var(--seal)" opacity=".75"/>
+      <rect x="110" y="46" width="56" height="34" rx="4" fill="var(--gold-wash)" stroke="var(--gold)" stroke-opacity=".5"/>
+      <rect x="34" y="66" width="66" height="7" rx="3.5" fill="var(--ink-faint)" opacity=".4"/>
+      <rect x="34" y="80" width="74" height="7" rx="3.5" fill="var(--ink-faint)" opacity=".4"/>
+      <rect x="118" y="88" width="12" height="12" rx="2" fill="var(--seal)"/>
+      <text x="124" y="98" text-anchor="middle" font-size="10" fill="var(--paper-ink)" font-family="'Noto Serif SC',serif">门</text>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand"><span class="seal-mini">门</span>Onepager · Gallery</div>
+    <div class="top-actions">
+      <a class="repo" href="https://github.com/liush2yuxjtu/onepager-skill-iterations" target="_blank" rel="noopener">GitHub ↗</a>
+      <div class="theme-switch" role="group" aria-label="主题切换">
+        <button data-theme-set="dark" aria-pressed="true">墨</button>
+        <button data-theme-set="light" aria-pressed="false">纸</button>
+        <button data-theme-set="system" aria-pressed="false">跟随</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow stagger d1">Narrow-Gate One-Pager · Skill Archive</p>
+    <h1 class="stagger d2"><span class="cn">众门陈列</span><span class="en">Gallery of Gates</span></h1>
+    <p class="sub stagger d3">每一份 onepager 都是<b>一扇门</b>——一个自包含的交互式 HTML，只交换最小必要信息。这里陈列着 <b>/onepager</b> 技能迭代出的产物：你点开任何一扇门，就走进了那一页的世界。</p>
+    <div class="stats stagger d4">
+      <div class="stat"><span class="n">14<span class="u"> 法则</span></span><span class="l">Laws</span></div>
+      <div class="stat"><span class="n">17<span class="u"> 评测</span></span><span class="l">Evals</span></div>
+      <div class="stat"><span class="n">13<span class="u"> 提交</span></span><span class="l">Commits</span></div>
+      <div class="stat"><span class="n">3<span class="u"> 端共用</span></span><span class="l">Agents</span></div>
+      <div class="stat"><span class="n">1<span class="u"> 份真源</span></span><span class="l">Source</span></div>
+    </div>
+    <svg class="hero-gate stagger d6" viewBox="0 0 340 150" role="img" aria-label="一扇发光的窄门">
+      <rect x="20" y="12" width="300" height="126" rx="8" fill="var(--bg3)" stroke="var(--line)"/>
+      <g stroke="var(--line)" stroke-width="1">
+        <path d="M20 46 H320 M20 80 H320 M20 114 H320"/>
+        <path d="M90 12 V138 M160 12 V138 M230 12 V138"/>
+      </g>
+      <rect x="150" y="28" width="40" height="110" rx="3" fill="var(--gold)"/>
+      <rect x="150" y="28" width="6" height="110" fill="var(--paper)" opacity=".4"/>
+      <rect x="138" y="28" width="64" height="110" fill="var(--gold)" opacity=".12"/>
+    </svg>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 迭代之门 -->
+  <section id="iterations">
+    <div class="gate-divider reveal"><span class="t">壹 · 迭代之门</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">01</span><h2>门越开越宽 <em>— the gates widen</em></h2></div>
+    <p class="sec-desc reveal">每一轮迭代都补上一类真实翻车点，并用量化基准验证：通过率、耗时、token。</p>
+    <div class="iters">
+      <div class="iter reveal" style="grid-column:1 / -1">
+        <span class="i-num">v0</span>
+        <h3>v0 · 基线</h3>
+        <div class="meta mono">2026-08-08 · skill-snapshot</div>
+        <p class="what">技能的起点：结论前置、交互即接口、单文件自包含。评测基线通过率 <b style="color:var(--seal)">63.9%</b>——之后每一轮都在补它的短板。</p>
+        <div class="kpis"><span class="kpi hot">pass 63.9%</span><span class="kpi">6 法则雏形</span></div>
+        <div class="foot mono">快照 <a href="onepager-workspace/skill-snapshot/SKILL.md" target="_blank">skill-snapshot/SKILL.md</a></div>
+      </div>
+      <div class="iter reveal">
+        <span class="i-num">一</span>
+        <h3>iteration-1 · 会话归集</h3>
+        <div class="meta mono">evals 5-7 · 2026-08-11</div>
+        <p class="what">主动归集当前会话 sub-artifact，主视频在正文可见，范围排除旧产物。</p>
+        <div class="kpis"><span class="kpi">with 100%</span><span class="kpi good">耗时 −5.3s</span></div>
+        <div class="foot mono"><a href="onepager-workspace/iteration-1/benchmark.md" target="_blank">benchmark.md</a></div>
+      </div>
+      <div class="iter reveal">
+        <span class="i-num">二</span>
+        <h3>iteration-2 · 隐式 recap</h3>
+        <div class="meta mono">evals 8-10 · 2026-08-11</div>
+        <p class="what">只给 transcript 的隐式任务：rich recap、scoped handoff、空态诚实展示。</p>
+        <div class="kpis"><span class="kpi hot">+36pp</span><span class="kpi good">耗时 −43.6s</span><span class="kpi good">token −3558</span></div>
+        <div class="foot mono"><a href="onepager-workspace/iteration-2/benchmark.md" target="_blank">benchmark.md</a></div>
+      </div>
+      <div class="iter reveal">
+        <span class="i-num">三</span>
+        <h3>iteration-3 · SVG 主动绘制</h3>
+        <div class="meta mono">evals 11-15 · 2026-08-12</div>
+        <p class="what">有形状就手写内联 SVG（数据 / 界面 / 流程），守住单文件自包含。</p>
+        <div class="kpis"><span class="kpi">new 100%</span><span class="kpi good">耗时 −92.1s</span><span class="kpi good">token −9625</span></div>
+        <div class="foot mono"><a href="onepager-workspace/iteration-3/benchmark.md" target="_blank">benchmark.md</a></div>
+      </div>
+      <div class="iter reveal" style="background:color-mix(in srgb,var(--bg2) 55%,var(--celadon-wash))">
+        <span class="i-num">v1</span>
+        <h3>v1 · 当前最优</h3>
+        <div class="meta mono">history.json · won</div>
+        <p class="what">14 条法则全量，评测通过率 <b style="color:var(--celadon)">100%</b>，判定 current_best。</p>
+        <div class="kpis"><span class="kpi good">pass 100%</span><span class="kpi">14 法则</span></div>
+        <div class="foot mono"><a href="onepager-workspace/history.json" target="_blank">history.json</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 产物之门 -->
+  <section id="gallery">
+    <div class="gate-divider reveal"><span class="t">贰 · 产物之门</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">02</span><h2>每一份产物，都是一扇门 <em>— open one</em></h2></div>
+    <p class="sec-desc reveal">下面每一张卡都对应评测里真实生成的 onepager。点卡片在灯箱里打开它，或点 ↗ 在新标签页看。</p>
+    <div class="gallery" id="gal">
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-3/eval-12-svg-render-fix/new_skill/run-1/outputs/main.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-svg"/></svg>
+        <div class="body">
+          <div class="t"><h4>SVG 渲染修复</h4><span class="badge mono">eval-12 · iter-3</span></div>
+          <p>从"只渲染出外框+标题、内部一片空白"到完整呈现——手写 SVG 纪律的救赎。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/run-1/outputs/ai-expert-onepager-two-paths.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-changes"/></svg>
+        <div class="body">
+          <div class="t"><h4>AI 专家 · 双路径</h4><span class="badge mono">eval-11 · iter-3</span></div>
+          <p>一个专家的两种使用路径（GUI 表单 vs 对话），画成手写 SVG 流程箭头图。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-3/eval-13-process-flow-onepager-svg/new_skill/run-1/outputs/ai-expert-lifecycle-onepager.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-life"/></svg>
+        <div class="body">
+          <div class="t"><h4>专家生命周期</h4><span class="badge mono">eval-13 · iter-3</span></div>
+          <p>创建 → 测试 → 发布的完整生命周期，一张循环图看懂全局。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/run-1/outputs/index.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-gate"/></svg>
+        <div class="body">
+          <div class="t"><h4>显式画 SVG</h4><span class="badge mono">eval-14 · iter-3</span></div>
+          <p>一进页面就是一张内联 SVG——别等用户追问 "where is the visual SVG?"。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/run-1/outputs/expert-lifespan-onepager.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-evidence"/></svg>
+        <div class="body">
+          <div class="t"><h4>截图证据内联</h4><span class="badge mono">eval-15 · iter-3</span></div>
+          <p>每阶段截图 base64 内联，作为可见证据直接摆上页面，不藏折叠区。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-2/eval-8-implicit-rich-recap/with_skill/run-1/outputs/main.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-recap"/></svg>
+        <div class="body">
+          <div class="t"><h4>隐式 rich recap</h4><span class="badge mono">eval-8 · iter-2</span></div>
+          <p>只给 transcript、不给指令，页面仍归集出内容丰富的会话 recap。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-2/eval-9-implicit-scoped-handoff/with_skill/run-1/outputs/main.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-handoff"/></svg>
+        <div class="body">
+          <div class="t"><h4>隐式 scoped handoff</h4><span class="badge mono">eval-9 · iter-2</span></div>
+          <p>隐式交接只带当前产物，不把旧会话混进来。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-2/eval-10-implicit-empty-state/with_skill/run-1/outputs/main.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-empty"/></svg>
+        <div class="body">
+          <div class="t"><h4>隐式空态</h4><span class="badge mono">eval-10 · iter-2</span></div>
+          <p>没有产物时诚实显示空态，绝不编造链接——可审计。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/with_skill/run-1/outputs/main.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-recap"/></svg>
+        <div class="body">
+          <div class="t"><h4>会话全产物 recap</h4><span class="badge mono">eval-5 · iter-1</span></div>
+          <p>一次 UAT 会话的完整 recap：report / qa / 视频全部归集进一页。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="onepager-workspace/iteration-1/eval-6-visible-primary-video/with_skill/run-1/outputs/main.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-evidence"/></svg>
+        <div class="body">
+          <div class="t"><h4>主视频可见</h4><span class="badge mono">eval-6 · iter-1</span></div>
+          <p>成功录像 run.webm 在正文直接可见，不再藏进折叠区。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+      <div class="item reveal" data-src="examples/showcase.html">
+        <svg class="cover" viewBox="0 0 200 120" aria-hidden="true"><use href="#sym-showcase"/></svg>
+        <div class="body">
+          <div class="t"><h4>技能自证页</h4><span class="badge mono">meta · 本技能</span></div>
+          <p>按法则 1-14 写成的"关于 onepager 的 onepager"——技能自己证明自己。</p>
+          <span class="open">打开此门</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 法则 -->
+  <section id="laws">
+    <div class="gate-divider reveal"><span class="t">叁 · 门道</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">03</span><h2>十四条法则 <em>— the narrow-gate laws</em></h2></div>
+    <p class="sec-desc reveal">这些法则不是拍脑袋——每一条都从真实翻车点被评测逼出来（见 README 迭代表）。</p>
+    <ul class="laws-strip reveal" id="lawsStrip"></ul>
+  </section>
+
+  <footer>
+    <div class="row reveal">
+      <a href="https://github.com/liush2yuxjtu/onepager-skill-iterations" target="_blank" rel="noopener">GitHub 仓库 ↗</a>
+      <span class="sep">·</span>
+      <span>技能本体 <span class="mono">onepager/</span></span>
+      <span class="sep">·</span>
+      <span>迭代工作区 <span class="mono">onepager-workspace/</span></span>
+    </div>
+    <p class="src reveal">来源：~/.agents/skills/onepager（Claude / Pi / Codex 三端符号链接共用） · ~/.pi/skills/onepager-workspace<br>
+    本页为画廊，遵守技能法则：内联 SVG 手绘封面、无外链资源（字体除外）、可离线打开。</p>
+  </footer>
+</div>
+
+<!-- 灯箱 -->
+<div class="lightbox" id="lb" role="dialog" aria-modal="true" aria-label="产物预览">
+  <div class="lb-frame">
+    <div class="lb-top">
+      <span class="t mono" id="lbTitle"></span>
+      <button class="lb-close" id="lbClose" aria-label="关闭">✕</button>
+    </div>
+    <iframe id="lbFrame" title="产物预览" loading="eager"></iframe>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+  var btns=document.querySelectorAll('.theme-switch button');
+  var stored=null;
+  try{stored=localStorage.getItem('og-theme');}catch(e){}
+  function apply(t){
+    root.removeAttribute('data-theme');
+    if(t==='light')root.setAttribute('data-theme','light');
+    if(t==='dark')root.setAttribute('data-theme','dark');
+    btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-set')===t));});
+  }
+  apply(stored||'dark');
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.getAttribute('data-theme-set');
+      apply(t);
+      try{localStorage.setItem('og-theme',t);}catch(e){}
+    });
+  });
+
+  // 法则渲染
+  var LAWS=[
+    "结论前置：5 秒内一句可行动的结论",
+    "窄网关，不搬运：交互只交换最小必要信息",
+    "交互是接口，不是装饰：瘦身砍内容不砍交互",
+    "行动闭环：可勾选、有进度、可复制 Markdown",
+    "诚实可审计：标注来源与生命周期",
+    "单文件自包含：无 CDN、离线可开、手机可看",
+    "会话产物主动归集，不等用户点名",
+    "组合产物 main + subs 拆分省 token",
+    "改动预览 = 冻结窄门条 + 定位闪烁",
+    "设计稿 vs WebApp：语义 Fidelity 4 态",
+    "SVG / 图片内联默认，子产物必须可见",
+    "SVG 主动绘制数据与界面，别等用户追问",
+    "HITL 凭据：密码 / key / 验证码 / 二维码不卡死",
+    "视觉密度：对称网格、轻量结论条、留白三件套"
+  ];
+  var strip=document.getElementById('lawsStrip');
+  strip.innerHTML=LAWS.map(function(s,i){
+    return '<li><span class="n">'+(i+1)+'</span><span><b>'+s.split('：')[0]+'</b>：'+s.split('：').slice(1).join('：')+'</span></li>';
+  }).join('');
+
+  // 灯箱
+  var lb=document.getElementById('lb'),lbf=document.getElementById('lbFrame'),lbT=document.getElementById('lbTitle'),lbC=document.getElementById('lbClose');
+  document.querySelectorAll('.item').forEach(function(it){
+    it.addEventListener('click',function(){
+      var src=it.getAttribute('data-src');
+      if(!src)return;
+      lbT.textContent='· '+src;
+      lbf.setAttribute('src',src);
+      lb.classList.add('open');
+      document.body.style.overflow='hidden';
+    });
+  });
+  function close(){lb.classList.remove('open');lbf.removeAttribute('src');document.body.style.overflow='';}
+  lbC.addEventListener('click',close);
+  lb.addEventListener('click',function(e){if(e.target===lb)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+
+  // 滚动显现
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>

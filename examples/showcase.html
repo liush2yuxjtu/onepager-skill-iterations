@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>onepager · 窄门单页 — 技能迭代回放</title>
+<meta name="description" content="AI agent 技能 /onepager：窄门哲学、14 法则、Claude·Pi·Codex 三端共用、评测驱动迭代 63.9%→100%。">
+<style>
+:root{
+  /* ——— 纸（light） ——— */
+  --bg:#F4EEDF;
+  --bg-elev:#FBF7EC;
+  --ink:#221A10;
+  --ink-soft:#574A39;
+  --ink-faint:#8A7B66;
+  --line:rgba(34,26,16,.13);
+  --seal:#A8392A;
+  --seal-deep:#8C2E21;
+  --seal-wash:rgba(168,57,42,.09);
+  --celadon:#477459;
+  --celadon-wash:rgba(71,116,89,.10);
+  --gold:#A97E25;
+  --gold-wash:rgba(169,126,37,.14);
+  --stone:#E5DCC6;
+  --stone-line:rgba(34,26,16,.10);
+  --grid:rgba(34,26,16,.045);
+  --focus:rgba(168,57,42,.42);
+  --shadow:0 1px 2px rgba(34,26,16,.06),0 8px 28px rgba(34,26,16,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16120B;
+    --bg-elev:#211B11;
+    --ink:#EAE0CB;
+    --ink-soft:#B2A48B;
+    --ink-faint:#7E725E;
+    --line:rgba(234,224,203,.15);
+    --seal:#D05A43;
+    --seal-deep:#E07861;
+    --seal-wash:rgba(208,90,67,.15);
+    --celadon:#7FB58A;
+    --celadon-wash:rgba(127,181,138,.13);
+    --gold:#D8B457;
+    --gold-wash:rgba(216,180,87,.14);
+    --stone:#262016;
+    --stone-line:rgba(234,224,203,.10);
+    --grid:rgba(234,224,203,.05);
+    --focus:rgba(224,120,97,.5);
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 34px rgba(0,0,0,.42);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16120B;
+  --bg-elev:#211B11;
+  --ink:#EAE0CB;
+  --ink-soft:#B2A48B;
+  --ink-faint:#7E725E;
+  --line:rgba(234,224,203,.15);
+  --seal:#D05A43;
+  --seal-deep:#E07861;
+  --seal-wash:rgba(208,90,67,.15);
+  --celadon:#7FB58A;
+  --celadon-wash:rgba(127,181,138,.13);
+  --gold:#D8B457;
+  --gold-wash:rgba(216,180,87,.14);
+  --stone:#262016;
+  --stone-line:rgba(234,224,203,.10);
+  --grid:rgba(234,224,203,.05);
+  --focus:rgba(224,120,97,.5);
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 34px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  font-size:16px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(var(--grid) 1px, transparent 1px);
+  background-size:22px 22px;
+}
+::selection{background:var(--seal);color:#fff}
+a{color:var(--seal);text-decoration:none;border-bottom:1px dotted var(--seal)}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+
+/* ——— 顶栏 ——— */
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+.topbar-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
+.brand{display:flex;align-items:center;gap:10px;font-size:.82rem;letter-spacing:.06em;color:var(--ink-soft)}
+.brand .seal-mini{width:22px;height:22px;border-radius:4px;background:var(--seal);color:#fff;display:grid;place-items:center;font-family:"Songti SC","STSong",serif;font-size:.72rem}
+.theme-switch{display:flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--bg-elev)}
+.theme-switch button{border:0;background:transparent;color:var(--ink-faint);font-size:.72rem;padding:3px 10px;border-radius:999px;cursor:pointer;font-family:inherit;letter-spacing:.05em}
+.theme-switch button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* ——— hero ——— */
+.hero{padding:52px 0 8px;text-align:center}
+.eyebrow{font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;color:var(--seal);margin:0 0 14px}
+h1{font-family:"Songti SC","STSong","Noto Serif SC",Georgia,serif;font-weight:600;margin:0;line-height:1.12;font-size:clamp(2.3rem,6.4vw,3.6rem);text-wrap:balance;letter-spacing:.02em}
+h1 .en{display:block;font-size:.42em;letter-spacing:.34em;color:var(--ink-faint);margin-top:.35em;font-family:"PingFang SC",sans-serif;text-transform:uppercase}
+.hero-sub{margin:16px auto 0;max-width:34ch;color:var(--ink-soft);font-size:.98rem}
+.hero-meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.meta-chip{font-size:.72rem;font-family:ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.04em;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:3px 11px;background:var(--bg-elev)}
+
+/* ——— 结论条（法则1） ——— */
+.tldr{margin:34px 0 0;background:var(--bg-elev);border:1px solid var(--line);border-left:4px solid var(--seal);border-radius:10px;padding:18px 20px;box-shadow:var(--shadow)}
+.tldr .label{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--seal);margin:0 0 6px;display:block}
+.tldr p{margin:0;color:var(--ink);font-size:.96rem}
+.tldr strong{color:var(--seal-deep)}
+
+/* ——— section 通用 ——— */
+section{padding:44px 0 8px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.sec-head h2{font-family:"Songti SC","STSong",serif;font-weight:600;margin:0;font-size:1.35rem;text-wrap:balance}
+.sec-num{font-size:.72rem;letter-spacing:.24em;color:var(--ink-faint);font-family:ui-monospace,Menlo,monospace}
+.sec-desc{color:var(--ink-soft);font-size:.88rem;margin:-8px 0 20px;max-width:64ch}
+
+/* ——— 三端共用 ——— */
+.agents{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.agent{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--bg-elev);box-shadow:var(--shadow)}
+.agent h3{margin:0 0 4px;font-size:1.02rem}
+.agent .role{font-size:.74rem;color:var(--ink-faint);letter-spacing:.04em;margin-bottom:10px}
+.agent .path{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.7rem;color:var(--celadon);word-break:break-all;line-height:1.5}
+.agent .arrow{color:var(--ink-faint);font-size:.7rem}
+.agent.repo{background:color-mix(in srgb,var(--bg-elev) 60%,var(--celadon-wash));border-color:color-mix(in srgb,var(--celadon) 40%,var(--line))}
+
+/* ——— 法则 ——— */
+.law-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.search{border:1px solid var(--line);background:var(--bg-elev);border-radius:999px;padding:8px 16px;flex:1;min-width:220px;color:var(--ink);font-size:.88rem;font-family:inherit}
+.search::placeholder{color:var(--ink-faint)}
+.law-count{font-size:.74rem;color:var(--ink-faint);font-family:ui-monospace,Menlo,monospace}
+.laws{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.law{position:relative;border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;background:var(--bg-elev);box-shadow:var(--shadow);transition:opacity .15s,transform .15s}
+.law[hidden]{display:none}
+.law .num{font-family:"Songti SC",serif;font-size:1.3rem;color:var(--seal);line-height:1;display:block;margin-bottom:8px}
+.law h3{margin:0 0 6px;font-size:.98rem;line-height:1.4;text-wrap:balance}
+.law p{margin:0;font-size:.84rem;color:var(--ink-soft);line-height:1.6}
+.law .tag{display:inline-block;margin-top:10px;font-size:.66rem;letter-spacing:.1em;color:var(--ink-faint);border:1px solid var(--line);border-radius:999px;padding:1px 9px;text-transform:uppercase}
+.law .tag.t-ia{color:var(--seal);border-color:color-mix(in srgb,var(--seal) 40%,var(--line))}
+.law .tag.t-interact{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 45%,var(--line))}
+.law .tag.t-compose{color:var(--celadon);border-color:color-mix(in srgb,var(--celadon) 45%,var(--line))}
+.law .tag.t-trust{color:var(--ink-soft)}
+.law .tag.t-changes{color:var(--seal-deep);border-color:color-mix(in srgb,var(--seal-deep) 40%,var(--line))}
+
+/* ——— 迭代 ——— */
+.gates{display:flex;gap:0;align-items:flex-end;justify-content:space-between;border:1px solid var(--line);border-radius:14px;background:var(--bg-elev);padding:24px 20px 16px;box-shadow:var(--shadow);overflow-x:auto}
+.gate{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:88px}
+.gate figcaption{font-size:.72rem;color:var(--ink-faint);text-align:center;font-family:ui-monospace,Menlo,monospace}
+.gate .g-pass{font-size:.9rem;color:var(--seal);font-weight:600}
+.gate-arrow{align-self:center;color:var(--ink-faint);font-size:.8rem;padding:0 6px}
+.iter-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:20px}
+.iter{border:1px solid var(--line);border-radius:12px;background:var(--bg-elev);padding:16px;box-shadow:var(--shadow)}
+.iter h3{margin:0 0 2px;font-size:1rem}
+.iter .evals{font-size:.72rem;color:var(--ink-faint);font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
+.iter .lead{margin:10px 0 12px;font-size:.9rem}
+.iter .lead b{color:var(--celadon)}
+.iter .stats{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;font-size:.74rem;color:var(--ink-soft);font-family:ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.iter .stats .k{color:var(--ink-faint)}
+.bardelta{display:flex;align-items:center;gap:10px;margin-top:12px}
+.bardelta .bar{flex:1;height:6px;border-radius:99px;background:var(--line);overflow:hidden;position:relative}
+.bardelta .bar i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--celadon)}
+.bardelta .bar i.bad{background:var(--ink-faint)}
+.bardelta span{font-size:.68rem;color:var(--ink-faint);font-family:ui-monospace,Menlo,monospace;white-space:nowrap}
+.delta-good{color:var(--celadon)}
+.delta-bad{color:var(--seal)}
+
+/* ——— evals ——— */
+.eval-groups{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.eval-group{border:1px solid var(--line);border-radius:12px;background:var(--bg-elev);padding:16px;box-shadow:var(--shadow)}
+.eval-group h3{margin:0 0 10px;font-size:.95rem;display:flex;align-items:center;gap:8px}
+.eval-group h3 .n{font-family:ui-monospace,Menlo,monospace;font-size:.7rem;color:var(--seal);border:1px solid color-mix(in srgb,var(--seal) 40%,var(--line));border-radius:999px;padding:1px 8px}
+.eval-group ul{margin:0;padding:0;list-style:none}
+.eval-group li{font-size:.82rem;color:var(--ink-soft);padding:5px 0 5px 18px;position:relative;line-height:1.55}
+.eval-group li::before{content:"·";position:absolute;left:4px;color:var(--ink-faint)}
+.eval-group li b{color:var(--ink);font-weight:600}
+.eval-group li .en{display:block;font-size:.68rem;color:var(--ink-faint);font-family:ui-monospace,Menlo,monospace}
+
+/* ——— 行动计划 ——— */
+.action{border:1px solid var(--line);border-radius:14px;background:var(--bg-elev);padding:20px;box-shadow:var(--shadow)}
+.progress{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.progress .track{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress .fill{height:100%;width:0;background:var(--seal);border-radius:99px;transition:width .3s}
+.progress .pct{font-family:ui-monospace,Menlo,monospace;font-size:.78rem;color:var(--seal);font-variant-numeric:tabular-nums;min-width:3em;text-align:right}
+.actionlist{list-style:none;margin:0 0 16px;padding:0}
+.actionlist li{display:flex;gap:12px;align-items:flex-start;padding:8px 4px;border-bottom:1px dashed var(--line);font-size:.9rem;color:var(--ink-soft);cursor:pointer}
+.actionlist li:last-child{border-bottom:0}
+.actionlist input{margin-top:5px;accent-color:var(--seal);width:16px;height:16px;flex:none}
+.actionlist li.done{color:var(--ink-faint);text-decoration:line-through}
+.actionlist li .hl{color:var(--ink)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:.82rem;border-radius:999px;padding:7px 16px;cursor:pointer;transition:all .12s}
+.btn:hover{border-color:var(--seal);color:var(--seal)}
+.btn.primary{background:var(--seal);border-color:var(--seal);color:#fff}
+.btn.primary:hover{background:var(--seal-deep);color:#fff}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:.8rem;opacity:0;pointer-events:none;transition:.2s;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ——— commits ——— */
+details{border:1px solid var(--line);border-radius:12px;background:var(--bg-elev);box-shadow:var(--shadow);overflow:hidden}
+details summary{cursor:pointer;padding:14px 18px;font-size:.9rem;font-weight:600;list-style:none;display:flex;align-items:center;gap:8px}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸";color:var(--seal);transition:transform .15s;font-size:.8em}
+details[open] summary::before{transform:rotate(90deg)}
+.commitlist{margin:0;padding:0 0 10px;list-style:none}
+.commitlist li{display:flex;gap:12px;padding:7px 18px;font-size:.8rem;color:var(--ink-soft);font-family:ui-monospace,Menlo,monospace;border-top:1px dashed var(--line);line-height:1.6}
+.commitlist .hash{color:var(--seal);flex:none}
+.commitlist .date{color:var(--ink-faint);flex:none;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ——— 页脚 ——— */
+footer{border-top:1px solid var(--line);margin-top:56px;padding:28px 0 44px;color:var(--ink-faint);font-size:.78rem}
+footer .src{font-family:ui-monospace,Menlo,monospace;word-break:break-all;line-height:1.8}
+footer b{color:var(--ink-soft);font-weight:600}
+footer .meta-line{margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
+
+hr.sep{border:0;height:1px;background:var(--line);margin:40px 0 0}
+
+/* ——— 窄屏 ——— */
+@media (max-width:760px){
+  .agents,.laws,.iter-cards,.eval-groups{grid-template-columns:1fr}
+  .gates{justify-content:flex-start}
+  .hero{padding-top:38px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand"><span class="seal-mini">门</span>ONEPAGER · SKILL 回放</div>
+    <div class="theme-switch" role="group" aria-label="主题切换">
+      <button data-theme-set="light" aria-pressed="false">浅</button>
+      <button data-theme-set="dark" aria-pressed="false">深</button>
+      <button data-theme-set="system" aria-pressed="true">跟随</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Agent Skill · 迭代回放 · 自证单页</p>
+    <h1>窄门单页<span class="en">Onepager</span></h1>
+    <p class="hero-sub">少即是门。结论在前，细节折叠，交互即接口——人、agent、webapp 之间，只交换最小必要信息。</p>
+    <div class="hero-meta">
+      <span class="meta-chip">14 法则</span>
+      <span class="meta-chip">17 evals</span>
+      <span class="meta-chip">13 commits</span>
+      <span class="meta-chip">v0→v1 · 63.9%→100%</span>
+      <span class="meta-chip">Claude · Pi · Codex 共用</span>
+    </div>
+
+    <!-- 窄门 hero SVG：手写内联，法则 11/12 -->
+    <svg viewBox="0 0 760 330" role="img" aria-label="一堵墙中间一扇窄门，门缝透出光" style="max-width:560px;width:100%;height:auto;margin:26px auto 0;display:block">
+      <defs>
+        <linearGradient id="g-doorglow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--gold)" stop-opacity=".9"/>
+          <stop offset="1" stop-color="var(--gold)" stop-opacity=".35"/>
+        </linearGradient>
+        <radialGradient id="g-pool" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="var(--gold)" stop-opacity=".32"/>
+          <stop offset="1" stop-color="var(--gold)" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="g-shaft" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--gold)" stop-opacity="0"/>
+          <stop offset="1" stop-color="var(--gold)" stop-opacity=".16"/>
+        </linearGradient>
+      </defs>
+      <!-- 地面光池 -->
+      <ellipse cx="380" cy="318" rx="170" ry="20" fill="url(#g-pool)"/>
+      <!-- 墙体 -->
+      <rect x="70" y="60" width="620" height="256" rx="10" fill="var(--stone)" stroke="var(--line)"/>
+      <g stroke="var(--stone-line)" stroke-width="1">
+        <path d="M70 118 H690 M70 172 H690 M70 226 H690 M70 280 H690"/>
+        <path d="M210 60 V316 M330 60 V316 M430 60 V316 M550 60 V316"/>
+      </g>
+      <!-- 墙面牌匾 -->
+      <rect x="345" y="74" width="70" height="26" rx="3" fill="var(--seal)" opacity=".92"/>
+      <text x="380" y="91" text-anchor="middle" font-size="13" fill="#fff" font-family="'Songti SC','STSong',serif" letter-spacing="4">ONEPAGER</text>
+      <!-- 窄门门缝 -->
+      <rect x="356" y="112" width="48" height="204" rx="4" fill="url(#g-doorglow)"/>
+      <rect x="356" y="112" width="48" height="204" rx="4" fill="none" stroke="var(--gold)" stroke-width="2"/>
+      <!-- 门缝前溢出的光 -->
+      <rect x="340" y="112" width="80" height="204" fill="url(#g-shaft)"/>
+      <!-- 门缝高光 -->
+      <rect x="356" y="112" width="5" height="204" fill="#fff" opacity=".5"/>
+      <!-- 地面门槛 -->
+      <rect x="330" y="316" width="100" height="6" rx="3" fill="var(--ink-faint)" opacity=".55"/>
+      <!-- 印章：窄门 -->
+      <g transform="translate(620,84)">
+        <rect width="42" height="42" rx="6" fill="var(--seal)"/>
+        <text x="21" y="20" text-anchor="middle" font-size="15" fill="#fff" font-family="'Songti SC','STSong',serif">窄</text>
+        <text x="21" y="35" text-anchor="middle" font-size="15" fill="#fff" font-family="'Songti SC','STSong',serif">门</text>
+      </g>
+    </svg>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- 结论前置（法则 1） -->
+  <div class="tldr">
+    <span class="label">结论 · TL;DR</span>
+    <p><strong>/onepager</strong> 是一个给 AI agent 的「窄门哲学」技能：所有交付物收敛成一个自包含交互式 HTML，结论一屏可见、细节按需展开。它由 <strong>17 个评测</strong>驱动迭代出 <strong>14 条法则</strong>，通过率 <strong>63.9% → 100%</strong>；Claude、Pi、Codex 三端共享同一份源码（<code>~/.agents/skills/onepager</code>），评测工作区在 <code>~/.pi/skills/onepager-workspace</code>。本页即按它自己的法则写成。</p>
+  </div>
+
+  <!-- 三端共用 -->
+  <section id="agents">
+    <div class="sec-head">
+      <h2>一套源码，三端共用</h2>
+      <span class="sec-num">01 · TOPOLOGY</span>
+    </div>
+    <p class="sec-desc">三个 agent 的 skill 目录都是指向同一份仓库的符号链接——迭代只发生一次，三端同时生效。</p>
+    <div class="agents">
+      <div class="agent">
+        <h3>Claude Code</h3>
+        <div class="role">CLAUDE / SLASH COMMAND</div>
+        <div class="path">~/.claude/skills/onepager <span class="arrow">→</span> ~/.agents/skills/onepager</div>
+      </div>
+      <div class="agent">
+        <h3>Pi</h3>
+        <div class="role">PI CODING AGENT</div>
+        <div class="path">~/.pi/skills/onepager <span class="arrow">→</span> ~/.agents/skills/onepager</div>
+      </div>
+      <div class="agent">
+        <h3>Codex</h3>
+        <div class="role">OPENAI CODEX</div>
+        <div class="path">~/.codex/skills/onepager <span class="arrow">→</span> ~/.agents/skills/onepager</div>
+      </div>
+      <div class="agent repo">
+        <h3>唯一真源（git 仓库）</h3>
+        <div class="role">CANONICAL · 13 COMMITS</div>
+        <div class="path">~/.agents/skills/onepager · SKILL.md · rules/ · evals/ · scripts/</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心法则 -->
+  <section id="laws">
+    <div class="sec-head">
+      <h2>核心法则 · 14 扇窄门</h2>
+      <span class="sec-num">02 · LAWS</span>
+    </div>
+    <p class="sec-desc">输入关键词过滤（窄网关：只返回匹配行，不铺全量）。每条法则 = 一扇门，交互只交换最小必要信息。</p>
+    <div class="law-toolbar">
+      <input class="search" id="lawSearch" type="search" placeholder="过滤法则… 如 svg / 窄门 / 凭证 / 密度" aria-label="过滤法则">
+      <span class="law-count" id="lawCount">14 / 14</span>
+    </div>
+    <div class="laws" id="lawGrid">
+      <div class="law" data-kw="结论 前置 tldr tl;dr 下钻"><span class="num">一</span><h3>结论前置</h3><p>标题下 5 秒内出现一句可行动的结论（TL;DR），证据按需下钻。人不该读完报告才知道结论。</p><span class="tag t-ia">ia · 结论</span></div>
+      <div class="law" data-kw="窄网关 不搬运 最小必要 搜索 聚焦"><span class="num">二</span><h3>窄网关，不搬运</h3><p>搜索只返回匹配行、聚焦只传一个 pane_id、勾选只回传增量。绝不全量铺开。</p><span class="tag t-ia">ia · 窄网关</span></div>
+      <div class="law" data-kw="交互 接口 不是装饰 搜索 排序 复制 聚焦"><span class="num">三</span><h3>交互是接口，不是装饰</h3><p>瘦身可以砍内容，绝不砍交互。搜索/排序/聚焦/勾选/复制是窄网关本身——最常见的翻车点。</p><span class="tag t-interact">interact · 交互</span></div>
+      <div class="law" data-kw="行动 闭环 勾选 进度 复制 markdown"><span class="num">四</span><h3>行动闭环</h3><p>诊断必须带「行动」：可勾选、有进度、可一键复制为 Markdown，把决策状态反馈回 agent。</p><span class="tag t-interact">interact · 行动</span></div>
+      <div class="law" data-kw="诚实 可审计 来源 时间戳 生命周期"><span class="num">五</span><h3>诚实可审计</h3><p>标注采集命令/时间戳/来源；没问题就说没问题，瞬时尖峰标注"非持续"。可复现才值得信任。</p><span class="tag t-trust">trust · 诚实</span></div>
+      <div class="law" data-kw="单文件 自包含 无cdn 离线 手机"><span class="num">六</span><h3>单文件自包含</h3><p>无 CDN、无构建步骤、离线可用、手机可看。交付物不绑架用户环境。</p><span class="tag t-compose">compose · 单文件</span></div>
+      <div class="law" data-kw="主动归集 会话产物 sub-artifact recap handoff"><span class="num">七</span><h3>会话产物主动归集</h3><p>从聊天证据归集 main + sub-artifact，不等用户点名"产物在哪"；只收有证据的项目。</p><span class="tag t-compose">compose · 归集</span></div>
+      <div class="law" data-kw="组合 main subs 拆分 token"><span class="num">八</span><h3>组合产物 main + subs</h3><p>多页产物拆成 main（结论+窄门）与 sub-*.html（自包含），避免 >200KB 单文件 token 爆炸。</p><span class="tag t-compose">compose · 拆分</span></div>
+      <div class="law" data-kw="改动预览 冻结窄门条 定位 闪烁 spa 长html"><span class="num">九</span><h3>改动预览 = 冻结窄门条 + 定位闪烁</h3><p>超长单 HTML / SPA 改动时注入默认折叠顶栏：一行结论 + tag 跳转闪烁，评审只看增量。</p><span class="tag t-changes">changes · 预览</span></div>
+      <div class="law" data-kw="设计稿 webapp 漂移 基准 fidelity 语义"><span class="num">十</span><h3>设计稿 vs WebApp 漂移基准</h3><p>不数 selector，测语义 Fidelity 4 态（full/partial/gap/overflow）+ 对抗验证；溢出 ≠ 偏离。</p><span class="tag t-trust">trust · 漂移</span></div>
+      <div class="law" data-kw="svg 图片 内联 外链 子产物 可见"><span class="num">十一</span><h3>SVG / 图片 = 内联默认</h3><p>一律内联进 HTML（<code>&lt;svg&gt;</code> 或 data URI），绝不外链文件；独立文件 ≠ 交付。</p><span class="tag t-compose">compose · 内联</span></div>
+      <div class="law" data-kw="svg 主动 绘制 数据 界面 mock 图表库 手写"><span class="num">十二</span><h3>SVG 主动绘制数据与界面</h3><p>有形状就手写内联 SVG（环形/条/折线/流程/UI mock），别等用户追问"where is the visual SVG?"。禁引 chart.js/d3。</p><span class="tag t-compose">compose · SVG</span></div>
+      <div class="law" data-kw="hitl 凭据 密码 key token 验证码 二维码"><span class="num">十三</span><h3>HITL 人机凭据窄门</h3><p>密码/API key/验证码/二维码：安全可复制不卡死，零远程端点，页脚声明仅本机使用。</p><span class="tag t-interact">interact · 凭据</span></div>
+      <div class="law" data-kw="视觉密度 布局 纪律 对称网格 留白 呼吸感"><span class="num">十四</span><h3>视觉密度与布局纪律</h3><p>对称网格（2×2）、轻量结论条 + 主色左边框、留白三件套。密度是布局第一红线，页面"一眼不慌"。</p><span class="tag t-compose">compose · 密度</span></div>
+    </div>
+  </section>
+
+  <!-- 迭代历史 -->
+  <section id="iterations">
+    <div class="sec-head">
+      <h2>迭代历史 · 门越开越宽</h2>
+      <span class="sec-num">03 · ITERATIONS</span>
+    </div>
+    <p class="sec-desc">从 v0 基线到 v1 当前最优，再到三个评测轮次：每轮门都更宽——通过率更高、耗时更省、token 更少。</p>
+
+    <!-- 门越开越宽 mini-SVG（法则 12） -->
+    <figure class="gates" style="margin:0 0 20px">
+      <div class="gate">
+        <svg width="40" height="70" viewBox="0 0 40 70" aria-hidden="true">
+          <rect x="2" y="2" width="36" height="66" rx="4" fill="var(--stone)" stroke="var(--line)"/>
+          <rect x="14" y="14" width="12" height="54" fill="var(--gold)" opacity=".5"/>
+        </svg>
+        <figcaption><span class="g-pass">63.9%</span>v0 基线</figcaption>
+      </div>
+      <span class="gate-arrow">→</span>
+      <div class="gate">
+        <svg width="52" height="70" viewBox="0 0 52 70" aria-hidden="true">
+          <rect x="2" y="2" width="48" height="66" rx="4" fill="var(--stone)" stroke="var(--line)"/>
+          <rect x="18" y="14" width="16" height="54" fill="var(--gold)" opacity=".7"/>
+        </svg>
+        <figcaption><span class="g-pass">100%</span>v1 当前最优</figcaption>
+      </div>
+      <span class="gate-arrow">→</span>
+      <div class="gate">
+        <svg width="64" height="70" viewBox="0 0 64 70" aria-hidden="true">
+          <rect x="2" y="2" width="60" height="66" rx="4" fill="var(--stone)" stroke="var(--line)"/>
+          <rect x="22" y="14" width="20" height="54" fill="var(--gold)" opacity=".85"/>
+        </svg>
+        <figcaption><span class="g-pass">100%</span>iter-2 · 耗时 −43.6s</figcaption>
+      </div>
+      <span class="gate-arrow">→</span>
+      <div class="gate">
+        <svg width="76" height="70" viewBox="0 0 76 70" aria-hidden="true">
+          <rect x="2" y="2" width="72" height="66" rx="4" fill="var(--stone)" stroke="var(--line)"/>
+          <rect x="26" y="14" width="24" height="54" fill="var(--gold)"/>
+        </svg>
+        <figcaption><span class="g-pass">100%</span>iter-3 · 耗时 −92.1s</figcaption>
+      </div>
+    </figure>
+
+    <div class="iter-cards">
+      <div class="iter">
+        <h3>iteration-1</h3>
+        <div class="evals">evals 5-7 · 会话产物归集 · 2026-08-11</div>
+        <p class="lead">新增<b>主动归集 sub-artifact</b> 与 <b>关键媒体可见</b>；带/不带技能通过率持平。</p>
+        <div class="stats">
+          <span><span class="k">通过率</span> 100% vs 100%</span>
+          <span class="delta-good"><span class="k">耗时</span> −5.3s</span>
+          <span><span class="k">token</span> 11925 vs 11812</span>
+          <span class="delta-bad"><span class="k">token Δ</span> +113</span>
+        </div>
+        <div class="bardelta"><span>耗时</span><div class="bar"><i style="width:95.7%"></i></div><div class="bar"><i class="bad" style="width:100%"></i></div><span class="delta-good">−5.3s</span></div>
+      </div>
+      <div class="iter">
+        <h3>iteration-2</h3>
+        <div class="evals">evals 8-10 · 隐式 recap/handoff · 2026-08-11</div>
+        <p class="lead">通过率 <b>+36pp</b>（100% vs 64%），耗时 −43.6s，token 省 3558——技能价值最大的一轮。</p>
+        <div class="stats">
+          <span class="delta-good"><span class="k">通过率</span> 100% vs 64% (+36)</span>
+          <span class="delta-good"><span class="k">耗时</span> −43.6s</span>
+          <span><span class="k">token</span> 10158 vs 13716</span>
+          <span class="delta-good"><span class="k">token Δ</span> −3558</span>
+        </div>
+        <div class="bardelta"><span>通过率</span><div class="bar"><i style="width:100%"></i></div><div class="bar"><i class="bad" style="width:64%"></i></div><span class="delta-good">+36pp</span></div>
+      </div>
+      <div class="iter">
+        <h3>iteration-3</h3>
+        <div class="evals">evals 11-15 · SVG 主动绘制 · 2026-08-12</div>
+        <p class="lead">新增<b>手写内联 SVG 纪律</b>（<code>&lt;g&gt;</code> 包裹、<code>&lt;text&gt;</code> 纯文本），旧 vs 新均 100%，但新版省时省 token。</p>
+        <div class="stats">
+          <span><span class="k">通过率</span> 100% vs 100%</span>
+          <span class="delta-good"><span class="k">耗时</span> −92.1s</span>
+          <span><span class="k">token</span> 74263 vs 83888</span>
+          <span class="delta-good"><span class="k">token Δ</span> −9625</span>
+        </div>
+        <div class="bardelta"><span>耗时</span><div class="bar"><i style="width:64.9%"></i></div><div class="bar"><i class="bad" style="width:100%"></i></div><span class="delta-good">−92.1s</span></div>
+      </div>
+      <div class="iter" style="border-color:color-mix(in srgb,var(--celadon) 45%,var(--line));background:color-mix(in srgb,var(--bg-elev) 60%,var(--celadon-wash))">
+        <h3>v0 → v1（history.json）</h3>
+        <div class="evals">baseline → current_best · won</div>
+        <p class="lead">通过率从 <b>63.9% 跳到 100%</b>——v1 判定为 <b>won</b>，成为当前最优版本。</p>
+        <svg viewBox="0 0 280 90" role="img" aria-label="通过率从 63.9% 升到 100% 的折线" style="width:100%;height:auto;margin-top:6px">
+          <defs><linearGradient id="g-climb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--celadon)" stop-opacity=".35"/><stop offset="1" stop-color="var(--celadon)" stop-opacity="0"/></linearGradient></defs>
+          <line x1="20" y1="86" x2="262" y2="86" stroke="var(--line)" stroke-width="1"/>
+          <path d="M28 74 L244 22 L244 86 L28 86 Z" fill="url(#g-climb)"/>
+          <path d="M28 74 L244 22" fill="none" stroke="var(--celadon)" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="28" cy="74" r="4" fill="var(--bg-elev)" stroke="var(--seal)" stroke-width="2"/>
+          <circle cx="244" cy="22" r="4" fill="var(--bg-elev)" stroke="var(--celadon)" stroke-width="2"/>
+          <text x="28" y="68" text-anchor="middle" font-size="11" fill="var(--seal)" font-family="ui-monospace,Menlo,monospace">v0 63.9%</text>
+          <text x="244" y="14" text-anchor="middle" font-size="11" fill="var(--celadon)" font-family="ui-monospace,Menlo,monospace">v1 100%</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 评测覆盖 -->
+  <section id="evals">
+    <div class="sec-head">
+      <h2>17 个评测用例 · 覆盖真实缺陷</h2>
+      <span class="sec-num">04 · EVALS</span>
+    </div>
+    <p class="sec-desc">每个评测都源自真实会话里的翻车点（Mac 发热、评审看不懂的臃肿报告、SVG 渲染空白、凭据卡死…）。</p>
+    <div class="eval-groups">
+      <div class="eval-group">
+        <h3><span class="n">1-3</span>诊断与瘦身</h3>
+        <ul>
+          <li><b>Mac 发热诊断</b>：交互式 HTML 报告 + 进程下钻<span class="en">eval-1 · 7 断言</span></li>
+          <li><b>臃肿验收报告瘦身</b>：6 tab 几十行表格 → 窄门<span class="en">eval-2 · 5 断言</span></li>
+          <li><b>MySQL 慢查询诊断</b>：Top 20 明细不铺开<span class="en">eval-3 · 6 断言</span></li>
+        </ul>
+      </div>
+      <div class="eval-group">
+        <h3><span class="n">5-10</span>会话归集 recap / handoff</h3>
+        <ul>
+          <li><b>全产物归集</b> + <b>主视频可见</b> + <b>范围排除旧产物</b><span class="en">eval-5/6/7</span></li>
+          <li><b>Pi transcript 三连</b>：recap / handoff / 隐式空态<span class="en">eval-8/9/10</span></li>
+        </ul>
+      </div>
+      <div class="eval-group">
+        <h3><span class="n">4</span>改动预览</h3>
+        <ul>
+          <li><b>500KB SPA 改动预览</b>：冻结窄门条 + 子视图跳转定位<span class="en">eval-4 · 8 断言</span></li>
+        </ul>
+      </div>
+      <div class="eval-group">
+        <h3><span class="n">11-15</span>SVG 主动绘制</h3>
+        <ul>
+          <li><b>SVG 渲染空白修复</b>：只出外框+标题 → 手写纪律<span class="en">eval-12 · 5 断言</span></li>
+          <li><b>双路径 WebApp</b> / <b>专家生命周期</b> / <b>MCP 流程图</b> / <b>截图证据内联</b><span class="en">eval-11/13/14/15</span></li>
+        </ul>
+      </div>
+      <div class="eval-group">
+        <h3><span class="n">16-17</span>HITL 凭据</h3>
+        <ul>
+          <li><b>CLI 部署登录</b>：密码 + API key + 短信验证码<span class="en">eval-16 · 9 断言</span></li>
+          <li><b>登录多凭据</b>：密码/key/验证码/二维码不卡死<span class="en">eval-17 · 8 断言</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 行动计划 -->
+  <section id="action">
+    <div class="sec-head">
+      <h2>行动计划 · 把决策反馈回 agent</h2>
+      <span class="sec-num">05 · ACTION LOOP</span>
+    </div>
+    <div class="action">
+      <div class="progress" aria-label="行动完成度">
+        <div class="track"><div class="fill" id="progFill"></div></div>
+        <span class="pct" id="progPct">0%</span>
+      </div>
+      <ul class="actionlist" id="actionList">
+        <li data-actions><input type="checkbox" id="a1"><label for="a1">按触发时机判断：只有要<strong>交互式 HTML</strong> 时才触发 onepager，普通文字/汇报不用</label></li>
+        <li data-actions><input type="checkbox" id="a2"><label for="a2">交付前跑自查清单：结论前置 / 窄网关交互全在 / 无 CDN 外链 / 页脚标来源</label></li>
+        <li data-actions><input type="checkbox" id="a3"><label for="a3">有形状的数据主动手写内联 SVG，不引 chart.js / d3 / echarts</label></li>
+        <li data-actions><input type="checkbox" id="a4"><label for="a4">产物预计 &gt;200KB 时拆 main + subs，main 始终 &lt;50KB</label></li>
+        <li data-actions><input type="checkbox" id="a5"><label for="a5">本页自证：已遵守法则 1-14（单文件、无外链、双主题、手写 SVG）</label></li>
+        <li data-actions><input type="checkbox" id="a6"><label for="a6">把本页部署到 Cloudflare Pages 公共 URL，交付可分享链接</label></li>
+      </ul>
+      <div class="btnrow">
+        <button class="btn primary" id="copyActions">复制行动清单 Markdown</button>
+        <button class="btn" id="copySummary">复制迭代摘要</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- git 回放 -->
+  <section id="commits">
+    <div class="sec-head">
+      <h2>13 次提交 · 法则如何长出来</h2>
+      <span class="sec-num">06 · COMMITS</span>
+    </div>
+    <details>
+      <summary>展开 git 提交回放（08-08 → 08-13）</summary>
+      <ul class="commitlist">
+        <li><span class="hash">ad3015e</span><span>法则14 视觉密度与布局纪律 + eval 16/17 补齐（凭据窄门）</span><span class="date">08-13</span></li>
+        <li><span class="hash">4619efa</span><span>法则12 扩为数据+界面双维主动 SVG；evals 13-15 基于今日真实缺陷</span><span class="date">08-12</span></li>
+        <li><span class="hash">e16954d</span><span>法则12 SVG=主动绘制数据 + compose-svg-proactive 规则</span><span class="date">08-12</span></li>
+        <li><span class="hash">89a235c</span><span>evals 1-4 expectations 补齐（可验证断言），10 evals 齐备</span><span class="date">08-12</span></li>
+        <li><span class="hash">5232649</span><span>法则7 会话主动归集 sub-artifact + eval-5 fixtures</span><span class="date">08-12</span></li>
+        <li><span class="hash">dc2cedb</span><span>snapshot：.claude 精简版 SKILL.md（去主动归集逻辑）保留历史</span><span class="date">08-12</span></li>
+        <li><span class="hash">585c55e</span><span>法则10 SVG/图片内联默认 + compose-inline-assets；同步 4 平台</span><span class="date">08-10</span></li>
+        <li><span class="hash">aa8fec9</span><span>法则9 设计稿vsWebApp漂移基准（语义 Fidelity 4 态 + 对抗验证）+ eval-5</span><span class="date">08-10</span></li>
+        <li><span class="hash">d89298e</span><span>rules/ 规则库（12 文件）：5 大类索引 + 10 条带正反例规则</span><span class="date">08-10</span></li>
+        <li><span class="hash">f79e38a</span><span>法则8 改动预览模式（冻结窄门条 + 定位闪烁）+ eval-4</span><span class="date">08-10</span></li>
+        <li><span class="hash">768c097</span><span>法则7 组合产物 main+subs 拆分省 token（eval-3 验证 10/10 vs 1/10）</span><span class="date">08-09</span></li>
+        <li><span class="hash">6a7f0a8</span><span>README：少即是门 slogan + hero SVG 头图</span><span class="date">08-09</span></li>
+        <li><span class="hash">8ce4b0a</span><span>v0 诞生：窄门单页 agent skill — 结论前置、交互即接口、单文件自包含</span><span class="date">08-08</span></li>
+      </ul>
+    </details>
+  </section>
+
+  <hr class="sep">
+  <footer>
+    <p><b>来源与生命周期</b>（法则 5/6）：</p>
+    <div class="src">
+      ~/.agents/skills/onepager  <b>SKILL.md</b> (247 行 · 14 法则) · rules/ (16 文件) · evals/ (17 用例)<br>
+      ~/.pi/skills/onepager-workspace  <b>iteration-1/2/3</b> · skill-snapshot · history.json · benchmark.md<br>
+      ~/.claude/skills/onepager · ~/.pi/skills/onepager · ~/.codex/skills/onepager  → 均符号链接至唯一真源
+    </div>
+    <div class="meta-line">
+      <span>本页由 Claude Code 依 /onepager 法则生成 · 单文件自包含 · 无外链资源</span>
+    </div>
+    <div class="meta-line">
+      <span>hero 窄门 SVG · 印章"窄门" · 门越开越宽 —— 均为手写内联 SVG（法则 12）</span>
+    </div>
+    <div class="meta-line" style="margin-top:4px">
+      <span>生成日期 2026-08-15 · 凭据声明：本页零远程端点，数据仅本地</span>
+    </div>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+  var toastEl=document.getElementById('toast'),toastTimer=null;
+  function toast(msg){
+    toastEl.textContent=msg;toastEl.classList.add('show');
+    clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove('show');},2200);
+  }
+  function copyText(txt){
+    function done(){toast('已复制到剪贴板');}
+    function fail(){toast('复制失败：'+String(txt).slice(0,30)+'…');}
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done,fail);
+    }else{
+      var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done();}catch(e){fail();}
+      document.body.removeChild(ta);
+    }
+  }
+
+  // 主题切换（三态：浅 / 深 / 跟随）
+  var root=document.documentElement;
+  var btns=document.querySelectorAll('.theme-switch button');
+  var stored=null;
+  try{stored=localStorage.getItem('op-theme');}catch(e){}
+  function apply(theme){
+    root.removeAttribute('data-theme');
+    if(theme==='light')root.setAttribute('data-theme','light');
+    if(theme==='dark')root.setAttribute('data-theme','dark');
+    btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-set')===theme));});
+  }
+  if(stored)apply(stored);
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.getAttribute('data-theme-set');
+      apply(t);
+      try{localStorage.setItem('op-theme',t);}catch(e){}
+    });
+  });
+
+  // 法则过滤（窄网关：只返回匹配行）
+  var grid=document.getElementById('lawGrid');
+  var cards=Array.prototype.slice.call(grid.querySelectorAll('.law'));
+  var count=document.getElementById('lawCount');
+  var search=document.getElementById('lawSearch');
+  function filterLaw(){
+    var q=search.value.trim().toLowerCase();
+    var n=0;
+    cards.forEach(function(c){
+      var hit=!q||c.getAttribute('data-kw').toLowerCase().indexOf(q)>-1||c.textContent.toLowerCase().indexOf(q)>-1;
+      c.hidden=!hit;if(hit)n++;
+    });
+    count.textContent=n+' / 14';
+  }
+  search.addEventListener('input',filterLaw);
+
+  // 行动计划闭环
+  var list=document.getElementById('actionList');
+  var fill=document.getElementById('progFill');
+  var pct=document.getElementById('progPct');
+  var items=Array.prototype.slice.call(list.querySelectorAll('li'));
+  function updateProg(){
+    var done=items.filter(function(li){return li.querySelector('input').checked;}).length;
+    var p=Math.round(done/items.length*100);
+    fill.style.width=p+'%';pct.textContent=p+'%';
+    items.forEach(function(li){li.classList.toggle('done',li.querySelector('input').checked);});
+  }
+  list.addEventListener('change',updateProg);
+
+  document.getElementById('copyActions').addEventListener('click',function(){
+    var checked=items.filter(function(li){return li.querySelector('input').checked;})
+      .map(function(li){return '- [x] '+li.textContent.trim();}).join('\n');
+    var md='## onepager 行动计划\n\n'+checked;
+    copyText(md||'（尚未勾选任何行动）');
+  });
+
+  document.getElementById('copySummary').addEventListener('click',function(){
+    var md=[
+      '# /onepager · 窄门单页 迭代摘要',
+      '',
+      '- 定位：AI agent 技能，交付自包含交互式 HTML，结论前置、窄网关、交互即接口',
+      '- 三端共用：Claude / Pi / Codex 均符号链接至 ~/.agents/skills/onepager（唯一 git 真源）',
+      '- 规模：14 法则 · 17 evals · 13 commits · rules/ 16 文件',
+      '- 迭代：v0 63.9% → v1 100%（won）；iter-1 归集 / iter-2 +36pp / iter-3 SVG 纪律',
+      '- 评测工作区：~/.pi/skills/onepager-workspace（iteration-1/2/3 · history.json · benchmark.md）'
+    ].join('\n');
+    copyText(md);
+  });
+
+  updateProg();
+})();
+</script>
+</body>
+</html>
