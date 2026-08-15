@@ -1,0 +1,57 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML directly links current-report.html and current-qa.json.",
+      "passed": false,
+      "evidence": "links=[]; outputs=['main.html', 'metrics.json']"
+    },
+    {
+      "text": "The output does not link or copy old-failure.webm.",
+      "passed": true,
+      "evidence": "linked=False; copied=False"
+    },
+    {
+      "text": "The artifact links are visible in the main page rather than present only inside collapsed details.",
+      "passed": false,
+      "evidence": "visible_links=[]"
+    },
+    {
+      "text": "The footer includes /tmp/scoped-recap and implicit-session-9.",
+      "passed": true,
+      "evidence": "project=True; session=True"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.5
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 0,
+    "files_created": [
+      "main.html"
+    ],
+    "errors_encountered": 0,
+    "output_chars": 13804,
+    "transcript_chars": 84287
+  },
+  "timing": {
+    "total_tokens": 14144,
+    "duration_ms": 122958,
+    "total_duration_seconds": 122.958,
+    "exit_code": 0
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions inspect proactive discovery, main-page visibility, scope, empty state, and provenance."
+  }
+}

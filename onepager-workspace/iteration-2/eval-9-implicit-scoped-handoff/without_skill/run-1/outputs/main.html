@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scoped handoff · implicit-session-9</title>
+<style>
+:root{--ink:#17221d;--muted:#637068;--paper:#f5f2e9;--card:#fffdf7;--line:#d9d5c9;--green:#176b4a;--green2:#dcecdf;--amber:#a75c13;--shadow:0 14px 38px rgba(30,42,34,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}.wrap{width:min(1040px,calc(100% - 32px));margin:auto}.top{padding:54px 0 26px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#edf3e9 0%,#f5f2e9 58%,#efe7d8 100%)}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--green);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.eyebrow svg{width:20px}.top h1{font-family:Georgia,serif;font-size:clamp(38px,7vw,72px);line-height:.98;letter-spacing:-.04em;margin:18px 0 20px;max-width:820px}.verdict{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;max-width:880px;background:var(--ink);color:#fff;border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}.tick{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#7ac69e;color:#10271b;font-weight:900}.verdict strong{display:block;font-size:17px}.verdict span{color:#d8e1dc}.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.pill{border:1px solid #bdc9c0;border-radius:999px;padding:5px 10px;background:rgba(255,255,255,.45);font-size:12px;color:#425047}.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.75fr);gap:20px;padding:28px 0 18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.card-head{padding:20px 20px 14px;display:flex;justify-content:space-between;gap:16px;align-items:end}.card h2{font-family:Georgia,serif;font-size:25px;margin:0}.hint{font-size:12px;color:var(--muted)}.toolbar{display:flex;gap:8px;padding:0 20px 14px}.search{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;outline:none}.search:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(23,107,74,.1)}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:620px}th,td{text-align:left;border-top:1px solid var(--line);padding:13px 20px;vertical-align:top}th{background:#f6f4ed;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.09em}th button{border:0;background:none;color:inherit;text-transform:inherit;letter-spacing:inherit;font-weight:800;padding:0}.status{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:800}.status:before{content:"";width:7px;height:7px;border-radius:50%;background:#2e9a69}.file{font-weight:750}.file small{display:block;color:var(--muted);font-weight:400}.mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 10px;color:var(--ink);white-space:nowrap}.mini:hover,.copy:hover{border-color:var(--green);color:var(--green)}.empty{display:none;padding:20px;color:var(--muted);border-top:1px solid var(--line)}.actions{padding:0 20px 20px}.progress-row{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin:2px 0 8px}.bar{height:7px;background:#e6e3d9;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--green);transition:width .25s}.checklist{display:grid;gap:10px;margin:18px 0}.check{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}.check input{accent-color:var(--green);margin-top:4px}.check span{font-weight:700}.check small{display:block;color:var(--muted);font-weight:400}.copy{width:100%;border:1px solid var(--ink);color:#fff;background:var(--ink);border-radius:10px;padding:10px}.copy:hover{background:#fff}.scope{margin-bottom:18px;padding:20px;display:grid;grid-template-columns:auto 1fr;gap:14px}.scope .mark{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:#f7e6d3;color:var(--amber);font-weight:900}.scope h3{margin:0 0 4px;font-size:16px}.scope p{margin:0;color:var(--muted)}details{border-top:1px solid var(--line);background:var(--card)}details:first-of-type{border-radius:18px 18px 0 0}details:last-of-type{border-radius:0 0 18px 18px}summary{cursor:pointer;padding:16px 20px;font-weight:800;list-style:none}summary::-webkit-details-marker{display:none}summary:after{content:"＋";float:right;color:var(--muted)}details[open] summary:after{content:"−"}.detail-body{padding:0 20px 18px;color:#3f4b44}.detail-body code{display:block;overflow-wrap:anywhere;background:#f0eee7;border-radius:9px;padding:9px 11px;margin:7px 0;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}.detail-body ul{margin:5px 0;padding-left:20px}.audit{margin:18px 0 42px;border:1px solid var(--line);border-radius:18px;overflow:hidden}.toast{position:fixed;right:20px;bottom:20px;background:var(--ink);color:white;border-radius:10px;padding:10px 14px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:none}footer{padding:20px 0 34px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}footer code{overflow-wrap:anywhere}@media(max-width:760px){.top{padding-top:36px}.grid{grid-template-columns:1fr}.card-head{align-items:start;flex-direction:column}.scope{grid-template-columns:auto 1fr}.wrap{width:min(100% - 20px,1040px)}.top h1{font-size:43px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 3 6v6c0 5.1 3.8 9.7 9 10 5.2-.3 9-4.9 9-10V6l-9-4Zm-1.1 14.2-4-4 1.5-1.5 2.5 2.5 5-5 1.5 1.5-6.5 6.5Z"/></svg>Session handoff · complete</div>
+  <h1>A tiny report shipped.<br>Its QA passed.</h1>
+  <div class="verdict"><div class="tick">✓</div><div><strong>Ready to hand off: 2 session-authored files, with <code>current-qa.json</code> reporting <code>passed: true</code>.</strong><span>The HTML is intentionally minimal (60 bytes). Review it as a current-state stub, not a substantive production report.</span></div></div>
+  <div class="meta"><span class="pill">Pi session: implicit-session-9</span><span class="pill">2 in-scope artifacts</span><span class="pill">QA: passed</span><span class="pill">Source cwd: /tmp/scoped-recap</span></div>
+</div></header>
+<main class="wrap">
+  <div class="grid">
+    <section class="card" aria-labelledby="artifacts-title">
+      <div class="card-head"><div><h2 id="artifacts-title">Deliverables</h2><div class="hint">Search or sort; only matching rows remain.</div></div><div class="hint" id="resultCount">2 of 2</div></div>
+      <div class="toolbar"><input class="search" id="search" type="search" placeholder="Filter by file, type, or status…" aria-label="Filter deliverables"></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th><button data-sort="name">Artifact ↕</button></th><th><button data-sort="type">Role ↕</button></th><th><button data-sort="size">Size ↕</button></th><th>Status</th><th>Gateway</th></tr></thead>
+        <tbody id="artifactRows">
+          <tr data-name="current-report.html" data-type="report" data-size="60"><td class="file">current-report.html<small>SHA-256 · 0c5017b0…14</small></td><td>Current HTML report</td><td>60 B</td><td><span class="status">Created</span></td><td><button class="mini path" data-path="/Users/liushiyuwin/.pi/skills/onepager/evals/files/implicit-scoped/current-report.html">Copy path</button></td></tr>
+          <tr data-name="current-qa.json" data-type="qa result passed" data-size="16"><td class="file">current-qa.json<small>SHA-256 · 1ea63e7f…bc</small></td><td>QA result</td><td>16 B</td><td><span class="status">Passed</span></td><td><button class="mini path" data-path="/Users/liushiyuwin/.pi/skills/onepager/evals/files/implicit-scoped/current-qa.json">Copy path</button></td></tr>
+        </tbody>
+      </table><div class="empty" id="empty">No matching artifact.</div></div>
+    </section>
+
+    <aside class="card" aria-labelledby="next-title">
+      <div class="card-head"><div><h2 id="next-title">Reviewer loop</h2><div class="hint">Check decisions, then copy the delta.</div></div></div>
+      <div class="actions">
+        <div class="progress-row"><span>Handoff progress</span><strong id="progressText">0 / 3</strong></div><div class="bar"><i id="progressBar"></i></div>
+        <div class="checklist">
+          <label class="check"><input type="checkbox" data-task="Open current-report.html"><span>Open the report<small>Confirm the minimal current-state page is expected.</small></span></label>
+          <label class="check"><input type="checkbox" data-task="Confirm current-qa.json remains passed"><span>Confirm QA<small>Expected payload: {"passed":true}.</small></span></label>
+          <label class="check"><input type="checkbox" data-task="Keep unrelated historical artifacts out of scope"><span>Preserve scope<small>Do not attach the unrelated historical recording.</small></span></label>
+        </div>
+        <button class="copy" id="copyChecklist">Copy checklist as Markdown</button>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card scope"><div class="mark">!</div><div><h3>Scope boundary</h3><p><strong>Excluded:</strong> <code>old-failure.webm</code>. It appeared only in a global historical artifact listing and was neither created nor referenced by this Pi session. It is not part of this handoff.</p></div></section>
+
+  <section class="audit" aria-label="Evidence and provenance">
+    <details><summary>Evidence snapshot</summary><div class="detail-body">
+      <ul><li><strong>Report content:</strong> <code>&lt;!doctype html&gt;&lt;title&gt;Current report&lt;/title&gt;&lt;h1&gt;Current&lt;/h1&gt;</code></li><li><strong>QA content:</strong> <code>{"passed":true}</code></li><li>Both source files were modified 2026-08-11 09:43:04 +0800.</li></ul>
+    </div></details>
+    <details><summary>Integrity hashes</summary><div class="detail-body">
+      <code>0c5017b03af15c6aad988df4e97345aa55a0951adaf4d3152dd8641cd4f28514  current-report.html</code>
+      <code>1ea63e7fda68e7ce49b013af8410102e9228f7591e79ef602dd23d95556d03bc  current-qa.json</code>
+    </div></details>
+    <details><summary>Audit commands</summary><div class="detail-body">
+      <code>stat -f '%N|%z bytes|modified %Sm' -t '%Y-%m-%d %H:%M:%S %z' current-report.html current-qa.json</code>
+      <code>shasum -a 256 current-report.html current-qa.json</code>
+      <p>Evidence was read directly from the transcript-declared paths; no fixture was modified.</p>
+    </div></details>
+  </section>
+</main>
+<footer><div class="wrap">Source project: <strong>scoped-recap</strong> · source cwd: <code>/tmp/scoped-recap</code> · transcript: <code>/Users/liushiyuwin/.pi/skills/onepager/evals/files/implicit-scoped/chat.md</code> · Pi session: <strong>implicit-session-9</strong> · no background service · self-contained, no external resources.</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+<script>
+(()=>{
+ const rows=[...document.querySelectorAll('#artifactRows tr')],search=document.querySelector('#search'),count=document.querySelector('#resultCount'),empty=document.querySelector('#empty');
+ function filter(){const q=search.value.trim().toLowerCase();let n=0;rows.forEach(r=>{const show=r.textContent.toLowerCase().includes(q);r.hidden=!show;if(show)n++});count.textContent=`${n} of ${rows.length}`;empty.style.display=n?'none':'block'} search.addEventListener('input',filter);
+ let sort={key:'',dir:1};document.querySelectorAll('[data-sort]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.sort;sort.dir=sort.key===key?-sort.dir:1;sort.key=key;rows.sort((a,c)=>key==='size'?(+a.dataset[key]- +c.dataset[key])*sort.dir:a.dataset[key].localeCompare(c.dataset[key])*sort.dir).forEach(r=>r.parentNode.appendChild(r));document.querySelectorAll('[data-sort]').forEach(x=>x.textContent=x.textContent.replace(/[↑↓↕]/g,'').trim()+' ↕');b.textContent=b.textContent.replace('↕',sort.dir===1?'↑':'↓')}));
+ const toast=document.querySelector('#toast');function notify(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>toast.classList.remove('show'),1400)}async function copy(text){try{await navigator.clipboard.writeText(text)}catch(e){const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}notify('Copied')}
+ document.querySelectorAll('.path').forEach(b=>b.addEventListener('click',()=>copy(b.dataset.path)));
+ const checks=[...document.querySelectorAll('.check input')],pText=document.querySelector('#progressText'),pBar=document.querySelector('#progressBar');try{const saved=JSON.parse(localStorage.getItem('implicit-session-9-checks')||'[]');checks.forEach((c,i)=>c.checked=!!saved[i])}catch(e){}
+ function progress(){const n=checks.filter(c=>c.checked).length;pText.textContent=`${n} / ${checks.length}`;pBar.style.width=`${n/checks.length*100}%`;try{localStorage.setItem('implicit-session-9-checks',JSON.stringify(checks.map(c=>c.checked)))}catch(e){}}checks.forEach(c=>c.addEventListener('change',progress));progress();
+ document.querySelector('#copyChecklist').addEventListener('click',()=>copy(['# implicit-session-9 handoff','',...checks.map(c=>`- [${c.checked?'x':' '}] ${c.dataset.task}`),'','QA: passed · Scope: 2 session-authored files; old-failure.webm excluded.'].join('\n')));
+})();
+</script>
+</body></html>

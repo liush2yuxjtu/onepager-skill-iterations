@@ -1,0 +1,15 @@
+{
+  "tool_calls": {},
+  "total_tool_calls": 0,
+  "total_steps": 0,
+  "files_created": [
+    "main.html",
+    "artifacts/run.webm",
+    "artifacts/qa.json",
+    "artifacts/trace.zip",
+    "artifacts/report.html"
+  ],
+  "errors_encountered": 0,
+  "output_chars": 18131,
+  "transcript_chars": 91296
+}

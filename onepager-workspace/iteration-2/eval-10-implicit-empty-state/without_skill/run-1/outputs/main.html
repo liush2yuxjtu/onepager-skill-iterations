@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Parser failure · session recap</title>
+  <style>
+    :root{--bg:#f4f1ea;--paper:#fffdf8;--ink:#20231f;--muted:#6b7168;--line:#dcd8cd;--accent:#c6512c;--accent-soft:#f7dfd5;--ok:#34715a;--shadow:0 18px 50px rgba(39,34,25,.08)}
+    *{box-sizing:border-box}html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+    body{margin:0;min-height:100vh;background:radial-gradient(circle at 85% 5%,rgba(198,81,44,.11),transparent 28rem),var(--bg)}
+    main{width:min(760px,calc(100% - 32px));margin:0 auto;padding:64px 0 36px}
+    .eyebrow{display:flex;align-items:center;gap:9px;color:var(--accent);font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.09em;text-transform:uppercase}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px var(--accent-soft)}
+    h1{max-width:670px;margin:18px 0 12px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,8vw,66px);line-height:.98;letter-spacing:-.045em;font-weight:600}
+    .verdict{margin:0 0 32px;max-width:640px;color:var(--muted);font-size:clamp(17px,2.7vw,21px);line-height:1.5}.verdict strong{color:var(--ink)}
+    .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.card{background:color-mix(in srgb,var(--paper) 94%,transparent);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+    .label{margin:0 0 10px;color:var(--muted);font:700 11px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase}.cause{margin:0;font-size:23px;font-weight:700;letter-spacing:-.025em}.empty{display:flex;align-items:flex-start;gap:12px}.empty svg{flex:0 0 auto;color:var(--ok)}.empty strong{display:block;font-size:17px}.empty span{display:block;margin-top:4px;color:var(--muted);font-size:14px;line-height:1.4}
+    .actions{margin-top:14px}.action-head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:10px}.action-head .label{margin:0}.count{color:var(--muted);font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace}.track{height:5px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:10px}.fill{width:0;height:100%;background:var(--ok);transition:width .25s ease}
+    .task{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-top:1px solid var(--line);cursor:pointer}.task:first-of-type{border-top:0}.task input{margin:3px 0 0;accent-color:var(--ok);width:16px;height:16px}.task span{line-height:1.45}.task input:checked+span{text-decoration:line-through;color:var(--muted)}
+    .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}button{appearance:none;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:9px 12px;font:700 13px inherit;cursor:pointer;transition:.15s ease}button:hover{border-color:var(--accent);transform:translateY(-1px)}button.primary{background:var(--ink);border-color:var(--ink);color:var(--paper)}button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 40%,transparent);outline-offset:2px}
+    details{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--paper) 80%,transparent)}summary{padding:15px 18px;cursor:pointer;font-weight:700;list-style:none}summary::-webkit-details-marker{display:none}summary:after{content:"＋";float:right;color:var(--muted)}details[open] summary:after{content:"−"}.evidence{padding:0 18px 18px}.quote{margin:0;padding:14px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}.meta{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;margin:16px 0 0;font-size:13px}.meta dt{color:var(--muted)}.meta dd{margin:0;overflow-wrap:anywhere}
+    footer{margin-top:24px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.6;overflow-wrap:anywhere}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:10px;font-size:13px;box-shadow:var(--shadow);transition:.2s ease}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:620px){main{padding-top:42px}.grid{grid-template-columns:1fr}.card{padding:18px}h1{font-size:42px}.verdict{font-size:17px}}
+    @media(prefers-color-scheme:dark){:root{--bg:#191b18;--paper:#22251f;--ink:#f1eee5;--muted:#a9ada2;--line:#3b3f37;--accent:#ef815c;--accent-soft:#44291f;--ok:#75b99e;--shadow:0 18px 50px rgba(0,0,0,.2)}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Session recap · implicit-session-10</div>
+      <h1>The delimiter was invalid.</h1>
+      <p class="verdict"><strong>That is the recorded root cause of the parser failure.</strong> The attempt produced no files or external artifacts.</p>
+    </header>
+
+    <section class="grid" aria-label="Key findings">
+      <article class="card">
+        <p class="label">Root cause</p>
+        <p class="cause">Invalid delimiter</p>
+      </article>
+      <article class="card empty">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7.5h5l1.5 2H20v8.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7.5Z" stroke="currentColor" stroke-width="1.7"/><path d="m9 14 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><strong>No artifacts</strong><span>Nothing was generated, so there are no output links to review.</span></div>
+      </article>
+    </section>
+
+    <section class="card actions" aria-labelledby="next-title">
+      <div class="action-head"><p class="label" id="next-title">Next pass</p><span class="count" id="count">0 / 2 done</span></div>
+      <div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div>
+      <label class="task"><input type="checkbox" data-task><span>Replace or correct the invalid delimiter.</span></label>
+      <label class="task"><input type="checkbox" data-task><span>Rerun the parser and inspect its output.</span></label>
+      <div class="toolbar">
+        <button class="primary" id="copyRecap" type="button">Copy recap</button>
+        <button id="copyActions" type="button">Copy action list</button>
+      </div>
+    </section>
+
+    <details>
+      <summary>Evidence &amp; provenance</summary>
+      <div class="evidence">
+        <p class="quote">“Root cause was an invalid delimiter; no files or external artifacts were generated.”</p>
+        <dl class="meta">
+          <dt>Session</dt><dd>implicit-session-10</dd>
+          <dt>Working directory</dt><dd>/tmp/no-artifacts</dd>
+          <dt>Timestamp</dt><dd>Not provided in transcript</dd>
+        </dl>
+      </div>
+    </details>
+
+    <footer>
+      Source: Pi session transcript · /Users/liushiyuwin/.pi/skills/onepager/evals/files/implicit-empty/chat.md<br>
+      Scope: concise recap only; no parser configuration or delimiter value was present in the source.
+    </footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const tasks=[...document.querySelectorAll('[data-task]')];
+    const stateKey='recap:implicit-session-10:tasks';
+    try{const saved=JSON.parse(localStorage.getItem(stateKey)||'[]');tasks.forEach((t,i)=>t.checked=!!saved[i])}catch(e){}
+    function update(){const done=tasks.filter(t=>t.checked).length;document.getElementById('count').textContent=`${done} / ${tasks.length} done`;document.getElementById('fill').style.width=`${done/tasks.length*100}%`;try{localStorage.setItem(stateKey,JSON.stringify(tasks.map(t=>t.checked)))}catch(e){}}
+    tasks.forEach(t=>t.addEventListener('change',update));update();
+    const toast=document.getElementById('toast');let toastTimer;
+    function notify(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),1800)}
+    async function copy(text,message){try{await navigator.clipboard.writeText(text)}catch(e){const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();document.execCommand('copy');area.remove()}notify(message)}
+    document.getElementById('copyRecap').addEventListener('click',()=>copy('# Parser failure recap\n\n**Root cause:** Invalid delimiter.\n\n**Output:** No files or external artifacts were generated.\n\n**Session:** `implicit-session-10`','Recap copied'));
+    document.getElementById('copyActions').addEventListener('click',()=>copy(tasks.map((t,i)=>`- [${t.checked?'x':' '}] ${t.nextElementSibling.textContent}`).join('\n'),'Action list copied'));
+  </script>
+</body>
+</html>

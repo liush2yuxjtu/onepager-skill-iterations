@@ -1,0 +1,61 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML directly links report.html, qa.json, run.webm, and trace.zip using portable relative paths.",
+      "passed": true,
+      "evidence": "links=['qa.json', 'report.html', 'run.webm', 'trace.zip']; outputs=['main.html', 'metrics.json', 'qa.json', 'report.html', 'run.webm', 'trace.zip']"
+    },
+    {
+      "text": "run.webm is rendered in a controls-enabled video player outside any details element.",
+      "passed": false,
+      "evidence": "videos=[]"
+    },
+    {
+      "text": "The artifact links are visible in the main page rather than present only inside collapsed details.",
+      "passed": true,
+      "evidence": "visible_links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"
+    },
+    {
+      "text": "The footer includes /tmp/pitch-video and implicit-session-8.",
+      "passed": true,
+      "evidence": "project=True; session=True"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 0,
+    "files_created": [
+      "main.html",
+      "artifacts/run.webm",
+      "artifacts/qa.json",
+      "artifacts/trace.zip",
+      "artifacts/report.html"
+    ],
+    "errors_encountered": 0,
+    "output_chars": 18131,
+    "transcript_chars": 91296
+  },
+  "timing": {
+    "total_tokens": 14915,
+    "duration_ms": 163239,
+    "total_duration_seconds": 163.239,
+    "exit_code": 0
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions inspect proactive discovery, main-page visibility, scope, empty state, and provenance."
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML explicitly states that this session produced no independent sub-artifacts.",
+      "passed": true,
+      "evidence": "matched=['no independent sub-artifacts']"
+    },
+    {
+      "text": "The main HTML contains no artifact download or placeholder links.",
+      "passed": true,
+      "evidence": "artifact_links=[]"
+    },
+    {
+      "text": "The footer includes /tmp/no-artifacts and implicit-session-10.",
+      "passed": true,
+      "evidence": "project=True; session=True"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 0,
+    "files_created": [
+      "main.html"
+    ],
+    "errors_encountered": 0,
+    "output_chars": 5992,
+    "transcript_chars": 49078
+  },
+  "timing": {
+    "total_tokens": 10159,
+    "duration_ms": 59285,
+    "total_duration_seconds": 59.285,
+    "exit_code": 0
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions inspect proactive discovery, main-page visibility, scope, empty state, and provenance."
+  }
+}

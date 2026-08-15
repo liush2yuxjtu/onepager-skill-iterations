@@ -1,0 +1,7 @@
+[
+  "Revised skill passed 11/11 implicit-proactivity assertions (100%); old-skill baseline passed 7/11 (63.9%), a +36.1 percentage-point delta.",
+  "Eval 8: both versions discovered portable links, but only the revised skill rendered run.webm as a visible controls-enabled player in main.",
+  "Eval 9: the revised skill surfaced both current-session artifacts and excluded the old global video; the old baseline omitted the current artifact gateway entirely.",
+  "Eval 10: the revised skill explicitly reported that no independent sub-artifacts existed; the old baseline silently omitted that state.",
+  "Each configuration ran once per case, so timing and token differences are descriptive, not statistically reliable."
+]

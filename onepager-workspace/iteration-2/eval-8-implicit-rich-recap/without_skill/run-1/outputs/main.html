@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Session recap · UAT passed</title>
+<style>
+:root{--ink:#18201d;--muted:#66706b;--paper:#f4f1e9;--card:#fffdf8;--line:#d9d5ca;--green:#176b50;--green2:#dceee5;--amber:#bd7135;--blue:#315d80;--shadow:0 14px 40px rgba(37,43,39,.08);color-scheme:light}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button,a{touch-action:manipulation}a{color:inherit}.shell{width:min(1100px,calc(100% - 32px));margin:auto}.topbar{height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(24,32,29,.12)}.brand{display:flex;align-items:center;gap:10px;font-weight:760;letter-spacing:-.02em}.mark{width:25px;height:25px}.session{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);background:rgba(255,255,255,.5);padding:5px 9px;border:1px solid var(--line);border-radius:99px}.hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.6fr);gap:44px;padding:64px 0 38px;align-items:end}.eyebrow{display:flex;align-items:center;gap:8px;color:var(--green);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.pulse{width:8px;height:8px;border-radius:50%;background:#29a673;box-shadow:0 0 0 5px rgba(41,166,115,.13)}h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(42px,7vw,74px);line-height:.96;letter-spacing:-.055em;margin:16px 0 22px;max-width:780px}.lead{font-size:18px;line-height:1.5;max-width:680px;margin:0;color:#38413d}.hero-actions{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}.btn{border:1px solid var(--ink);border-radius:8px;padding:10px 14px;background:transparent;text-decoration:none;font-weight:720;cursor:pointer;display:inline-flex;align-items:center;gap:8px}.btn.primary{background:var(--ink);color:#fff}.btn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(24,32,29,.12)}.verdict{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:23px;box-shadow:var(--shadow)}.verdict .stamp{display:inline-flex;gap:7px;align-items:center;background:var(--green2);color:var(--green);border-radius:99px;padding:5px 9px;font-size:12px;font-weight:850}.verdict strong{display:block;font:700 28px/1.1 Georgia,serif;margin:20px 0 8px}.verdict p{margin:0;color:var(--muted)}.facts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:60px}.fact{padding:24px 0}.fact+.fact{padding-left:28px;border-left:1px solid var(--line)}.fact b{font:700 27px/1 Georgia,serif;display:block}.fact span{color:var(--muted);font-size:13px}.section{margin:0 0 64px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:20px}.kicker{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--amber);font-weight:850}.section h2{font:700 30px/1.1 Georgia,serif;letter-spacing:-.025em;margin:5px 0 0}.hint{font-size:13px;color:var(--muted);margin:0}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.step{position:relative;min-height:160px;background:rgba(255,253,248,.68);border:1px solid var(--line);border-radius:13px;padding:18px}.step:not(:last-child):after{content:"→";position:absolute;right:-12px;top:25px;z-index:2;color:var(--amber);background:var(--paper);width:22px;text-align:center}.num{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--amber)}.step h3{font-size:16px;line-height:1.25;margin:30px 0 8px}.step p{font-size:13px;color:var(--muted);margin:0}.toolbar{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.search{position:relative;flex:1;max-width:430px}.search svg{position:absolute;left:12px;top:12px;color:var(--muted)}.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 12px 10px 38px;color:var(--ink);outline:none}.search input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(23,107,80,.1)}.count{align-self:center;color:var(--muted);font-size:13px}.table-wrap{overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}table{width:100%;border-collapse:collapse;min-width:700px}th{text-align:left;padding:13px 17px;background:#eeece5;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;cursor:pointer;user-select:none}th:hover{color:var(--ink)}td{padding:16px 17px;border-top:1px solid var(--line);vertical-align:middle}.type{font-size:12px;background:#efede6;border-radius:5px;padding:3px 6px}.status{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:760;font-size:13px}.status:before{content:"";width:7px;height:7px;background:#2aa673;border-radius:50%}.open{font-weight:760;color:var(--blue);text-decoration:none;white-space:nowrap}.open:hover{text-decoration:underline}.muted{color:var(--muted);font-size:13px}.empty{padding:28px;text-align:center;color:var(--muted);display:none}.review{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}.progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}.progress-row strong{font-size:13px}.track{height:7px;background:#e8e5dd;border-radius:99px;overflow:hidden;margin-bottom:18px}.fill{height:100%;width:0;background:var(--green);transition:width .25s}.check{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--line);cursor:pointer}.check:first-of-type{border-top:0}.check input{accent-color:var(--green);width:17px;height:17px;margin-top:3px}.check span{font-weight:650}.check small{display:block;color:var(--muted);font-weight:400}.panel .btn{margin-top:16px;width:100%;justify-content:center}.callout{display:flex;flex-direction:column;justify-content:space-between;background:var(--ink);color:#fff}.callout h3{font:700 26px/1.12 Georgia,serif;margin:0 0 10px}.callout p{margin:0;color:#c7cfcb}.callout .btn{border-color:#77807c;color:#fff}.copied{font-size:12px;color:#a9dfc9;height:18px;margin-top:6px}.audit details{background:rgba(255,253,248,.75);border:1px solid var(--line);border-radius:10px;margin-top:9px}.audit summary{cursor:pointer;padding:14px 16px;font-weight:730}.audit .detail-body{border-top:1px solid var(--line);padding:14px 16px;color:var(--muted);font-size:13px}.audit code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);word-break:break-all}.quote{border-left:3px solid var(--amber);padding-left:12px;margin:5px 0}.footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--muted);font-size:12px;display:grid;grid-template-columns:1fr auto;gap:16px}.footer code{word-break:break-all}.no-results{display:none}.sort-arrow{color:var(--green);margin-left:3px}@media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:40px;gap:24px}.facts{grid-template-columns:1fr}.fact+.fact{padding-left:0;border-left:0;border-top:1px solid var(--line)}.flow{grid-template-columns:1fr 1fr}.step:nth-child(2):after{display:none}.review{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column}.footer{grid-template-columns:1fr}.session{display:none}}@media(max-width:460px){.shell{width:min(100% - 22px,1100px)}.flow{grid-template-columns:1fr}.step:not(:last-child):after{display:none}.toolbar{align-items:stretch;flex-direction:column}.hero-actions .btn{width:100%;justify-content:center}}
+</style>
+</head>
+<body>
+<header class="shell topbar">
+  <div class="brand"><svg class="mark" viewBox="0 0 28 28" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="8" fill="#18201d"/><path d="M8 14.2l3.7 3.7L20 9.7" fill="none" stroke="#b6e2ce" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Pi session recap</div>
+  <div class="session">implicit-session-8</div>
+</header>
+<main class="shell">
+  <section class="hero">
+    <div>
+      <div class="eyebrow"><span class="pulse"></span>Completed · QA passed</div>
+      <h1>Fresh UAT passed. Evidence is ready.</h1>
+      <p class="lead">The session produced a final HTML report, confirmed a clean QA result, recorded a 415-second fresh run, and saved its Playwright trace.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="artifacts/report.html">Open final report <span aria-hidden="true">↗</span></a>
+        <button class="btn" id="copyBriefTop" type="button">Copy recap</button>
+      </div>
+    </div>
+    <aside class="verdict" aria-label="Session verdict">
+      <span class="stamp">✓ VERIFIED OUTCOME</span>
+      <strong>UAT: PASS</strong>
+      <p><code>qa.json</code> reports <b>passed=true</b> with zero errors.</p>
+    </aside>
+  </section>
+
+  <section class="facts" aria-label="Key session facts">
+    <div class="fact"><b>4</b><span>deliverables preserved</span></div>
+    <div class="fact"><b>6m 55s</b><span>fresh run duration (415 seconds)</span></div>
+    <div class="fact"><b>0</b><span>QA errors reported</span></div>
+  </section>
+
+  <section class="section" aria-labelledby="storyTitle">
+    <div class="section-head"><div><div class="kicker">What happened</div><h2 id="storyTitle">A four-step delivery trail</h2></div><p class="hint">Ordered exactly as recorded in the transcript.</p></div>
+    <div class="flow">
+      <article class="step"><span class="num">01</span><h3>Report created</h3><p>The assistant wrote the final illustrated UAT report.</p></article>
+      <article class="step"><span class="num">02</span><h3>QA checked</h3><p>The machine-readable result returned <b>passed=true</b>.</p></article>
+      <article class="step"><span class="num">03</span><h3>Fresh run recorded</h3><p>A 415-second browser run was saved as WebM.</p></article>
+      <article class="step"><span class="num">04</span><h3>Trace preserved</h3><p>The Playwright trace was retained for debugging.</p></article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="artifactTitle">
+    <div class="section-head"><div><div class="kicker">Evidence</div><h2 id="artifactTitle">Artifact index</h2></div><p class="hint">Search or sort; open only what you need.</p></div>
+    <div class="toolbar">
+      <label class="search"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M12.5 12.5L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="search" type="search" placeholder="Find report, QA, recording, trace…" aria-label="Search artifacts"></label>
+      <span class="count" id="count">4 artifacts</span>
+    </div>
+    <div class="table-wrap">
+      <table id="artifactTable">
+        <thead><tr><th data-key="name">Artifact</th><th data-key="type">Type</th><th data-key="purpose">Purpose</th><th data-key="status">Status</th><th>Open</th></tr></thead>
+        <tbody>
+          <tr data-name="Final report" data-type="HTML" data-purpose="UAT result" data-status="Ready"><td><b>Final report</b><div class="muted">report.html · 65 B</div></td><td><span class="type">HTML</span></td><td>UAT result</td><td><span class="status">Ready</span></td><td><a class="open" href="artifacts/report.html">View ↗</a></td></tr>
+          <tr data-name="QA result" data-type="JSON" data-purpose="Pass/fail evidence" data-status="Passed"><td><b>QA result</b><div class="muted">qa.json · 28 B</div></td><td><span class="type">JSON</span></td><td>Pass/fail evidence</td><td><span class="status">Passed</span></td><td><a class="open" href="artifacts/qa.json">Inspect ↗</a></td></tr>
+          <tr data-name="Fresh run" data-type="WebM" data-purpose="415-second recording" data-status="Saved"><td><b>Fresh run</b><div class="muted">run.webm · 23 B</div></td><td><span class="type">WEBM</span></td><td>415-second recording</td><td><span class="status">Saved</span></td><td><a class="open" href="artifacts/run.webm">Play ↗</a></td></tr>
+          <tr data-name="Playwright trace" data-type="ZIP" data-purpose="Debug evidence" data-status="Saved"><td><b>Playwright trace</b><div class="muted">trace.zip · 121 B</div></td><td><span class="type">ZIP</span></td><td>Debug evidence</td><td><span class="status">Saved</span></td><td><a class="open" href="artifacts/trace.zip" download>Download ↓</a></td></tr>
+        </tbody>
+      </table>
+      <div class="empty" id="empty">No matching artifact. Try a broader term.</div>
+    </div>
+  </section>
+
+  <section class="section review" aria-label="Review handoff">
+    <div class="panel">
+      <div class="progress-row"><strong>Optional review checklist</strong><span class="muted" id="progressText">0 / 3</span></div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+      <label class="check"><input type="checkbox" data-task="Review the final UAT report"><span>Review the report<small>Confirm the final rendered outcome.</small></span></label>
+      <label class="check"><input type="checkbox" data-task="Replay the 415-second fresh run"><span>Replay the run<small>Use the recording for visual confirmation.</small></span></label>
+      <label class="check"><input type="checkbox" data-task="Inspect the Playwright trace if debugging is needed"><span>Inspect trace if needed<small>Only necessary when investigating behavior.</small></span></label>
+      <button class="btn" id="copyChecklist" type="button">Copy checklist as Markdown</button>
+      <div class="copied" id="copyState" role="status"></div>
+    </div>
+    <div class="panel callout">
+      <div><div class="kicker" style="color:#a9dfc9">Recommended handoff</div><h3>No blocker is recorded.</h3><p>Accept the PASS result; open deeper evidence only if review or debugging calls for it.</p></div>
+      <button class="btn" id="copyBrief" type="button">Copy session brief</button>
+    </div>
+  </section>
+
+  <section class="section audit" aria-labelledby="auditTitle">
+    <div class="section-head"><div><div class="kicker">Audit trail</div><h2 id="auditTitle">Provenance, on demand</h2></div><p class="hint">Original evidence stays behind a narrow gate.</p></div>
+    <details><summary>Transcript claims</summary><div class="detail-body"><p class="quote">“Final illustrated UAT report created.”</p><p class="quote">“qa.json passed=true”</p><p class="quote">“recorded 415-second fresh run”</p><p class="quote">“Playwright trace saved”</p></div></details>
+    <details><summary>Source paths</summary><div class="detail-body">Transcript: <code>/Users/liushiyuwin/.pi/skills/onepager/evals/files/implicit-rich/chat.md</code><br>Session working directory: <code>/tmp/pitch-video</code><br>Evidence source directory: <code>/Users/liushiyuwin/.pi/skills/onepager/evals/files/implicit-rich/</code></div></details>
+    <details><summary>Scope and caveats</summary><div class="detail-body">This recap reports only facts present in the supplied transcript and QA file. Per-event timestamps were not recorded. Artifact sizes shown are the preserved local fixture sizes; no additional claims about their media contents are made.</div></details>
+  </section>
+</main>
+<footer class="shell footer"><div>Source: Pi session transcript · <code>implicit-session-8</code></div><div>Portable offline bundle · no CDN or external assets</div></footer>
+<script>
+(()=>{
+  const rows=[...document.querySelectorAll('#artifactTable tbody tr')], search=document.querySelector('#search'), count=document.querySelector('#count'), empty=document.querySelector('#empty');
+  function filter(){const q=search.value.trim().toLowerCase();let n=0;rows.forEach(r=>{const yes=!q||r.innerText.toLowerCase().includes(q);r.style.display=yes?'':'none';if(yes)n++});count.textContent=n+' artifact'+(n===1?'':'s');empty.style.display=n?'none':'block'}
+  search.addEventListener('input',filter);
+  let sort={key:'',dir:1};document.querySelectorAll('th[data-key]').forEach(th=>th.addEventListener('click',()=>{const key=th.dataset.key;sort.dir=sort.key===key?-sort.dir:1;sort.key=key;document.querySelectorAll('.sort-arrow').forEach(x=>x.remove());const a=document.createElement('span');a.className='sort-arrow';a.textContent=sort.dir===1?'↑':'↓';th.appendChild(a);rows.sort((x,y)=>x.dataset[key].localeCompare(y.dataset[key])*sort.dir).forEach(r=>r.parentNode.appendChild(r));filter()}));
+  const checks=[...document.querySelectorAll('.check input')], fill=document.querySelector('#fill'), progress=document.querySelector('#progressText'), state=document.querySelector('#copyState');
+  function update(){const n=checks.filter(x=>x.checked).length;progress.textContent=n+' / '+checks.length;fill.style.width=(n/checks.length*100)+'%'}checks.forEach(x=>x.addEventListener('change',update));
+  const brief='# Session recap — implicit-session-8\n\n- Outcome: Fresh UAT PASS\n- QA: passed=true; 0 errors\n- Fresh run: 415 seconds (6m 55s)\n- Deliverables: report.html, qa.json, run.webm, trace.zip\n- Blockers: none recorded';
+  async function copy(text,msg){try{await navigator.clipboard.writeText(text)}catch(e){const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}state.textContent=msg;setTimeout(()=>state.textContent='',1800)}
+  document.querySelector('#copyBrief').addEventListener('click',()=>copy(brief,'Session brief copied.'));document.querySelector('#copyBriefTop').addEventListener('click',()=>copy(brief,'Session brief copied.'));
+  document.querySelector('#copyChecklist').addEventListener('click',()=>copy(checks.map(x=>'- ['+(x.checked?'x':' ')+'] '+x.dataset.task).join('\n'),'Checklist copied.'));
+})();
+</script>
+</body>
+</html>
