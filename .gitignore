@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+*.pyc
+.ruff_cache/
+# 原始 agent 会话日志（单文件可达 100MB+，超出 Git/GitHub 单文件上限，不入库）
+*.jsonl
