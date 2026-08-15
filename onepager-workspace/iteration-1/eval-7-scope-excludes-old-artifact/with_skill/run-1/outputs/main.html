@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>eval-session-7 · 会话交接</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#121a2d;--panel2:#172238;--text:#eef4ff;--muted:#9baac2;--line:#2a3852;--cyan:#67e8f9;--green:#62e6a7;--amber:#f8c76a;--shadow:0 18px 50px #02061166}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:radial-gradient(circle at 90% 0,#173154 0,transparent 28rem),var(--bg);color:var(--text);font:15px/1.6 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    a{color:var(--cyan);text-underline-offset:3px} button,input{font:inherit} button{cursor:pointer}
+    .shell{width:min(980px,calc(100% - 32px));margin:auto;padding:58px 0 36px}
+    .eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+    h1{font-size:clamp(32px,7vw,62px);line-height:1.02;letter-spacing:-.045em;margin:10px 0 18px;max-width:800px}
+    .verdict{display:grid;grid-template-columns:auto 1fr;gap:13px;align-items:start;padding:17px 18px;background:#10253a;border:1px solid #265774;border-radius:16px;box-shadow:var(--shadow);font-size:17px}
+    .mark{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#062217;font-weight:900}
+    .verdict strong{color:var(--green)} .sub{color:var(--muted);margin:4px 0 0}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 34px}
+    .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}.stat b{display:block;font-size:24px}.stat span{color:var(--muted);font-size:12px}
+    section{margin-top:34px} .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:13px} h2{font-size:20px;margin:0}.hint{color:var(--muted);font-size:13px}
+    .toolbar{display:flex;gap:10px;margin-bottom:10px}.search{width:100%;padding:11px 13px;border-radius:11px;background:#0d1526;border:1px solid var(--line);color:var(--text);outline:none}.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #67e8f91a}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow)}table{width:100%;border-collapse:collapse;min-width:620px}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted);background:#0e1729}th button{padding:0;border:0;background:none;color:inherit;font-weight:700}tr:last-child td{border-bottom:0}.type{display:inline-block;padding:3px 8px;border:1px solid #3b526f;border-radius:999px;color:#c9d8ed;font-size:11px}.artifact-name{font-weight:800}.purpose{color:var(--muted);font-size:13px}.open{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:9px;background:var(--cyan);color:#06202b;text-decoration:none;font-weight:800;white-space:nowrap}.empty{display:none;padding:26px;text-align:center;color:var(--muted)}
+    details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:0 16px;margin-top:10px}summary{cursor:pointer;padding:14px 0;font-weight:750}details[open] summary{border-bottom:1px solid var(--line)}.detail-body{padding:14px 0}.json{margin:0;background:#09101e;border:1px solid #25334b;border-radius:10px;padding:13px;overflow:auto;color:#c9f7df}.audit{display:grid;grid-template-columns:150px 1fr;gap:8px 16px;margin:0}.audit dt{color:var(--muted)}.audit dd{margin:0;word-break:break-word}.good{color:var(--green)}.warn{color:var(--amber)}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em}
+    .actions{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}.progress-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}.track{height:8px;flex:1;border-radius:9px;background:#26344c;overflow:hidden}.fill{width:0;height:100%;background:var(--green);transition:width .2s}.count{color:var(--muted);font-size:12px;white-space:nowrap}.check{display:flex;gap:10px;align-items:flex-start;padding:10px 0}.check input{accent-color:var(--green);margin-top:5px}.check small{display:block;color:var(--muted)}.copy{margin-top:13px;border:1px solid #3e5977;background:#172841;color:var(--text);border-radius:10px;padding:9px 13px;font-weight:750}.copy:hover{border-color:var(--cyan)}
+    footer{border-top:1px solid var(--line);margin-top:42px;padding-top:20px;color:var(--muted);font-size:12px}.foot-grid{display:grid;grid-template-columns:110px 1fr;gap:6px 12px}.foot-grid b{color:#cad5e6}.foot-grid span{word-break:break-all}
+    .toast{position:fixed;right:18px;bottom:18px;background:#e7fff4;color:#08291c;padding:10px 14px;border-radius:10px;font-weight:800;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:none}
+    @media(max-width:640px){.shell{width:min(100% - 22px,980px);padding-top:34px}.stats{grid-template-columns:1fr}.section-head{display:block}.hint{margin-top:4px}.audit{grid-template-columns:1fr;gap:2px}.audit dd{margin-bottom:8px}.verdict{font-size:15px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="eyebrow">Session handoff · eval-session-7</div>
+      <h1>范围清楚，QA 已通过。</h1>
+      <div class="verdict">
+        <span class="mark" aria-hidden="true">✓</span>
+        <div><strong>本次会话唯一有归属证据的产物是 qa.json，结果 passed。</strong><p class="sub">旧会话视频未纳入；交付包只复制了当前会话所需文件。</p></div>
+      </div>
+      <div class="stats" aria-label="交接摘要">
+        <div class="stat"><b>1</b><span>已归集会话产物</span></div>
+        <div class="stat"><b>0</b><span>QA errors</span></div>
+        <div class="stat"><b>28 B</b><span>便携附件体积</span></div>
+      </div>
+    </header>
+
+    <section aria-labelledby="artifacts-title">
+      <div class="section-head"><h2 id="artifacts-title">会话产物</h2><span class="hint">搜索或排序，只取所需信息</span></div>
+      <div class="toolbar"><input id="search" class="search" type="search" placeholder="搜索名称、类型或用途…" aria-label="搜索会话产物"></div>
+      <div class="table-wrap">
+        <table id="artifactTable">
+          <thead><tr><th><button data-key="name">名称 ↕</button></th><th><button data-key="type">类型 ↕</button></th><th><button data-key="size">大小 ↕</button></th><th>操作</th></tr></thead>
+          <tbody><tr data-name="qa.json" data-type="json" data-size="28"><td><div class="artifact-name">qa.json</div><div class="purpose">当前会话确认的 QA 结果</div></td><td><span class="type">JSON</span></td><td>28 B</td><td><a class="open" href="qa.json" download>打开 / 下载 →</a></td></tr></tbody>
+        </table>
+        <div id="empty" class="empty">没有匹配的会话产物。</div>
+      </div>
+      <details>
+        <summary>查看 QA 最小证据</summary>
+        <div class="detail-body"><pre class="json"><code>{"passed":true,"errors":[]}</code></pre></div>
+      </details>
+      <details>
+        <summary>查看归集边界与审计</summary>
+        <div class="detail-body">
+          <dl class="audit">
+            <dt>纳入依据</dt><dd>当前聊天明确确认 <code>qa.json</code></dd>
+            <dt>完整性</dt><dd><span class="good">SHA-256</span> <code>012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500</code></dd>
+            <dt>排除项</dt><dd><span class="warn">failure.webm</span>：目录中存在，但聊天未将其归属当前会话；未复制、未链接、未嵌入。</dd>
+            <dt>项目检查</dt><dd><code>/tmp/scoped-handoff</code> 在采集时不存在；保留为来源项目标识，不据此推断额外产物。</dd>
+            <dt>采集时间</dt><dd>2026-08-11T09:27:10+0800</dd>
+            <dt>采集方法</dt><dd><code>read qa.json</code>；<code>stat</code> 两个明确输入；<code>test -d /tmp/scoped-handoff</code>；<code>shasum -a 256 qa.json</code></dd>
+          </dl>
+        </div>
+      </details>
+    </section>
+
+    <section aria-labelledby="actions-title">
+      <div class="section-head"><h2 id="actions-title">接手清单</h2><span class="hint">状态仅保存在本机浏览器</span></div>
+      <div class="actions">
+        <div class="progress-row"><div class="track" aria-hidden="true"><div id="fill" class="fill"></div></div><span id="count" class="count">0 / 2</span></div>
+        <label class="check"><input type="checkbox" data-action="确认 qa.json：passed=true，errors=[]"><span>确认 QA 结果<small>读取 qa.json，确认 passed=true 且 errors 为空。</small></span></label>
+        <label class="check"><input type="checkbox" data-action="保持产物范围：不要引入 failure.webm"><span>保持会话边界<small>后续交接不要将无当前会话归属证据的视频混入。</small></span></label>
+        <button id="copy" class="copy" type="button">复制 Markdown 清单</button>
+      </div>
+    </section>
+
+    <footer>
+      <div class="foot-grid"><b>来源项目</b><span>/tmp/scoped-handoff</span><b>Session ID</b><span>eval-session-7</span><b>生成时间</b><span>2026-08-11T09:27:10+0800</span><b>交付说明</b><span>离线可用；无 CDN、无外链资源、无后台服务。</span></div>
+    </footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite">已复制</div>
+  <script>
+    const search=document.querySelector('#search'), tbody=document.querySelector('tbody'), empty=document.querySelector('#empty');
+    const rows=()=>[...tbody.querySelectorAll('tr')];
+    search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();let n=0;rows().forEach(r=>{const show=r.textContent.toLowerCase().includes(q);r.hidden=!show;if(show)n++});empty.style.display=n?'none':'block'});
+    let sortState={key:'',dir:1};
+    document.querySelectorAll('th button').forEach(btn=>btn.addEventListener('click',()=>{const key=btn.dataset.key;sortState.dir=sortState.key===key?-sortState.dir:1;sortState.key=key;const list=rows().sort((a,b)=>{const av=key==='size'?+a.dataset[key]:a.dataset[key],bv=key==='size'?+b.dataset[key]:b.dataset[key];return (av>bv?1:av<bv?-1:0)*sortState.dir});list.forEach(r=>tbody.appendChild(r));document.querySelectorAll('th button').forEach(b=>b.textContent=b.textContent.replace(/[↑↓↕]/,'↕'));btn.textContent=btn.textContent.replace('↕',sortState.dir===1?'↑':'↓')}));
+    const checks=[...document.querySelectorAll('.check input')], fill=document.querySelector('#fill'), count=document.querySelector('#count'), store='handoff:eval-session-7';
+    try{const saved=JSON.parse(localStorage.getItem(store)||'[]');checks.forEach((c,i)=>c.checked=!!saved[i])}catch(e){}
+    function update(){const done=checks.filter(c=>c.checked).length;fill.style.width=(done/checks.length*100)+'%';count.textContent=`${done} / ${checks.length}`;try{localStorage.setItem(store,JSON.stringify(checks.map(c=>c.checked)))}catch(e){}}
+    checks.forEach(c=>c.addEventListener('change',update));update();
+    const toast=document.querySelector('#toast');
+    document.querySelector('#copy').addEventListener('click',async()=>{const md=['# eval-session-7 接手清单','',...checks.map(c=>`- [${c.checked?'x':' '}] ${c.dataset.action}`),'','产物：qa.json（SHA-256: 012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500）'].join('\n');try{await navigator.clipboard.writeText(md)}catch(e){const t=document.createElement('textarea');t.value=md;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1400)});
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "eval_id": 7,
+  "eval_name": "scope-excludes-old-artifact",
+  "prompt": "生成一个本次会话 handoff Onepager。聊天只确认产物 qa.json；输入目录里还存在旧会话的 failure.webm，但聊天没有把它归属到当前会话。请主动收集有证据的当前会话产物，同时避免把目录里所有文件都塞进页面。来源项目绝对路径 /tmp/scoped-handoff，session ID eval-session-7。",
+  "assertions": [
+    "The main HTML directly links qa.json.",
+    "The main HTML does not link or copy failure.webm because the prompt says it belongs to an old session.",
+    "The page does not invent any artifact URL or placeholder link.",
+    "The footer includes /tmp/scoped-handoff and eval-session-7."
+  ]
+}

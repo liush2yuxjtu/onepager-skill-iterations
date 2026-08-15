@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fresh UAT · Session Recap</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0d10;--panel:#13171c;--line:#29313a;--text:#edf2f7;--muted:#93a1b2;--green:#63d69a;--amber:#f3c86a;--blue:#78b7ff;--red:#ff8a8a;--r:16px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% 0,#172438 0,transparent 34rem),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1060px,calc(100% - 28px));margin:auto;padding:36px 0 60px}header{margin-bottom:22px}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(30px,6vw,54px);line-height:1.02;margin:8px 0 14px;letter-spacing:-.045em}.verdict{border-left:4px solid var(--amber);background:#171a1d;padding:14px 16px;border-radius:0 var(--r) var(--r) 0;max-width:850px}.verdict strong{color:var(--green)}.meta,.muted{color:var(--muted)}.meta{margin-top:10px;font-size:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:color-mix(in srgb,var(--panel) 94%,transparent);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 14px 40px #0004}.card h2,.card h3{margin:0 0 10px}.card h2{font-size:20px}.span2{grid-column:1/-1}.status{display:inline-flex;gap:7px;align-items:center;color:var(--green);font-weight:800}.dot{width:9px;height:9px;background:var(--green);border-radius:50%;box-shadow:0 0 0 5px #63d69a20}.warning{color:var(--amber)}a,button{color:var(--blue)}a:hover{text-decoration:none}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}input[type=search],button,.button{border:1px solid var(--line);background:#0e1216;color:var(--text);border-radius:10px;padding:9px 11px;font:inherit}.button{display:inline-block;text-decoration:none}button{cursor:pointer}button:hover,.button:hover{border-color:var(--blue)}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}th button{padding:0;border:0;background:none;color:var(--muted);font-weight:750}.type{color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}.preview{width:100%;height:170px;border:1px solid var(--line);border-radius:12px;background:white}video{width:100%;max-height:320px;background:#050607;border-radius:12px;border:1px solid var(--line)}pre{white-space:pre-wrap;word-break:break-word;background:#0b0e12;padding:12px;border-radius:10px;border:1px solid var(--line);color:#cfe1f5}details{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}summary{cursor:pointer;font-weight:750}.check{display:flex;gap:10px;padding:8px 0}.check input{accent-color:var(--green)}.progress{height:8px;background:#0b0e12;border-radius:10px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--green);transition:.2s}footer{color:var(--muted);font-size:12px;margin-top:22px;border-top:1px solid var(--line);padding-top:18px}.hash{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;font-size:11px}.empty{display:none;color:var(--muted);padding:15px}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:3px 8px;margin-right:5px;font-size:12px;color:var(--muted)}@media(max-width:720px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}.wrap{padding-top:24px}th:nth-child(3),td:nth-child(3){display:none}.preview{height:130px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header>
+  <div class="eyebrow">Pi session · eval-session-5</div>
+  <h1>Fresh UAT 产物已归集</h1>
+  <div class="verdict"><strong>QA 与报告均声明 PASS</strong>；4 个指定产物已进入便携包并可从本页直接查看或下载。注意：视频仅 18 B、trace 内容为“fake trace”，因此当前结论只证明产物已生成与归集，不足以证明证据质量。</div>
+  <div class="meta">项目：<code>/tmp/pitch-video-project</code> · 归集时间：2026-08-11T01:27:20Z · 输入：本次会话指定目录</div>
+</header>
+
+<section class="grid" aria-label="关键证据">
+  <article class="card">
+    <h2>QA 结果</h2>
+    <div class="status"><span class="dot"></span>PASS · 0 errors</div>
+    <p class="muted">解析自 <code>qa.json</code>，不是二次推断。</p>
+    <details><summary>查看原始 JSON</summary><pre>{"passed":true,"errors":[]}</pre><a class="button" href="qa.json" download>下载 qa.json</a></details>
+  </article>
+
+  <article class="card">
+    <h2>Trace 摘要</h2>
+    <p><span class="pill">ZIP 126 B</span><span class="pill">1 file</span></p>
+    <pre>trace.txt → "fake trace"</pre>
+    <a class="button" href="trace.zip" download>下载 trace.zip</a>
+  </article>
+
+  <article class="card span2">
+    <h2>UAT 报告 · 页面内预览</h2>
+    <iframe class="preview" src="report.html" title="UAT report preview" sandbox></iframe>
+    <div class="toolbar"><a class="button" href="report.html" target="_blank" rel="noopener">独立打开报告 ↗</a></div>
+  </article>
+
+  <article class="card span2">
+    <h2>运行录像 · 页面内播放</h2>
+    <video controls preload="metadata" src="run.webm">浏览器无法播放；请<a href="run.webm" download>下载录像</a>。</video>
+    <p id="videoNote" class="warning">文件仅 18 B；若无法播放，说明现有捕获不足，需重新录制。</p>
+    <a class="button" href="run.webm" download>下载 run.webm</a>
+  </article>
+
+  <article class="card span2">
+    <h2>产物索引</h2>
+    <div class="toolbar"><input id="search" type="search" placeholder="搜索文件或类型…" aria-label="搜索产物"><span id="count" class="muted"></span></div>
+    <div style="overflow:auto"><table id="artifacts"><thead><tr><th><button data-sort="name">文件 ↕</button></th><th><button data-sort="type">用途 ↕</button></th><th><button data-sort="size">大小 ↕</button></th><th>窄操作</th></tr></thead><tbody>
+      <tr data-name="report.html" data-type="uat report" data-size="53"><td><strong>report.html</strong></td><td>UAT 报告</td><td>53 B</td><td><a href="report.html" target="_blank">打开</a></td></tr>
+      <tr data-name="qa.json" data-type="qa result" data-size="28"><td><strong>qa.json</strong></td><td>QA 结果</td><td>28 B</td><td><a href="qa.json" target="_blank">打开</a></td></tr>
+      <tr data-name="run.webm" data-type="video capture" data-size="18"><td><strong>run.webm</strong></td><td>运行录像</td><td>18 B</td><td><a href="run.webm" download>下载</a></td></tr>
+      <tr data-name="trace.zip" data-type="trace archive" data-size="126"><td><strong>trace.zip</strong></td><td>Trace 归档</td><td>126 B</td><td><a href="trace.zip" download>下载</a></td></tr>
+    </tbody></table><div id="empty" class="empty">没有匹配产物。</div></div>
+    <details><summary>完整性校验 · SHA-256</summary><pre class="hash">report.html  8713327d51e1a3e32771b889270449cf611c5843a57caf2d5463b8958911518d
+qa.json      012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500
+run.webm     0da62f1e5928525cba07cb35414f4cb4e6178c6ad72070e5d92534cafb3934dc
+trace.zip    eb389820e51295ef9bae57dbdbe51425543c1d64d6b1033448c5811ad412966f</pre></details>
+  </article>
+
+  <article class="card span2">
+    <h2>建议的验证闭环</h2>
+    <div id="checks">
+      <label class="check"><input type="checkbox" data-task="在目标浏览器中独立打开 report.html，确认 PASS 页面可见"> <span>独立打开报告，确认 PASS 页面可见</span></label>
+      <label class="check"><input type="checkbox" data-task="重新生成可播放的 run.webm，并替换当前 18 B 文件"> <span>重新生成可播放录像（当前仅 18 B）</span></label>
+      <label class="check"><input type="checkbox" data-task="用真实 trace 替换 trace.zip 中的占位内容"> <span>用真实 trace 替换占位内容</span></label>
+    </div>
+    <div class="progress" aria-label="完成进度"><i id="bar"></i></div>
+    <div class="toolbar"><span id="progressText" class="muted">0 / 3 完成</span><button id="copy">复制 Markdown 清单</button></div>
+  </article>
+</section>
+
+<footer>
+  <div>来源项目：<code>/tmp/pitch-video-project</code> · Pi session ID：<code>eval-session-5</code></div>
+  <div>归集来源：<code>/Users/liushiyuwin/.pi/skills/onepager/evals/files/session-artifacts</code></div>
+  <div>生命周期：静态离线便携包；无 CDN、无后台服务。仅复制会话指定的 4 个产物；未复制同目录的非指定文件。</div>
+</footer>
+</main>
+<script>
+const rows=[...document.querySelectorAll('#artifacts tbody tr')],search=document.querySelector('#search'),count=document.querySelector('#count'),empty=document.querySelector('#empty');
+function filter(){const q=search.value.trim().toLowerCase();let n=0;rows.forEach(r=>{const show=!q||(r.dataset.name+' '+r.dataset.type).includes(q);r.hidden=!show;if(show)n++});count.textContent=`${n} / ${rows.length} 个产物`;empty.style.display=n?'none':'block'}
+search.addEventListener('input',filter);filter();
+let direction=1,last='';document.querySelectorAll('[data-sort]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.sort;direction=last===k?-direction:1;last=k;rows.sort((a,c)=>k==='size'?(+a.dataset[k]- +c.dataset[k])*direction:a.dataset[k].localeCompare(c.dataset[k])*direction).forEach(r=>r.parentNode.appendChild(r));document.querySelectorAll('[data-sort]').forEach(x=>x.textContent=x.textContent.replace(/[↑↓]/g,'↕'));b.textContent=b.textContent.replace('↕',direction>0?'↑':'↓');filter()}));
+const boxes=[...document.querySelectorAll('#checks input')],key='onepager:eval-session-5:checks';try{const saved=JSON.parse(localStorage.getItem(key)||'[]');boxes.forEach((b,i)=>b.checked=!!saved[i])}catch(e){}
+function update(){const n=boxes.filter(b=>b.checked).length;document.querySelector('#bar').style.width=`${n/boxes.length*100}%`;document.querySelector('#progressText').textContent=`${n} / ${boxes.length} 完成`;try{localStorage.setItem(key,JSON.stringify(boxes.map(b=>b.checked)))}catch(e){}}
+boxes.forEach(b=>b.addEventListener('change',update));update();
+document.querySelector('#copy').addEventListener('click',async e=>{const text=['# eval-session-5 验证清单','',...boxes.map(b=>`- [${b.checked?'x':' '}] ${b.dataset.task}`)].join('\n');try{await navigator.clipboard.writeText(text);e.currentTarget.textContent='已复制 ✓'}catch(err){prompt('复制以下清单：',text)}setTimeout(()=>e.currentTarget.textContent='复制 Markdown 清单',1500)});
+</script>
+</body>
+</html>

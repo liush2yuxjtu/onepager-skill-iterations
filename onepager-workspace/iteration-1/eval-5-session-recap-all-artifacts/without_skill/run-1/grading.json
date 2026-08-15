@@ -1,0 +1,61 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.",
+      "passed": true,
+      "evidence": "links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"
+    },
+    {
+      "text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+      "passed": true,
+      "evidence": "video_nodes=[('run.webm', True, 0)]"
+    },
+    {
+      "text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+      "passed": true,
+      "evidence": "artifact_links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"
+    },
+    {
+      "text": "The page includes source project absolute path and a Pi session ID in its footer.",
+      "passed": true,
+      "evidence": "project=True; session=True"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 0,
+    "files_created": [
+      "run.webm",
+      "qa.json",
+      "trace.zip",
+      "main.html",
+      "report.html"
+    ],
+    "errors_encountered": 0,
+    "output_chars": 10983,
+    "transcript_chars": 106081920
+  },
+  "timing": {
+    "total_tokens": 14159,
+    "duration_ms": 138481,
+    "total_duration_seconds": 138.481,
+    "exit_code": 0
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions directly inspect link scope and media placement in main.html."
+  }
+}

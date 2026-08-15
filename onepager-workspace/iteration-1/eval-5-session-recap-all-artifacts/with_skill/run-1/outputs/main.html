@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fresh UAT · Session Recap</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0d10;--panel:#14181d;--line:#2a3139;--text:#f4f7f9;--muted:#9ba8b4;--green:#5de09a;--blue:#75a7ff;--amber:#ffc66d;--shadow:0 18px 60px #0006}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#163328 0,transparent 31rem),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}main{width:min(920px,calc(100% - 32px));margin:auto;padding:52px 0 38px}header{margin-bottom:28px}.eyebrow{color:var(--green);font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}h1{font-size:clamp(34px,7vw,68px);line-height:.98;letter-spacing:-.055em;margin:10px 0 18px;max-width:700px}.verdict{display:flex;gap:12px;align-items:flex-start;background:#112219;border:1px solid #27553d;border-radius:14px;padding:15px 17px;box-shadow:var(--shadow)}.pass{flex:none;color:#04130b;background:var(--green);font-weight:900;border-radius:999px;padding:3px 9px}.verdict strong{display:block}.verdict span:last-child{color:#c6d1cb}.topline{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:34px 0 12px}h2{font-size:19px;margin:0}.count,.meta{color:var(--muted);font-size:13px}.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}input,select,button{font:inherit;color:var(--text);background:#101419;border:1px solid var(--line);border-radius:9px;padding:9px 11px}input{min-width:220px;flex:1}button,.linkbtn{cursor:pointer}button:hover,.linkbtn:hover{border-color:var(--blue)}.artifacts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.artifact{display:flex;align-items:center;gap:13px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;min-width:0}.icon{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:#202731;color:var(--blue);font-weight:900}.artifact-main{min-width:0;flex:1}.artifact-main strong,.artifact-main span{display:block}.artifact-main span{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.linkbtn{flex:none;text-decoration:none;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px}.media{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.media-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:11px}.media-head p{margin:2px 0 0;color:var(--muted);font-size:13px}video{display:block;width:100%;max-height:440px;background:#050607;border-radius:9px}details{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:0 15px}summary{cursor:pointer;font-weight:750;padding:14px 0}.details-body{border-top:1px solid var(--line);padding:14px 0}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:9px 7px}th button{border:0;padding:0;background:none;color:var(--muted);font-size:12px;font-weight:800}code{color:#c8d7ff;word-break:break-all}.checks{display:grid;gap:9px}.check{display:flex;gap:9px;align-items:flex-start}.check input{min-width:auto;margin-top:5px}.progress{height:7px;background:#282f36;border-radius:9px;overflow:hidden;margin:12px 0 7px}.bar{height:100%;width:0;background:var(--green);transition:.2s}.check-actions{display:flex;justify-content:space-between;align-items:center;gap:12px}.toast{color:var(--green);font-size:13px;min-height:20px}footer{border-top:1px solid var(--line);margin-top:30px;padding-top:18px;color:var(--muted);font-size:12px}.path{word-break:break-all}body.empty .artifact{display:none}.empty-note{display:none;color:var(--muted);padding:14px}.empty-note.show{display:block}@media(max-width:680px){main{padding-top:30px}.artifacts{grid-template-columns:1fr}.media-head,.topline{align-items:flex-start;flex-direction:column}table{display:block;overflow:auto}.artifact{padding:12px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">Pi session · eval-session-5</div>
+  <h1>Fresh UAT<br>证据已归档</h1>
+  <div class="verdict"><span class="pass">PASS</span><span><strong>本次 fresh UAT 通过。</strong><span>报告与 QA 结果一致；录像和 trace 已与主页面打包，可离线复核。</span></span></div>
+</header>
+
+<section aria-labelledby="artifact-title">
+  <div class="topline"><h2 id="artifact-title">会话产物</h2><span class="count">4 / 4 已归集</span></div>
+  <div class="tools">
+    <input id="search" type="search" placeholder="搜索产物…" aria-label="搜索产物">
+    <select id="sort" aria-label="产物排序"><option value="priority">按重要性</option><option value="name">按名称</option><option value="type">按类型</option></select>
+  </div>
+  <div id="artifacts" class="artifacts">
+    <article class="artifact" data-name="report html uat pass 报告" data-type="html" data-priority="1"><span class="icon">R</span><div class="artifact-main"><strong>report.html</strong><span>UAT 主报告 · PASS</span></div><a class="linkbtn" href="report.html">打开 →</a></article>
+    <article class="artifact" data-name="run webm video 录像 回放" data-type="video" data-priority="2"><span class="icon">▶</span><div class="artifact-main"><strong>run.webm</strong><span>fresh UAT 执行录像</span></div><a class="linkbtn" href="run.webm" download>下载 ↓</a></article>
+    <article class="artifact" data-name="qa json passed errors 结构化结果" data-type="json" data-priority="3"><span class="icon">{ }</span><div class="artifact-main"><strong>qa.json</strong><span>结构化结果 · passed: true</span></div><a class="linkbtn" href="qa.json">查看 →</a></article>
+    <article class="artifact" data-name="trace zip 调试 追踪 证据" data-type="zip" data-priority="4"><span class="icon">Z</span><div class="artifact-main"><strong>trace.zip</strong><span>运行追踪 · 含 trace.txt</span></div><a class="linkbtn" href="trace.zip" download>下载 ↓</a></article>
+  </div>
+  <div id="empty" class="empty-note">没有匹配的产物。</div>
+</section>
+
+<section class="media" aria-labelledby="video-title">
+  <div class="media-head"><div><strong id="video-title">执行录像</strong><p>关键媒体直接置于主页面；若浏览器无法解码，可使用右侧下载。</p></div><a class="linkbtn" href="run.webm" download>下载原片 ↓</a></div>
+  <video controls preload="metadata"><source src="run.webm" type="video/webm">浏览器无法播放此录像，请使用下载链接。</video>
+</section>
+
+<details>
+  <summary>证据清单与校验值</summary>
+  <div class="details-body"><table id="evidence"><thead><tr><th><button data-key="name">文件 ↕</button></th><th><button data-key="type">类型 ↕</button></th><th><button data-key="size">大小 ↕</button></th><th>SHA-256</th></tr></thead><tbody>
+  <tr data-name="report.html" data-type="HTML" data-size="53"><td><a href="report.html">report.html</a></td><td>HTML</td><td>53 B</td><td><code>8713327d…1518d</code></td></tr>
+  <tr data-name="qa.json" data-type="JSON" data-size="28"><td><a href="qa.json">qa.json</a></td><td>JSON</td><td>28 B</td><td><code>012aa279…e8500</code></td></tr>
+  <tr data-name="run.webm" data-type="VIDEO" data-size="18"><td><a href="run.webm">run.webm</a></td><td>WEBM</td><td>18 B</td><td><code>0da62f1e…934dc</code></td></tr>
+  <tr data-name="trace.zip" data-type="ZIP" data-size="126"><td><a href="trace.zip">trace.zip</a></td><td>ZIP</td><td>126 B</td><td><code>eb389820…2966f</code></td></tr>
+  </tbody></table><p class="meta">校验值在归集后计算；trace.zip 已确认包含 <code>trace.txt</code>（10 B）。</p></div>
+</details>
+
+<details>
+  <summary>复核行动 <span id="progressText" class="meta">0 / 3</span></summary>
+  <div class="details-body">
+    <div class="checks">
+      <label class="check"><input type="checkbox" value="打开 report.html，确认 UAT 主结论为 PASS"><span>打开报告，确认主结论为 PASS</span></label>
+      <label class="check"><input type="checkbox" value="回放 run.webm，抽查 fresh UAT 执行过程"><span>回放录像，抽查执行过程</span></label>
+      <label class="check"><input type="checkbox" value="保留 trace.zip，用于后续问题追踪"><span>保留 trace，用于后续问题追踪</span></label>
+    </div>
+    <div class="progress"><div id="bar" class="bar"></div></div>
+    <div class="check-actions"><span id="toast" class="toast"></span><button id="copy">复制 Markdown</button></div>
+  </div>
+</details>
+
+<footer>
+  <div>来源项目：<strong>pitch-video-project</strong></div>
+  <div class="path">绝对路径：<code>/tmp/pitch-video-project</code></div>
+  <div>Pi session ID：<code>eval-session-5</code></div>
+  <div>归集范围：仅聊天明确列出的 4 个 session-owned 输入文件；未复制同目录其他文件。</div>
+</footer>
+</main>
+<script>
+const cards=[...document.querySelectorAll('.artifact')],box=document.querySelector('#artifacts'),search=document.querySelector('#search'),sort=document.querySelector('#sort'),empty=document.querySelector('#empty');
+function render(){const q=search.value.trim().toLowerCase(),key=sort.value;cards.sort((a,b)=>key==='priority'?+a.dataset.priority-+b.dataset.priority:a.dataset[key].localeCompare(b.dataset[key]));cards.forEach(c=>{c.hidden=!c.dataset.name.includes(q);box.append(c)});empty.classList.toggle('show',cards.every(c=>c.hidden))}search.addEventListener('input',render);sort.addEventListener('change',render);
+let tableDir=1;document.querySelectorAll('#evidence th button').forEach(b=>b.onclick=()=>{const key=b.dataset.key,rows=[...document.querySelectorAll('#evidence tbody tr')];tableDir*=-1;rows.sort((a,c)=>key==='size'?(+a.dataset.size-+c.dataset.size)*tableDir:a.dataset[key].localeCompare(c.dataset[key])*tableDir).forEach(r=>r.parentNode.append(r))});
+const checks=[...document.querySelectorAll('.check input')],bar=document.querySelector('#bar'),progressText=document.querySelector('#progressText'),toast=document.querySelector('#toast');
+function update(){const n=checks.filter(x=>x.checked).length;bar.style.width=(n/checks.length*100)+'%';progressText.textContent=n+' / '+checks.length;checks.forEach((x,i)=>localStorage.setItem('uat-recap-'+i,x.checked?'1':'0'))}checks.forEach((x,i)=>{x.checked=localStorage.getItem('uat-recap-'+i)==='1';x.addEventListener('change',update)});update();
+document.querySelector('#copy').onclick=async()=>{const md=['# Fresh UAT 复核','',...checks.map(x=>`- [${x.checked?'x':' '}] ${x.value}`)].join('\n');try{await navigator.clipboard.writeText(md);toast.textContent='已复制'}catch(e){const t=document.createElement('textarea');t.value=md;document.body.append(t);t.select();document.execCommand('copy');t.remove();toast.textContent='已复制'}setTimeout(()=>toast.textContent='',1800)};
+</script>
+</body>
+</html>

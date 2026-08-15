@@ -1,0 +1,11 @@
+{
+  "eval_id": 5,
+  "eval_name": "session-recap-all-artifacts",
+  "prompt": "为这次会话做一个交互式 Onepager recap。聊天记录明确提到本次 fresh UAT 生成了 report.html、qa.json、run.webm、trace.zip；这些文件都在输入目录。请不要等我逐个点名，主动归集本次会话产物，并把重要产物直接放进主页面。来源项目绝对路径写 /tmp/pitch-video-project，Pi session ID 写 eval-session-5。",
+  "assertions": [
+    "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.",
+    "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+    "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+    "The page includes source project absolute path and a Pi session ID in its footer."
+  ]
+}

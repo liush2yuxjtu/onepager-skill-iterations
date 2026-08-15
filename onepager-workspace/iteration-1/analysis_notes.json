@@ -1,0 +1,6 @@
+[
+  "All 12 assertions passed in both configurations; the revised skill is regression-safe on artifact links, visible media, provenance, and scope exclusion.",
+  "The old-skill baseline also passed because the eval prompts explicitly requested artifact collection; these cases verify behavior but do not discriminate trigger/proactivity without an explicit request.",
+  "The revised skill averaged 119.3s versus 124.6s for the old baseline; the difference is small relative to one run per case.",
+  "Eval 7 confirms neither version linked or copied the old-session failure.webm even though it was present in the input directory."
+]

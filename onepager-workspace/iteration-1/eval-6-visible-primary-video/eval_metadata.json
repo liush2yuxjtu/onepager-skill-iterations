@@ -1,0 +1,11 @@
+{
+  "eval_id": 6,
+  "eval_name": "visible-primary-video",
+  "prompt": "请把本次调试会话总结成 onepager。当前聊天提到两个视频：最终成功录像 run.webm 和失败证据 failure.webm，还有最终报告 report.html。它们位于输入目录；hero.svg 是页面素材。主页面应让我一眼看到最终录像和所有会话产物入口，不要把视频只藏在“证据”折叠区。来源项目绝对路径 /tmp/debug-session，session ID eval-session-6。",
+  "assertions": [
+    "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+    "The main HTML directly links both run.webm and failure.webm and report.html, while hero.svg is inline or used as page artwork rather than omitted silently.",
+    "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+    "The page includes source project absolute path and a Pi session ID in its footer."
+  ]
+}

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>调试会话 · eval-session-6</title>
+<style>
+:root{--ink:#15231d;--muted:#647169;--paper:#f5f3ed;--card:#fffefa;--green:#286149;--green2:#dce9df;--red:#9b413b;--red2:#f5e2df;--line:#d9ddd7;--gold:#d5a63d;--shadow:0 16px 42px #1b362514}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}header{padding:28px 0 20px}.brand{display:flex;align-items:center;gap:12px;color:var(--green);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px}.brand svg{width:60px;height:30px;border-radius:8px}.hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:end;margin-top:28px}.eyebrow{color:var(--green);font-size:13px;font-weight:800;margin:0 0 8px}.hero h1{font-family:Georgia,serif;font-size:clamp(34px,6vw,68px);line-height:.98;letter-spacing:-.045em;margin:0;max-width:750px}.verdict{max-width:760px;font-size:18px;margin:18px 0 0}.badge{display:inline-flex;align-items:center;gap:8px;background:var(--green2);color:var(--green);padding:7px 12px;border-radius:999px;font-weight:800}.dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 5px #28614918}.meta{text-align:right;color:var(--muted);font-size:13px}.meta strong{display:block;color:var(--ink);font-size:15px}.section{margin:18px 0 34px}.section-title{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}.section-title h2{font:700 23px/1.2 Georgia,serif;margin:0}.section-title p{margin:0;color:var(--muted);font-size:13px}.primary{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}.primary-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.primary-head h3{margin:0;font-size:18px}.status{background:var(--green);color:white;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800}.video-shell{background:#111;border-radius:15px;overflow:hidden;min-height:280px;display:grid;place-items:center}.video-shell video{display:block;width:100%;max-height:620px;min-height:280px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:white;text-decoration:none;font-weight:750;cursor:pointer;font:inherit}.btn:hover,.btn:focus{border-color:var(--green);outline:2px solid #28614922}.btn.main{background:var(--green);border-color:var(--green);color:white}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.card h3{margin:0 0 6px;font-size:17px}.card p{color:var(--muted);margin:0 0 12px}.failure{border-top:4px solid var(--red)}.report{border-top:4px solid var(--gold)}.mini-video{background:#111;border-radius:11px;width:100%;min-height:180px;display:block}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}.search{flex:1;min-width:220px;border:1px solid var(--line);background:white;border-radius:10px;padding:10px 12px;font:inherit}.table-wrap{overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}tr:last-child td{border:0}th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);cursor:pointer;user-select:none}th:hover{color:var(--green)}td:first-child{font-weight:800}.type{display:inline-block;border-radius:999px;padding:3px 8px;background:#edf0ed;font-size:12px}.small-link{color:var(--green);font-weight:800;text-underline-offset:3px}.empty{display:none;color:var(--muted);padding:20px;text-align:center}.check-card{background:#173a2d;color:#f7fbf8;border-radius:20px;padding:20px}.progress-line{display:flex;align-items:center;gap:12px;margin:12px 0 16px}.bar{height:8px;background:#ffffff24;border-radius:99px;overflow:hidden;flex:1}.bar span{display:block;height:100%;width:0;background:#baddc4;transition:width .2s}.checks{display:grid;gap:8px}.check{display:flex;gap:10px;align-items:flex-start;background:#ffffff0c;padding:10px;border-radius:10px}.check input{margin-top:4px;accent-color:#baddc4}.check label{cursor:pointer}.check:has(input:checked) label{text-decoration:line-through;color:#b7c7bf}.check-card .btn{margin-top:14px;background:transparent;color:white;border-color:#ffffff52}.copy-note{font-size:12px;color:#c5d4cc;margin-left:8px}details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 15px;margin:12px 0}summary{cursor:pointer;font-weight:800;padding:13px 0}details p{color:var(--muted)}footer{border-top:1px solid var(--line);padding:23px 0 36px;color:var(--muted);font-size:12px}.source{overflow-wrap:anywhere}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:white;padding:10px 14px;border-radius:10px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:720px){.hero{grid-template-columns:1fr}.meta{text-align:left}.grid{grid-template-columns:1fr}.wrap{width:min(100% - 20px,1120px)}.video-shell,.video-shell video{min-height:190px}.section-title{align-items:start;flex-direction:column}.primary{padding:12px}}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="brand" aria-label="会话标识">
+    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" viewBox="0 0 120 60" role="img" aria-label="绿色会话素材"><rect width="120" height="60" rx="12" fill="#286149"/><path d="M22 30h26m12 0h38" stroke="#f5f3ed" stroke-width="5" stroke-linecap="round"/><circle cx="54" cy="30" r="7" fill="#d5a63d"/></svg>
+    Debug session / artifact index
+  </div>
+  <div class="hero">
+    <div>
+      <p class="eyebrow">FINAL HANDOFF</p>
+      <h1>调试闭环已形成</h1>
+      <p class="verdict"><span class="badge"><span class="dot"></span>最终结果：成功</span>　最终录像已置于首屏；失败证据与 UAT 报告均可直接进入。</p>
+    </div>
+    <div class="meta"><span>SESSION</span><strong>eval-session-6</strong><span>3 个会话产物</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="section" aria-labelledby="final-title">
+    <div class="section-title"><h2 id="final-title">最终成功录像</h2><p>首要证据 · 页面打开即可见</p></div>
+    <article class="primary">
+      <div class="primary-head"><h3>run.webm</h3><span class="status">SUCCESS RUN</span></div>
+      <div class="video-shell"><video controls preload="metadata" aria-label="最终成功录像"><source src="run.webm" type="video/webm">浏览器无法播放此 WebM；请使用下方按钮打开或下载。</video></div>
+      <div class="actions"><a class="btn main" href="run.webm" target="_blank">打开录像 ↗</a><a class="btn" href="run.webm" download>下载 run.webm</a></div>
+    </article>
+  </section>
+
+  <section class="section" aria-labelledby="related-title">
+    <div class="section-title"><h2 id="related-title">其余产物</h2><p>失败 → 修复 → 报告，一条最短审计路径</p></div>
+    <div class="grid">
+      <article class="card failure">
+        <h3>失败证据 · failure.webm</h3><p>用于对照成功录像，保留问题发生时的可视证据。</p>
+        <video class="mini-video" controls preload="metadata" aria-label="失败证据录像"><source src="failure.webm" type="video/webm">浏览器无法播放此 WebM。</video>
+        <div class="actions"><a class="btn" href="failure.webm" target="_blank">打开失败录像 ↗</a><a class="btn" href="failure.webm" download>下载</a></div>
+      </article>
+      <article class="card report">
+        <h3>最终报告 · report.html</h3><p>UAT 结果：<strong>PASS</strong>。报告作为独立页面保留，可离线打开。</p>
+        <div class="actions"><a class="btn main" href="report.html">进入报告 →</a><a class="btn" href="report.html" download>下载</a></div>
+        <details><summary>报告最小摘要</summary><p>报告标题为 “UAT report”，结论为 “PASS”。完整原件未改写。</p></details>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="index-title">
+    <div class="section-title"><h2 id="index-title">产物入口</h2><p>搜索只显示需要的条目；点击表头排序</p></div>
+    <div class="toolbar"><input id="search" class="search" type="search" placeholder="搜索名称、类型或作用…" aria-label="搜索产物"><button class="btn" id="reset" type="button">清除</button></div>
+    <div class="table-wrap">
+      <table id="artifacts">
+        <thead><tr><th data-key="name">名称 ↕</th><th data-key="type">类型 ↕</th><th data-key="purpose">作用 ↕</th><th>入口</th></tr></thead>
+        <tbody>
+          <tr><td>run.webm</td><td><span class="type">视频</span></td><td>最终成功录像</td><td><a class="small-link" href="run.webm" target="_blank">打开 →</a></td></tr>
+          <tr><td>failure.webm</td><td><span class="type">视频</span></td><td>失败对照证据</td><td><a class="small-link" href="failure.webm" target="_blank">打开 →</a></td></tr>
+          <tr><td>report.html</td><td><span class="type">报告</span></td><td>最终 UAT 报告</td><td><a class="small-link" href="report.html">打开 →</a></td></tr>
+        </tbody>
+      </table>
+      <div id="empty" class="empty">没有匹配产物。</div>
+    </div>
+  </section>
+
+  <section class="section check-card" aria-labelledby="handoff-title">
+    <div class="section-title"><h2 id="handoff-title">交付核验</h2><p style="color:#c5d4cc">状态只保存在当前浏览器</p></div>
+    <div class="progress-line"><div class="bar"><span id="bar"></span></div><strong id="count">0 / 3</strong></div>
+    <div class="checks">
+      <div class="check"><input id="c1" type="checkbox"><label for="c1">已观看最终成功录像 run.webm</label></div>
+      <div class="check"><input id="c2" type="checkbox"><label for="c2">已核对失败证据 failure.webm</label></div>
+      <div class="check"><input id="c3" type="checkbox"><label for="c3">已确认最终报告 report.html 为 PASS</label></div>
+    </div>
+    <button id="copy" class="btn" type="button">复制 Markdown 清单</button><span id="copyNote" class="copy-note"></span>
+  </section>
+
+  <details><summary>审计说明</summary><p>页面仅汇总本次输入明确列出的会话产物。视频与报告以原件复制，hero.svg 已直接内联到页头；未引入 CDN、字体或其他网络资源。录像内容未被转码或改写。</p></details>
+</main>
+
+<footer><div class="wrap source">来源项目：<strong>/tmp/debug-session</strong><br>Session ID：<strong>eval-session-6</strong><br>输入产物目录：/Users/liushiyuwin/.pi/skills/onepager/evals/files/session-artifacts<br>生成方式：基于用户提供的 4 个输入文件建立相对链接便携包；hero.svg 内联，3 个可导航产物复制到本目录。</div></footer>
+<div id="toast" class="toast" role="status" aria-live="polite">已复制</div>
+<script>
+const rows=[...document.querySelectorAll('#artifacts tbody tr')],search=document.querySelector('#search'),empty=document.querySelector('#empty');
+function filter(){const q=search.value.trim().toLowerCase();let n=0;rows.forEach(r=>{const show=r.textContent.toLowerCase().includes(q);r.hidden=!show;if(show)n++});empty.style.display=n?'none':'block'}
+search.addEventListener('input',filter);document.querySelector('#reset').onclick=()=>{search.value='';filter();search.focus()};
+let sortKey='',dir=1;document.querySelectorAll('th[data-key]').forEach((th,i)=>th.onclick=()=>{dir=sortKey===th.dataset.key?-dir:1;sortKey=th.dataset.key;rows.sort((a,b)=>a.cells[i].textContent.trim().localeCompare(b.cells[i].textContent.trim(),'zh-CN')*dir).forEach(r=>r.parentNode.appendChild(r));document.querySelectorAll('th[data-key]').forEach(x=>x.textContent=x.textContent.replace(/[↑↓↕]/g,'').trim()+' ↕');th.textContent=th.textContent.replace('↕',dir>0?'↑':'↓');filter()});
+const checks=[...document.querySelectorAll('.checks input')],bar=document.querySelector('#bar'),count=document.querySelector('#count');
+function update(){const n=checks.filter(x=>x.checked).length;bar.style.width=(n/checks.length*100)+'%';count.textContent=n+' / '+checks.length;checks.forEach(x=>localStorage.setItem('eval-session-6:'+x.id,x.checked?'1':'0'))}
+checks.forEach(x=>{x.checked=localStorage.getItem('eval-session-6:'+x.id)==='1';x.addEventListener('change',update)});update();
+document.querySelector('#copy').onclick=async()=>{const md=['# eval-session-6 交付核验',...checks.map(x=>`- [${x.checked?'x':' '}] ${x.labels[0].textContent}`)].join('\n');try{await navigator.clipboard.writeText(md)}catch(e){const t=document.createElement('textarea');t.value=md;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}const toast=document.querySelector('#toast');toast.classList.add('show');document.querySelector('#copyNote').textContent='已复制当前状态';setTimeout(()=>toast.classList.remove('show'),1400)};
+</script>
+</body>
+</html>

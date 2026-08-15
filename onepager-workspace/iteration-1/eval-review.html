@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: #fff;
+    }
+    .output-file-content iframe.html-frame {
+      height: 70vh;
+      min-height: 400px;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "onepager", "runs": [{"id": "eval-5-session-recap-all-artifacts-with_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "main.html", "type": "text", "content": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Fresh UAT \u00b7 Session Recap<\/title>\n<style>\n:root{color-scheme:dark;--bg:#0b0d10;--panel:#14181d;--line:#2a3139;--text:#f4f7f9;--muted:#9ba8b4;--green:#5de09a;--blue:#75a7ff;--amber:#ffc66d;--shadow:0 18px 60px #0006}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#163328 0,transparent 31rem),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",sans-serif}main{width:min(920px,calc(100% - 32px));margin:auto;padding:52px 0 38px}header{margin-bottom:28px}.eyebrow{color:var(--green);font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}h1{font-size:clamp(34px,7vw,68px);line-height:.98;letter-spacing:-.055em;margin:10px 0 18px;max-width:700px}.verdict{display:flex;gap:12px;align-items:flex-start;background:#112219;border:1px solid #27553d;border-radius:14px;padding:15px 17px;box-shadow:var(--shadow)}.pass{flex:none;color:#04130b;background:var(--green);font-weight:900;border-radius:999px;padding:3px 9px}.verdict strong{display:block}.verdict span:last-child{color:#c6d1cb}.topline{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:34px 0 12px}h2{font-size:19px;margin:0}.count,.meta{color:var(--muted);font-size:13px}.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}input,select,button{font:inherit;color:var(--text);background:#101419;border:1px solid var(--line);border-radius:9px;padding:9px 11px}input{min-width:220px;flex:1}button,.linkbtn{cursor:pointer}button:hover,.linkbtn:hover{border-color:var(--blue)}.artifacts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.artifact{display:flex;align-items:center;gap:13px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;min-width:0}.icon{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:#202731;color:var(--blue);font-weight:900}.artifact-main{min-width:0;flex:1}.artifact-main strong,.artifact-main span{display:block}.artifact-main span{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.linkbtn{flex:none;text-decoration:none;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px}.media{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.media-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:11px}.media-head p{margin:2px 0 0;color:var(--muted);font-size:13px}video{display:block;width:100%;max-height:440px;background:#050607;border-radius:9px}details{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:0 15px}summary{cursor:pointer;font-weight:750;padding:14px 0}.details-body{border-top:1px solid var(--line);padding:14px 0}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:9px 7px}th button{border:0;padding:0;background:none;color:var(--muted);font-size:12px;font-weight:800}code{color:#c8d7ff;word-break:break-all}.checks{display:grid;gap:9px}.check{display:flex;gap:9px;align-items:flex-start}.check input{min-width:auto;margin-top:5px}.progress{height:7px;background:#282f36;border-radius:9px;overflow:hidden;margin:12px 0 7px}.bar{height:100%;width:0;background:var(--green);transition:.2s}.check-actions{display:flex;justify-content:space-between;align-items:center;gap:12px}.toast{color:var(--green);font-size:13px;min-height:20px}footer{border-top:1px solid var(--line);margin-top:30px;padding-top:18px;color:var(--muted);font-size:12px}.path{word-break:break-all}body.empty .artifact{display:none}.empty-note{display:none;color:var(--muted);padding:14px}.empty-note.show{display:block}@media(max-width:680px){main{padding-top:30px}.artifacts{grid-template-columns:1fr}.media-head,.topline{align-items:flex-start;flex-direction:column}table{display:block;overflow:auto}.artifact{padding:12px}}\n<\/style>\n<\/head>\n<body>\n<main>\n<header>\n  <div class=\"eyebrow\">Pi session \u00b7 eval-session-5<\/div>\n  <h1>Fresh UAT<br>\u8bc1\u636e\u5df2\u5f52\u6863<\/h1>\n  <div class=\"verdict\"><span class=\"pass\">PASS<\/span><span><strong>\u672c\u6b21 fresh UAT \u901a\u8fc7\u3002<\/strong><span>\u62a5\u544a\u4e0e QA \u7ed3\u679c\u4e00\u81f4\uff1b\u5f55\u50cf\u548c trace \u5df2\u4e0e\u4e3b\u9875\u9762\u6253\u5305\uff0c\u53ef\u79bb\u7ebf\u590d\u6838\u3002<\/span><\/span><\/div>\n<\/header>\n\n<section aria-labelledby=\"artifact-title\">\n  <div class=\"topline\"><h2 id=\"artifact-title\">\u4f1a\u8bdd\u4ea7\u7269<\/h2><span class=\"count\">4 / 4 \u5df2\u5f52\u96c6<\/span><\/div>\n  <div class=\"tools\">\n    <input id=\"search\" type=\"search\" placeholder=\"\u641c\u7d22\u4ea7\u7269\u2026\" aria-label=\"\u641c\u7d22\u4ea7\u7269\">\n    <select id=\"sort\" aria-label=\"\u4ea7\u7269\u6392\u5e8f\"><option value=\"priority\">\u6309\u91cd\u8981\u6027<\/option><option value=\"name\">\u6309\u540d\u79f0<\/option><option value=\"type\">\u6309\u7c7b\u578b<\/option><\/select>\n  <\/div>\n  <div id=\"artifacts\" class=\"artifacts\">\n    <article class=\"artifact\" data-name=\"report html uat pass \u62a5\u544a\" data-type=\"html\" data-priority=\"1\"><span class=\"icon\">R<\/span><div class=\"artifact-main\"><strong>report.html<\/strong><span>UAT \u4e3b\u62a5\u544a \u00b7 PASS<\/span><\/div><a class=\"linkbtn\" href=\"report.html\">\u6253\u5f00 \u2192<\/a><\/article>\n    <article class=\"artifact\" data-name=\"run webm video \u5f55\u50cf \u56de\u653e\" data-type=\"video\" data-priority=\"2\"><span class=\"icon\">\u25b6<\/span><div class=\"artifact-main\"><strong>run.webm<\/strong><span>fresh UAT \u6267\u884c\u5f55\u50cf<\/span><\/div><a class=\"linkbtn\" href=\"run.webm\" download>\u4e0b\u8f7d \u2193<\/a><\/article>\n    <article class=\"artifact\" data-name=\"qa json passed errors \u7ed3\u6784\u5316\u7ed3\u679c\" data-type=\"json\" data-priority=\"3\"><span class=\"icon\">{ }<\/span><div class=\"artifact-main\"><strong>qa.json<\/strong><span>\u7ed3\u6784\u5316\u7ed3\u679c \u00b7 passed: true<\/span><\/div><a class=\"linkbtn\" href=\"qa.json\">\u67e5\u770b \u2192<\/a><\/article>\n    <article class=\"artifact\" data-name=\"trace zip \u8c03\u8bd5 \u8ffd\u8e2a \u8bc1\u636e\" data-type=\"zip\" data-priority=\"4\"><span class=\"icon\">Z<\/span><div class=\"artifact-main\"><strong>trace.zip<\/strong><span>\u8fd0\u884c\u8ffd\u8e2a \u00b7 \u542b trace.txt<\/span><\/div><a class=\"linkbtn\" href=\"trace.zip\" download>\u4e0b\u8f7d \u2193<\/a><\/article>\n  <\/div>\n  <div id=\"empty\" class=\"empty-note\">\u6ca1\u6709\u5339\u914d\u7684\u4ea7\u7269\u3002<\/div>\n<\/section>\n\n<section class=\"media\" aria-labelledby=\"video-title\">\n  <div class=\"media-head\"><div><strong id=\"video-title\">\u6267\u884c\u5f55\u50cf<\/strong><p>\u5173\u952e\u5a92\u4f53\u76f4\u63a5\u7f6e\u4e8e\u4e3b\u9875\u9762\uff1b\u82e5\u6d4f\u89c8\u5668\u65e0\u6cd5\u89e3\u7801\uff0c\u53ef\u4f7f\u7528\u53f3\u4fa7\u4e0b\u8f7d\u3002<\/p><\/div><a class=\"linkbtn\" href=\"run.webm\" download>\u4e0b\u8f7d\u539f\u7247 \u2193<\/a><\/div>\n  <video controls preload=\"metadata\"><source src=\"run.webm\" type=\"video/webm\">\u6d4f\u89c8\u5668\u65e0\u6cd5\u64ad\u653e\u6b64\u5f55\u50cf\uff0c\u8bf7\u4f7f\u7528\u4e0b\u8f7d\u94fe\u63a5\u3002<\/video>\n<\/section>\n\n<details>\n  <summary>\u8bc1\u636e\u6e05\u5355\u4e0e\u6821\u9a8c\u503c<\/summary>\n  <div class=\"details-body\"><table id=\"evidence\"><thead><tr><th><button data-key=\"name\">\u6587\u4ef6 \u2195<\/button><\/th><th><button data-key=\"type\">\u7c7b\u578b \u2195<\/button><\/th><th><button data-key=\"size\">\u5927\u5c0f \u2195<\/button><\/th><th>SHA-256<\/th><\/tr><\/thead><tbody>\n  <tr data-name=\"report.html\" data-type=\"HTML\" data-size=\"53\"><td><a href=\"report.html\">report.html<\/a><\/td><td>HTML<\/td><td>53 B<\/td><td><code>8713327d\u20261518d<\/code><\/td><\/tr>\n  <tr data-name=\"qa.json\" data-type=\"JSON\" data-size=\"28\"><td><a href=\"qa.json\">qa.json<\/a><\/td><td>JSON<\/td><td>28 B<\/td><td><code>012aa279\u2026e8500<\/code><\/td><\/tr>\n  <tr data-name=\"run.webm\" data-type=\"VIDEO\" data-size=\"18\"><td><a href=\"run.webm\">run.webm<\/a><\/td><td>WEBM<\/td><td>18 B<\/td><td><code>0da62f1e\u2026934dc<\/code><\/td><\/tr>\n  <tr data-name=\"trace.zip\" data-type=\"ZIP\" data-size=\"126\"><td><a href=\"trace.zip\">trace.zip<\/a><\/td><td>ZIP<\/td><td>126 B<\/td><td><code>eb389820\u20262966f<\/code><\/td><\/tr>\n  <\/tbody><\/table><p class=\"meta\">\u6821\u9a8c\u503c\u5728\u5f52\u96c6\u540e\u8ba1\u7b97\uff1btrace.zip \u5df2\u786e\u8ba4\u5305\u542b <code>trace.txt<\/code>\uff0810 B\uff09\u3002<\/p><\/div>\n<\/details>\n\n<details>\n  <summary>\u590d\u6838\u884c\u52a8 <span id=\"progressText\" class=\"meta\">0 / 3<\/span><\/summary>\n  <div class=\"details-body\">\n    <div class=\"checks\">\n      <label class=\"check\"><input type=\"checkbox\" value=\"\u6253\u5f00 report.html\uff0c\u786e\u8ba4 UAT \u4e3b\u7ed3\u8bba\u4e3a PASS\"><span>\u6253\u5f00\u62a5\u544a\uff0c\u786e\u8ba4\u4e3b\u7ed3\u8bba\u4e3a PASS<\/span><\/label>\n      <label class=\"check\"><input type=\"checkbox\" value=\"\u56de\u653e run.webm\uff0c\u62bd\u67e5 fresh UAT \u6267\u884c\u8fc7\u7a0b\"><span>\u56de\u653e\u5f55\u50cf\uff0c\u62bd\u67e5\u6267\u884c\u8fc7\u7a0b<\/span><\/label>\n      <label class=\"check\"><input type=\"checkbox\" value=\"\u4fdd\u7559 trace.zip\uff0c\u7528\u4e8e\u540e\u7eed\u95ee\u9898\u8ffd\u8e2a\"><span>\u4fdd\u7559 trace\uff0c\u7528\u4e8e\u540e\u7eed\u95ee\u9898\u8ffd\u8e2a<\/span><\/label>\n    <\/div>\n    <div class=\"progress\"><div id=\"bar\" class=\"bar\"><\/div><\/div>\n    <div class=\"check-actions\"><span id=\"toast\" class=\"toast\"><\/span><button id=\"copy\">\u590d\u5236 Markdown<\/button><\/div>\n  <\/div>\n<\/details>\n\n<footer>\n  <div>\u6765\u6e90\u9879\u76ee\uff1a<strong>pitch-video-project<\/strong><\/div>\n  <div class=\"path\">\u7edd\u5bf9\u8def\u5f84\uff1a<code>/tmp/pitch-video-project<\/code><\/div>\n  <div>Pi session ID\uff1a<code>eval-session-5<\/code><\/div>\n  <div>\u5f52\u96c6\u8303\u56f4\uff1a\u4ec5\u804a\u5929\u660e\u786e\u5217\u51fa\u7684 4 \u4e2a session-owned \u8f93\u5165\u6587\u4ef6\uff1b\u672a\u590d\u5236\u540c\u76ee\u5f55\u5176\u4ed6\u6587\u4ef6\u3002<\/div>\n<\/footer>\n<\/main>\n<script>\nconst cards=[...document.querySelectorAll('.artifact')],box=document.querySelector('#artifacts'),search=document.querySelector('#search'),sort=document.querySelector('#sort'),empty=document.querySelector('#empty');\nfunction render(){const q=search.value.trim().toLowerCase(),key=sort.value;cards.sort((a,b)=>key==='priority'?+a.dataset.priority-+b.dataset.priority:a.dataset[key].localeCompare(b.dataset[key]));cards.forEach(c=>{c.hidden=!c.dataset.name.includes(q);box.append(c)});empty.classList.toggle('show',cards.every(c=>c.hidden))}search.addEventListener('input',render);sort.addEventListener('change',render);\nlet tableDir=1;document.querySelectorAll('#evidence th button').forEach(b=>b.onclick=()=>{const key=b.dataset.key,rows=[...document.querySelectorAll('#evidence tbody tr')];tableDir*=-1;rows.sort((a,c)=>key==='size'?(+a.dataset.size-+c.dataset.size)*tableDir:a.dataset[key].localeCompare(c.dataset[key])*tableDir).forEach(r=>r.parentNode.append(r))});\nconst checks=[...document.querySelectorAll('.check input')],bar=document.querySelector('#bar'),progressText=document.querySelector('#progressText'),toast=document.querySelector('#toast');\nfunction update(){const n=checks.filter(x=>x.checked).length;bar.style.width=(n/checks.length*100)+'%';progressText.textContent=n+' / '+checks.length;checks.forEach((x,i)=>localStorage.setItem('uat-recap-'+i,x.checked?'1':'0'))}checks.forEach((x,i)=>{x.checked=localStorage.getItem('uat-recap-'+i)==='1';x.addEventListener('change',update)});update();\ndocument.querySelector('#copy').onclick=async()=>{const md=['# Fresh UAT \u590d\u6838','',...checks.map(x=>`- [${x.checked?'x':' '}] ${x.value}`)].join('\\n');try{await navigator.clipboard.writeText(md);toast.textContent='\u5df2\u590d\u5236'}catch(e){const t=document.createElement('textarea');t.value=md;document.body.append(t);t.select();document.execCommand('copy');t.remove();toast.textContent='\u5df2\u590d\u5236'}setTimeout(()=>toast.textContent='',1800)};\n<\/script>\n<\/body>\n<\/html>\n", "path": "/files/eval-5-session-recap-all-artifacts-with_skill-run-1/main.html"}, {"name": "qa.json", "type": "text", "content": "{\"passed\":true,\"errors\":[]}\n", "path": "/files/eval-5-session-recap-all-artifacts-with_skill-run-1/qa.json"}, {"name": "report.html", "type": "text", "content": "<!doctype html><title>UAT report<\/title><h1>PASS<\/h1>", "path": "/files/eval-5-session-recap-all-artifacts-with_skill-run-1/report.html"}, {"name": "run.webm", "type": "binary", "mime": "video/webm", "data_uri": "data:video/webm;base64,UklGRmZha2Utd2VibS1ldmFs", "path": "/files/eval-5-session-recap-all-artifacts-with_skill-run-1/run.webm"}, {"name": "trace.zip", "type": "binary", "mime": "application/zip", "data_uri": "data:application/zip;base64,UEsDBBQAAAAAADVLC12DcbHQCgAAAAoAAAAJAAAAdHJhY2UudHh0ZmFrZSB0cmFjZVBLAQIUAxQAAAAAADVLC12DcbHQCgAAAAoAAAAJAAAAAAAAAAAAAACAAQAAAAB0cmFjZS50eHRQSwUGAAAAAAEAAQA3AAAAMQAAAAAA", "path": "/files/eval-5-session-recap-all-artifacts-with_skill-run-1/trace.zip"}], "grading": {"expectations": [{"text": "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.", "passed": true, "evidence": "links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"}, {"text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.", "passed": true, "evidence": "video_nodes=[('run.webm', True, 0)]"}, {"text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.", "passed": true, "evidence": "artifact_links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"}, {"text": "The page includes source project absolute path and a Pi session ID in its footer.", "passed": true, "evidence": "project=True; session=True"}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"tool_calls": {}, "total_tool_calls": 0, "total_steps": 0, "files_created": ["run.webm", "qa.json", "trace.zip", "main.html", "report.html"], "errors_encountered": 0, "output_chars": 11267, "transcript_chars": 103024370}, "timing": {"total_tokens": 13908, "duration_ms": 113315, "total_duration_seconds": 113.315, "exit_code": 0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Assertions directly inspect link scope and media placement in main.html."}}, "rel_path": "eval-5-session-recap-all-artifacts/with_skill/run-1"}, {"id": "eval-5-session-recap-all-artifacts-without_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "main.html", "type": "text", "content": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Fresh UAT \u00b7 Session Recap<\/title>\n<style>\n:root{color-scheme:dark;--bg:#0b0d10;--panel:#13171c;--line:#29313a;--text:#edf2f7;--muted:#93a1b2;--green:#63d69a;--amber:#f3c86a;--blue:#78b7ff;--red:#ff8a8a;--r:16px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% 0,#172438 0,transparent 34rem),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif}.wrap{width:min(1060px,calc(100% - 28px));margin:auto;padding:36px 0 60px}header{margin-bottom:22px}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(30px,6vw,54px);line-height:1.02;margin:8px 0 14px;letter-spacing:-.045em}.verdict{border-left:4px solid var(--amber);background:#171a1d;padding:14px 16px;border-radius:0 var(--r) var(--r) 0;max-width:850px}.verdict strong{color:var(--green)}.meta,.muted{color:var(--muted)}.meta{margin-top:10px;font-size:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:color-mix(in srgb,var(--panel) 94%,transparent);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 14px 40px #0004}.card h2,.card h3{margin:0 0 10px}.card h2{font-size:20px}.span2{grid-column:1/-1}.status{display:inline-flex;gap:7px;align-items:center;color:var(--green);font-weight:800}.dot{width:9px;height:9px;background:var(--green);border-radius:50%;box-shadow:0 0 0 5px #63d69a20}.warning{color:var(--amber)}a,button{color:var(--blue)}a:hover{text-decoration:none}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}input[type=search],button,.button{border:1px solid var(--line);background:#0e1216;color:var(--text);border-radius:10px;padding:9px 11px;font:inherit}.button{display:inline-block;text-decoration:none}button{cursor:pointer}button:hover,.button:hover{border-color:var(--blue)}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}th button{padding:0;border:0;background:none;color:var(--muted);font-weight:750}.type{color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}.preview{width:100%;height:170px;border:1px solid var(--line);border-radius:12px;background:white}video{width:100%;max-height:320px;background:#050607;border-radius:12px;border:1px solid var(--line)}pre{white-space:pre-wrap;word-break:break-word;background:#0b0e12;padding:12px;border-radius:10px;border:1px solid var(--line);color:#cfe1f5}details{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}summary{cursor:pointer;font-weight:750}.check{display:flex;gap:10px;padding:8px 0}.check input{accent-color:var(--green)}.progress{height:8px;background:#0b0e12;border-radius:10px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--green);transition:.2s}footer{color:var(--muted);font-size:12px;margin-top:22px;border-top:1px solid var(--line);padding-top:18px}.hash{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;font-size:11px}.empty{display:none;color:var(--muted);padding:15px}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:3px 8px;margin-right:5px;font-size:12px;color:var(--muted)}@media(max-width:720px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}.wrap{padding-top:24px}th:nth-child(3),td:nth-child(3){display:none}.preview{height:130px}}\n<\/style>\n<\/head>\n<body>\n<main class=\"wrap\">\n<header>\n  <div class=\"eyebrow\">Pi session \u00b7 eval-session-5<\/div>\n  <h1>Fresh UAT \u4ea7\u7269\u5df2\u5f52\u96c6<\/h1>\n  <div class=\"verdict\"><strong>QA \u4e0e\u62a5\u544a\u5747\u58f0\u660e PASS<\/strong>\uff1b4 \u4e2a\u6307\u5b9a\u4ea7\u7269\u5df2\u8fdb\u5165\u4fbf\u643a\u5305\u5e76\u53ef\u4ece\u672c\u9875\u76f4\u63a5\u67e5\u770b\u6216\u4e0b\u8f7d\u3002\u6ce8\u610f\uff1a\u89c6\u9891\u4ec5 18 B\u3001trace \u5185\u5bb9\u4e3a\u201cfake trace\u201d\uff0c\u56e0\u6b64\u5f53\u524d\u7ed3\u8bba\u53ea\u8bc1\u660e\u4ea7\u7269\u5df2\u751f\u6210\u4e0e\u5f52\u96c6\uff0c\u4e0d\u8db3\u4ee5\u8bc1\u660e\u8bc1\u636e\u8d28\u91cf\u3002<\/div>\n  <div class=\"meta\">\u9879\u76ee\uff1a<code>/tmp/pitch-video-project<\/code> \u00b7 \u5f52\u96c6\u65f6\u95f4\uff1a2026-08-11T01:27:20Z \u00b7 \u8f93\u5165\uff1a\u672c\u6b21\u4f1a\u8bdd\u6307\u5b9a\u76ee\u5f55<\/div>\n<\/header>\n\n<section class=\"grid\" aria-label=\"\u5173\u952e\u8bc1\u636e\">\n  <article class=\"card\">\n    <h2>QA \u7ed3\u679c<\/h2>\n    <div class=\"status\"><span class=\"dot\"><\/span>PASS \u00b7 0 errors<\/div>\n    <p class=\"muted\">\u89e3\u6790\u81ea <code>qa.json<\/code>\uff0c\u4e0d\u662f\u4e8c\u6b21\u63a8\u65ad\u3002<\/p>\n    <details><summary>\u67e5\u770b\u539f\u59cb JSON<\/summary><pre>{\"passed\":true,\"errors\":[]}<\/pre><a class=\"button\" href=\"qa.json\" download>\u4e0b\u8f7d qa.json<\/a><\/details>\n  <\/article>\n\n  <article class=\"card\">\n    <h2>Trace \u6458\u8981<\/h2>\n    <p><span class=\"pill\">ZIP 126 B<\/span><span class=\"pill\">1 file<\/span><\/p>\n    <pre>trace.txt \u2192 \"fake trace\"<\/pre>\n    <a class=\"button\" href=\"trace.zip\" download>\u4e0b\u8f7d trace.zip<\/a>\n  <\/article>\n\n  <article class=\"card span2\">\n    <h2>UAT \u62a5\u544a \u00b7 \u9875\u9762\u5185\u9884\u89c8<\/h2>\n    <iframe class=\"preview\" src=\"report.html\" title=\"UAT report preview\" sandbox><\/iframe>\n    <div class=\"toolbar\"><a class=\"button\" href=\"report.html\" target=\"_blank\" rel=\"noopener\">\u72ec\u7acb\u6253\u5f00\u62a5\u544a \u2197<\/a><\/div>\n  <\/article>\n\n  <article class=\"card span2\">\n    <h2>\u8fd0\u884c\u5f55\u50cf \u00b7 \u9875\u9762\u5185\u64ad\u653e<\/h2>\n    <video controls preload=\"metadata\" src=\"run.webm\">\u6d4f\u89c8\u5668\u65e0\u6cd5\u64ad\u653e\uff1b\u8bf7<a href=\"run.webm\" download>\u4e0b\u8f7d\u5f55\u50cf<\/a>\u3002<\/video>\n    <p id=\"videoNote\" class=\"warning\">\u6587\u4ef6\u4ec5 18 B\uff1b\u82e5\u65e0\u6cd5\u64ad\u653e\uff0c\u8bf4\u660e\u73b0\u6709\u6355\u83b7\u4e0d\u8db3\uff0c\u9700\u91cd\u65b0\u5f55\u5236\u3002<\/p>\n    <a class=\"button\" href=\"run.webm\" download>\u4e0b\u8f7d run.webm<\/a>\n  <\/article>\n\n  <article class=\"card span2\">\n    <h2>\u4ea7\u7269\u7d22\u5f15<\/h2>\n    <div class=\"toolbar\"><input id=\"search\" type=\"search\" placeholder=\"\u641c\u7d22\u6587\u4ef6\u6216\u7c7b\u578b\u2026\" aria-label=\"\u641c\u7d22\u4ea7\u7269\"><span id=\"count\" class=\"muted\"><\/span><\/div>\n    <div style=\"overflow:auto\"><table id=\"artifacts\"><thead><tr><th><button data-sort=\"name\">\u6587\u4ef6 \u2195<\/button><\/th><th><button data-sort=\"type\">\u7528\u9014 \u2195<\/button><\/th><th><button data-sort=\"size\">\u5927\u5c0f \u2195<\/button><\/th><th>\u7a84\u64cd\u4f5c<\/th><\/tr><\/thead><tbody>\n      <tr data-name=\"report.html\" data-type=\"uat report\" data-size=\"53\"><td><strong>report.html<\/strong><\/td><td>UAT \u62a5\u544a<\/td><td>53 B<\/td><td><a href=\"report.html\" target=\"_blank\">\u6253\u5f00<\/a><\/td><\/tr>\n      <tr data-name=\"qa.json\" data-type=\"qa result\" data-size=\"28\"><td><strong>qa.json<\/strong><\/td><td>QA \u7ed3\u679c<\/td><td>28 B<\/td><td><a href=\"qa.json\" target=\"_blank\">\u6253\u5f00<\/a><\/td><\/tr>\n      <tr data-name=\"run.webm\" data-type=\"video capture\" data-size=\"18\"><td><strong>run.webm<\/strong><\/td><td>\u8fd0\u884c\u5f55\u50cf<\/td><td>18 B<\/td><td><a href=\"run.webm\" download>\u4e0b\u8f7d<\/a><\/td><\/tr>\n      <tr data-name=\"trace.zip\" data-type=\"trace archive\" data-size=\"126\"><td><strong>trace.zip<\/strong><\/td><td>Trace \u5f52\u6863<\/td><td>126 B<\/td><td><a href=\"trace.zip\" download>\u4e0b\u8f7d<\/a><\/td><\/tr>\n    <\/tbody><\/table><div id=\"empty\" class=\"empty\">\u6ca1\u6709\u5339\u914d\u4ea7\u7269\u3002<\/div><\/div>\n    <details><summary>\u5b8c\u6574\u6027\u6821\u9a8c \u00b7 SHA-256<\/summary><pre class=\"hash\">report.html  8713327d51e1a3e32771b889270449cf611c5843a57caf2d5463b8958911518d\nqa.json      012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500\nrun.webm     0da62f1e5928525cba07cb35414f4cb4e6178c6ad72070e5d92534cafb3934dc\ntrace.zip    eb389820e51295ef9bae57dbdbe51425543c1d64d6b1033448c5811ad412966f<\/pre><\/details>\n  <\/article>\n\n  <article class=\"card span2\">\n    <h2>\u5efa\u8bae\u7684\u9a8c\u8bc1\u95ed\u73af<\/h2>\n    <div id=\"checks\">\n      <label class=\"check\"><input type=\"checkbox\" data-task=\"\u5728\u76ee\u6807\u6d4f\u89c8\u5668\u4e2d\u72ec\u7acb\u6253\u5f00 report.html\uff0c\u786e\u8ba4 PASS \u9875\u9762\u53ef\u89c1\"> <span>\u72ec\u7acb\u6253\u5f00\u62a5\u544a\uff0c\u786e\u8ba4 PASS \u9875\u9762\u53ef\u89c1<\/span><\/label>\n      <label class=\"check\"><input type=\"checkbox\" data-task=\"\u91cd\u65b0\u751f\u6210\u53ef\u64ad\u653e\u7684 run.webm\uff0c\u5e76\u66ff\u6362\u5f53\u524d 18 B \u6587\u4ef6\"> <span>\u91cd\u65b0\u751f\u6210\u53ef\u64ad\u653e\u5f55\u50cf\uff08\u5f53\u524d\u4ec5 18 B\uff09<\/span><\/label>\n      <label class=\"check\"><input type=\"checkbox\" data-task=\"\u7528\u771f\u5b9e trace \u66ff\u6362 trace.zip \u4e2d\u7684\u5360\u4f4d\u5185\u5bb9\"> <span>\u7528\u771f\u5b9e trace \u66ff\u6362\u5360\u4f4d\u5185\u5bb9<\/span><\/label>\n    <\/div>\n    <div class=\"progress\" aria-label=\"\u5b8c\u6210\u8fdb\u5ea6\"><i id=\"bar\"><\/i><\/div>\n    <div class=\"toolbar\"><span id=\"progressText\" class=\"muted\">0 / 3 \u5b8c\u6210<\/span><button id=\"copy\">\u590d\u5236 Markdown \u6e05\u5355<\/button><\/div>\n  <\/article>\n<\/section>\n\n<footer>\n  <div>\u6765\u6e90\u9879\u76ee\uff1a<code>/tmp/pitch-video-project<\/code> \u00b7 Pi session ID\uff1a<code>eval-session-5<\/code><\/div>\n  <div>\u5f52\u96c6\u6765\u6e90\uff1a<code>/Users/liushiyuwin/.pi/skills/onepager/evals/files/session-artifacts<\/code><\/div>\n  <div>\u751f\u547d\u5468\u671f\uff1a\u9759\u6001\u79bb\u7ebf\u4fbf\u643a\u5305\uff1b\u65e0 CDN\u3001\u65e0\u540e\u53f0\u670d\u52a1\u3002\u4ec5\u590d\u5236\u4f1a\u8bdd\u6307\u5b9a\u7684 4 \u4e2a\u4ea7\u7269\uff1b\u672a\u590d\u5236\u540c\u76ee\u5f55\u7684\u975e\u6307\u5b9a\u6587\u4ef6\u3002<\/div>\n<\/footer>\n<\/main>\n<script>\nconst rows=[...document.querySelectorAll('#artifacts tbody tr')],search=document.querySelector('#search'),count=document.querySelector('#count'),empty=document.querySelector('#empty');\nfunction filter(){const q=search.value.trim().toLowerCase();let n=0;rows.forEach(r=>{const show=!q||(r.dataset.name+' '+r.dataset.type).includes(q);r.hidden=!show;if(show)n++});count.textContent=`${n} / ${rows.length} \u4e2a\u4ea7\u7269`;empty.style.display=n?'none':'block'}\nsearch.addEventListener('input',filter);filter();\nlet direction=1,last='';document.querySelectorAll('[data-sort]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.sort;direction=last===k?-direction:1;last=k;rows.sort((a,c)=>k==='size'?(+a.dataset[k]- +c.dataset[k])*direction:a.dataset[k].localeCompare(c.dataset[k])*direction).forEach(r=>r.parentNode.appendChild(r));document.querySelectorAll('[data-sort]').forEach(x=>x.textContent=x.textContent.replace(/[\u2191\u2193]/g,'\u2195'));b.textContent=b.textContent.replace('\u2195',direction>0?'\u2191':'\u2193');filter()}));\nconst boxes=[...document.querySelectorAll('#checks input')],key='onepager:eval-session-5:checks';try{const saved=JSON.parse(localStorage.getItem(key)||'[]');boxes.forEach((b,i)=>b.checked=!!saved[i])}catch(e){}\nfunction update(){const n=boxes.filter(b=>b.checked).length;document.querySelector('#bar').style.width=`${n/boxes.length*100}%`;document.querySelector('#progressText').textContent=`${n} / ${boxes.length} \u5b8c\u6210`;try{localStorage.setItem(key,JSON.stringify(boxes.map(b=>b.checked)))}catch(e){}}\nboxes.forEach(b=>b.addEventListener('change',update));update();\ndocument.querySelector('#copy').addEventListener('click',async e=>{const text=['# eval-session-5 \u9a8c\u8bc1\u6e05\u5355','',...boxes.map(b=>`- [${b.checked?'x':' '}] ${b.dataset.task}`)].join('\\n');try{await navigator.clipboard.writeText(text);e.currentTarget.textContent='\u5df2\u590d\u5236 \u2713'}catch(err){prompt('\u590d\u5236\u4ee5\u4e0b\u6e05\u5355\uff1a',text)}setTimeout(()=>e.currentTarget.textContent='\u590d\u5236 Markdown \u6e05\u5355',1500)});\n<\/script>\n<\/body>\n<\/html>\n", "path": "/files/eval-5-session-recap-all-artifacts-without_skill-run-1/main.html"}, {"name": "qa.json", "type": "text", "content": "{\"passed\":true,\"errors\":[]}\n", "path": "/files/eval-5-session-recap-all-artifacts-without_skill-run-1/qa.json"}, {"name": "report.html", "type": "text", "content": "<!doctype html><title>UAT report<\/title><h1>PASS<\/h1>", "path": "/files/eval-5-session-recap-all-artifacts-without_skill-run-1/report.html"}, {"name": "run.webm", "type": "binary", "mime": "video/webm", "data_uri": "data:video/webm;base64,UklGRmZha2Utd2VibS1ldmFs", "path": "/files/eval-5-session-recap-all-artifacts-without_skill-run-1/run.webm"}, {"name": "trace.zip", "type": "binary", "mime": "application/zip", "data_uri": "data:application/zip;base64,UEsDBBQAAAAAADVLC12DcbHQCgAAAAoAAAAJAAAAdHJhY2UudHh0ZmFrZSB0cmFjZVBLAQIUAxQAAAAAADVLC12DcbHQCgAAAAoAAAAJAAAAAAAAAAAAAACAAQAAAAB0cmFjZS50eHRQSwUGAAAAAAEAAQA3AAAAMQAAAAAA", "path": "/files/eval-5-session-recap-all-artifacts-without_skill-run-1/trace.zip"}], "grading": {"expectations": [{"text": "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.", "passed": true, "evidence": "links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"}, {"text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.", "passed": true, "evidence": "video_nodes=[('run.webm', True, 0)]"}, {"text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.", "passed": true, "evidence": "artifact_links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"}, {"text": "The page includes source project absolute path and a Pi session ID in its footer.", "passed": true, "evidence": "project=True; session=True"}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"tool_calls": {}, "total_tool_calls": 0, "total_steps": 0, "files_created": ["run.webm", "qa.json", "trace.zip", "main.html", "report.html"], "errors_encountered": 0, "output_chars": 10983, "transcript_chars": 106081920}, "timing": {"total_tokens": 14159, "duration_ms": 138481, "total_duration_seconds": 138.481, "exit_code": 0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Assertions directly inspect link scope and media placement in main.html."}}, "rel_path": "eval-5-session-recap-all-artifacts/without_skill/run-1"}, {"id": "eval-6-visible-primary-video-with_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "failure.webm", "type": "binary", "mime": "video/webm", "data_uri": "data:video/webm;base64,UklGRmZha2UtZmFpbHVyZS12aWRlbw==", "path": "/files/eval-6-visible-primary-video-with_skill-run-1/failure.webm"}, {"name": "main.html", "type": "text", "content": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>\u8c03\u8bd5\u4f1a\u8bdd\u603b\u7ed3 \u00b7 eval-session-6<\/title>\n<style>\n:root{--ink:#15211c;--muted:#627069;--paper:#f5f2e9;--card:#fffdf7;--green:#286149;--lime:#c9f27b;--line:#d9ded5;--red:#a84438;--shadow:0 18px 60px #17362914}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}a{color:inherit}.wrap{width:min(1100px,calc(100% - 32px));margin:auto}.hero{padding:42px 0 24px}.hero-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(250px,.6fr);gap:22px;align-items:stretch}.intro,.stamp{border:1px solid var(--line);border-radius:24px;background:var(--card);box-shadow:var(--shadow)}.intro{padding:32px}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--green);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.dot{width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 5px #c9f27b40}h1{margin:14px 0 8px;font-size:clamp(32px,6vw,62px);line-height:1;letter-spacing:-.045em}.verdict{margin:18px 0 0;padding-left:15px;border-left:4px solid var(--green);font-size:clamp(17px,2.4vw,22px);font-weight:680}.stamp{padding:24px;display:grid;place-items:center;text-align:center;overflow:hidden}.stamp svg{width:150px;height:75px;border-radius:18px;box-shadow:0 16px 30px #28614935}.stamp strong{display:block;margin-top:13px;font-size:28px}.stamp small{color:var(--muted)}section{margin:18px 0 32px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:12px}.section-head h2{margin:0;font-size:21px}.section-head p{margin:0;color:var(--muted);font-size:13px}.primary{background:#0f1915;border-radius:24px;padding:18px;color:#f7fff9;box-shadow:var(--shadow)}.primary-label{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 10px;background:var(--lime);color:#17351f;font-weight:800;font-size:12px}.primary video{display:block;width:100%;aspect-ratio:16/9;max-height:610px;background:#050807;border-radius:16px}.video-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 4px 1px}.video-foot p{margin:0;color:#bdc8c1}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:8px 13px;border:1px solid var(--line);border-radius:11px;background:var(--card);text-decoration:none;font-weight:750;cursor:pointer}.primary .btn{border-color:#456257;background:#1d2c26;color:white}.media-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.48fr);gap:16px}.evidence,.actions,.artifacts{border:1px solid var(--line);border-radius:20px;background:var(--card);padding:18px}.evidence video{width:100%;aspect-ratio:16/9;background:#101411;border-radius:12px;display:block}.evidence h3,.actions h3{margin:0 0 12px}.evidence p{color:var(--muted);margin:10px 0 0}.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px}.bar{height:7px;border-radius:9px;background:#e3e7df;margin:8px 0 14px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:var(--green);transition:.2s}.check{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #edf0eb}.check:last-of-type{border:0}.check input{accent-color:var(--green)}.actions .btn{width:100%;margin-top:14px}.tools{display:flex;gap:8px;flex-wrap:wrap}.tools input{min-width:210px;flex:1;border:1px solid var(--line);background:white;border-radius:11px;padding:10px 12px;font:inherit}.artifacts{padding:0;overflow:hidden}.artifact-head,.artifact-row{display:grid;grid-template-columns:1.2fr .7fr .8fr;align-items:center;gap:12px}.artifact-head{padding:11px 18px;background:#ecefe8;color:var(--muted);font-size:12px;font-weight:800}.sort{border:0;background:transparent;text-align:left;padding:0;color:inherit;font:inherit;font-weight:inherit;cursor:pointer}.artifact-row{padding:15px 18px;border-top:1px solid var(--line)}.artifact-row:first-of-type{border-top:0}.name{font-weight:800}.name small{display:block;color:var(--muted);font-weight:500}.type{color:var(--muted)}.open{text-align:right}.open a{color:var(--green);font-weight:800;text-underline-offset:3px}.empty{display:none;padding:24px;text-align:center;color:var(--muted)}details{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:0 16px}summary{padding:15px 0;font-weight:800;cursor:pointer}.audit{padding:0 0 14px;color:var(--muted);font-size:13px}.audit code{overflow-wrap:anywhere;color:var(--ink)}footer{margin:38px 0 28px;color:var(--muted);font-size:12px}.toast{position:fixed;left:50%;bottom:24px;translate:-50% 20px;padding:10px 15px;border-radius:999px;background:#11251c;color:white;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;translate:-50% 0}@media(max-width:760px){.hero{padding-top:22px}.hero-grid,.media-grid{grid-template-columns:1fr}.intro{padding:24px}.stamp{display:none}.artifact-head,.artifact-row{grid-template-columns:1fr auto}.artifact-head span:nth-child(2),.artifact-row .type{display:none}.video-foot{align-items:flex-start;flex-direction:column}.open{text-align:right}.section-head{align-items:flex-start;flex-direction:column;gap:3px}}\n<\/style>\n<\/head>\n<body>\n<header class=\"hero\"><div class=\"wrap hero-grid\">\n  <div class=\"intro\"><div class=\"eyebrow\"><span class=\"dot\"><\/span> Debug session \u00b7 completed<\/div><h1>\u8c03\u8bd5\u4f1a\u8bdd\u5df2\u901a\u8fc7<\/h1><p class=\"verdict\">\u6700\u7ec8\u62a5\u544a\u4e3a <strong>PASS<\/strong>\uff1b\u4f18\u5148\u89c2\u770b\u6210\u529f\u5f55\u50cf\uff0c\u5931\u8d25\u5f55\u50cf\u4fdd\u7559\u4e3a\u524d\u540e\u5bf9\u7167\u8bc1\u636e\u3002<\/p><\/div>\n  <aside class=\"stamp\" aria-label=\"\u6210\u529f\u72b6\u6001\u89c6\u89c9\u6807\u8bb0\">\n    <!-- hero.svg \u5df2\u5185\u8054\uff0c\u907f\u514d\u79bb\u7ebf\u5916\u94fe -->\n    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"60\" viewBox=\"0 0 120 60\" role=\"img\" aria-label=\"\u7eff\u8272\u6210\u529f\u6807\u8bb0\"><rect width=\"120\" height=\"60\" rx=\"10\" fill=\"#286149\"/><path d=\"m37 30 13 12 31-28\" fill=\"none\" stroke=\"#c9f27b\" stroke-width=\"7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><\/svg>\n    <div><strong>PASS<\/strong><small>\u6700\u7ec8\u9a8c\u6536\u72b6\u6001<\/small><\/div>\n  <\/aside>\n<\/div><\/header>\n<main class=\"wrap\">\n<section aria-labelledby=\"final-title\"><div class=\"section-head\"><div><h2 id=\"final-title\">\u6700\u7ec8\u6210\u529f\u5f55\u50cf<\/h2><p>\u4e3b\u4ea7\u7269\u76f4\u63a5\u53ef\u89c1\uff0c\u4e0d\u85cf\u5728\u8bc1\u636e\u6298\u53e0\u533a<\/p><\/div><span class=\"badge\">\u25cf PRIMARY<\/span><\/div>\n  <div class=\"primary\"><div class=\"primary-label\"><strong>run.webm<\/strong><span>\u6700\u7ec8\u6210\u529f<\/span><\/div><video controls preload=\"metadata\" playsinline><source src=\"run.webm\" type=\"video/webm\">\u6d4f\u89c8\u5668\u65e0\u6cd5\u64ad\u653e WebM\uff0c\u8bf7\u4f7f\u7528\u4e0b\u65b9\u4e0b\u8f7d\u94fe\u63a5\u3002<\/video><div class=\"video-foot\"><p class=\"media-status\">\u53ef\u64ad\u653e\u65f6\u957f\u4e0e\u753b\u9762\u4ee5\u6e90\u6587\u4ef6\u4e3a\u51c6\u3002<\/p><a class=\"btn\" href=\"run.webm\" download>\u4e0b\u8f7d\u6700\u7ec8\u5f55\u50cf \u2193<\/a><\/div><\/div>\n<\/section>\n<section><div class=\"section-head\"><div><h2>\u5bf9\u7167\u4e0e\u884c\u52a8<\/h2><p>\u4e00\u6b21\u53ea\u901a\u8fc7\u4e00\u6247\u7a84\u95e8\u53d6\u6240\u9700\u4fe1\u606f<\/p><\/div><\/div><div class=\"media-grid\">\n  <article class=\"evidence\"><h3>\u5931\u8d25\u8bc1\u636e \u00b7 failure.webm<\/h3><video controls preload=\"metadata\" playsinline><source src=\"failure.webm\" type=\"video/webm\">\u6d4f\u89c8\u5668\u65e0\u6cd5\u64ad\u653e WebM\u3002<\/video><p>\u7528\u4e8e\u4e0e\u6700\u7ec8\u6210\u529f\u7ed3\u679c\u5bf9\u7167\u3002<a href=\"failure.webm\" download>\u4e0b\u8f7d\u5931\u8d25\u5f55\u50cf \u2192<\/a><\/p><\/article>\n  <aside class=\"actions\"><h3>\u4ea4\u63a5\u68c0\u67e5<\/h3><div class=\"progress-meta\"><span>\u5b8c\u6210\u8fdb\u5ea6<\/span><strong id=\"count\">0 / 3<\/strong><\/div><div class=\"bar\"><span id=\"bar\"><\/span><\/div>\n    <label class=\"check\"><input type=\"checkbox\" data-item=\"\u89c2\u770b\u6700\u7ec8\u6210\u529f\u5f55\u50cf\">\u89c2\u770b\u6700\u7ec8\u6210\u529f\u5f55\u50cf<\/label><label class=\"check\"><input type=\"checkbox\" data-item=\"\u6309\u9700\u6838\u5bf9\u5931\u8d25\u8bc1\u636e\">\u6309\u9700\u6838\u5bf9\u5931\u8d25\u8bc1\u636e<\/label><label class=\"check\"><input type=\"checkbox\" data-item=\"\u6253\u5f00\u6700\u7ec8 UAT \u62a5\u544a\">\u6253\u5f00\u6700\u7ec8 UAT \u62a5\u544a<\/label><button class=\"btn\" id=\"copy\">\u590d\u5236 Markdown \u6e05\u5355<\/button>\n  <\/aside>\n<\/div><\/section>\n<section><div class=\"section-head\"><div><h2>\u5168\u90e8\u4f1a\u8bdd\u4ea7\u7269<\/h2><p id=\"result-count\">3 \u4e2a\u5df2\u6821\u9a8c\u5165\u53e3<\/p><\/div><div class=\"tools\"><input id=\"search\" type=\"search\" placeholder=\"\u641c\u7d22\u540d\u79f0\u3001\u7c7b\u578b\u6216\u7528\u9014\u2026\" aria-label=\"\u641c\u7d22\u4f1a\u8bdd\u4ea7\u7269\"><\/div><\/div>\n  <div class=\"artifacts\"><div class=\"artifact-head\"><button class=\"sort\" data-sort=\"name\">\u4ea7\u7269 \u2195<\/button><button class=\"sort\" data-sort=\"type\">\u7c7b\u578b \u2195<\/button><span style=\"text-align:right\">\u5165\u53e3<\/span><\/div><div id=\"rows\">\n    <div class=\"artifact-row\" data-name=\"run.webm \u6700\u7ec8\u6210\u529f\u5f55\u50cf\" data-type=\"\u89c6\u9891 webm\"><div class=\"name\">run.webm<small>\u6700\u7ec8\u6210\u529f\u5f55\u50cf \u00b7 \u4e3b\u4ea7\u7269<\/small><\/div><div class=\"type\">\u89c6\u9891 \u00b7 WebM<\/div><div class=\"open\"><a href=\"run.webm\">\u6253\u5f00 / \u4e0b\u8f7d \u2192<\/a><\/div><\/div>\n    <div class=\"artifact-row\" data-name=\"failure.webm \u5931\u8d25\u8bc1\u636e\u5f55\u50cf\" data-type=\"\u89c6\u9891 webm\"><div class=\"name\">failure.webm<small>\u5931\u8d25\u73b0\u573a \u00b7 \u5bf9\u7167\u8bc1\u636e<\/small><\/div><div class=\"type\">\u89c6\u9891 \u00b7 WebM<\/div><div class=\"open\"><a href=\"failure.webm\">\u6253\u5f00 / \u4e0b\u8f7d \u2192<\/a><\/div><\/div>\n    <div class=\"artifact-row\" data-name=\"report.html \u6700\u7ec8 uat \u62a5\u544a pass\" data-type=\"\u62a5\u544a html\"><div class=\"name\">report.html<small>\u6700\u7ec8 UAT \u62a5\u544a \u00b7 PASS<\/small><\/div><div class=\"type\">\u62a5\u544a \u00b7 HTML<\/div><div class=\"open\"><a href=\"report.html\">\u6253\u5f00\u62a5\u544a \u2192<\/a><\/div><\/div>\n  <\/div><div class=\"empty\" id=\"empty\">\u6ca1\u6709\u5339\u914d\u7684\u4f1a\u8bdd\u4ea7\u7269<\/div><\/div>\n<\/section>\n<section><details><summary>\u5ba1\u8ba1\u4fe1\u606f\u4e0e\u6765\u6e90<\/summary><div class=\"audit\">\u7ed3\u8bba\u4f9d\u636e\uff1a\u8f93\u5165\u4e2d\u7684\u6700\u7ec8\u62a5\u544a\u5185\u5bb9\u4e3a \u201cPASS\u201d\u3002<br>\u6765\u6e90\u9879\u76ee\uff1a<code>/tmp/debug-session<\/code><br>\u4f1a\u8bdd ID\uff1a<code>eval-session-6<\/code><br>\u751f\u6210\u65f6\u95f4\uff1a<code>2026-08-11 09:27:19 +0800<\/code><br>\u5f52\u96c6\u8303\u56f4\uff1a\u7528\u6237\u660e\u786e\u63d0\u4f9b\u7684 4 \u4e2a\u8f93\u5165\u6587\u4ef6\uff1bhero.svg \u5df2\u5185\u8054\u4e3a\u9875\u9762\u89c6\u89c9\u7d20\u6750\uff0c3 \u4e2a\u4f1a\u8bdd\u4ea7\u7269\u5df2\u590d\u5236\u5e76\u4f7f\u7528\u76f8\u5bf9\u94fe\u63a5\u3002<\/div><\/details><\/section>\n<\/main>\n<footer class=\"wrap\">\u79bb\u7ebf\u53ef\u7528 \u00b7 \u65e0 CDN \u00b7 \u5a92\u4f53\u4e0e\u62a5\u544a\u4f7f\u7528\u53ef\u643a\u5e26\u7684\u76f8\u5bf9\u8def\u5f84<\/footer><div class=\"toast\" id=\"toast\" role=\"status\">\u5df2\u590d\u5236<\/div>\n<script>\nconst checks=[...document.querySelectorAll('.check input')],bar=document.querySelector('#bar'),count=document.querySelector('#count');\nfunction progress(){const n=checks.filter(x=>x.checked).length;count.textContent=`${n} / ${checks.length}`;bar.style.width=`${n/checks.length*100}%`;localStorage.setItem('eval-session-6-checks',JSON.stringify(checks.map(x=>x.checked)))}\ntry{const saved=JSON.parse(localStorage.getItem('eval-session-6-checks'));if(Array.isArray(saved))checks.forEach((x,i)=>x.checked=!!saved[i])}catch(e){} checks.forEach(x=>x.addEventListener('change',progress));progress();\nconst toast=document.querySelector('#toast');function ping(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1500)}\ndocument.querySelector('#copy').onclick=async()=>{const md=['# eval-session-6 \u4ea4\u63a5\u6e05\u5355',...checks.map(x=>`- [${x.checked?'x':' '}] ${x.dataset.item}`)].join('\\n');try{await navigator.clipboard.writeText(md);ping('Markdown \u5df2\u590d\u5236')}catch(e){const a=document.createElement('textarea');a.value=md;document.body.append(a);a.select();document.execCommand('copy');a.remove();ping('Markdown \u5df2\u590d\u5236')}};\nconst rows=document.querySelector('#rows'),search=document.querySelector('#search'),result=document.querySelector('#result-count'),empty=document.querySelector('#empty');function filter(){const q=search.value.trim().toLowerCase();let n=0;[...rows.children].forEach(r=>{const show=(r.dataset.name+' '+r.dataset.type).toLowerCase().includes(q);r.hidden=!show;if(show)n++});result.textContent=`${n} \u4e2a${q?'\u5339\u914d':'\u5df2\u6821\u9a8c'}\u5165\u53e3`;empty.style.display=n?'none':'block'}search.oninput=filter;\nlet direction=1;document.querySelectorAll('.sort').forEach(b=>b.onclick=()=>{direction*=-1;[...rows.children].sort((a,c)=>a.dataset[b.dataset.sort].localeCompare(c.dataset[b.dataset.sort],'zh-CN')*direction).forEach(r=>rows.append(r));b.textContent=`${b.dataset.sort==='name'?'\u4ea7\u7269':'\u7c7b\u578b'} ${direction>0?'\u2191':'\u2193'}`});\ndocument.querySelectorAll('video').forEach(v=>v.addEventListener('error',()=>{const s=v.closest('article')?.querySelector('p')||v.parentElement.querySelector('.media-status');if(s)s.firstChild.textContent='\u5f53\u524d\u6d4f\u89c8\u5668\u65e0\u6cd5\u89e3\u7801\u6b64\u6e90\u6587\u4ef6\uff1b\u53ef\u4f7f\u7528\u4e0b\u8f7d\u5165\u53e3\u3002 '}));\n<\/script>\n<\/body><\/html>\n", "path": "/files/eval-6-visible-primary-video-with_skill-run-1/main.html"}, {"name": "report.html", "type": "text", "content": "<!doctype html><title>UAT report<\/title><h1>PASS<\/h1>", "path": "/files/eval-6-visible-primary-video-with_skill-run-1/report.html"}, {"name": "run.webm", "type": "binary", "mime": "video/webm", "data_uri": "data:video/webm;base64,UklGRmZha2Utd2VibS1ldmFs", "path": "/files/eval-6-visible-primary-video-with_skill-run-1/run.webm"}], "grading": {"expectations": [{"text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.", "passed": true, "evidence": "video_nodes=[('run.webm', True, 0), ('failure.webm', True, 0)]"}, {"text": "The main HTML directly links both run.webm and failure.webm and report.html, while hero.svg is inline or used as page artwork rather than omitted silently.", "passed": true, "evidence": "links=['failure.webm', 'report.html', 'run.webm']; inline_svg=True"}, {"text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.", "passed": true, "evidence": "artifact_links=['failure.webm', 'report.html', 'run.webm']"}, {"text": "The page includes source project absolute path and a Pi session ID in its footer.", "passed": true, "evidence": "project=True; session=True"}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"tool_calls": {}, "total_tool_calls": 0, "total_steps": 0, "files_created": ["run.webm", "failure.webm", "main.html", "report.html"], "errors_encountered": 0, "output_chars": 12561, "transcript_chars": 100592015}, "timing": {"total_tokens": 13994, "duration_ms": 129480, "total_duration_seconds": 129.48, "exit_code": 0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Assertions directly inspect link scope and media placement in main.html."}}, "rel_path": "eval-6-visible-primary-video/with_skill/run-1"}, {"id": "eval-6-visible-primary-video-without_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "failure.webm", "type": "binary", "mime": "video/webm", "data_uri": "data:video/webm;base64,UklGRmZha2UtZmFpbHVyZS12aWRlbw==", "path": "/files/eval-6-visible-primary-video-without_skill-run-1/failure.webm"}, {"name": "main.html", "type": "text", "content": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>\u8c03\u8bd5\u4f1a\u8bdd \u00b7 eval-session-6<\/title>\n<style>\n:root{--ink:#15231d;--muted:#647169;--paper:#f5f3ed;--card:#fffefa;--green:#286149;--green2:#dce9df;--red:#9b413b;--red2:#f5e2df;--line:#d9ddd7;--gold:#d5a63d;--shadow:0 16px 42px #1b362514}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",sans-serif}a{color:inherit}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}header{padding:28px 0 20px}.brand{display:flex;align-items:center;gap:12px;color:var(--green);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px}.brand svg{width:60px;height:30px;border-radius:8px}.hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:end;margin-top:28px}.eyebrow{color:var(--green);font-size:13px;font-weight:800;margin:0 0 8px}.hero h1{font-family:Georgia,serif;font-size:clamp(34px,6vw,68px);line-height:.98;letter-spacing:-.045em;margin:0;max-width:750px}.verdict{max-width:760px;font-size:18px;margin:18px 0 0}.badge{display:inline-flex;align-items:center;gap:8px;background:var(--green2);color:var(--green);padding:7px 12px;border-radius:999px;font-weight:800}.dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 5px #28614918}.meta{text-align:right;color:var(--muted);font-size:13px}.meta strong{display:block;color:var(--ink);font-size:15px}.section{margin:18px 0 34px}.section-title{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}.section-title h2{font:700 23px/1.2 Georgia,serif;margin:0}.section-title p{margin:0;color:var(--muted);font-size:13px}.primary{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}.primary-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.primary-head h3{margin:0;font-size:18px}.status{background:var(--green);color:white;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800}.video-shell{background:#111;border-radius:15px;overflow:hidden;min-height:280px;display:grid;place-items:center}.video-shell video{display:block;width:100%;max-height:620px;min-height:280px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:white;text-decoration:none;font-weight:750;cursor:pointer;font:inherit}.btn:hover,.btn:focus{border-color:var(--green);outline:2px solid #28614922}.btn.main{background:var(--green);border-color:var(--green);color:white}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.card h3{margin:0 0 6px;font-size:17px}.card p{color:var(--muted);margin:0 0 12px}.failure{border-top:4px solid var(--red)}.report{border-top:4px solid var(--gold)}.mini-video{background:#111;border-radius:11px;width:100%;min-height:180px;display:block}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}.search{flex:1;min-width:220px;border:1px solid var(--line);background:white;border-radius:10px;padding:10px 12px;font:inherit}.table-wrap{overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}tr:last-child td{border:0}th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);cursor:pointer;user-select:none}th:hover{color:var(--green)}td:first-child{font-weight:800}.type{display:inline-block;border-radius:999px;padding:3px 8px;background:#edf0ed;font-size:12px}.small-link{color:var(--green);font-weight:800;text-underline-offset:3px}.empty{display:none;color:var(--muted);padding:20px;text-align:center}.check-card{background:#173a2d;color:#f7fbf8;border-radius:20px;padding:20px}.progress-line{display:flex;align-items:center;gap:12px;margin:12px 0 16px}.bar{height:8px;background:#ffffff24;border-radius:99px;overflow:hidden;flex:1}.bar span{display:block;height:100%;width:0;background:#baddc4;transition:width .2s}.checks{display:grid;gap:8px}.check{display:flex;gap:10px;align-items:flex-start;background:#ffffff0c;padding:10px;border-radius:10px}.check input{margin-top:4px;accent-color:#baddc4}.check label{cursor:pointer}.check:has(input:checked) label{text-decoration:line-through;color:#b7c7bf}.check-card .btn{margin-top:14px;background:transparent;color:white;border-color:#ffffff52}.copy-note{font-size:12px;color:#c5d4cc;margin-left:8px}details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 15px;margin:12px 0}summary{cursor:pointer;font-weight:800;padding:13px 0}details p{color:var(--muted)}footer{border-top:1px solid var(--line);padding:23px 0 36px;color:var(--muted);font-size:12px}.source{overflow-wrap:anywhere}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:white;padding:10px 14px;border-radius:10px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:720px){.hero{grid-template-columns:1fr}.meta{text-align:left}.grid{grid-template-columns:1fr}.wrap{width:min(100% - 20px,1120px)}.video-shell,.video-shell video{min-height:190px}.section-title{align-items:start;flex-direction:column}.primary{padding:12px}}\n<\/style>\n<\/head>\n<body>\n<header class=\"wrap\">\n  <div class=\"brand\" aria-label=\"\u4f1a\u8bdd\u6807\u8bc6\">\n    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"60\" viewBox=\"0 0 120 60\" role=\"img\" aria-label=\"\u7eff\u8272\u4f1a\u8bdd\u7d20\u6750\"><rect width=\"120\" height=\"60\" rx=\"12\" fill=\"#286149\"/><path d=\"M22 30h26m12 0h38\" stroke=\"#f5f3ed\" stroke-width=\"5\" stroke-linecap=\"round\"/><circle cx=\"54\" cy=\"30\" r=\"7\" fill=\"#d5a63d\"/><\/svg>\n    Debug session / artifact index\n  <\/div>\n  <div class=\"hero\">\n    <div>\n      <p class=\"eyebrow\">FINAL HANDOFF<\/p>\n      <h1>\u8c03\u8bd5\u95ed\u73af\u5df2\u5f62\u6210<\/h1>\n      <p class=\"verdict\"><span class=\"badge\"><span class=\"dot\"><\/span>\u6700\u7ec8\u7ed3\u679c\uff1a\u6210\u529f<\/span>\u3000\u6700\u7ec8\u5f55\u50cf\u5df2\u7f6e\u4e8e\u9996\u5c4f\uff1b\u5931\u8d25\u8bc1\u636e\u4e0e UAT \u62a5\u544a\u5747\u53ef\u76f4\u63a5\u8fdb\u5165\u3002<\/p>\n    <\/div>\n    <div class=\"meta\"><span>SESSION<\/span><strong>eval-session-6<\/strong><span>3 \u4e2a\u4f1a\u8bdd\u4ea7\u7269<\/span><\/div>\n  <\/div>\n<\/header>\n\n<main class=\"wrap\">\n  <section class=\"section\" aria-labelledby=\"final-title\">\n    <div class=\"section-title\"><h2 id=\"final-title\">\u6700\u7ec8\u6210\u529f\u5f55\u50cf<\/h2><p>\u9996\u8981\u8bc1\u636e \u00b7 \u9875\u9762\u6253\u5f00\u5373\u53ef\u89c1<\/p><\/div>\n    <article class=\"primary\">\n      <div class=\"primary-head\"><h3>run.webm<\/h3><span class=\"status\">SUCCESS RUN<\/span><\/div>\n      <div class=\"video-shell\"><video controls preload=\"metadata\" aria-label=\"\u6700\u7ec8\u6210\u529f\u5f55\u50cf\"><source src=\"run.webm\" type=\"video/webm\">\u6d4f\u89c8\u5668\u65e0\u6cd5\u64ad\u653e\u6b64 WebM\uff1b\u8bf7\u4f7f\u7528\u4e0b\u65b9\u6309\u94ae\u6253\u5f00\u6216\u4e0b\u8f7d\u3002<\/video><\/div>\n      <div class=\"actions\"><a class=\"btn main\" href=\"run.webm\" target=\"_blank\">\u6253\u5f00\u5f55\u50cf \u2197<\/a><a class=\"btn\" href=\"run.webm\" download>\u4e0b\u8f7d run.webm<\/a><\/div>\n    <\/article>\n  <\/section>\n\n  <section class=\"section\" aria-labelledby=\"related-title\">\n    <div class=\"section-title\"><h2 id=\"related-title\">\u5176\u4f59\u4ea7\u7269<\/h2><p>\u5931\u8d25 \u2192 \u4fee\u590d \u2192 \u62a5\u544a\uff0c\u4e00\u6761\u6700\u77ed\u5ba1\u8ba1\u8def\u5f84<\/p><\/div>\n    <div class=\"grid\">\n      <article class=\"card failure\">\n        <h3>\u5931\u8d25\u8bc1\u636e \u00b7 failure.webm<\/h3><p>\u7528\u4e8e\u5bf9\u7167\u6210\u529f\u5f55\u50cf\uff0c\u4fdd\u7559\u95ee\u9898\u53d1\u751f\u65f6\u7684\u53ef\u89c6\u8bc1\u636e\u3002<\/p>\n        <video class=\"mini-video\" controls preload=\"metadata\" aria-label=\"\u5931\u8d25\u8bc1\u636e\u5f55\u50cf\"><source src=\"failure.webm\" type=\"video/webm\">\u6d4f\u89c8\u5668\u65e0\u6cd5\u64ad\u653e\u6b64 WebM\u3002<\/video>\n        <div class=\"actions\"><a class=\"btn\" href=\"failure.webm\" target=\"_blank\">\u6253\u5f00\u5931\u8d25\u5f55\u50cf \u2197<\/a><a class=\"btn\" href=\"failure.webm\" download>\u4e0b\u8f7d<\/a><\/div>\n      <\/article>\n      <article class=\"card report\">\n        <h3>\u6700\u7ec8\u62a5\u544a \u00b7 report.html<\/h3><p>UAT \u7ed3\u679c\uff1a<strong>PASS<\/strong>\u3002\u62a5\u544a\u4f5c\u4e3a\u72ec\u7acb\u9875\u9762\u4fdd\u7559\uff0c\u53ef\u79bb\u7ebf\u6253\u5f00\u3002<\/p>\n        <div class=\"actions\"><a class=\"btn main\" href=\"report.html\">\u8fdb\u5165\u62a5\u544a \u2192<\/a><a class=\"btn\" href=\"report.html\" download>\u4e0b\u8f7d<\/a><\/div>\n        <details><summary>\u62a5\u544a\u6700\u5c0f\u6458\u8981<\/summary><p>\u62a5\u544a\u6807\u9898\u4e3a \u201cUAT report\u201d\uff0c\u7ed3\u8bba\u4e3a \u201cPASS\u201d\u3002\u5b8c\u6574\u539f\u4ef6\u672a\u6539\u5199\u3002<\/p><\/details>\n      <\/article>\n    <\/div>\n  <\/section>\n\n  <section class=\"section\" aria-labelledby=\"index-title\">\n    <div class=\"section-title\"><h2 id=\"index-title\">\u4ea7\u7269\u5165\u53e3<\/h2><p>\u641c\u7d22\u53ea\u663e\u793a\u9700\u8981\u7684\u6761\u76ee\uff1b\u70b9\u51fb\u8868\u5934\u6392\u5e8f<\/p><\/div>\n    <div class=\"toolbar\"><input id=\"search\" class=\"search\" type=\"search\" placeholder=\"\u641c\u7d22\u540d\u79f0\u3001\u7c7b\u578b\u6216\u4f5c\u7528\u2026\" aria-label=\"\u641c\u7d22\u4ea7\u7269\"><button class=\"btn\" id=\"reset\" type=\"button\">\u6e05\u9664<\/button><\/div>\n    <div class=\"table-wrap\">\n      <table id=\"artifacts\">\n        <thead><tr><th data-key=\"name\">\u540d\u79f0 \u2195<\/th><th data-key=\"type\">\u7c7b\u578b \u2195<\/th><th data-key=\"purpose\">\u4f5c\u7528 \u2195<\/th><th>\u5165\u53e3<\/th><\/tr><\/thead>\n        <tbody>\n          <tr><td>run.webm<\/td><td><span class=\"type\">\u89c6\u9891<\/span><\/td><td>\u6700\u7ec8\u6210\u529f\u5f55\u50cf<\/td><td><a class=\"small-link\" href=\"run.webm\" target=\"_blank\">\u6253\u5f00 \u2192<\/a><\/td><\/tr>\n          <tr><td>failure.webm<\/td><td><span class=\"type\">\u89c6\u9891<\/span><\/td><td>\u5931\u8d25\u5bf9\u7167\u8bc1\u636e<\/td><td><a class=\"small-link\" href=\"failure.webm\" target=\"_blank\">\u6253\u5f00 \u2192<\/a><\/td><\/tr>\n          <tr><td>report.html<\/td><td><span class=\"type\">\u62a5\u544a<\/span><\/td><td>\u6700\u7ec8 UAT \u62a5\u544a<\/td><td><a class=\"small-link\" href=\"report.html\">\u6253\u5f00 \u2192<\/a><\/td><\/tr>\n        <\/tbody>\n      <\/table>\n      <div id=\"empty\" class=\"empty\">\u6ca1\u6709\u5339\u914d\u4ea7\u7269\u3002<\/div>\n    <\/div>\n  <\/section>\n\n  <section class=\"section check-card\" aria-labelledby=\"handoff-title\">\n    <div class=\"section-title\"><h2 id=\"handoff-title\">\u4ea4\u4ed8\u6838\u9a8c<\/h2><p style=\"color:#c5d4cc\">\u72b6\u6001\u53ea\u4fdd\u5b58\u5728\u5f53\u524d\u6d4f\u89c8\u5668<\/p><\/div>\n    <div class=\"progress-line\"><div class=\"bar\"><span id=\"bar\"><\/span><\/div><strong id=\"count\">0 / 3<\/strong><\/div>\n    <div class=\"checks\">\n      <div class=\"check\"><input id=\"c1\" type=\"checkbox\"><label for=\"c1\">\u5df2\u89c2\u770b\u6700\u7ec8\u6210\u529f\u5f55\u50cf run.webm<\/label><\/div>\n      <div class=\"check\"><input id=\"c2\" type=\"checkbox\"><label for=\"c2\">\u5df2\u6838\u5bf9\u5931\u8d25\u8bc1\u636e failure.webm<\/label><\/div>\n      <div class=\"check\"><input id=\"c3\" type=\"checkbox\"><label for=\"c3\">\u5df2\u786e\u8ba4\u6700\u7ec8\u62a5\u544a report.html \u4e3a PASS<\/label><\/div>\n    <\/div>\n    <button id=\"copy\" class=\"btn\" type=\"button\">\u590d\u5236 Markdown \u6e05\u5355<\/button><span id=\"copyNote\" class=\"copy-note\"><\/span>\n  <\/section>\n\n  <details><summary>\u5ba1\u8ba1\u8bf4\u660e<\/summary><p>\u9875\u9762\u4ec5\u6c47\u603b\u672c\u6b21\u8f93\u5165\u660e\u786e\u5217\u51fa\u7684\u4f1a\u8bdd\u4ea7\u7269\u3002\u89c6\u9891\u4e0e\u62a5\u544a\u4ee5\u539f\u4ef6\u590d\u5236\uff0chero.svg \u5df2\u76f4\u63a5\u5185\u8054\u5230\u9875\u5934\uff1b\u672a\u5f15\u5165 CDN\u3001\u5b57\u4f53\u6216\u5176\u4ed6\u7f51\u7edc\u8d44\u6e90\u3002\u5f55\u50cf\u5185\u5bb9\u672a\u88ab\u8f6c\u7801\u6216\u6539\u5199\u3002<\/p><\/details>\n<\/main>\n\n<footer><div class=\"wrap source\">\u6765\u6e90\u9879\u76ee\uff1a<strong>/tmp/debug-session<\/strong><br>Session ID\uff1a<strong>eval-session-6<\/strong><br>\u8f93\u5165\u4ea7\u7269\u76ee\u5f55\uff1a/Users/liushiyuwin/.pi/skills/onepager/evals/files/session-artifacts<br>\u751f\u6210\u65b9\u5f0f\uff1a\u57fa\u4e8e\u7528\u6237\u63d0\u4f9b\u7684 4 \u4e2a\u8f93\u5165\u6587\u4ef6\u5efa\u7acb\u76f8\u5bf9\u94fe\u63a5\u4fbf\u643a\u5305\uff1bhero.svg \u5185\u8054\uff0c3 \u4e2a\u53ef\u5bfc\u822a\u4ea7\u7269\u590d\u5236\u5230\u672c\u76ee\u5f55\u3002<\/div><\/footer>\n<div id=\"toast\" class=\"toast\" role=\"status\" aria-live=\"polite\">\u5df2\u590d\u5236<\/div>\n<script>\nconst rows=[...document.querySelectorAll('#artifacts tbody tr')],search=document.querySelector('#search'),empty=document.querySelector('#empty');\nfunction filter(){const q=search.value.trim().toLowerCase();let n=0;rows.forEach(r=>{const show=r.textContent.toLowerCase().includes(q);r.hidden=!show;if(show)n++});empty.style.display=n?'none':'block'}\nsearch.addEventListener('input',filter);document.querySelector('#reset').onclick=()=>{search.value='';filter();search.focus()};\nlet sortKey='',dir=1;document.querySelectorAll('th[data-key]').forEach((th,i)=>th.onclick=()=>{dir=sortKey===th.dataset.key?-dir:1;sortKey=th.dataset.key;rows.sort((a,b)=>a.cells[i].textContent.trim().localeCompare(b.cells[i].textContent.trim(),'zh-CN')*dir).forEach(r=>r.parentNode.appendChild(r));document.querySelectorAll('th[data-key]').forEach(x=>x.textContent=x.textContent.replace(/[\u2191\u2193\u2195]/g,'').trim()+' \u2195');th.textContent=th.textContent.replace('\u2195',dir>0?'\u2191':'\u2193');filter()});\nconst checks=[...document.querySelectorAll('.checks input')],bar=document.querySelector('#bar'),count=document.querySelector('#count');\nfunction update(){const n=checks.filter(x=>x.checked).length;bar.style.width=(n/checks.length*100)+'%';count.textContent=n+' / '+checks.length;checks.forEach(x=>localStorage.setItem('eval-session-6:'+x.id,x.checked?'1':'0'))}\nchecks.forEach(x=>{x.checked=localStorage.getItem('eval-session-6:'+x.id)==='1';x.addEventListener('change',update)});update();\ndocument.querySelector('#copy').onclick=async()=>{const md=['# eval-session-6 \u4ea4\u4ed8\u6838\u9a8c',...checks.map(x=>`- [${x.checked?'x':' '}] ${x.labels[0].textContent}`)].join('\\n');try{await navigator.clipboard.writeText(md)}catch(e){const t=document.createElement('textarea');t.value=md;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}const toast=document.querySelector('#toast');toast.classList.add('show');document.querySelector('#copyNote').textContent='\u5df2\u590d\u5236\u5f53\u524d\u72b6\u6001';setTimeout(()=>toast.classList.remove('show'),1400)};\n<\/script>\n<\/body>\n<\/html>", "path": "/files/eval-6-visible-primary-video-without_skill-run-1/main.html"}, {"name": "report.html", "type": "text", "content": "<!doctype html><title>UAT report<\/title><h1>PASS<\/h1>", "path": "/files/eval-6-visible-primary-video-without_skill-run-1/report.html"}, {"name": "run.webm", "type": "binary", "mime": "video/webm", "data_uri": "data:video/webm;base64,UklGRmZha2Utd2VibS1ldmFs", "path": "/files/eval-6-visible-primary-video-without_skill-run-1/run.webm"}], "grading": {"expectations": [{"text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.", "passed": true, "evidence": "video_nodes=[('run.webm', True, 0), ('failure.webm', True, 0)]"}, {"text": "The main HTML directly links both run.webm and failure.webm and report.html, while hero.svg is inline or used as page artwork rather than omitted silently.", "passed": true, "evidence": "links=['failure.webm', 'report.html', 'run.webm']; inline_svg=True"}, {"text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.", "passed": true, "evidence": "artifact_links=['failure.webm', 'report.html', 'run.webm']"}, {"text": "The page includes source project absolute path and a Pi session ID in its footer.", "passed": true, "evidence": "project=True; session=True"}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"tool_calls": {}, "total_tool_calls": 0, "total_steps": 0, "files_created": ["run.webm", "failure.webm", "main.html", "report.html"], "errors_encountered": 0, "output_chars": 13654, "transcript_chars": 134963980}, "timing": {"total_tokens": 13525, "duration_ms": 124721, "total_duration_seconds": 124.721, "exit_code": 0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Assertions directly inspect link scope and media placement in main.html."}}, "rel_path": "eval-6-visible-primary-video/without_skill/run-1"}, {"id": "eval-7-scope-excludes-old-artifact-with_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "main.html", "type": "text", "content": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta name=\"color-scheme\" content=\"dark\">\n  <title>eval-session-7 \u00b7 \u4f1a\u8bdd\u4ea4\u63a5<\/title>\n  <style>\n    :root{--bg:#0b1020;--panel:#121a2d;--panel2:#172238;--text:#eef4ff;--muted:#9baac2;--line:#2a3852;--cyan:#67e8f9;--green:#62e6a7;--amber:#f8c76a;--shadow:0 18px 50px #02061166}\n    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:radial-gradient(circle at 90% 0,#173154 0,transparent 28rem),var(--bg);color:var(--text);font:15px/1.6 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif}\n    a{color:var(--cyan);text-underline-offset:3px} button,input{font:inherit} button{cursor:pointer}\n    .shell{width:min(980px,calc(100% - 32px));margin:auto;padding:58px 0 36px}\n    .eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}\n    h1{font-size:clamp(32px,7vw,62px);line-height:1.02;letter-spacing:-.045em;margin:10px 0 18px;max-width:800px}\n    .verdict{display:grid;grid-template-columns:auto 1fr;gap:13px;align-items:start;padding:17px 18px;background:#10253a;border:1px solid #265774;border-radius:16px;box-shadow:var(--shadow);font-size:17px}\n    .mark{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#062217;font-weight:900}\n    .verdict strong{color:var(--green)} .sub{color:var(--muted);margin:4px 0 0}\n    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 34px}\n    .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}.stat b{display:block;font-size:24px}.stat span{color:var(--muted);font-size:12px}\n    section{margin-top:34px} .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:13px} h2{font-size:20px;margin:0}.hint{color:var(--muted);font-size:13px}\n    .toolbar{display:flex;gap:10px;margin-bottom:10px}.search{width:100%;padding:11px 13px;border-radius:11px;background:#0d1526;border:1px solid var(--line);color:var(--text);outline:none}.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #67e8f91a}\n    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow)}table{width:100%;border-collapse:collapse;min-width:620px}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted);background:#0e1729}th button{padding:0;border:0;background:none;color:inherit;font-weight:700}tr:last-child td{border-bottom:0}.type{display:inline-block;padding:3px 8px;border:1px solid #3b526f;border-radius:999px;color:#c9d8ed;font-size:11px}.artifact-name{font-weight:800}.purpose{color:var(--muted);font-size:13px}.open{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:9px;background:var(--cyan);color:#06202b;text-decoration:none;font-weight:800;white-space:nowrap}.empty{display:none;padding:26px;text-align:center;color:var(--muted)}\n    details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:0 16px;margin-top:10px}summary{cursor:pointer;padding:14px 0;font-weight:750}details[open] summary{border-bottom:1px solid var(--line)}.detail-body{padding:14px 0}.json{margin:0;background:#09101e;border:1px solid #25334b;border-radius:10px;padding:13px;overflow:auto;color:#c9f7df}.audit{display:grid;grid-template-columns:150px 1fr;gap:8px 16px;margin:0}.audit dt{color:var(--muted)}.audit dd{margin:0;word-break:break-word}.good{color:var(--green)}.warn{color:var(--amber)}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em}\n    .actions{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}.progress-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}.track{height:8px;flex:1;border-radius:9px;background:#26344c;overflow:hidden}.fill{width:0;height:100%;background:var(--green);transition:width .2s}.count{color:var(--muted);font-size:12px;white-space:nowrap}.check{display:flex;gap:10px;align-items:flex-start;padding:10px 0}.check input{accent-color:var(--green);margin-top:5px}.check small{display:block;color:var(--muted)}.copy{margin-top:13px;border:1px solid #3e5977;background:#172841;color:var(--text);border-radius:10px;padding:9px 13px;font-weight:750}.copy:hover{border-color:var(--cyan)}\n    footer{border-top:1px solid var(--line);margin-top:42px;padding-top:20px;color:var(--muted);font-size:12px}.foot-grid{display:grid;grid-template-columns:110px 1fr;gap:6px 12px}.foot-grid b{color:#cad5e6}.foot-grid span{word-break:break-all}\n    .toast{position:fixed;right:18px;bottom:18px;background:#e7fff4;color:#08291c;padding:10px 14px;border-radius:10px;font-weight:800;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:none}\n    @media(max-width:640px){.shell{width:min(100% - 22px,980px);padding-top:34px}.stats{grid-template-columns:1fr}.section-head{display:block}.hint{margin-top:4px}.audit{grid-template-columns:1fr;gap:2px}.audit dd{margin-bottom:8px}.verdict{font-size:15px}}\n  <\/style>\n<\/head>\n<body>\n  <main class=\"shell\">\n    <header>\n      <div class=\"eyebrow\">Session handoff \u00b7 eval-session-7<\/div>\n      <h1>\u8303\u56f4\u6e05\u695a\uff0cQA \u5df2\u901a\u8fc7\u3002<\/h1>\n      <div class=\"verdict\">\n        <span class=\"mark\" aria-hidden=\"true\">\u2713<\/span>\n        <div><strong>\u672c\u6b21\u4f1a\u8bdd\u552f\u4e00\u6709\u5f52\u5c5e\u8bc1\u636e\u7684\u4ea7\u7269\u662f qa.json\uff0c\u7ed3\u679c passed\u3002<\/strong><p class=\"sub\">\u65e7\u4f1a\u8bdd\u89c6\u9891\u672a\u7eb3\u5165\uff1b\u4ea4\u4ed8\u5305\u53ea\u590d\u5236\u4e86\u5f53\u524d\u4f1a\u8bdd\u6240\u9700\u6587\u4ef6\u3002<\/p><\/div>\n      <\/div>\n      <div class=\"stats\" aria-label=\"\u4ea4\u63a5\u6458\u8981\">\n        <div class=\"stat\"><b>1<\/b><span>\u5df2\u5f52\u96c6\u4f1a\u8bdd\u4ea7\u7269<\/span><\/div>\n        <div class=\"stat\"><b>0<\/b><span>QA errors<\/span><\/div>\n        <div class=\"stat\"><b>28 B<\/b><span>\u4fbf\u643a\u9644\u4ef6\u4f53\u79ef<\/span><\/div>\n      <\/div>\n    <\/header>\n\n    <section aria-labelledby=\"artifacts-title\">\n      <div class=\"section-head\"><h2 id=\"artifacts-title\">\u4f1a\u8bdd\u4ea7\u7269<\/h2><span class=\"hint\">\u641c\u7d22\u6216\u6392\u5e8f\uff0c\u53ea\u53d6\u6240\u9700\u4fe1\u606f<\/span><\/div>\n      <div class=\"toolbar\"><input id=\"search\" class=\"search\" type=\"search\" placeholder=\"\u641c\u7d22\u540d\u79f0\u3001\u7c7b\u578b\u6216\u7528\u9014\u2026\" aria-label=\"\u641c\u7d22\u4f1a\u8bdd\u4ea7\u7269\"><\/div>\n      <div class=\"table-wrap\">\n        <table id=\"artifactTable\">\n          <thead><tr><th><button data-key=\"name\">\u540d\u79f0 \u2195<\/button><\/th><th><button data-key=\"type\">\u7c7b\u578b \u2195<\/button><\/th><th><button data-key=\"size\">\u5927\u5c0f \u2195<\/button><\/th><th>\u64cd\u4f5c<\/th><\/tr><\/thead>\n          <tbody><tr data-name=\"qa.json\" data-type=\"json\" data-size=\"28\"><td><div class=\"artifact-name\">qa.json<\/div><div class=\"purpose\">\u5f53\u524d\u4f1a\u8bdd\u786e\u8ba4\u7684 QA \u7ed3\u679c<\/div><\/td><td><span class=\"type\">JSON<\/span><\/td><td>28 B<\/td><td><a class=\"open\" href=\"qa.json\" download>\u6253\u5f00 / \u4e0b\u8f7d \u2192<\/a><\/td><\/tr><\/tbody>\n        <\/table>\n        <div id=\"empty\" class=\"empty\">\u6ca1\u6709\u5339\u914d\u7684\u4f1a\u8bdd\u4ea7\u7269\u3002<\/div>\n      <\/div>\n      <details>\n        <summary>\u67e5\u770b QA \u6700\u5c0f\u8bc1\u636e<\/summary>\n        <div class=\"detail-body\"><pre class=\"json\"><code>{\"passed\":true,\"errors\":[]}<\/code><\/pre><\/div>\n      <\/details>\n      <details>\n        <summary>\u67e5\u770b\u5f52\u96c6\u8fb9\u754c\u4e0e\u5ba1\u8ba1<\/summary>\n        <div class=\"detail-body\">\n          <dl class=\"audit\">\n            <dt>\u7eb3\u5165\u4f9d\u636e<\/dt><dd>\u5f53\u524d\u804a\u5929\u660e\u786e\u786e\u8ba4 <code>qa.json<\/code><\/dd>\n            <dt>\u5b8c\u6574\u6027<\/dt><dd><span class=\"good\">SHA-256<\/span> <code>012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500<\/code><\/dd>\n            <dt>\u6392\u9664\u9879<\/dt><dd><span class=\"warn\">failure.webm<\/span>\uff1a\u76ee\u5f55\u4e2d\u5b58\u5728\uff0c\u4f46\u804a\u5929\u672a\u5c06\u5176\u5f52\u5c5e\u5f53\u524d\u4f1a\u8bdd\uff1b\u672a\u590d\u5236\u3001\u672a\u94fe\u63a5\u3001\u672a\u5d4c\u5165\u3002<\/dd>\n            <dt>\u9879\u76ee\u68c0\u67e5<\/dt><dd><code>/tmp/scoped-handoff<\/code> \u5728\u91c7\u96c6\u65f6\u4e0d\u5b58\u5728\uff1b\u4fdd\u7559\u4e3a\u6765\u6e90\u9879\u76ee\u6807\u8bc6\uff0c\u4e0d\u636e\u6b64\u63a8\u65ad\u989d\u5916\u4ea7\u7269\u3002<\/dd>\n            <dt>\u91c7\u96c6\u65f6\u95f4<\/dt><dd>2026-08-11T09:27:10+0800<\/dd>\n            <dt>\u91c7\u96c6\u65b9\u6cd5<\/dt><dd><code>read qa.json<\/code>\uff1b<code>stat<\/code> \u4e24\u4e2a\u660e\u786e\u8f93\u5165\uff1b<code>test -d /tmp/scoped-handoff<\/code>\uff1b<code>shasum -a 256 qa.json<\/code><\/dd>\n          <\/dl>\n        <\/div>\n      <\/details>\n    <\/section>\n\n    <section aria-labelledby=\"actions-title\">\n      <div class=\"section-head\"><h2 id=\"actions-title\">\u63a5\u624b\u6e05\u5355<\/h2><span class=\"hint\">\u72b6\u6001\u4ec5\u4fdd\u5b58\u5728\u672c\u673a\u6d4f\u89c8\u5668<\/span><\/div>\n      <div class=\"actions\">\n        <div class=\"progress-row\"><div class=\"track\" aria-hidden=\"true\"><div id=\"fill\" class=\"fill\"><\/div><\/div><span id=\"count\" class=\"count\">0 / 2<\/span><\/div>\n        <label class=\"check\"><input type=\"checkbox\" data-action=\"\u786e\u8ba4 qa.json\uff1apassed=true\uff0cerrors=[]\"><span>\u786e\u8ba4 QA \u7ed3\u679c<small>\u8bfb\u53d6 qa.json\uff0c\u786e\u8ba4 passed=true \u4e14 errors \u4e3a\u7a7a\u3002<\/small><\/span><\/label>\n        <label class=\"check\"><input type=\"checkbox\" data-action=\"\u4fdd\u6301\u4ea7\u7269\u8303\u56f4\uff1a\u4e0d\u8981\u5f15\u5165 failure.webm\"><span>\u4fdd\u6301\u4f1a\u8bdd\u8fb9\u754c<small>\u540e\u7eed\u4ea4\u63a5\u4e0d\u8981\u5c06\u65e0\u5f53\u524d\u4f1a\u8bdd\u5f52\u5c5e\u8bc1\u636e\u7684\u89c6\u9891\u6df7\u5165\u3002<\/small><\/span><\/label>\n        <button id=\"copy\" class=\"copy\" type=\"button\">\u590d\u5236 Markdown \u6e05\u5355<\/button>\n      <\/div>\n    <\/section>\n\n    <footer>\n      <div class=\"foot-grid\"><b>\u6765\u6e90\u9879\u76ee<\/b><span>/tmp/scoped-handoff<\/span><b>Session ID<\/b><span>eval-session-7<\/span><b>\u751f\u6210\u65f6\u95f4<\/b><span>2026-08-11T09:27:10+0800<\/span><b>\u4ea4\u4ed8\u8bf4\u660e<\/b><span>\u79bb\u7ebf\u53ef\u7528\uff1b\u65e0 CDN\u3001\u65e0\u5916\u94fe\u8d44\u6e90\u3001\u65e0\u540e\u53f0\u670d\u52a1\u3002<\/span><\/div>\n    <\/footer>\n  <\/main>\n  <div id=\"toast\" class=\"toast\" role=\"status\" aria-live=\"polite\">\u5df2\u590d\u5236<\/div>\n  <script>\n    const search=document.querySelector('#search'), tbody=document.querySelector('tbody'), empty=document.querySelector('#empty');\n    const rows=()=>[...tbody.querySelectorAll('tr')];\n    search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();let n=0;rows().forEach(r=>{const show=r.textContent.toLowerCase().includes(q);r.hidden=!show;if(show)n++});empty.style.display=n?'none':'block'});\n    let sortState={key:'',dir:1};\n    document.querySelectorAll('th button').forEach(btn=>btn.addEventListener('click',()=>{const key=btn.dataset.key;sortState.dir=sortState.key===key?-sortState.dir:1;sortState.key=key;const list=rows().sort((a,b)=>{const av=key==='size'?+a.dataset[key]:a.dataset[key],bv=key==='size'?+b.dataset[key]:b.dataset[key];return (av>bv?1:av<bv?-1:0)*sortState.dir});list.forEach(r=>tbody.appendChild(r));document.querySelectorAll('th button').forEach(b=>b.textContent=b.textContent.replace(/[\u2191\u2193\u2195]/,'\u2195'));btn.textContent=btn.textContent.replace('\u2195',sortState.dir===1?'\u2191':'\u2193')}));\n    const checks=[...document.querySelectorAll('.check input')], fill=document.querySelector('#fill'), count=document.querySelector('#count'), store='handoff:eval-session-7';\n    try{const saved=JSON.parse(localStorage.getItem(store)||'[]');checks.forEach((c,i)=>c.checked=!!saved[i])}catch(e){}\n    function update(){const done=checks.filter(c=>c.checked).length;fill.style.width=(done/checks.length*100)+'%';count.textContent=`${done} / ${checks.length}`;try{localStorage.setItem(store,JSON.stringify(checks.map(c=>c.checked)))}catch(e){}}\n    checks.forEach(c=>c.addEventListener('change',update));update();\n    const toast=document.querySelector('#toast');\n    document.querySelector('#copy').addEventListener('click',async()=>{const md=['# eval-session-7 \u63a5\u624b\u6e05\u5355','',...checks.map(c=>`- [${c.checked?'x':' '}] ${c.dataset.action}`),'','\u4ea7\u7269\uff1aqa.json\uff08SHA-256: 012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500\uff09'].join('\\n');try{await navigator.clipboard.writeText(md)}catch(e){const t=document.createElement('textarea');t.value=md;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1400)});\n  <\/script>\n<\/body>\n<\/html>\n", "path": "/files/eval-7-scope-excludes-old-artifact-with_skill-run-1/main.html"}, {"name": "qa.json", "type": "text", "content": "{\"passed\":true,\"errors\":[]}\n", "path": "/files/eval-7-scope-excludes-old-artifact-with_skill-run-1/qa.json"}], "grading": {"expectations": [{"text": "The main HTML directly links qa.json.", "passed": true, "evidence": "links=['qa.json']"}, {"text": "The main HTML does not link or copy failure.webm because the prompt says it belongs to an old session.", "passed": true, "evidence": "linked=False; copied=False"}, {"text": "The page does not invent any artifact URL or placeholder link.", "passed": true, "evidence": "artifact_links=['qa.json']"}, {"text": "The footer includes /tmp/scoped-handoff and eval-session-7.", "passed": true, "evidence": "project=True; session=True"}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"tool_calls": {}, "total_tool_calls": 0, "total_steps": 0, "files_created": ["qa.json", "main.html"], "errors_encountered": 0, "output_chars": 11947, "transcript_chars": 112055139}, "timing": {"total_tokens": 13372, "duration_ms": 115029, "total_duration_seconds": 115.029, "exit_code": 0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Assertions directly inspect link scope and media placement in main.html."}}, "rel_path": "eval-7-scope-excludes-old-artifact/with_skill/run-1"}, {"id": "eval-7-scope-excludes-old-artifact-without_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "main.html", "type": "text", "content": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>\u4f1a\u8bdd\u4ea4\u63a5 \u00b7 eval-session-7<\/title>\n<style>\n:root{color-scheme:dark;--bg:#0b1020;--panel:#121a2d;--panel2:#172139;--text:#eef4ff;--muted:#9eabc2;--line:#293651;--good:#63e6a5;--blue:#7cb7ff;--amber:#ffc86b;--shadow:0 18px 50px #03071366}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0,#18305c 0,transparent 34rem),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",sans-serif}.wrap{width:min(960px,calc(100% - 32px));margin:0 auto;padding:54px 0 34px}header{margin-bottom:24px}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(30px,6vw,54px);line-height:1.05;margin:9px 0 14px;letter-spacing:-.035em}.verdict{max-width:780px;margin:0;color:#dce7f8;font-size:clamp(17px,2.5vw,21px)}.verdict strong{color:var(--good)}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:19px}.chip{border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--muted);background:#0b1121aa;font-size:12px}.chip.good{border-color:#29694e;color:var(--good)}.panel{background:linear-gradient(145deg,var(--panel),#0f1729);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin:16px 0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}.panel h2{font-size:17px;margin:0}.count{color:var(--muted);font-variant-numeric:tabular-nums}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}input[type=search]{min-width:220px;flex:1;border:1px solid var(--line);background:#0b1121;color:var(--text);padding:10px 12px;border-radius:10px;outline:none}input[type=search]:focus{border-color:var(--blue);box-shadow:0 0 0 3px #7cb7ff22}button,.button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:9px 11px;font:inherit;cursor:pointer;text-decoration:none}button:hover,.button:hover{border-color:var(--blue)}.sort[aria-pressed=true]{color:var(--blue);border-color:#467ab4}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:13px 10px;border-top:1px solid var(--line)}th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}.name{font-weight:750}.sub{display:block;color:var(--muted);font-size:12px;font-weight:400}.ok{color:var(--good);font-weight:800}.empty{display:none;color:var(--muted);padding:18px 4px}.progress-row{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:8px}.track{height:7px;background:#0a1020;border-radius:99px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--good));transition:width .2s}.checks{display:grid;gap:9px;margin:16px 0}.check{display:flex;gap:10px;align-items:flex-start;background:#0c1324;border:1px solid var(--line);padding:11px;border-radius:10px}.check input{margin-top:4px;accent-color:#58d99a}.check:has(input:checked) span{text-decoration:line-through;color:var(--muted)}details{border-top:1px solid var(--line);padding:14px 0}details:last-child{padding-bottom:0}summary{cursor:pointer;font-weight:700;color:#dce7f8}.detail{color:var(--muted);padding:9px 0 0;overflow-wrap:anywhere}.detail code{color:#d6e6ff}.audit-grid{display:grid;grid-template-columns:130px 1fr;gap:7px 12px}.label{color:var(--muted)}footer{color:var(--muted);font-size:12px;padding:15px 2px;overflow-wrap:anywhere}.toast{position:fixed;right:18px;bottom:18px;background:#eaf5ff;color:#0b1020;padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:none}@media(max-width:620px){.wrap{width:min(100% - 20px,960px);padding-top:32px}.panel{padding:15px}.panel-head{align-items:flex-start}.audit-grid{grid-template-columns:1fr}.label{margin-top:5px}}\n<\/style>\n<\/head>\n<body>\n<main class=\"wrap\">\n<header>\n  <div class=\"eyebrow\">Scoped session handoff<\/div>\n  <h1>eval-session-7 \u4ea4\u63a5<\/h1>\n  <p class=\"verdict\"><strong>\u5f53\u524d\u4f1a\u8bdd\u53ef\u4ea4\u63a5\uff1a<\/strong>\u552f\u4e00\u6709\u4f1a\u8bdd\u5f52\u5c5e\u8bc1\u636e\u7684\u4ea7\u7269\u662f <code>qa.json<\/code>\uff0cQA \u5df2\u901a\u8fc7\u4e14\u65e0\u9519\u8bef\uff1b\u672a\u83b7\u804a\u5929\u786e\u8ba4\u7684\u65e7\u89c6\u9891\u672a\u7eb3\u5165\u4ea4\u4ed8\u5305\u3002<\/p>\n  <div class=\"meta\"><span class=\"chip good\">QA PASS<\/span><span class=\"chip\">1 \u4e2a\u5f52\u5c5e\u4ea7\u7269<\/span><span class=\"chip\">\u79bb\u7ebf\u53ef\u7528<\/span><\/div>\n<\/header>\n\n<section class=\"panel\" aria-labelledby=\"artifacts-title\">\n  <div class=\"panel-head\"><h2 id=\"artifacts-title\">\u5f53\u524d\u4f1a\u8bdd\u4ea7\u7269<\/h2><span class=\"count\" id=\"resultCount\">1 / 1<\/span><\/div>\n  <div class=\"toolbar\">\n    <input id=\"search\" type=\"search\" placeholder=\"\u641c\u7d22\u540d\u79f0\u3001\u7c7b\u578b\u6216\u72b6\u6001\u2026\" aria-label=\"\u641c\u7d22\u4ea7\u7269\">\n    <button class=\"sort\" data-key=\"name\" aria-pressed=\"false\">\u540d\u79f0 \u2195<\/button>\n    <button class=\"sort\" data-key=\"size\" aria-pressed=\"false\">\u5927\u5c0f \u2195<\/button>\n  <\/div>\n  <div class=\"table-wrap\">\n    <table>\n      <thead><tr><th>\u4ea7\u7269<\/th><th>\u72b6\u6001<\/th><th>\u5927\u5c0f<\/th><th>\u7a84\u64cd\u4f5c<\/th><\/tr><\/thead>\n      <tbody id=\"artifactRows\">\n        <tr data-name=\"qa.json\" data-size=\"28\" data-search=\"qa.json json pass passed true \u65e0\u9519\u8bef\">\n          <td><span class=\"name\">qa.json<\/span><span class=\"sub\">JSON \u00b7 SHA-256 012aa279\u2026e8500<\/span><\/td>\n          <td><span class=\"ok\">PASS<\/span><span class=\"sub\">0 errors<\/span><\/td>\n          <td>28 B<\/td>\n          <td><a class=\"button\" href=\"qa.json\" target=\"_blank\" rel=\"noopener\">\u6253\u5f00 \u2192<\/a><\/td>\n        <\/tr>\n      <\/tbody>\n    <\/table>\n  <\/div>\n  <div class=\"empty\" id=\"empty\">\u6ca1\u6709\u5339\u914d\u7684\u4f1a\u8bdd\u4ea7\u7269\u3002<\/div>\n<\/section>\n\n<section class=\"panel\" aria-labelledby=\"actions-title\">\n  <div class=\"panel-head\"><h2 id=\"actions-title\">\u63a5\u624b\u6e05\u5355<\/h2><button id=\"copy\">\u590d\u5236 Markdown<\/button><\/div>\n  <div class=\"progress-row\"><span>\u4ea4\u63a5\u8fdb\u5ea6<\/span><span id=\"progressText\">0 / 3<\/span><\/div>\n  <div class=\"track\" aria-hidden=\"true\"><div class=\"fill\" id=\"progressFill\"><\/div><\/div>\n  <div class=\"checks\" id=\"checks\">\n    <label class=\"check\"><input type=\"checkbox\"><span>\u6253\u5f00 <code>qa.json<\/code> \u5e76\u786e\u8ba4 <code>passed: true<\/code><\/span><\/label>\n    <label class=\"check\"><input type=\"checkbox\"><span>\u786e\u8ba4\u9519\u8bef\u5217\u8868\u4e3a\u7a7a<\/span><\/label>\n    <label class=\"check\"><input type=\"checkbox\"><span>\u57fa\u4e8e QA \u901a\u8fc7\u72b6\u6001\u7ee7\u7eed\u540e\u7eed\u5de5\u4f5c<\/span><\/label>\n  <\/div>\n<\/section>\n\n<section class=\"panel\" aria-labelledby=\"evidence-title\">\n  <div class=\"panel-head\"><h2 id=\"evidence-title\">\u8bc1\u636e\u4e0e\u8fb9\u754c<\/h2><span class=\"count\">\u6309\u9700\u5c55\u5f00<\/span><\/div>\n  <details>\n    <summary>\u67e5\u770b\u7eb3\u5165\u4f9d\u636e<\/summary>\n    <div class=\"detail audit-grid\"><span class=\"label\">\u804a\u5929\u8bc1\u636e<\/span><span>\u4efb\u52a1\u660e\u786e\u786e\u8ba4\u4ea7\u7269 <code>qa.json<\/code>\u3002<\/span><span class=\"label\">\u5185\u5bb9\u8bc1\u636e<\/span><span><code>{\"passed\":true,\"errors\":[]}<\/code><\/span><span class=\"label\">\u5b8c\u6574\u6027<\/span><span>SHA-256: <code>012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500<\/code><\/span><\/div>\n  <\/details>\n  <details>\n    <summary>\u67e5\u770b\u6392\u9664\u8fb9\u754c<\/summary>\n    <div class=\"detail\">\u8f93\u5165\u76ee\u5f55\u4e2d\u7684 <code>failure.webm<\/code> \u6ca1\u6709\u88ab\u804a\u5929\u5f52\u5c5e\u5230\u5f53\u524d\u4f1a\u8bdd\uff0c\u5e76\u88ab\u660e\u786e\u63cf\u8ff0\u4e3a\u65e7\u4f1a\u8bdd\u6587\u4ef6\uff0c\u56e0\u6b64\u672a\u590d\u5236\u3001\u672a\u94fe\u63a5\u3001\u672a\u7eb3\u5165\u672c\u4ea4\u63a5\u5305\u3002<\/div>\n  <\/details>\n  <details>\n    <summary>\u67e5\u770b\u91c7\u96c6\u65b9\u6cd5<\/summary>\n    <div class=\"detail\">\u6700\u5c0f\u91c7\u96c6\uff1a\u8bfb\u53d6\u5df2\u786e\u8ba4 JSON\uff1b\u4ee5\u6587\u4ef6 stat \u4e0e SHA-256 \u6821\u9a8c\u5b8c\u6574\u6027\uff1b\u53ea\u590d\u5236\u6709\u660e\u786e\u4f1a\u8bdd\u5f52\u5c5e\u7684\u6587\u4ef6\u3002\u672a\u626b\u63cf\u6216\u642c\u8fd0\u6765\u6e90\u9879\u76ee\u7684\u5176\u4ed6\u5185\u5bb9\u3002<\/div>\n  <\/details>\n<\/section>\n\n<footer>\n  \u6765\u6e90\u9879\u76ee\uff1a<strong>/tmp/scoped-handoff<\/strong><br>\n  \u4f1a\u8bdd ID\uff1a<strong>eval-session-7<\/strong> \u00b7 \u9875\u9762\u4e0e\u94fe\u63a5\u5747\u4e3a\u672c\u5730\u76f8\u5bf9\u8def\u5f84 \u00b7 \u65e0 CDN / \u65e0\u540e\u53f0\u670d\u52a1\n<\/footer>\n<\/main>\n<div class=\"toast\" id=\"toast\" role=\"status\" aria-live=\"polite\">\u5df2\u590d\u5236<\/div>\n<script>\n(() => {\n  const rows = [...document.querySelectorAll('#artifactRows tr')];\n  const tbody = document.querySelector('#artifactRows');\n  const search = document.querySelector('#search');\n  const count = document.querySelector('#resultCount');\n  const empty = document.querySelector('#empty');\n  let sortState = { key: '', dir: 1 };\n\n  function filterRows() {\n    const q = search.value.trim().toLowerCase();\n    let visible = 0;\n    rows.forEach(row => {\n      const show = !q || row.dataset.search.includes(q);\n      row.hidden = !show;\n      if (show) visible++;\n    });\n    count.textContent = `${visible} / ${rows.length}`;\n    empty.style.display = visible ? 'none' : 'block';\n  }\n  search.addEventListener('input', filterRows);\n\n  document.querySelectorAll('.sort').forEach(button => button.addEventListener('click', () => {\n    const key = button.dataset.key;\n    sortState.dir = sortState.key === key ? -sortState.dir : 1;\n    sortState.key = key;\n    rows.sort((a, b) => key === 'size'\n      ? (Number(a.dataset.size) - Number(b.dataset.size)) * sortState.dir\n      : a.dataset.name.localeCompare(b.dataset.name) * sortState.dir);\n    rows.forEach(row => tbody.appendChild(row));\n    document.querySelectorAll('.sort').forEach(b => {\n      const active = b === button;\n      b.setAttribute('aria-pressed', active);\n      b.textContent = `${b.dataset.key === 'name' ? '\u540d\u79f0' : '\u5927\u5c0f'} ${active ? (sortState.dir > 0 ? '\u2191' : '\u2193') : '\u2195'}`;\n    });\n  }));\n\n  const checkboxes = [...document.querySelectorAll('#checks input')];\n  const progressText = document.querySelector('#progressText');\n  const progressFill = document.querySelector('#progressFill');\n  function updateProgress() {\n    const done = checkboxes.filter(box => box.checked).length;\n    progressText.textContent = `${done} / ${checkboxes.length}`;\n    progressFill.style.width = `${done / checkboxes.length * 100}%`;\n  }\n  checkboxes.forEach(box => box.addEventListener('change', updateProgress));\n\n  const toast = document.querySelector('#toast');\n  document.querySelector('#copy').addEventListener('click', async () => {\n    const lines = ['# eval-session-7 handoff', '', ...checkboxes.map(box => `- [${box.checked ? 'x' : ' '}] ${box.parentElement.innerText.trim()}`), '', '- Artifact: qa.json (PASS, 0 errors)'];\n    try {\n      await navigator.clipboard.writeText(lines.join('\\n'));\n      toast.textContent = 'Markdown \u5df2\u590d\u5236';\n    } catch (_) {\n      const area = document.createElement('textarea'); area.value = lines.join('\\n'); document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove();\n      toast.textContent = 'Markdown \u5df2\u590d\u5236';\n    }\n    toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1600);\n  });\n})();\n<\/script>\n<\/body>\n<\/html>\n", "path": "/files/eval-7-scope-excludes-old-artifact-without_skill-run-1/main.html"}, {"name": "qa.json", "type": "text", "content": "{\"passed\":true,\"errors\":[]}\n", "path": "/files/eval-7-scope-excludes-old-artifact-without_skill-run-1/qa.json"}], "grading": {"expectations": [{"text": "The main HTML directly links qa.json.", "passed": true, "evidence": "links=['qa.json']"}, {"text": "The main HTML does not link or copy failure.webm because the prompt says it belongs to an old session.", "passed": true, "evidence": "linked=False; copied=False"}, {"text": "The page does not invent any artifact URL or placeholder link.", "passed": true, "evidence": "artifact_links=['qa.json']"}, {"text": "The footer includes /tmp/scoped-handoff and eval-session-7.", "passed": true, "evidence": "project=True; session=True"}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"tool_calls": {}, "total_tool_calls": 0, "total_steps": 0, "files_created": ["qa.json", "main.html"], "errors_encountered": 0, "output_chars": 10798, "transcript_chars": 91563053}, "timing": {"total_tokens": 11996, "duration_ms": 110588, "total_duration_seconds": 110.588, "exit_code": 0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Assertions directly inspect link scope and media placement in main.html."}}, "rel_path": "eval-7-scope-excludes-old-artifact/without_skill/run-1"}], "previous_feedback": {}, "previous_outputs": {}, "benchmark": {"metadata": {"skill_name": "onepager", "skill_path": "/Users/liushiyuwin/.pi/skills/onepager", "executor_model": "openai-codex/gpt-5.6-sol (medium)", "analyzer_model": "inline deterministic grader", "timestamp": "2026-08-11T01:31:09Z", "evals_run": [5, 6, 7], "runs_per_configuration": 3}, "runs": [{"eval_id": 5, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": 113.315, "tokens": 13908, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.", "passed": true, "evidence": "links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"}, {"text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.", "passed": true, "evidence": "video_nodes=[('run.webm', True, 0)]"}, {"text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.", "passed": true, "evidence": "artifact_links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"}, {"text": "The page includes source project absolute path and a Pi session ID in its footer.", "passed": true, "evidence": "project=True; session=True"}], "notes": [], "eval_name": "session-recap-all-artifacts"}, {"eval_id": 6, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": 129.48, "tokens": 13994, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.", "passed": true, "evidence": "video_nodes=[('run.webm', True, 0), ('failure.webm', True, 0)]"}, {"text": "The main HTML directly links both run.webm and failure.webm and report.html, while hero.svg is inline or used as page artwork rather than omitted silently.", "passed": true, "evidence": "links=['failure.webm', 'report.html', 'run.webm']; inline_svg=True"}, {"text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.", "passed": true, "evidence": "artifact_links=['failure.webm', 'report.html', 'run.webm']"}, {"text": "The page includes source project absolute path and a Pi session ID in its footer.", "passed": true, "evidence": "project=True; session=True"}], "notes": [], "eval_name": "visible-primary-video"}, {"eval_id": 7, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": 115.029, "tokens": 13372, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "The main HTML directly links qa.json.", "passed": true, "evidence": "links=['qa.json']"}, {"text": "The main HTML does not link or copy failure.webm because the prompt says it belongs to an old session.", "passed": true, "evidence": "linked=False; copied=False"}, {"text": "The page does not invent any artifact URL or placeholder link.", "passed": true, "evidence": "artifact_links=['qa.json']"}, {"text": "The footer includes /tmp/scoped-handoff and eval-session-7.", "passed": true, "evidence": "project=True; session=True"}], "notes": [], "eval_name": "scope-excludes-old-artifact"}, {"eval_id": 5, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": 138.481, "tokens": 14159, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.", "passed": true, "evidence": "links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"}, {"text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.", "passed": true, "evidence": "video_nodes=[('run.webm', True, 0)]"}, {"text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.", "passed": true, "evidence": "artifact_links=['qa.json', 'report.html', 'run.webm', 'trace.zip']"}, {"text": "The page includes source project absolute path and a Pi session ID in its footer.", "passed": true, "evidence": "project=True; session=True"}], "notes": [], "eval_name": "session-recap-all-artifacts"}, {"eval_id": 6, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": 124.721, "tokens": 13525, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.", "passed": true, "evidence": "video_nodes=[('run.webm', True, 0), ('failure.webm', True, 0)]"}, {"text": "The main HTML directly links both run.webm and failure.webm and report.html, while hero.svg is inline or used as page artwork rather than omitted silently.", "passed": true, "evidence": "links=['failure.webm', 'report.html', 'run.webm']; inline_svg=True"}, {"text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.", "passed": true, "evidence": "artifact_links=['failure.webm', 'report.html', 'run.webm']"}, {"text": "The page includes source project absolute path and a Pi session ID in its footer.", "passed": true, "evidence": "project=True; session=True"}], "notes": [], "eval_name": "visible-primary-video"}, {"eval_id": 7, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": 110.588, "tokens": 11996, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "The main HTML directly links qa.json.", "passed": true, "evidence": "links=['qa.json']"}, {"text": "The main HTML does not link or copy failure.webm because the prompt says it belongs to an old session.", "passed": true, "evidence": "linked=False; copied=False"}, {"text": "The page does not invent any artifact URL or placeholder link.", "passed": true, "evidence": "artifact_links=['qa.json']"}, {"text": "The footer includes /tmp/scoped-handoff and eval-session-7.", "passed": true, "evidence": "project=True; session=True"}], "notes": [], "eval_name": "scope-excludes-old-artifact"}], "run_summary": {"with_skill": {"pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0}, "time_seconds": {"mean": 119.2747, "stddev": 8.8795, "min": 113.315, "max": 129.48}, "tokens": {"mean": 13758, "stddev": 337.0401, "min": 13372, "max": 13994}}, "without_skill": {"pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0}, "time_seconds": {"mean": 124.5967, "stddev": 13.9469, "min": 110.588, "max": 138.481}, "tokens": {"mean": 13226.6667, "stddev": 1111.9327, "min": 11996, "max": 14159}}, "delta": {"pass_rate": "+0.00", "time_seconds": "-5.3", "tokens": "+531"}}, "notes": ["All 12 assertions passed in both configurations; the revised skill is regression-safe on artifact links, visible media, provenance, and scope exclusion.", "The old-skill baseline also passed because the eval prompts explicitly requested artifact collection; these cases verify behavior but do not discriminate trigger/proactivity without an explicit request.", "The revised skill averaged 119.3s versus 124.6s for the old baseline; the difference is small relative to one run per case.", "Eval 7 confirms neither version linked or copied the old-session failure.webm even though it was present in the input directory."]}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "html") {
+          const iframe = document.createElement("iframe");
+          iframe.className = "html-frame";
+          iframe.src = file.path;
+          content.appendChild(iframe);
+        } else if (file.type === "text") {
+          if (file.content != null) {
+            const pre = document.createElement("pre");
+            pre.textContent = file.content;
+            content.appendChild(pre);
+          } else if (file.path) {
+            const a = document.createElement("a");
+            a.className = "download-link";
+            a.href = file.path;
+            a.target = "_blank";
+            a.textContent = "View raw file: " + file.name;
+            content.appendChild(a);
+          }
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "html") {
+          const iframe = document.createElement("iframe");
+          iframe.className = "html-frame";
+          iframe.src = file.path;
+          fc.appendChild(iframe);
+        } else if (file.type === "text") {
+          if (file.content != null) {
+            const pre = document.createElement("pre");
+            pre.textContent = file.content;
+            fc.appendChild(pre);
+          } else if (file.path) {
+            const a = document.createElement("a");
+            a.className = "download-link";
+            a.href = file.path;
+            a.target = "_blank";
+            a.textContent = "View raw file: " + file.name;
+            fc.appendChild(a);
+          }
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.path) return file.path;
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+<footer style="position:fixed;left:8px;bottom:6px;z-index:9999;padding:4px 8px;border-radius:6px;background:#111c;color:#fff;font:11px system-ui">来源：onepager skill · /Users/liushiyuwin/.pi/skills/onepager · Pi session ID：本会话环境未暴露</footer></body>
+</html>
