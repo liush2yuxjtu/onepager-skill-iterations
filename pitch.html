@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三个火种 · 一套循环 — /skill-creator 把 onepager 从 63.9% 迭代到 100%</title>
+<meta name="description" content="Pitch：用 /skill-creator 建 baseline，每 1 个新问题 → 1 类多个评测 case → 打分+评语 → 自迭代。onepager 从 v0 63.9% 到 v1 100%。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Noto+Serif+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>(function(){try{var t=localStorage.getItem('pt-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else document.documentElement.setAttribute('data-theme','dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<style>
+:root{
+  --bg:#131009; --bg2:#1B1610; --bg3:#251E13;
+  --ink:#EDE3CC; --ink-soft:#B3A588; --ink-faint:#7B7058;
+  --line:rgba(237,227,204,.15);
+  --seal:#D05A41; --seal-deep:#E2775C; --seal-wash:rgba(208,90,65,.16);
+  --gold:#D5A53C; --gold-wash:rgba(213,165,60,.16);
+  --celadon:#7FB287; --celadon-wash:rgba(127,178,135,.14);
+  --paper:#F2E9D2; --paper-ink:#22190E;
+  --grid:rgba(237,227,204,.045);
+  --focus:rgba(226,119,92,.55);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 44px rgba(0,0,0,.5);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F2EADA; --bg2:#EBE0C8; --bg3:#DFD1B2;
+    --ink:#241A0E; --ink-soft:#5E5139; --ink-faint:#96876B;
+    --line:rgba(36,26,14,.15);
+    --seal:#A93B25; --seal-deep:#8A2E1B; --seal-wash:rgba(169,59,37,.11);
+    --gold:#A27A1B; --gold-wash:rgba(162,122,27,.15);
+    --celadon:#4C7658; --celadon-wash:rgba(76,118,88,.12);
+    --paper:#221A0E; --paper-ink:#F2EADA;
+    --grid:rgba(36,26,14,.05);
+    --focus:rgba(169,59,37,.45);
+    --shadow:0 1px 2px rgba(36,26,14,.07),0 12px 36px rgba(36,26,14,.10);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F2EADA; --bg2:#EBE0C8; --bg3:#DFD1B2;
+  --ink:#241A0E; --ink-soft:#5E5139; --ink-faint:#96876B;
+  --line:rgba(36,26,14,.15);
+  --seal:#A93B25; --seal-deep:#8A2E1B; --seal-wash:rgba(169,59,37,.11);
+  --gold:#A27A1B; --gold-wash:rgba(162,122,27,.15);
+  --celadon:#4C7658; --celadon-wash:rgba(76,118,88,.12);
+  --paper:#221A0E; --paper-ink:#F2EADA;
+  --grid:rgba(36,26,14,.05);
+  --focus:rgba(169,59,37,.45);
+  --shadow:0 1px 2px rgba(36,26,14,.07),0 12px 36px rgba(36,26,14,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Fraunces","Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  font-size:16.5px;line-height:1.8;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--grid) 1px,transparent 1px);background-size:26px 26px;
+}
+::selection{background:var(--seal);color:var(--paper-ink)}
+a{color:var(--seal);text-decoration:none}
+a:hover{color:var(--seal-deep)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:920px;margin:0 auto;padding:0 26px}
+
+.topbar{position:sticky;top:0;z-index:60;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+.topbar-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.14em;color:var(--ink-soft);text-transform:uppercase}
+.seal-mini{width:24px;height:24px;border-radius:5px;background:var(--seal);color:var(--paper-ink);display:grid;place-items:center;font-size:.76rem}
+.top-actions{display:flex;gap:10px;align-items:center}
+.top-actions a.repo{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+.top-actions a.repo:hover{color:var(--seal);border-color:var(--seal)}
+.theme-switch{display:flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--bg2)}
+.theme-switch button{border:0;background:transparent;color:var(--ink-faint);font-size:.68rem;padding:3px 10px;border-radius:999px;cursor:pointer;font-family:"IBM Plex Mono",monospace}
+.theme-switch button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+.hero{padding:78px 0 24px;text-align:center}
+.hero .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.3em;color:var(--seal);text-transform:uppercase;margin:0 0 16px}
+.hero h1{margin:0;font-weight:500;font-size:clamp(2.2rem,6.4vw,3.8rem);line-height:1.12}
+.hero h1 .cn{font-family:"Noto Serif SC","Songti SC",serif;font-weight:700}
+.hero h1 .en{display:block;font-style:italic;font-weight:300;font-size:.44em;letter-spacing:.06em;color:var(--ink-faint);margin-top:.16em}
+.hero .sub{margin:20px auto 0;max-width:52ch;color:var(--ink-soft);font-size:1.02rem}
+.hero .sub b{color:var(--ink)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:24px}
+.pill{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.06em;border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.pill.hot{color:var(--seal);border-color:color-mix(in srgb,var(--seal) 45%,var(--line))}
+.pill.good{color:var(--celadon);border-color:color-mix(in srgb,var(--celadon) 45%,var(--line))}
+
+.tldr{margin:30px 0 0;background:var(--bg2);border:1px solid var(--line);border-left:4px solid var(--seal);border-radius:10px;padding:18px 20px;box-shadow:var(--shadow)}
+.tldr .label{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--seal);display:block;margin-bottom:6px;font-family:"IBM Plex Mono",monospace}
+.tldr p{margin:0;font-size:.95rem}
+.tldr strong{color:var(--seal-deep)}
+
+section{padding:48px 0 8px}
+.gate-divider{display:flex;align-items:center;gap:14px;margin-bottom:6px;color:var(--ink-faint)}
+.gate-divider .t{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint)}
+.gate-divider .ln{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+.sec-head .idx{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--seal);letter-spacing:.1em}
+.sec-head h2{margin:0;font-size:1.6rem;font-weight:500}
+.sec-head h2 em{font-style:italic;color:var(--ink-faint);font-weight:300}
+.sec-desc{color:var(--ink-soft);font-size:.92rem;max-width:64ch;margin:0 0 24px}
+
+/* 火种卡 */
+.sparks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.spark{position:relative;border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:20px 20px 16px;box-shadow:var(--shadow);overflow:hidden;transition:transform .22s,border-color .22s}
+.spark:hover{transform:translateY(-3px);border-color:var(--gold)}
+.spark .s-num{position:absolute;top:12px;right:16px;font-family:"Fraunces",serif;font-style:italic;font-size:2rem;line-height:1;color:var(--seal);opacity:.55}
+.spark svg{display:block;width:100%;height:auto;margin-bottom:12px}
+.spark h3{margin:0 0 8px;font-size:1.02rem;font-weight:600;line-height:1.4}
+.spark .pain{font-size:.82rem;color:var(--ink-soft);margin:0 0 10px}
+.spark .pain b{color:var(--seal)}
+.spark .fix{font-size:.84rem;margin:0 0 12px}
+.spark .fix b{color:var(--celadon)}
+.spark .map{font-size:.72rem;font-family:"IBM Plex Mono",monospace;color:var(--ink-faint);border-top:1px dashed var(--line);padding-top:10px;line-height:1.8}
+.spark .map b{color:var(--gold)}
+
+/* 循环 */
+.loop-card{border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:24px 20px 18px;box-shadow:var(--shadow)}
+.loop-card svg{width:100%;max-width:760px;height:auto;display:block;margin:0 auto}
+.loop-note{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}
+.loop-note .n{text-align:center;font-size:.78rem;color:var(--ink-soft)}
+.loop-note .n b{display:block;font-family:"Fraunces",serif;font-style:italic;font-size:1.1rem;color:var(--seal)}
+
+/* 映射表 */
+table{width:100%;border-collapse:collapse;font-size:.86rem;background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.08em;color:var(--ink-faint);text-transform:uppercase;background:var(--bg3)}
+tr:last-child td{border-bottom:0}
+td .law{color:var(--gold);font-family:"IBM Plex Mono",monospace;font-size:.78rem}
+td .ev{color:var(--seal);font-family:"IBM Plex Mono",monospace;font-size:.78rem;white-space:nowrap}
+.owrap{overflow-x:auto}
+
+/* 数字 */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.metric{border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:18px;box-shadow:var(--shadow);text-align:center}
+.metric .big{font-family:"Fraunces",serif;font-size:2.2rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--seal)}
+.metric .big.good{color:var(--celadon)}
+.metric .cap{font-size:.74rem;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase;margin-top:8px;font-family:"IBM Plex Mono",monospace}
+.metric .sub{font-size:.78rem;color:var(--ink-soft);margin-top:6px}
+.bench{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+.bench .b{border:1px solid var(--line);border-radius:14px;background:var(--bg2);padding:16px 18px;box-shadow:var(--shadow)}
+.bench .b h4{margin:0 0 2px;font-size:.95rem}
+.bench .b .meta{font-size:.7rem;font-family:"IBM Plex Mono",monospace;color:var(--ink-faint);margin-bottom:12px}
+.bench .bar{display:flex;align-items:center;gap:10px;margin:6px 0}
+.bench .bar .lab{width:3.2em;font-size:.7rem;color:var(--ink-faint);font-family:"IBM Plex Mono",monospace;flex:none}
+.bench .bar .tk{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bench .bar .tk i{display:block;height:100%;border-radius:99px}
+.bench .bar .tk i.win{background:var(--celadon)}
+.bench .bar .tk i.lose{background:var(--ink-faint)}
+.bench .bar .val{font-size:.72rem;font-family:"IBM Plex Mono",monospace;color:var(--ink-soft);width:6.5em;text-align:right;font-variant-numeric:tabular-nums}
+.bench .bar .val.d{color:var(--celadon)}
+
+/* 产物之门 */
+.prods{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.prod{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--bg2);padding:16px 18px;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s,border-color .2s}
+.prod:hover{transform:translateY(-3px);border-color:var(--gold)}
+.prod .t{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.prod h4{margin:0;font-size:.95rem;font-weight:600}
+.prod .badge{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.05em;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));border-radius:999px;padding:2px 8px;white-space:nowrap;flex:none}
+.prod p{font-size:.78rem;color:var(--ink-soft);margin:6px 0 0;line-height:1.55}
+.prod .open{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;color:var(--seal);text-transform:uppercase}
+.prod .open::after{content:"↗";transition:transform .18s}
+.prod:hover .open::after{transform:translate(2px,-2px)}
+.note-inline{font-size:.78rem;color:var(--ink-faint);margin-top:12px}
+
+/* runner */
+.runner{border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:20px;box-shadow:var(--shadow)}
+.runner code{display:block;font-family:"IBM Plex Mono",monospace;font-size:.74rem;line-height:1.8;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;color:var(--ink);white-space:pre}
+.runners{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.run-tag{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--bg3)}
+.run-tag h4{margin:0 0 4px;font-size:.95rem;font-family:"IBM Plex Mono",monospace;color:var(--seal)}
+.run-tag p{margin:0;font-size:.8rem;color:var(--ink-soft)}
+
+/* 行动 */
+.action{border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:20px;box-shadow:var(--shadow)}
+.progress{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.progress .track{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress .fill{height:100%;width:0;background:var(--seal);border-radius:99px;transition:width .3s}
+.progress .pct{font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--seal);min-width:3em;text-align:right;font-variant-numeric:tabular-nums}
+.actionlist{list-style:none;margin:0 0 16px;padding:0}
+.actionlist li{display:flex;gap:12px;align-items:flex-start;padding:8px 4px;border-bottom:1px dashed var(--line);font-size:.88rem;color:var(--ink-soft);cursor:pointer}
+.actionlist li:last-child{border-bottom:0}
+.actionlist input{margin-top:5px;accent-color:var(--seal);width:16px;height:16px;flex:none}
+.actionlist li.done{color:var(--ink-faint);text-decoration:line-through}
+.actionlist li strong{color:var(--ink)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:.8rem;border-radius:999px;padding:7px 16px;cursor:pointer;transition:.12s}
+.btn:hover{border-color:var(--seal);color:var(--seal)}
+.btn.primary{background:var(--seal);border-color:var(--seal);color:var(--paper-ink)}
+.btn.primary:hover{background:var(--seal-deep)}
+
+footer{border-top:1px solid var(--line);margin-top:56px;padding:28px 0 46px;color:var(--ink-faint);font-size:.78rem}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:.7rem;line-height:1.9;word-break:break-all;margin-top:10px}
+footer a{color:var(--ink-soft)}
+
+.lightbox{position:fixed;inset:0;z-index:90;background:rgba(10,8,5,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:4vh 4vw}
+.lightbox.open{display:flex;animation:lbIn .22s ease}
+@keyframes lbIn{from{opacity:0}to{opacity:1}}
+.lb-frame{position:relative;width:min(1180px,94vw);height:88vh;background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.lb-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--bg)}
+.lb-top .t{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-close{border:1px solid var(--line);background:transparent;color:var(--ink-soft);border-radius:999px;width:32px;height:32px;cursor:pointer;font-size:15px;flex:none}
+.lb-close:hover{color:var(--seal);border-color:var(--seal)}
+.lb-frame iframe{width:100%;height:calc(100% - 57px);border:0;display:block;background:#fff}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:.78rem;opacity:0;pointer-events:none;transition:.2s;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.2,.8,.2,1),transform .6s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.hero .stagger{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.05s}.d2{animation-delay:.13s}.d3{animation-delay:.21s}.d4{animation-delay:.3s}.d5{animation-delay:.4s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal,.hero .stagger{opacity:1;transform:none}}
+@media (max-width:820px){
+  .sparks,.metrics,.bench,.runners{grid-template-columns:1fr}
+  .prods{grid-template-columns:1fr}
+  .loop-note{grid-template-columns:1fr 1fr}
+  .hero{padding-top:54px}
+  .wrap{padding:0 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand"><span class="seal-mini">火</span>Skill-Creator · Pitch</div>
+    <div class="top-actions">
+      <a class="repo" href="https://github.com/liush2yuxjtu/onepager-skill-iterations" target="_blank" rel="noopener">源码仓库 ↗</a>
+      <div class="theme-switch" role="group" aria-label="主题切换">
+        <button data-theme-set="dark" aria-pressed="true">墨</button>
+        <button data-theme-set="light" aria-pressed="false">纸</button>
+        <button data-theme-set="system" aria-pressed="false">跟随</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow stagger d1">Skill-Creator · 评测驱动迭代 · Pitch</p>
+    <h1 class="stagger d2"><span class="cn">三个火种，一套循环</span><span class="en">Three sparks, one loop</span></h1>
+    <p class="sub stagger d3">我们没把技能"一次写对"。三个真实的翻车点成了火种，用 <b>/skill-creator</b> 一套循环反复烧：<b>每遇到 1 个问题 → 生成 1 类多个评测 case → 我们打分+评语 → 它自己迭代</b>。结果：<b>/onepager 从 v0 通过率 63.9% 迭代到 v1 的 100%</b>。</p>
+    <div class="pills stagger d4">
+      <span class="pill hot">v0 63.9%</span><span class="pill">→</span><span class="pill good">v1 100%</span>
+      <span class="pill">17 evals</span><span class="pill">14 法则</span><span class="pill">3 轮 iteration</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="tldr reveal">
+    <span class="label">结论 · TL;DR</span>
+    <p><strong>先用 /skill-creator 建一个能跑的 baseline</strong>，然后每次出现 <strong>1 个新问题</strong>，就让它提示并修改技能、生成 <strong>1 类多个 case</strong>、我们<strong>打分 + 写评语</strong>、它自己迭代提升性能。反复 4 轮，onepager 的通过率从 63.9% 到 100%，同时每轮都更省时省 token。本页就是这套循环的证据 + 教程。</p>
+  </div>
+
+  <!-- 1 初心·三个火种 -->
+  <section id="sparks">
+    <div class="gate-divider reveal"><span class="t">壹 · 初心</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">01</span><h2>三个火种 <em>— 我们到底想改什么</em></h2></div>
+    <p class="sec-desc reveal">不是抽象的"更好"，是三个具体的痛。每个火种后来都沉淀成了法则 + 一类评测。</p>
+    <div class="sparks">
+      <div class="spark reveal">
+        <span class="s-num">Ⅰ</span>
+        <svg viewBox="0 0 240 110" aria-hidden="true">
+          <rect x="12" y="16" width="216" height="78" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+          <g font-family="'IBM Plex Mono',monospace" font-size="9">
+            <rect x="22" y="26" width="10" height="5" fill="var(--seal)" opacity=".8"/>
+            <text x="38" y="30" fill="var(--ink-faint)">div class="wrapper"</text>
+            <rect x="22" y="36" width="10" height="5" fill="var(--seal)" opacity=".5"/>
+            <text x="38" y="40" fill="var(--ink-faint)">header / nav / main / footer</text>
+            <rect x="22" y="46" width="10" height="5" fill="var(--seal)" opacity=".6"/>
+            <text x="38" y="50" fill="var(--ink-faint)">table × 20 rows × 6 cols…</text>
+            <rect x="22" y="56" width="10" height="5" fill="var(--seal)" opacity=".7"/>
+            <text x="38" y="60" fill="var(--ink-faint)">svg / section / card × N</text>
+            <rect x="22" y="66" width="10" height="5" fill="var(--seal)" opacity=".4"/>
+            <text x="38" y="70" fill="var(--ink-faint)">repeat… till 1000 lines</text>
+            <text x="22" y="86" fill="var(--seal)">1000 行 · 一处错全局崩</text>
+          </g>
+        </svg>
+        <h3>千行 HTML：费 token，一处错全崩</h3>
+        <p class="pain">naive 版爱写<b>一个千行 HTML</b>：每次迭代都要重读重写，token 烧穿；任何一处标签写错，<b>整页渲染失败</b>。</p>
+        <p class="fix">想改成：<b>几百行框架</b> + 每个要展示的地方单独一个 <b>sub-artifact HTML</b>，产物链接 <b>inline</b> 在主页里。</p>
+        <div class="map">→ <b>法则 8</b> main+subs · <b>法则 7</b> 归集 · <b>法则 11</b> 内联可见<br>→ <span>evals 3, 5-10</span></div>
+      </div>
+
+      <div class="spark reveal">
+        <span class="s-num">Ⅱ</span>
+        <svg viewBox="0 0 240 110" aria-hidden="true">
+          <rect x="12" y="16" width="216" height="78" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+          <path d="M28 80 L52 64 L72 70 L94 46 L118 56 L142 34 L170 44 L200 22" fill="none" stroke="var(--celadon)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M28 80 L52 64 L72 70 L94 46 L118 56 L142 34 L170 44 L200 22 L200 80 Z" fill="var(--celadon-wash)"/>
+          <text x="28" y="98" fill="var(--celadon)" font-family="'IBM Plex Mono',monospace" font-size="9">SVG 1-5KB · 信息密度高</text>
+          <rect x="150" y="60" width="18" height="14" rx="2" fill="var(--seal)" opacity=".6"/>
+          <path d="M160 90 l8 -14 8 14 Z" fill="var(--gold)" opacity=".8"/>
+          <text x="196" y="52" fill="var(--ink-faint)" font-family="'IBM Plex Mono',monospace" font-size="8">改一个 icon</text>
+          <text x="196" y="62" fill="var(--ink-faint)" font-family="'IBM Plex Mono',monospace" font-size="8">→ 重生成整页？</text>
+        </svg>
+        <h3>不画 SVG：改个 icon 就重生成整页</h3>
+        <p class="pain">naive 版用<b> HTML/文字</b>讲数据、甚至不画；改网页里一个小 icon，就触发<b>重写整份 HTML</b>，太烧 token。</p>
+        <p class="fix">想改成：<b>主动手写 SVG</b> 画数据 & <b>UI mock</b>——SVG 很小但信息量丰富，改动局部不影响全局。</p>
+        <div class="map">→ <b>法则 11</b> 内联默认 · <b>法则 12</b> SVG 主动绘制（mock up）<br>→ <span>evals 11-15</span></div>
+      </div>
+
+      <div class="spark reveal">
+        <span class="s-num">Ⅲ</span>
+        <svg viewBox="0 0 240 110" aria-hidden="true">
+          <rect x="12" y="16" width="216" height="78" rx="6" fill="var(--bg3)" stroke="var(--line)"/>
+          <rect x="26" y="30" width="188" height="16" rx="4" fill="var(--bg)" stroke="var(--line)"/>
+          <circle cx="34" cy="38" r="2.2" fill="var(--ink-faint)" opacity=".8"/><circle cx="42" cy="38" r="2.2" fill="var(--ink-faint)" opacity=".8"/><circle cx="50" cy="38" r="2.2" fill="var(--ink-faint)" opacity=".8"/>
+          <rect x="26" y="54" width="188" height="16" rx="4" fill="var(--bg)" stroke="var(--line)"/>
+          <rect x="26" y="54" width="120" height="16" rx="4" fill="var(--celadon-wash)"/>
+          <text x="32" y="65" fill="var(--celadon)" font-family="'IBM Plex Mono',monospace" font-size="8">sk-…</text>
+          <rect x="170" y="54" width="20" height="16" rx="4" fill="var(--seal)" opacity=".8"/>
+          <text x="176" y="65" fill="var(--paper-ink)" font-family="'IBM Plex Mono',monospace" font-size="8">开</text>
+          <text x="26" y="88" fill="var(--seal)" font-family="'IBM Plex Mono',monospace" font-size="9">密码 · API key · 验证码 · 二维码</text>
+        </svg>
+        <h3>输密码 / key 就卡手</h3>
+        <p class="pain">需要人类填<b>密码、API key、验证码</b>时，页面卡住、不知道填什么、填完还要手动回传给 agent。</p>
+        <p class="fix">想改成：<b>一键打开链接</b> → 复制凭据进页面 → <b>一键把所有密钥 + 人工输入复制成一个 prompt</b> 回传 agent。</p>
+        <div class="map">→ <b>法则 13</b> HITL 凭据窄门（安全可复制不卡死）<br>→ <span>evals 16-17</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 五步循环 -->
+  <section id="loop">
+    <div class="gate-divider reveal"><span class="t">贰 · 方法</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">02</span><h2>一套循环 <em>— 你要带走的东西</em></h2></div>
+    <p class="sec-desc reveal">每次只处理 <b>1 个问题</b>。循环转起来，技能自己变强——不用你通读手册改技能。</p>
+    <div class="loop-card reveal">
+      <svg viewBox="0 0 760 200" role="img" aria-label="五步迭代闭环">
+        <defs>
+          <linearGradient id="arcg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--seal)"/><stop offset="1" stop-color="var(--celadon)"/></linearGradient>
+        </defs>
+        <g font-family="'Noto Serif SC',serif" font-size="13" fill="var(--ink)">
+          <circle cx="80" cy="100" r="34" fill="var(--bg3)" stroke="var(--seal)" stroke-width="2"/>
+          <text x="80" y="96" text-anchor="middle" font-size="12" fill="var(--seal)">①</text>
+          <text x="80" y="112" text-anchor="middle" font-size="11">1 个新问题</text>
+          <circle cx="250" cy="100" r="34" fill="var(--bg3)" stroke="var(--seal)" stroke-width="2"/>
+          <text x="250" y="96" text-anchor="middle" font-size="12" fill="var(--seal)">②</text>
+          <text x="250" y="112" text-anchor="middle" font-size="11">它提示&修改</text>
+          <circle cx="420" cy="100" r="34" fill="var(--bg3)" stroke="var(--gold)" stroke-width="2"/>
+          <text x="420" y="96" text-anchor="middle" font-size="12" fill="var(--gold)">③</text>
+          <text x="420" y="112" text-anchor="middle" font-size="11">生成 1 类多 case</text>
+          <circle cx="590" cy="100" r="34" fill="var(--bg3)" stroke="var(--gold)" stroke-width="2"/>
+          <text x="590" y="96" text-anchor="middle" font-size="12" fill="var(--gold)">④</text>
+          <text x="590" y="112" text-anchor="middle" font-size="11">我们打分+评语</text>
+          <path d="M660 100 H700 M700 84 l12 16 -12 16" fill="none" stroke="var(--celadon)" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="720" y="82" text-anchor="middle" font-size="10" fill="var(--celadon)">它</text>
+          <text x="720" y="96" text-anchor="middle" font-size="10" fill="var(--celadon)">自迭代</text>
+        </g>
+        <g fill="none" stroke="var(--ink-faint)" stroke-width="1.6">
+          <path d="M114 84 C150 52 196 52 232 74" stroke-dasharray="4 4" marker-end="none"/>
+          <path d="M284 84 C320 52 366 52 402 74" stroke-dasharray="4 4"/>
+          <path d="M454 84 C490 52 536 52 572 74" stroke-dasharray="4 4"/>
+          <path d="M624 76 C640 44 668 30 696 40" stroke-dasharray="4 4"/>
+        </g>
+        <g font-family="'IBM Plex Mono',monospace" font-size="10" fill="var(--ink-faint)">
+          <text x="116" y="40">下一个问题</text>
+          <text x="700" y="130">循环</text>
+        </g>
+      </svg>
+      <div class="loop-note">
+        <div class="n"><b>1 问题</b>真实翻车点</div>
+        <div class="n"><b>1 类 case</b>同域多场景</div>
+        <div class="n"><b>打分</b>expectations 断言</div>
+        <div class="n"><b>评语</b>反馈给 agent</div>
+        <div class="n"><b>自迭代</b>v1→vN</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 映射 -->
+  <section id="map">
+    <div class="gate-divider reveal"><span class="t">叁 · 证据</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">03</span><h2>火种 → 法则 → 评测 <em>— 每一轮都留痕</em></h2></div>
+    <p class="sec-desc reveal">每个火种都被 skill-creator 沉淀成法则，再用一类评测 case 锁住，跑 with / without 对照量化。</p>
+    <div class="owrap reveal">
+      <table>
+        <thead><tr><th>火种</th><th>想改成的样子</th><th>沉淀法则</th><th>评测类</th><th>验证结果</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>千行 HTML，一处错全崩</td>
+            <td>几百行框架 + sub-artifact 各自独立 + 链接 inline</td>
+            <td class="law">法则 8 组合 main+subs · 7 归集 · 11 内联</td>
+            <td class="ev">evals 3, 5-10</td>
+            <td>iter-2 with 100% vs without 64%（+36pp）</td>
+          </tr>
+          <tr>
+            <td>不画 SVG，改 icon 重生成整页</td>
+            <td>主动手写 SVG 画数据 & UI mock</td>
+            <td class="law">法则 11 内联默认 · 12 主动绘制</td>
+            <td class="ev">evals 11-15</td>
+            <td>iter-3 耗时 −92.1s · token −9625</td>
+          </tr>
+          <tr>
+            <td>输密码/key 卡手</td>
+            <td>一键打开 → 复制凭据进页 → 一键复制 prompt 回传</td>
+            <td class="law">法则 13 HITL 凭据窄门</td>
+            <td class="ev">evals 16-17</td>
+            <td>9 + 8 条断言全部覆盖</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4 数字 -->
+  <section id="numbers">
+    <div class="gate-divider reveal"><span class="t">肆 · 数字</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">04</span><h2>从 63.9% 到 100% <em>— 且更快、更省</em></h2></div>
+    <p class="sec-desc reveal">四个版本，一版比一版准、一版比一版省。数据来自各 iteration 的 benchmark（每轮 3 次取均值）。</p>
+    <div class="metrics reveal">
+      <div class="metric"><div class="big">63.9%</div><div class="cap">v0 基线通过率</div><div class="sub">skill-creator 建的 naive baseline</div></div>
+      <div class="metric"><div class="big good">100%</div><div class="cap">v1 当前通过率</div><div class="sub">history.json 判定 won</div></div>
+      <div class="metric"><div class="big good">17</div><div class="cap">评测用例</div><div class="sub">5 类问题域，锁定每条法则</div></div>
+    </div>
+    <div class="bench">
+      <div class="b reveal">
+        <h4>iteration-2 · 隐式 recap/handoff</h4>
+        <div class="meta mono">evals 8-10 · 通过率（with vs without）</div>
+        <div class="bar"><span class="lab">with</span><div class="tk"><i class="win" style="width:100%"></i></div><span class="val d">100%</span></div>
+        <div class="bar"><span class="lab">without</span><div class="tk"><i class="lose" style="width:64%"></i></div><span class="val">64%</span></div>
+        <div class="bar"><span class="lab">耗时</span><div class="tk"><i class="win" style="width:70%"></i></div><span class="val d">−43.6s</span></div>
+        <div class="bar"><span class="lab">token</span><div class="tk"><i class="win" style="width:74%"></i></div><span class="val d">−3558</span></div>
+      </div>
+      <div class="b reveal">
+        <h4>iteration-3 · SVG 主动绘制</h4>
+        <div class="meta mono">evals 11-15 · 新 vs 旧</div>
+        <div class="bar"><span class="lab">新</span><div class="tk"><i class="win" style="width:100%"></i></div><span class="val d">100%</span></div>
+        <div class="bar"><span class="lab">旧</span><div class="tk"><i class="lose" style="width:100%"></i></div><span class="val">100%</span></div>
+        <div class="bar"><span class="lab">耗时</span><div class="tk"><i class="win" style="width:65%"></i></div><span class="val d">−92.1s</span></div>
+        <div class="bar"><span class="lab">token</span><div class="tk"><i class="win" style="width:88%"></i></div><span class="val d">−9625</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 产物之门 -->
+  <section id="prods">
+    <div class="gate-divider reveal"><span class="t">伍 · 产物</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">05</span><h2>每类 case 的真实产物 <em>— 全部内联为 sub-artifact</em></h2></div>
+    <p class="sec-desc reveal">10 个评测产物 + 1 个自证页，都是评测运行时真实生成的 HTML。点击在灯箱预览，或 ↗ 新标签打开。</p>
+    <div class="prods" id="prods">
+      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-12-svg-render-fix/new_skill/run-1/outputs/main.html"><div class="t"><h4>SVG 渲染修复</h4><span class="badge mono">eval-12</span></div><p>从"只有外框+空白"到完整渲染——手写 SVG 纪律。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/run-1/outputs/ai-expert-onepager-two-paths.html"><div class="t"><h4>AI 专家双路径</h4><span class="badge mono">eval-11</span></div><p>两种使用路径画成手写 SVG 流程箭头图。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-13-process-flow-onepager-svg/new_skill/run-1/outputs/ai-expert-lifecycle-onepager.html"><div class="t"><h4>专家生命周期</h4><span class="badge mono">eval-13</span></div><p>创建→测试→发布的完整生命周期，循环图呈现。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/run-1/outputs/index.html"><div class="t"><h4>显式画 SVG</h4><span class="badge mono">eval-14</span></div><p>一进页面就是内联 SVG，不等用户追问。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/run-1/outputs/expert-lifespan-onepager.html"><div class="t"><h4>截图证据内联</h4><span class="badge mono">eval-15</span></div><p>每阶段截图 base64 内联，作可见证据。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-2/eval-8-implicit-rich-recap/with_skill/run-1/outputs/main.html"><div class="t"><h4>隐式 rich recap</h4><span class="badge mono">eval-8</span></div><p>只给 transcript，页面归集出完整 recap。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-2/eval-9-implicit-scoped-handoff/with_skill/run-1/outputs/main.html"><div class="t"><h4>隐式 scoped handoff</h4><span class="badge mono">eval-9</span></div><p>隐式交接只带当前产物。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-2/eval-10-implicit-empty-state/with_skill/run-1/outputs/main.html"><div class="t"><h4>隐式空态</h4><span class="badge mono">eval-10</span></div><p>没产物时诚实显示空态，不编造。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/with_skill/run-1/outputs/main.html"><div class="t"><h4>会话全产物 recap</h4><span class="badge mono">eval-5</span></div><p>report/qa/视频全部归集进一页。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="onepager-workspace/iteration-1/eval-6-visible-primary-video/with_skill/run-1/outputs/main.html"><div class="t"><h4>主视频可见</h4><span class="badge mono">eval-6</span></div><p>run.webm 在正文直接可见。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-src="examples/showcase.html" style="grid-column:1/-1"><div class="t"><h4>技能自证页（按法则 1-14 写成的 onepager）</h4><span class="badge mono">meta</span></div><p>技能自己证明自己：14 法则 + 迭代回放。</p><span class="open">打开</span></div>
+    </div>
+    <p class="note-inline reveal">sub-artifact 策略（法则 8）：main 只放结论 + 每扇门的链接；全量 HTML 各自独立、离线可开、按需加载——改一处不重写整页。</p>
+  </section>
+
+  <!-- 6 runner -->
+  <section id="runner">
+    <div class="gate-divider reveal"><span class="t">陆 · Runner</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">06</span><h2>同一套循环，跑在任何 runner 上 <em>— pi -p 与 claude -p</em></h2></div>
+    <p class="sec-desc reveal">skill-creator 的评测循环与 runner 解耦。我们用的是 Pi 的 headless print 模式，等价的 <b>claude -p</b> 一样跑同一套 evals。</p>
+    <div class="runner reveal">
+      <code>pi --print --mode json --no-session --no-context-files --no-extensions --no-skills \
+    --skill ~/.agents/skills/onepager --provider openai-codex --model gpt-5.6-sol \
+    --thinking medium "&lt;评测任务 prompt&gt;"</code>
+      <div class="runners">
+        <div class="run-tag"><h4>pi -p · pi --print</h4><p>我们实际用的 headless runner：加载指定 skill、跑评测、输出 JSON 流，脚本自动评分（run_eval*.py）。</p></div>
+        <div class="run-tag"><h4>claude -p · claude --print</h4><p>等价的 headless 模式：同一份 evals.json、同一套打分脚本，换 runner 即跑。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 行动 -->
+  <section id="action">
+    <div class="gate-divider reveal"><span class="t">柒 · 带走</span><span class="ln"></span></div>
+    <div class="sec-head reveal"><span class="idx">07</span><h2>行动清单 <em>— 把你的技能也这样养起来</em></h2></div>
+    <div class="action reveal">
+      <div class="progress"><div class="track"><div class="fill" id="progFill"></div></div><span class="pct" id="progPct">0%</span></div>
+      <ul class="actionlist" id="act">
+        <li><input type="checkbox" id="s1"><label for="s1"><strong>建 baseline</strong>：用 /skill-creator 初始化一个"能跑但朴素"的技能版本（v0），别追求完美。</label></li>
+        <li><input type="checkbox" id="s2"><label for="s2"><strong>跑真实任务，记下第 1 个卡点</strong>：比如"写了千行 HTML / 不画图 / 卡在密码"。</label></li>
+        <li><input type="checkbox" id="s3"><label for="s3"><strong>让 skill-creator 修改技能并生成 1 类多个 case</strong>：它提示你怎么改，同时生成一类评测用例。</label></li>
+        <li><input type="checkbox" id="s4"><label for="s4"><strong>打分 + 写评语</strong>：用 expectations 断言打分，把评语反馈回 agent（eval-review 视图）。</label></li>
+        <li><input type="checkbox" id="s5"><label for="s5"><strong>循环到通过率 100%</strong>：出现下一个问题就再转一圈，每轮都更准、更省。</label></li>
+        <li><input type="checkbox" id="s6"><label for="s6"><strong>runner 随你换</strong>：同一套 evals 跑在 pi -p 或 claude -p 上都行。</label></li>
+      </ul>
+      <div class="btnrow">
+        <button class="btn primary" id="copyAct">复制行动清单 Markdown</button>
+        <button class="btn" id="copyLoop">复制循环模板 Prompt</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="sec-desc" style="margin:0">来源与可审计（法则 5/6）：本页为 pitch，遵守 onepager 法则；全部产物链接指向仓库内真实文件。</div>
+    <div class="src">技能本体 ~/.agents/skills/onepager · 迭代工作区 ~/.pi/skills/onepager-workspace（history.json · iteration-1/2/3/benchmark.md）<br>
+    评测定义 ~/.agents/skills/onepager/evals/evals.json · 本页无远程端点，字体经 Google Fonts（例外已注明）。</div>
+  </footer>
+</div>
+
+<div class="lightbox" id="lb" role="dialog" aria-modal="true" aria-label="产物预览">
+  <div class="lb-frame">
+    <div class="lb-top"><span class="t mono" id="lbTitle"></span><button class="lb-close" id="lbClose" aria-label="关闭">✕</button></div>
+    <iframe id="lbFrame" title="产物预览"></iframe>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+  var btns=document.querySelectorAll('.theme-switch button');
+  var stored=null;try{stored=localStorage.getItem('pt-theme');}catch(e){}
+  function apply(t){root.removeAttribute('data-theme');if(t==='light')root.setAttribute('data-theme','light');if(t==='dark')root.setAttribute('data-theme','dark');btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-set')===t));});}
+  apply(stored||'dark');
+  btns.forEach(function(b){b.addEventListener('click',function(){apply(b.getAttribute('data-theme-set'));try{localStorage.setItem('pt-theme',b.getAttribute('data-theme-set'));}catch(e){}});});
+
+  var toastEl=document.getElementById('toast'),tTimer=null;
+  function toast(m){toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(tTimer);tTimer=setTimeout(function(){toastEl.classList.remove('show');},2200);}
+  function copy(t){function ok(){toast('已复制到剪贴板');}function no(){toast('复制失败');}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,no);}else{var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){no();}document.body.removeChild(ta);}}
+
+  var lb=document.getElementById('lb'),lbf=document.getElementById('lbFrame'),lbT=document.getElementById('lbTitle'),lbC=document.getElementById('lbClose');
+  document.querySelectorAll('.prod').forEach(function(it){
+    it.addEventListener('click',function(){var s=it.getAttribute('data-src');if(!s)return;lbT.textContent='· '+s;lbf.setAttribute('src',s);lb.classList.add('open');document.body.style.overflow='hidden';});
+  });
+  function close(){lb.classList.remove('open');lbf.removeAttribute('src');document.body.style.overflow='';}
+  lbC.addEventListener('click',close);lb.addEventListener('click',function(e){if(e.target===lb)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+
+  var list=document.getElementById('act'),fill=document.getElementById('progFill'),pct=document.getElementById('progPct'),items=Array.prototype.slice.call(list.querySelectorAll('li'));
+  function up(){var d=items.filter(function(x){return x.querySelector('input').checked;}).length;var p=Math.round(d/items.length*100);fill.style.width=p+'%';pct.textContent=p+'%';items.forEach(function(x){x.classList.toggle('done',x.querySelector('input').checked);});}
+  list.addEventListener('change',up);
+
+  document.getElementById('copyAct').addEventListener('click',function(){
+    var c=items.filter(function(x){return x.querySelector('input').checked;}).map(function(x){return '- [x] '+x.textContent.trim();}).join('\n');
+    copy('## skill-creator 评测驱动迭代\n\n'+c||'(未勾选)');
+  });
+  document.getElementById('copyLoop').addEventListener('click',function(){
+    copy(['## 迭代模板 Prompt（给 skill-creator）','','我建了一个 baseline 技能 <skill-name>，当前通过率 <rate>。',
+      '现在遇到 1 个新问题：<描述翻车点>。',
+      '请你：1) 提示并修改 SKILL.md；2) 针对这个问题生成 1 类多个评测 case（expectations 断言）；',
+      '3) 用 headless runner（pi -p / claude -p）跑 with/without 对照；4) 输出打分+评语；5) 迭代直到该域通过率 100%。'].join('\n'));
+  });
+
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  up();
+})();
+</script>
+</body>
+</html>
