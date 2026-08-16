@@ -8,7 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Noto+Serif+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script>(function(){try{var t=localStorage.getItem('pt-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else document.documentElement.setAttribute('data-theme','dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<script>(function(){try{var t=localStorage.getItem('pt-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else document.documentElement.setAttribute('data-theme','dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();
+</script>
 <style>
 :root{
   --bg:#131009; --bg2:#1B1610; --bg3:#251E13;
@@ -219,6 +220,14 @@ footer a{color:var(--ink-soft)}
   .hero{padding-top:54px}
   .wrap{padding:0 18px}
 }
+
+.search{border:1px solid var(--line);background:var(--bg2);border-radius:999px;padding:8px 16px;flex:1;min-width:200px;color:var(--ink);font-size:.85rem;font-family:"IBM Plex Mono",monospace}
+.search::placeholder{color:var(--ink-faint)}
+.law-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.law-count{font-size:.72rem;color:var(--ink-faint);font-family:"IBM Plex Mono",monospace}
+.group{font-size:1rem;margin:24px 0 12px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:10px}
+.group::after{content:"";flex:1;height:1px;background:var(--line)}
+.prod[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -442,20 +451,49 @@ footer a{color:var(--ink-soft)}
   <section id="prods">
     <div class="gate-divider reveal"><span class="t">伍 · 产物</span><span class="ln"></span></div>
     <div class="sec-head reveal"><span class="idx">05</span><h2>每类 case 的真实产物 <em>— 全部内联为 sub-artifact</em></h2></div>
-    <p class="sec-desc reveal">10 个评测产物 + 1 个自证页，都是评测运行时真实生成的 HTML。点击在灯箱预览，或 ↗ 新标签打开。</p>
-    <div class="prods" id="prods">
-      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-12-svg-render-fix/new_skill/run-1/outputs/main.html"><div class="t"><h4>SVG 渲染修复</h4><span class="badge mono">eval-12</span></div><p>从"只有外框+空白"到完整渲染——手写 SVG 纪律。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/run-1/outputs/ai-expert-onepager-two-paths.html"><div class="t"><h4>AI 专家双路径</h4><span class="badge mono">eval-11</span></div><p>两种使用路径画成手写 SVG 流程箭头图。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-13-process-flow-onepager-svg/new_skill/run-1/outputs/ai-expert-lifecycle-onepager.html"><div class="t"><h4>专家生命周期</h4><span class="badge mono">eval-13</span></div><p>创建→测试→发布的完整生命周期，循环图呈现。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/run-1/outputs/index.html"><div class="t"><h4>显式画 SVG</h4><span class="badge mono">eval-14</span></div><p>一进页面就是内联 SVG，不等用户追问。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/run-1/outputs/expert-lifespan-onepager.html"><div class="t"><h4>截图证据内联</h4><span class="badge mono">eval-15</span></div><p>每阶段截图 base64 内联，作可见证据。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-2/eval-8-implicit-rich-recap/with_skill/run-1/outputs/main.html"><div class="t"><h4>隐式 rich recap</h4><span class="badge mono">eval-8</span></div><p>只给 transcript，页面归集出完整 recap。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-2/eval-9-implicit-scoped-handoff/with_skill/run-1/outputs/main.html"><div class="t"><h4>隐式 scoped handoff</h4><span class="badge mono">eval-9</span></div><p>隐式交接只带当前产物。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-2/eval-10-implicit-empty-state/with_skill/run-1/outputs/main.html"><div class="t"><h4>隐式空态</h4><span class="badge mono">eval-10</span></div><p>没产物时诚实显示空态，不编造。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/with_skill/run-1/outputs/main.html"><div class="t"><h4>会话全产物 recap</h4><span class="badge mono">eval-5</span></div><p>report/qa/视频全部归集进一页。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="onepager-workspace/iteration-1/eval-6-visible-primary-video/with_skill/run-1/outputs/main.html"><div class="t"><h4>主视频可见</h4><span class="badge mono">eval-6</span></div><p>run.webm 在正文直接可见。</p><span class="open">打开</span></div>
-      <div class="prod reveal" data-src="examples/showcase.html" style="grid-column:1/-1"><div class="t"><h4>技能自证页（按法则 1-14 写成的 onepager）</h4><span class="badge mono">meta</span></div><p>技能自己证明自己：14 法则 + 迭代回放。</p><span class="open">打开</span></div>
+    <p class="sec-desc reveal">全部 <b>28 个</b> eval 产物 HTML（3 轮 iteration × 17 个评测域，含 with/without 与 new/old 对照）——都是评测运行时真实生成的。点卡片灯箱预览，或 ↗ 新标签打开。上方输入框可过滤。</p>
+    <div class="law-toolbar"><input class="search" id="prodSearch" type="search" placeholder="过滤产物… 如 eval-8 / with / svg" aria-label="过滤产物"><span class="law-count" id="prodCount">28 / 28</span></div>
+<h3 class="group">iteration-1 · evals 5-7 · 会话归集</h3>
+    <div class="prods">
+      <div class="prod reveal" data-kw="eval-5 会话全产物 recap with_skill main.html" data-src="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/with_skill/run-1/outputs/main.html"><div class="t"><h4>eval-5 · with_skill</h4><span class="badge mono">main.html</span></div><p>会话全产物 recap — report/qa/视频全部归集进一页</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-5 会话全产物 recap with_skill report.html" data-src="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/with_skill/run-1/outputs/report.html"><div class="t"><h4>eval-5 · with_skill</h4><span class="badge mono">report.html</span></div><p>会话全产物 recap — report/qa/视频全部归集进一页</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-5 会话全产物 recap without_skill main.html" data-src="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/without_skill/run-1/outputs/main.html"><div class="t"><h4>eval-5 · without_skill</h4><span class="badge mono">main.html</span></div><p>会话全产物 recap — report/qa/视频全部归集进一页</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-5 会话全产物 recap without_skill report.html" data-src="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/without_skill/run-1/outputs/report.html"><div class="t"><h4>eval-5 · without_skill</h4><span class="badge mono">report.html</span></div><p>会话全产物 recap — report/qa/视频全部归集进一页</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-6 主视频可见 with_skill main.html" data-src="onepager-workspace/iteration-1/eval-6-visible-primary-video/with_skill/run-1/outputs/main.html"><div class="t"><h4>eval-6 · with_skill</h4><span class="badge mono">main.html</span></div><p>主视频可见 — run.webm 正文直接可见</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-6 主视频可见 with_skill report.html" data-src="onepager-workspace/iteration-1/eval-6-visible-primary-video/with_skill/run-1/outputs/report.html"><div class="t"><h4>eval-6 · with_skill</h4><span class="badge mono">report.html</span></div><p>主视频可见 — run.webm 正文直接可见</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-6 主视频可见 without_skill main.html" data-src="onepager-workspace/iteration-1/eval-6-visible-primary-video/without_skill/run-1/outputs/main.html"><div class="t"><h4>eval-6 · without_skill</h4><span class="badge mono">main.html</span></div><p>主视频可见 — run.webm 正文直接可见</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-6 主视频可见 without_skill report.html" data-src="onepager-workspace/iteration-1/eval-6-visible-primary-video/without_skill/run-1/outputs/report.html"><div class="t"><h4>eval-6 · without_skill</h4><span class="badge mono">report.html</span></div><p>主视频可见 — run.webm 正文直接可见</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-7 范围排除旧产物 with_skill main.html" data-src="onepager-workspace/iteration-1/eval-7-scope-excludes-old-artifact/with_skill/run-1/outputs/main.html"><div class="t"><h4>eval-7 · with_skill</h4><span class="badge mono">main.html</span></div><p>范围排除旧产物 — 不混入旧会话产物</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-7 范围排除旧产物 without_skill main.html" data-src="onepager-workspace/iteration-1/eval-7-scope-excludes-old-artifact/without_skill/run-1/outputs/main.html"><div class="t"><h4>eval-7 · without_skill</h4><span class="badge mono">main.html</span></div><p>范围排除旧产物 — 不混入旧会话产物</p><span class="open">打开</span></div>
     </div>
+<h3 class="group">iteration-2 · evals 8-10 · 隐式 recap / handoff</h3>
+    <div class="prods">
+      <div class="prod reveal" data-kw="eval-8 隐式 rich recap with_skill main.html" data-src="onepager-workspace/iteration-2/eval-8-implicit-rich-recap/with_skill/run-1/outputs/main.html"><div class="t"><h4>eval-8 · with_skill</h4><span class="badge mono">main.html</span></div><p>隐式 rich recap — 只给 transcript 出完整 recap</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-8 隐式 rich recap with_skill report.html" data-src="onepager-workspace/iteration-2/eval-8-implicit-rich-recap/with_skill/run-1/outputs/report.html"><div class="t"><h4>eval-8 · with_skill</h4><span class="badge mono">report.html</span></div><p>隐式 rich recap — 只给 transcript 出完整 recap</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-8 隐式 rich recap without_skill main.html" data-src="onepager-workspace/iteration-2/eval-8-implicit-rich-recap/without_skill/run-1/outputs/main.html"><div class="t"><h4>eval-8 · without_skill</h4><span class="badge mono">main.html</span></div><p>隐式 rich recap — 只给 transcript 出完整 recap</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-8 隐式 rich recap without_skill artifacts/report.html" data-src="onepager-workspace/iteration-2/eval-8-implicit-rich-recap/without_skill/run-1/outputs/artifacts/report.html"><div class="t"><h4>eval-8 · without_skill</h4><span class="badge mono">artifacts/report.html</span></div><p>隐式 rich recap — 只给 transcript 出完整 recap</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-9 隐式 scoped handoff with_skill main.html" data-src="onepager-workspace/iteration-2/eval-9-implicit-scoped-handoff/with_skill/run-1/outputs/main.html"><div class="t"><h4>eval-9 · with_skill</h4><span class="badge mono">main.html</span></div><p>隐式 scoped handoff — 隐式交接只带当前产物</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-9 隐式 scoped handoff with_skill current-report.html" data-src="onepager-workspace/iteration-2/eval-9-implicit-scoped-handoff/with_skill/run-1/outputs/current-report.html"><div class="t"><h4>eval-9 · with_skill</h4><span class="badge mono">current-report.html</span></div><p>隐式 scoped handoff — 隐式交接只带当前产物</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-9 隐式 scoped handoff without_skill main.html" data-src="onepager-workspace/iteration-2/eval-9-implicit-scoped-handoff/without_skill/run-1/outputs/main.html"><div class="t"><h4>eval-9 · without_skill</h4><span class="badge mono">main.html</span></div><p>隐式 scoped handoff — 隐式交接只带当前产物</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-10 隐式空态 with_skill main.html" data-src="onepager-workspace/iteration-2/eval-10-implicit-empty-state/with_skill/run-1/outputs/main.html"><div class="t"><h4>eval-10 · with_skill</h4><span class="badge mono">main.html</span></div><p>隐式空态 — 没产物时诚实空态</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-10 隐式空态 without_skill main.html" data-src="onepager-workspace/iteration-2/eval-10-implicit-empty-state/without_skill/run-1/outputs/main.html"><div class="t"><h4>eval-10 · without_skill</h4><span class="badge mono">main.html</span></div><p>隐式空态 — 没产物时诚实空态</p><span class="open">打开</span></div>
+    </div>
+<h3 class="group">iteration-3 · evals 11-15 · SVG 主动绘制</h3>
+    <div class="prods">
+      <div class="prod reveal" data-kw="eval-11 ai 专家双路径 new_skill ai-expert-onepager-two-paths.html" data-src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/run-1/outputs/ai-expert-onepager-two-paths.html"><div class="t"><h4>eval-11 · new_skill</h4><span class="badge mono">ai-expert-onepager-two-paths.html</span></div><p>AI 专家双路径 — 两种使用路径画成 SVG 流程</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-11 ai 专家双路径 old_skill onepager-ai-expert-two-paths.html" data-src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/old_skill/run-1/outputs/onepager-ai-expert-two-paths.html"><div class="t"><h4>eval-11 · old_skill</h4><span class="badge mono">onepager-ai-expert-two-paths.html</span></div><p>AI 专家双路径 — 两种使用路径画成 SVG 流程</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-12 svg 渲染修复 new_skill main.html" data-src="onepager-workspace/iteration-3/eval-12-svg-render-fix/new_skill/run-1/outputs/main.html"><div class="t"><h4>eval-12 · new_skill</h4><span class="badge mono">main.html</span></div><p>SVG 渲染修复 — 从外框+空白到完整渲染</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-12 svg 渲染修复 old_skill onepager-pipeline-status-fixed.html" data-src="onepager-workspace/iteration-3/eval-12-svg-render-fix/old_skill/run-1/outputs/onepager-pipeline-status-fixed.html"><div class="t"><h4>eval-12 · old_skill</h4><span class="badge mono">onepager-pipeline-status-fixed.html</span></div><p>SVG 渲染修复 — 从外框+空白到完整渲染</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-13 专家生命周期 new_skill ai-expert-lifecycle-onepager.html" data-src="onepager-workspace/iteration-3/eval-13-process-flow-onepager-svg/new_skill/run-1/outputs/ai-expert-lifecycle-onepager.html"><div class="t"><h4>eval-13 · new_skill</h4><span class="badge mono">ai-expert-lifecycle-onepager.html</span></div><p>专家生命周期 — 创建→测试→发布循环图</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-14 显式画 svg new_skill index.html" data-src="onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/run-1/outputs/index.html"><div class="t"><h4>eval-14 · new_skill</h4><span class="badge mono">index.html</span></div><p>显式画 SVG — 一进页就是内联 SVG</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-15 截图证据内联 new_skill expert-lifespan-onepager.html" data-src="onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/run-1/outputs/expert-lifespan-onepager.html"><div class="t"><h4>eval-15 · new_skill</h4><span class="badge mono">expert-lifespan-onepager.html</span></div><p>截图证据内联 — 截图 base64 作可见证据</p><span class="open">打开</span></div>
+    </div>
+    <h3 class="group">打分 + 评语 · eval-review 视图（skill-creator 的评分/评语页）</h3>
+    <div class="prods">
+      <div class="prod reveal" data-kw="eval-review iteration-1 打分 评语 review" data-src="onepager-workspace/iteration-1/eval-review.html"><div class="t"><h4>iteration-1 · 打分+评语</h4><span class="badge mono">eval-review.html</span></div><p>evals 5-7 的期望断言评分与评语视图。</p><span class="open">打开</span></div>
+      <div class="prod reveal" data-kw="eval-review iteration-3 打分 评语 review" data-src="onepager-workspace/iteration-3/eval-review.html"><div class="t"><h4>iteration-3 · 打分+评语</h4><span class="badge mono">eval-review.html</span></div><p>evals 11-15 的期望断言评分与评语视图。</p><span class="open">打开</span></div>
+    </div>
+
     <p class="note-inline reveal">sub-artifact 策略（法则 8）：main 只放结论 + 每扇门的链接；全量 HTML 各自独立、离线可开、按需加载——改一处不重写整页。</p>
   </section>
 
@@ -552,6 +590,15 @@ footer a{color:var(--ink-soft)}
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
   up();
 })();
+
+  // 产物过滤（窄网关）
+  var pSearch=document.getElementById('prodSearch'),pCount=document.getElementById('prodCount'),
+      pCards=Array.prototype.slice.call(document.querySelectorAll('.prods .prod'));
+  if(pSearch&&pCount){pSearch.addEventListener('input',function(){
+    var q=pSearch.value.trim().toLowerCase(),n=0;
+    pCards.forEach(function(c){var hit=!q||c.getAttribute('data-kw').indexOf(q)>-1;c.hidden=!hit;if(hit)n++;});
+    pCount.textContent=n+' / '+pCards.length;
+  });}
 </script>
 </body>
 </html>
