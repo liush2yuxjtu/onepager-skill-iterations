@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>iteration-3 · SVG 主动绘制 — 本迭代全部 eval HTML（sub-artifact）</title>
+<title>iteration-3 · SVG 主动绘制 — 全部 eval HTML 内联渲染（sub-artifact）</title>
 <script>(function(){try{var t=localStorage.getItem('it-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else document.documentElement.setAttribute('data-theme','dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
 <style>
 :root{--bg:#131009;--bg2:#1B1610;--bg3:#251E13;--ink:#EDE3CC;--ink-soft:#B3A588;--ink-faint:#7B7058;
@@ -24,7 +24,7 @@
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Fraunces","Noto Serif SC","Songti SC","STSong",Georgia,serif;font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased;background-image:radial-gradient(var(--grid) 1px,transparent 1px);background-size:26px 26px}
 ::selection{background:var(--seal);color:var(--paper-ink)}a{color:var(--seal)}a:hover{color:var(--seal-deep)}:focus-visible{outline:2px solid var(--focus)}
 .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
-.wrap{max-width:960px;margin:0 auto;padding:0 24px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
 .topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
 .topbar-in{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
 .brand{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;color:var(--ink-soft);text-transform:uppercase}
@@ -47,24 +47,21 @@ h1{margin:0;font-size:clamp(1.7rem,4.6vw,2.6rem);font-weight:600;line-height:1.1
 .bm .bar .v{font-size:.68rem;color:var(--ink-soft);font-family:"IBM Plex Mono",monospace;width:5em;text-align:right;font-variant-numeric:tabular-nums}
 .bm .bar .v.win{color:var(--celadon)}
 h2{margin:34px 0 6px;font-size:1.25rem;font-weight:600}
-.desc2{font-size:.84rem;color:var(--ink-soft);margin:0 0 16px}
-.evals{display:flex;flex-direction:column;gap:18px}
+.desc2{font-size:.84rem;color:var(--ink-soft);margin:0 0 14px;max-width:70ch}
+.ss-index{font-size:.78rem;color:var(--ink-faint);margin:0 0 18px;line-height:2}
+.ss-index a{margin-right:14px;font-family:"IBM Plex Mono",monospace;font-size:.7rem}
+.evals{display:flex;flex-direction:column;gap:20px}
 .eval-block{border:1px solid var(--line);border-radius:14px;background:var(--bg2);overflow:hidden;box-shadow:var(--shadow)}
-.eh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--bg3);cursor:pointer}
+.eh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--bg3)}
 .eh .t{font-size:.9rem;font-weight:600}
-.eh .t .v{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));border-radius:999px;padding:1px 9px;margin-left:8px;font-weight:400}
-.eh .go{font-family:"IBM Plex Mono",monospace;font-size:.64rem;color:var(--seal);text-transform:uppercase;letter-spacing:.08em}
-.eval-block iframe{width:100%;height:460px;border:0;display:block;background:#fff}
+.eh .t .v{font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));border-radius:999px;padding:1px 9px;margin-left:8px;font-weight:400}
+.eh .go{font-family:"IBM Plex Mono",monospace;font-size:.64rem;color:var(--seal);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.eh .go:hover{color:var(--seal-deep)}
+.ss-slot{background:#fff}
+.ss-slot .ss-inner{width:100%}
 footer{border-top:1px solid var(--line);margin-top:44px;padding:22px 0 40px;color:var(--ink-faint);font-size:.76rem}
 footer .src{font-family:"IBM Plex Mono",monospace;font-size:.7rem;line-height:1.9;word-break:break-all;margin-top:8px}
-.lightbox{position:fixed;inset:0;z-index:90;background:rgba(10,8,5,.9);display:none;align-items:center;justify-content:center;padding:3vh 3vw}
-.lightbox.open{display:flex}
-.lb-frame{position:relative;width:min(1280px,96vw);height:94vh;background:#fff;border-radius:12px;overflow:hidden}
-.lb-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
-.lb-top .t{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lb-close{border:1px solid var(--line);background:transparent;color:var(--ink-soft);border-radius:999px;width:30px;height:30px;cursor:pointer;font-size:14px}
-.lb-frame iframe{width:100%;height:calc(100% - 51px);border:0;display:block;background:#fff}
-@media (max-width:760px){.wrap{padding:0 16px}.bench{flex-direction:column}.eval-block iframe{height:380px}}
+@media (max-width:760px){.wrap{padding:0 16px}.bench{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -76,66 +73,2254 @@ footer .src{font-family:"IBM Plex Mono",monospace;font-size:.7rem;line-height:1.
 <header>
   <p class="eyebrow">Sub-Artifact 3/3 · evals 11-15 · 2026-08-12</p>
   <h1>iteration-3 · SVG 主动绘制</h1>
-  <p class="meta mono">evals 11-15 · 2026-08-12 · 7 个 eval HTML 内联</p>
+  <p class="meta mono">evals 11-15 · 2026-08-12 · 7 个 eval HTML 内联渲染于本页</p>
   <p class="what">有形状就手写内联 SVG（数据/界面/流程），守住单文件自包含。</p>
   <div class="bench"><div class="bm"><div class="lab">通过率</div>
-        <div class="bar"><span class="k">带/新</span><div class="tk"><i style="width:100.0%"></i></div><span class="v win">new 100%</span></div>
-        <div class="bar"><span class="k">不带/旧</span><div class="tk"><i class="lose" style="width:100.0%"></i></div><span class="v">old 100%</span></div></div>
+        <div class="bar"><span class="k">带/新</span><div class="tk"><i style="width:100%"></i></div><span class="v ">new 100%</span></div>
+        <div class="bar"><span class="k">不带/旧</span><div class="tk"><i class="lose" style="width:100%"></i></div><span class="v">old 100%</span></div></div>
 <div class="bm"><div class="lab">耗时</div>
-        <div class="bar"><span class="k">带/新</span><div class="tk"><i style="width:65%"></i></div><span class="v win">170.3s</span></div>
+        <div class="bar"><span class="k">带/新</span><div class="tk"><i style="width:65%"></i></div><span class="v ">170.3s</span></div>
         <div class="bar"><span class="k">不带/旧</span><div class="tk"><i class="lose" style="width:100%"></i></div><span class="v">262.4s</span></div></div>
 <div class="bm"><div class="lab">token</div>
-        <div class="bar"><span class="k">带/新</span><div class="tk"><i style="width:88%"></i></div><span class="v win">74263</span></div>
+        <div class="bar"><span class="k">带/新</span><div class="tk"><i style="width:88%"></i></div><span class="v ">74263</span></div>
         <div class="bar"><span class="k">不带/旧</span><div class="tk"><i class="lose" style="width:100%"></i></div><span class="v">83888</span></div></div></div>
 </header>
 
-<h2>本迭代全部 eval HTML（内联 sub-sub-artifact）</h2>
-<p class="desc2">点标题可放大查看。每个都是评测运行时真实生成的产物。</p>
+<h2>本迭代全部 eval HTML — 内联渲染在本页内（sub-sub-artifact）</h2>
+<p class="desc2">每份产物已<b>真实内联渲染</b>在页面里（Shadow DOM 隔离样式，互不污染、保留各自主题），不是 iframe 隔离帧。点标题可看，点「交互原版」打开完整交互版本。</p>
+<div class="ss-index">产物索引：<a href="#ss-0">eval-11·new_skill</a> <a href="#ss-1">eval-11·old_skill</a> <a href="#ss-2">eval-12·new_skill</a> <a href="#ss-3">eval-12·old_skill</a> <a href="#ss-4">eval-13·new_skill</a> <a href="#ss-5">eval-14·new_skill</a> <a href="#ss-6">eval-15·new_skill</a></div>
 <div class="evals">
-      <div class="eval-block" data-src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/run-1/outputs/ai-expert-onepager-two-paths.html">
-        <div class="eh"><span class="t">eval-11 · AI 专家双路径<span class="v">new_skill · ai-expert-onepager-two-paths.html</span></span><span class="go">放大 ↗</span></div>
-        <iframe src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/run-1/outputs/ai-expert-onepager-two-paths.html" loading="lazy" title="eval-11 · new_skill · ai-expert-onepager-two-paths.html"></iframe>
+      <div class="eval-block" id="ss-0">
+        <div class="eh"><span class="t">eval-11 · AI 专家双路径<span class="v">new_skill · ai-expert-onepager-two-paths.html</span></span><a class="go" href="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/run-1/outputs/ai-expert-onepager-two-paths.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
+        <div class="ss-slot"><template class="ss-tpl"><style>
+  .ss-inner{
+    --bg:#f5f7fb; --ink:#1c2333; --mut:#5b6478; --line:#e2e6ee; --card:#ffffff;
+    --a:#2563eb; --a-soft:#eef4ff;
+    --b:#059669; --b-soft:#e9f9f1;
+    --conv:#7c3aed; --conv-soft:#f3efff;
+    --warn:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  .ss-inner{scroll-behavior:smooth}
+  .ss-inner{margin:0; background:var(--bg); color:var(--ink);
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:980px; margin:0 auto; padding:28px 20px 60px;}
+  .badge{display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.04em;}
+  .badge-a{background:var(--a); color:#fff;}
+  .badge-b{background:var(--b); color:#fff;}
+  .badge-conv{background:var(--conv); color:#fff;}
+
+  /* verdict */
+  .verdict{border-left:4px solid var(--conv); background:var(--conv-soft);
+    padding:14px 18px; border-radius:10px; margin:16px 0 8px;}
+  .verdict b{color:var(--conv);}
+  .sub{margin:6px 0 0; color:var(--mut);}
+
+  /* focus buttons — narrow gateway */
+  .focusbar{display:flex; gap:8px; align-items:center; margin:14px 0 4px; flex-wrap:wrap;}
+  .focusbar .lbl{color:var(--mut); font-size:12px;}
+  .focusbtn{border:1px solid var(--line); background:#fff; color:var(--ink);
+    padding:5px 12px; border-radius:8px; font-size:12.5px; cursor:pointer; transition:all .15s;}
+  .focusbtn.on-a{border-color:var(--a); background:var(--a); color:#fff;}
+  .focusbtn.on-b{border-color:var(--b); background:var(--b); color:#fff;}
+  .focusbtn.on-all{border-color:var(--conv); background:var(--conv-soft);}
+
+  /* dimming via focus state */
+  [data-focus="a"] [data-path="b"],[data-focus="a"] [data-path="conv"],
+  [data-focus="b"] [data-path="a"],[data-focus="b"] [data-path="conv"]{opacity:.16; filter:saturate(.3);}
+  [data-focus="a"] [data-path="a"],[data-focus="b"] [data-path="b"]{opacity:1;}
+  .lane{transition:opacity .25s, filter .25s;}
+
+  h2{font-size:17px; margin:34px 0 6px;}
+  .hint{color:var(--mut); font-size:12.5px; margin:0 0 12px;}
+
+  /* svg cards */
+  .diagram-card, .matrix-card{background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:14px; margin:10px 0;}
+  svg{max-width:100%; height:auto; display:block;}
+  svg .node{cursor:pointer;}
+  svg .nrect{transition:filter .2s;}
+  svg .nrect:hover{filter:brightness(.97);}
+
+  /* mock cards */
+  .mocks{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:10px 0;}
+  @media(max-width:760px){ .mocks{grid-template-columns:1fr;} }
+  .mock{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:0; overflow:hidden; display:flex; flex-direction:column; transition:opacity .25s,filter .25s,box-shadow .2s;}
+  .mock.a{border-top:3px solid var(--a);}
+  .mock.b{border-top:3px solid var(--b);}
+  .mock-head{display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line); background:#fafbfe;}
+  .mock-title{font-weight:700; font-size:13px;}
+  .mock-tag{margin-left:auto; color:var(--mut); font-size:11px; background:#eef1f6; padding:1px 8px; border-radius:999px;}
+  .form-fields{padding:12px; display:flex; flex-direction:column; gap:9px;}
+  .form-fields label{font-size:11.5px; color:var(--mut); display:flex; flex-direction:column; gap:3px;}
+  .form-fields input,.form-fields textarea,.chat-input{
+    border:1px solid var(--line); border-radius:8px; padding:7px 9px; font-size:12.5px;
+    font-family:inherit; color:var(--ink); background:#fff; width:100%;}
+  .form-fields .file{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; color:var(--a);}
+  .chat{padding:12px; display:flex; flex-direction:column; gap:8px;}
+  .msg{max-width:86%; border-radius:12px; padding:7px 11px; font-size:12.5px;}
+  .msg.user{align-self:flex-end; background:var(--a); color:#fff;}
+  .msg.ai{align-self:flex-start; background:#eef1f6;}
+  .mock-foot{display:flex; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--line);}
+  .mock-foot .ghost{border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 12px; border-radius:8px; font-size:12.5px;}
+  .mock-foot .primary{border:none; background:var(--conv); color:#fff; padding:6px 14px; border-radius:8px; font-size:12.5px;}
+  .kbd{font-size:11px; color:var(--mut); background:#eef1f6; padding:4px 8px; border-radius:6px; margin-left:auto;}
+  .mock-note{padding:8px 12px 12px; font-size:11.5px; color:var(--mut); margin:0; border-top:1px dashed var(--line);}
+  .mock-note b{color:var(--ink);}
+
+  /* conv card */
+  .mock.conv{border-top:3px solid var(--conv); padding:16px;}
+  .mock.conv h3{margin:10px 0 4px; color:var(--conv); font-size:15px;}
+  .mock.conv p{margin:0; color:var(--mut); font-size:12.5px;}
+
+  /* comparison table */
+  table.cmp{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; font-size:12.5px;}
+  table.cmp th,table.cmp td{border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top;}
+  table.cmp th{background:#fafbfe; font-size:12px; color:var(--mut);}
+  table.cmp tr:last-child td{border-bottom:none;}
+  table.cmp .pill{font-size:11px; font-weight:700; padding:1px 9px; border-radius:999px; white-space:nowrap;}
+  .pill.same{background:var(--b-soft); color:var(--b);}
+  .pill.diff{background:#fef3e2; color:#b45309;}
+  code.t{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11.5px; background:#eef1f6; padding:1px 5px; border-radius:5px;}
+
+  details.notes{border:1px solid var(--line); background:var(--card); border-radius:12px; padding:12px 14px; margin-top:12px;}
+  details.notes summary{cursor:pointer; font-weight:600; font-size:13px;}
+  details.notes ul{margin:10px 0 0; padding-left:18px; color:var(--mut);}
+  details.notes li{margin:5px 0;}
+
+  /* action checklist */
+  .actions{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px;}
+  .actions .bar{display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .actions progress{flex:1; height:8px; accent-color:var(--conv);}
+  .actions .cnt{font-size:12px; color:var(--mut); min-width:52px;}
+  .actions label{display:flex; gap:10px; align-items:flex-start; padding:6px 0; cursor:pointer; font-size:13px;}
+  .actions label input{margin-top:3px;}
+  .copy{border:1px solid var(--conv); color:var(--conv); background:#fff; padding:7px 14px; border-radius:8px; font-size:12.5px; cursor:pointer;}
+  .copy:active{transform:scale(.97);}
+
+  footer{margin-top:36px; padding-top:14px; border-top:1px solid var(--line); color:var(--mut); font-size:11.5px;}
+  footer code{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11px; background:#eef1f6; padding:1px 5px; border-radius:4px;}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--mut); margin-top:8px;}
+  .legend .sw{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+</style><div class="ss-inner">
+<div class="wrap">
+
+  <h1>AI 专家 WebApp · 双路径 onepager</h1>
+
+  <div class="verdict">
+    <b>结论：两条路径，一个终点。</b>
+    路径 A（GUI 表单）表单阶段零后端调用、审阅按 Enter 才执行、发布走专家 API；路径 B（与 expert-creator / expert-fixer 纯对话）无表单、自然语言直接创建或改进技能。两者在发布环节共用同一专家 API，最终汇合为「已发布专家 + evals 快照」。
+    <p class="sub">差异只在 表单 / 执行 / 发布 三个环节的自动化方式，终点契约唯一。</p>
+  </div>
+
+  <div class="focusbar">
+    <span class="lbl">窄门：聚焦一条路径查看</span>
+    <button class="focusbtn on-all" data-focus="all" onclick="focusPath('all')">全图</button>
+    <button class="focusbtn" data-focus="a" onclick="focusPath('a')">路径 A · 表单</button>
+    <button class="focusbtn" data-focus="b" onclick="focusPath('b')">路径 B · 对话</button>
+  </div>
+
+  <!-- ============ 双路径 SVG 流程图 ============ -->
+  <div class="diagram-card">
+    <svg viewBox="0 0 940 604" role="img" aria-label="双路径流程图：路径A与路径B从不同入口汇合到已发布专家">
+      <defs>
+        <marker id="ma" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2563eb"/></marker>
+        <marker id="mb" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#059669"/></marker>
+        <marker id="mc" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#7c3aed"/></marker>
+      </defs>
+
+      <g id="lane-a" class="lane" data-path="a">
+        <!-- 路径 A 节点 -->
+        <g class="node" data-path="a" onclick="focusPath('a')">
+          <rect class="nrect" x="100" y="40" width="200" height="54" rx="12" fill="#eef4ff" stroke="#2563eb" stroke-width="1.5"/>
+          <circle cx="116" cy="60" r="11" fill="#2563eb"/>
+          <text x="116" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">A</text>
+          <text x="140" y="62" font-size="13" font-weight="700" fill="#1c2333">路径 A · GUI 表单</text>
+          <text x="140" y="80" font-size="11" fill="#5b6478">表单驱动 · 无对话</text>
+        </g>
+        <g class="node" data-path="a" onclick="focusPath('a')">
+          <rect class="nrect" x="100" y="140" width="200" height="66" rx="12" fill="#ffffff" stroke="#2563eb"/>
+          <text x="200" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">① 表单阶段</text>
+          <text x="200" y="188" text-anchor="middle" font-size="12" fill="#1c2333">零后端调用</text>
+        </g>
+        <g class="node" data-path="a" onclick="focusPath('a')">
+          <rect class="nrect" x="100" y="248" width="200" height="66" rx="12" fill="#ffffff" stroke="#2563eb"/>
+          <text x="200" y="274" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">② 审阅阶段</text>
+          <text x="200" y="296" text-anchor="middle" font-size="12" fill="#1c2333">按 Enter 才执行</text>
+        </g>
+        <g class="node" data-path="a" onclick="focusPath('a')">
+          <rect class="nrect" x="100" y="356" width="200" height="66" rx="12" fill="#ffffff" stroke="#2563eb"/>
+          <text x="200" y="382" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">③ 发布阶段</text>
+          <text x="200" y="404" text-anchor="middle" font-size="12" fill="#1c2333">专家 API</text>
+        </g>
+        <!-- 路径 A 箭头 -->
+        <line x1="200" y1="94" x2="200" y2="140" stroke="#2563eb" stroke-width="2" marker-end="url(#ma)"/>
+        <line x1="200" y1="206" x2="200" y2="248" stroke="#2563eb" stroke-width="2" marker-end="url(#ma)"/>
+        <line x1="200" y1="314" x2="200" y2="356" stroke="#2563eb" stroke-width="2" marker-end="url(#ma)"/>
+        <path d="M200,422 L200,470 L470,470 L470,492" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mc)"/>
+      </g>
+
+      <g id="lane-b" class="lane" data-path="b">
+        <!-- 路径 B 节点 -->
+        <g class="node" data-path="b" onclick="focusPath('b')">
+          <rect class="nrect" x="640" y="40" width="200" height="54" rx="12" fill="#e9f9f1" stroke="#059669" stroke-width="1.5"/>
+          <circle cx="656" cy="60" r="11" fill="#059669"/>
+          <text x="656" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">B</text>
+          <text x="680" y="62" font-size="13" font-weight="700" fill="#1c2333">路径 B · 专家对话</text>
+          <text x="680" y="80" font-size="11" fill="#5b6478">无表单 · 自然语言</text>
+        </g>
+        <g class="node" data-path="b" onclick="focusPath('b')">
+          <rect class="nrect" x="640" y="140" width="200" height="78" rx="12" fill="#ffffff" stroke="#059669"/>
+          <text x="740" y="168" text-anchor="middle" font-size="13" font-weight="700" fill="#059669">① 对话阶段</text>
+          <text x="740" y="190" text-anchor="middle" font-size="11.5" fill="#1c2333">expert-creator 创建</text>
+          <text x="740" y="206" text-anchor="middle" font-size="11.5" fill="#1c2333">expert-fixer 改进</text>
+        </g>
+        <g class="node" data-path="b" onclick="focusPath('b')">
+          <rect class="nrect" x="640" y="260" width="200" height="66" rx="12" fill="#ffffff" stroke="#059669"/>
+          <text x="740" y="286" text-anchor="middle" font-size="13" font-weight="700" fill="#059669">② 发布阶段</text>
+          <text x="740" y="308" text-anchor="middle" font-size="12" fill="#1c2333">专家 API</text>
+        </g>
+        <!-- 路径 B 箭头 -->
+        <line x1="740" y1="94" x2="740" y2="140" stroke="#059669" stroke-width="2" marker-end="url(#mb)"/>
+        <line x1="740" y1="218" x2="740" y2="260" stroke="#059669" stroke-width="2" marker-end="url(#mb)"/>
+        <path d="M740,326 L740,470 L470,470 L470,492" fill="none" stroke="#059669" stroke-width="2" marker-end="url(#mc)"/>
+      </g>
+
+      <!-- 汇合 -->
+      <g id="lane-conv" class="lane" data-path="conv">
+        <circle cx="470" cy="470" r="4" fill="#7c3aed"/>
+        <g class="node" data-path="conv" onclick="focusPath('all')">
+          <rect class="nrect" x="260" y="500" width="420" height="70" rx="14" fill="#f3efff" stroke="#7c3aed" stroke-width="2"/>
+          <text x="470" y="531" text-anchor="middle" font-size="14" font-weight="700" fill="#7c3aed">已发布专家 + evals 快照</text>
+          <text x="470" y="552" text-anchor="middle" font-size="11.5" fill="#1c2333">两条路径在此汇合 · 同一份发布契约</text>
+        </g>
+      </g>
+    </svg>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--a)"></span>路径 A · GUI 表单（3 阶段）</span>
+      <span><span class="sw" style="background:var(--b)"></span>路径 B · 专家对话（2 阶段）</span>
+      <span><span class="sw" style="background:var(--conv)"></span>汇合终点（共享）</span>
+    </div>
+  </div>
+
+  <!-- ============ Mock 界面卡片（带路径徽标） ============ -->
+  <h2>两条路径的界面形态</h2>
+  <p class="hint">下方是两套使用界面的 mock。点击卡片可聚焦对应路径。</p>
+
+  <div class="mocks">
+    <article class="mock a" data-path="a" onclick="focusPath('a')" style="cursor:pointer">
+      <header class="mock-head">
+        <span class="badge badge-a">路径 A</span>
+        <span class="mock-title">专家编辑 · GUI 表单</span>
+        <span class="mock-tag">草稿 · 零后端</span>
+      </header>
+      <div class="form-fields">
+        <label>专家名称 <input value="内容质检专家" disabled></label>
+        <label>一句话简介 <input value="审核视频文案合规" disabled></label>
+        <label>技能文件 <span class="file">SKILL.md · 已绑定</span></label>
+        <label>触发描述 <textarea rows="2" disabled>在对话中触发生成技能</textarea></label>
       </div>
-      <div class="eval-block" data-src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/old_skill/run-1/outputs/onepager-ai-expert-two-paths.html">
-        <div class="eh"><span class="t">eval-11 · AI 专家双路径<span class="v">old_skill · onepager-ai-expert-two-paths.html</span></span><span class="go">放大 ↗</span></div>
-        <iframe src="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/old_skill/run-1/outputs/onepager-ai-expert-two-paths.html" loading="lazy" title="eval-11 · old_skill · onepager-ai-expert-two-paths.html"></iframe>
+      <footer class="mock-foot">
+        <button class="ghost">保存草稿</button>
+        <span class="kbd">按 Enter 审阅执行</span>
+        <button class="primary">发布</button>
+      </footer>
+      <p class="mock-note"><b>零后端</b>：表单阶段不产生任何 API 调用，未按 Enter 前只有浏览器本地草稿；审阅确认（Enter）才真正执行。</p>
+    </article>
+
+    <article class="mock b" data-path="b" onclick="focusPath('b')" style="cursor:pointer">
+      <header class="mock-head">
+        <span class="badge badge-b">路径 B</span>
+        <span class="mock-title">与专家对话</span>
+        <span class="mock-tag">无表单 · 自然语言</span>
+      </header>
+      <div class="chat">
+        <div class="msg user">帮我创建一个「发布前校验」专家</div>
+        <div class="msg ai">已生成技能草稿：校验规则 3 条，描述就绪。</div>
+        <div class="msg ai">expert-fixer 复核：修正 1 处规则冲突，其余通过。</div>
       </div>
-      <div class="eval-block" data-src="onepager-workspace/iteration-3/eval-12-svg-render-fix/new_skill/run-1/outputs/main.html">
-        <div class="eh"><span class="t">eval-12 · SVG 渲染修复<span class="v">new_skill · main.html</span></span><span class="go">放大 ↗</span></div>
-        <iframe src="onepager-workspace/iteration-3/eval-12-svg-render-fix/new_skill/run-1/outputs/main.html" loading="lazy" title="eval-12 · new_skill · main.html"></iframe>
-      </div>
-      <div class="eval-block" data-src="onepager-workspace/iteration-3/eval-12-svg-render-fix/old_skill/run-1/outputs/onepager-pipeline-status-fixed.html">
-        <div class="eh"><span class="t">eval-12 · SVG 渲染修复<span class="v">old_skill · onepager-pipeline-status-fixed.html</span></span><span class="go">放大 ↗</span></div>
-        <iframe src="onepager-workspace/iteration-3/eval-12-svg-render-fix/old_skill/run-1/outputs/onepager-pipeline-status-fixed.html" loading="lazy" title="eval-12 · old_skill · onepager-pipeline-status-fixed.html"></iframe>
-      </div>
-      <div class="eval-block" data-src="onepager-workspace/iteration-3/eval-13-process-flow-onepager-svg/new_skill/run-1/outputs/ai-expert-lifecycle-onepager.html">
-        <div class="eh"><span class="t">eval-13 · 专家生命周期<span class="v">new_skill · ai-expert-lifecycle-onepager.html</span></span><span class="go">放大 ↗</span></div>
-        <iframe src="onepager-workspace/iteration-3/eval-13-process-flow-onepager-svg/new_skill/run-1/outputs/ai-expert-lifecycle-onepager.html" loading="lazy" title="eval-13 · new_skill · ai-expert-lifecycle-onepager.html"></iframe>
-      </div>
-      <div class="eval-block" data-src="onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/run-1/outputs/index.html">
-        <div class="eh"><span class="t">eval-14 · 显式画 SVG<span class="v">new_skill · index.html</span></span><span class="go">放大 ↗</span></div>
-        <iframe src="onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/run-1/outputs/index.html" loading="lazy" title="eval-14 · new_skill · index.html"></iframe>
-      </div>
-      <div class="eval-block" data-src="onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/run-1/outputs/expert-lifespan-onepager.html">
-        <div class="eh"><span class="t">eval-15 · 截图证据内联<span class="v">new_skill · expert-lifespan-onepager.html</span></span><span class="go">放大 ↗</span></div>
-        <iframe src="onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/run-1/outputs/expert-lifespan-onepager.html" loading="lazy" title="eval-15 · new_skill · expert-lifespan-onepager.html"></iframe>
-      </div>
-      <div class="eval-block" data-src="onepager-workspace/iteration-3/eval-review.html">
-        <div class="eh"><span class="t">本迭代 · 打分+评语 视图<span class="v">eval-review.html</span></span><span class="go">放大 ↗</span></div>
-        <iframe src="onepager-workspace/iteration-3/eval-review.html" loading="lazy" title="eval-review"></iframe>
-      </div>
+      <footer class="mock-foot">
+        <input class="chat-input" value="继续对话…" disabled>
+        <button class="primary">回车发布</button>
+      </footer>
+      <p class="mock-note"><b>对话即执行</b>：无表单、无显式确认门，expert-creator / expert-fixer 边聊边生成或改进技能。</p>
+    </article>
+  </div>
+
+  <div class="mock conv" data-path="conv" style="cursor:pointer" onclick="focusPath('all')">
+    <span class="badge badge-conv">汇合</span>
+    <h3>已发布专家 + evals 快照</h3>
+    <p>两条路径发布后都落到同一份契约：可被专家 API 调用的已发布专家，并附带一份可复现的 evals 快照（能力评估结果随发布一同落库）。</p>
+  </div>
+
+  <!-- ============ 三环节异同 ============ -->
+  <h2>表单 / 执行 / 发布 三环节异同</h2>
+  <p class="hint">形态各异，终点相同：输入方式不同、执行门不同、发布通道唯一。</p>
+
+  <div class="matrix-card">
+    <svg viewBox="0 0 820 200" role="img" aria-label="三环节异同矩阵">
+      <text x="12" y="26" font-size="13" font-weight="700" fill="#1c2333">环节</text>
+      <text x="290" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">路径 A · 表单</text>
+      <text x="620" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#059669">路径 B · 对话</text>
+      <text x="782" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#5b6478">判定</text>
+
+      <!-- 行1 表单/输入 -->
+      <text x="12" y="72" font-size="12.5" fill="#1c2333">表单/输入</text>
+      <rect x="140" y="48" width="300" height="40" rx="10" fill="#eef4ff" stroke="#2563eb"/>
+      <text x="290" y="73" text-anchor="middle" font-size="12.5" fill="#1c2333">结构化表单 · 零后端调用</text>
+      <rect x="470" y="48" width="300" height="40" rx="10" fill="#e9f9f1" stroke="#059669"/>
+      <text x="620" y="73" text-anchor="middle" font-size="12.5" fill="#1c2333">自然语言对话 · 无表单</text>
+      <circle cx="776" cy="68" r="12" fill="#f59e0b"/><text x="776" y="72.5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">异</text>
+
+      <!-- 行2 执行/审阅 -->
+      <text x="12" y="124" font-size="12.5" fill="#1c2333">执行/审阅</text>
+      <rect x="140" y="100" width="300" height="40" rx="10" fill="#eef4ff" stroke="#2563eb"/>
+      <text x="290" y="125" text-anchor="middle" font-size="12.5" fill="#1c2333">审阅界面按 Enter 才执行</text>
+      <rect x="470" y="100" width="300" height="40" rx="10" fill="#e9f9f1" stroke="#059669"/>
+      <text x="620" y="125" text-anchor="middle" font-size="12.5" fill="#1c2333">对话即执行 · 边聊边改</text>
+      <circle cx="776" cy="120" r="12" fill="#f59e0b"/><text x="776" y="124.5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">异</text>
+
+      <!-- 行3 发布 -->
+      <text x="12" y="176" font-size="12.5" fill="#1c2333">发布</text>
+      <rect x="140" y="152" width="300" height="40" rx="10" fill="#f3efff" stroke="#7c3aed"/>
+      <text x="290" y="177" text-anchor="middle" font-size="12.5" fill="#1c2333">专家 API 发布</text>
+      <rect x="470" y="152" width="300" height="40" rx="10" fill="#f3efff" stroke="#7c3aed"/>
+      <text x="620" y="177" text-anchor="middle" font-size="12.5" fill="#1c2333">专家 API 发布（同）</text>
+      <circle cx="776" cy="172" r="12" fill="#059669"/><text x="776" y="176.5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">同</text>
+    </svg>
+    <p class="hint" style="margin-bottom:0">发布环节两路共用同一专家 API → 汇合为同一条契约，并落一份 evals 快照。</p>
+  </div>
+
+  <table class="cmp">
+    <tr><th style="width:84px">环节</th><th style="width:36%">路径 A · GUI 表单</th><th style="width:36%">路径 B · 专家对话</th><th style="width:56px">判定</th></tr>
+    <tr>
+      <td><b>表单</b></td>
+      <td>结构化表单即 schema：字段 = 专家属性，草稿可本地保存。<code class="t">零后端</code>：未按 Enter 前不产生任何 API 调用。</td>
+      <td>无表单。直接用自然语言向 <code class="t">expert-creator</code>（创建）/ <code class="t">expert-fixer</code>（改进）描述需求，由专家解析为技能草稿。</td>
+      <td><span class="pill diff">异</span></td>
+    </tr>
+    <tr>
+      <td><b>执行</b></td>
+      <td>显式确认门：审阅界面 <code class="t">按 Enter</code> 才触发后端执行；执行前可无限改草稿，零副作用。</td>
+      <td>隐式执行：对话本身即执行，边聊边生成/修改，无单独的确认门。</td>
+      <td><span class="pill diff">异</span></td>
+    </tr>
+    <tr>
+      <td><b>发布</b></td>
+      <td>发布数据来自表单 JSON，调用专家 API。</td>
+      <td>发布数据来自对话产物，调用同一专家 API。</td>
+      <td><span class="pill same">同</span></td>
+    </tr>
+    <tr>
+      <td><b>汇合</b></td>
+      <td colspan="2">发布成功 → 写入「已发布专家 + evals 快照」：同一份发布契约、同一份可复现评估记录。</td>
+      <td><span class="pill same">同</span></td>
+    </tr>
+  </table>
+
+  <details class="notes">
+    <summary>环节细则（按需下钻）</summary>
+    <ul>
+      <li><b>表单阶段零后端</b>：路径 A 的表单校验、字段映射全部在浏览器本地完成；后端只在 Enter 审阅执行后收到一次结构化 payload。</li>
+      <li><b>Enter = 执行闸门</b>：路径 A 把「审阅」与「执行」解耦，Enter 是唯一的执行触发器，天然防误触，也便于审阅人逐字段复核。</li>
+      <li><b>对话无闸门</b>：路径 B 的每次助手回复都可能触发一次技能生成/改进，适合探索型需求；确定性弱于 A，但上手更快。</li>
+      <li><b>同一条专家 API</b>：无论产物来自表单 JSON 还是对话文本，发布都走同一个专家 API 通道，产物规范、校验、落库逻辑完全一致。</li>
+      <li><b>evals 快照</b>：发布时强制生成或复用一次 evals 评估，作为该专家可复现的能力基线，后续改进可对照快照回归。</li>
+    </ul>
+  </details>
+
+  <!-- ============ 行动闭环 ============ -->
+  <h2>行动闭环</h2>
+  <div class="actions">
+    <div class="bar">
+      <span>已确认</span>
+      <progress id="prog" max="4" value="0"></progress>
+      <span class="cnt" id="cnt">0/4</span>
+      <button class="copy" onclick="copyMD()">复制 Markdown ✓</button>
+    </div>
+    <label><input type="checkbox" data-item="路径 A 确认：填表后审阅，按 Enter 才执行（表单阶段零后端调用）">路径 A 确认：填表后审阅，按 Enter 才执行（表单阶段零后端调用）</label>
+    <label><input type="checkbox" data-item="路径 B 确认：直接与 expert-creator / expert-fixer 纯对话，无表单、自然语言创建或改进">路径 B 确认：直接与 expert-creator / expert-fixer 纯对话，无表单、自然语言创建或改进</label>
+    <label><input type="checkbox" data-item="发布走专家 API：数据来自表单 JSON 或对话产物，调用同一发布通道">发布走专家 API：数据来自表单 JSON 或对话产物，调用同一发布通道</label>
+    <label><input type="checkbox" data-item="发布后核对 evals 快照已落库，作为该专家的可复现能力基线">发布后核对 evals 快照已落库，作为该专家的可复现能力基线</label>
+  </div>
+
+  <footer>
+    来源：onepager skill（双路径流程 onepager）· 交付文件：
+    <code>/Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-11-svg-path-diagrams/new_skill/outputs/ai-expert-onepager-two-paths.html</code>
+    <br>生成时间：2026-08-12 · 生成器：onepager（窄门哲学 · SMALL_INTERFACE）
+    · 自包含承诺：无 CDN、无外链图片/SVG，SVG 全部内联，离线可开。
+  </footer>
 </div>
 
+<script>
+  function focusPath(p){
+    document.body.dataset.focus = p;
+    document.querySelectorAll('.focusbtn').forEach(function(b){
+      b.className = 'focusbtn' + (b.dataset.focus === p ? (p==='a' ? ' on-a' : p==='b' ? ' on-b' : ' on-all') : '');
+    });
+  }
+
+  document.querySelectorAll('.actions input').forEach(function(c){
+    c.addEventListener('change', function(){
+      var n = document.querySelectorAll('.actions input:checked').length;
+      document.getElementById('prog').value = n;
+      document.getElementById('cnt').textContent = n + '/4';
+    });
+  });
+
+  function copyMD(){
+    var checked = Array.prototype.filter.call(document.querySelectorAll('.actions input:checked'), function(c){ return c.checked; });
+    var lines = ['## AI 专家 WebApp 双路径 · 已确认项'];
+    checked.forEach(function(c){ lines.push('- [x] ' + c.dataset.item); });
+    var md = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(md).then(function(){ flash('已复制 ' + checked.length + ' 项'); });
+    } else {
+      prompt('复制以下 Markdown：', md);
+    }
+  }
+  function flash(m){ alert(m); }
+</script>
+</div></template></div>
+      </div>
+      <div class="eval-block" id="ss-1">
+        <div class="eh"><span class="t">eval-11 · AI 专家双路径<span class="v">old_skill · onepager-ai-expert-two-paths.html</span></span><a class="go" href="onepager-workspace/iteration-3/eval-11-svg-path-diagrams/old_skill/run-1/outputs/onepager-ai-expert-two-paths.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
+        <div class="ss-slot"><template class="ss-tpl"><style>
+  .ss-inner{
+    --ink:#1b2330; --mut:#5b6673; --line:#e3e8ef; --bg:#f6f8fb; --card:#ffffff;
+    --a:#2563eb; --a-bg:#eef4ff; --a-line:#bcd4ff;
+    --b:#7c3aed; --b-bg:#f5f0ff; --b-line:#dccbff;
+    --ab:#0d9488; --ab-bg:#e7f7f4; --ab-line:#b3e5df;
+    --gold:#f59e0b; --ok:#059669; --bad:#e11d48;
+  }
+  *{box-sizing:border-box}
+  .ss-inner{scroll-behavior:smooth}
+  .ss-inner{margin:0;background:var(--bg);color:var(--ink);
+    font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 16px 60px}
+  a{color:var(--a)}
+
+  /* sticky top bar */
+  header{position:sticky;top:0;z-index:50;background:rgba(246,248,251,.92);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line)}
+  .topbar{max-width:1120px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .logo{font-weight:700;letter-spacing:.2px}
+  .logo small{color:var(--mut);font-weight:400;margin-left:8px}
+  nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  nav a{text-decoration:none;font-size:13px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);white-space:nowrap}
+  nav a:hover{border-color:var(--a);color:var(--a)}
+  .btn{font:inherit;cursor:pointer;border-radius:8px;padding:6px 12px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+  .btn.primary{background:var(--a);border-color:var(--a);color:#fff}
+  .btn:hover{filter:brightness(1.05)}
+
+  /* badges (HTML chips, outside svg) */
+  .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+  .chip-a{background:var(--a-bg);color:var(--a);border:1px solid var(--a-line)}
+  .chip-b{background:var(--b-bg);color:var(--b);border:1px solid var(--b-line)}
+  .chip-ab{background:var(--ab-bg);color:var(--ab);border:1px solid var(--ab-line)}
+  .chip i{font-style:normal;background:#fff;border-radius:50%;width:15px;height:15px;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+
+  /* hero / TLDR */
+  .hero{background:linear-gradient(135deg,#eef4ff 0%,#f5f0ff 55%,#e7f7f4 100%);
+    border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:20px 0 8px}
+  .hero h1{margin:0 0 8px;font-size:24px;line-height:1.3}
+  .tldr{margin:0;font-size:14.5px;color:#26303d}
+  .tldr b{color:var(--a)}
+  .tldr b.v{color:var(--b)}
+  .tldr b.g{color:var(--ab)}
+
+  .sec{margin-top:34px}
+  .sec h2{font-size:18px;display:flex;align-items:center;gap:10px;margin:0 0 6px}
+  .sec .lead{color:var(--mut);margin:0 0 16px;max-width:860px}
+
+  /* overview svg + lane dim */
+  #overview{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);
+    border-radius:16px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+  .ov-node{cursor:pointer}
+  .ov-node .ndA{fill:var(--a-bg);stroke:var(--a);stroke-width:1.4}
+  .ov-node .ndB{fill:var(--b-bg);stroke:var(--b);stroke-width:1.4}
+  .ov-node .ndAB{fill:var(--ab-bg);stroke:var(--ab);stroke-width:1.4}
+  .ov-node:hover .ndA,.ov-node:hover .ndB,.ov-node:hover .ndAB{stroke-width:2.6}
+  .ov-t{font-size:14px;font-weight:600}
+  .ov-s{font-size:11.5px;fill:#5b6673}
+  .lane.dimmed,.base.dimmed{opacity:.22;transition:opacity .2s}
+  .ov-badge rect{stroke-width:1}
+  .ov-badge text{font-size:11px;font-weight:700;fill:#fff}
+
+  /* mock cards grid */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+  .card-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;transition:box-shadow .2s}
+  .card-wrap:hover{box-shadow:0 4px 14px rgba(16,24,40,.08)}
+  .card-cap{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 8px}
+  .card-cap .tt{font-weight:700;font-size:13.5px}
+  .card-cap .tag{font-size:11px;color:var(--mut)}
+  .mockcard{width:100%;height:auto;display:block}
+  details{margin:8px 2px 0;font-size:12.5px;color:var(--mut)}
+  details summary{cursor:pointer;color:var(--a)}
+  .flash{animation:fl 1.5s ease}
+  @keyframes fl{0%{box-shadow:0 0 0 3px var(--gold);border-color:var(--gold)}
+    60%{box-shadow:0 0 0 7px rgba(245,158,11,.35)}100%{box-shadow:none;border-color:var(--line)}}
+
+  /* contrast table */
+  .tbox{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .tbox .tfilter{border:none;border-bottom:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;align-items:center}
+  .tfilter input{flex:1;min-width:160px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);font:inherit}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+  th{background:#f8fafc;font-size:12.5px}
+  tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:600;white-space:nowrap;width:88px}
+  td.k{width:88px}
+  .nohit{display:none;padding:18px;text-align:center;color:var(--mut)}
+
+  /* decision checklist (narrow gateway: action loop) */
+  .act{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+  .act .prog{height:6px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:6px 0 12px}
+  .act .prog i{display:block;height:100%;width:0;background:var(--ok);transition:width .2s}
+  .act label{display:flex;gap:10px;align-items:flex-start;padding:8px;border-radius:10px;cursor:pointer}
+  .act label:hover{background:#f8fafc}
+  .act input{margin-top:3px;accent-color:var(--ok)}
+  .act .bars{margin-left:auto}
+
+  footer{margin-top:44px;color:var(--mut);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+  footer code{background:#eef1f5;border-radius:5px;padding:1px 6px;font-size:11.5px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  @media(max-width:640px){
+    .hero h1{font-size:20px}
+    .topbar nav{margin-left:0}
+  }
+</style><div class="ss-inner">
+
+<header>
+  <div class="topbar">
+    <div class="logo">AI 专家 WebApp <small>双路径 onepager</small></div>
+    <nav>
+      <a href="#sec-overview">总览</a>
+      <a href="#sec-a">路径 A</a>
+      <a href="#sec-b">路径 B</a>
+      <a href="#sec-ab">汇合点</a>
+      <a href="#sec-compare">异同对照</a>
+    </nav>
+    <button class="btn" onclick="copyTLDR()" title="复制 TL;DR">复制结论</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ 结论前置 ============ -->
+  <div class="hero">
+    <h1>一个 WebApp，两条使用路径，汇合于同一产物</h1>
+    <p class="tldr">
+      路径 <b>A</b> 用 <b>GUI 表单</b>分步创建：<b>表单阶段 0 次后端调用</b> → <b>审阅按 Enter 才执行</b> → <b>发布走专家 API</b>。
+      路径 <b class="v">B</b> 与 <b class="v">expert-creator / expert-fixer</b> 专家<b class="v">纯对话</b>（无表单、自然语言创建或改进技能）。
+      两条路径在「发布」环节共用<b class="g">同一专家 API</b>，最终收敛于同构产物：<b class="g">已发布专家 + evals 快照</b>。
+      差异只在「入口与执行」，发布与交付物完全一致。
+    </p>
+  </div>
+
+  <!-- ============ 总览 SVG ============ -->
+  <section class="sec" id="sec-overview">
+    <h2>总览 <span class="chip chip-ab"><i>SVG</i>分支 → 汇合</span></h2>
+    <p class="lead">单一入口分支成 A / B 两条路径，各自走完 3 段后在底部汇合。悬停任意节点可聚焦该路径，点击节点跳转到对应的界面 mock 卡片。</p>
+
+    <svg id="overview" viewBox="0 0 960 620" role="img" aria-label="双路径总览：共享入口分支为路径A与路径B并汇合到已发布专家与evals快照">
+      <defs>
+        <marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker>
+        <marker id="arB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7c3aed"/></marker>
+        <marker id="arAB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0d9488"/></marker>
+      </defs>
+
+      <!-- 入口 (base) -->
+      <g class="base">
+        <rect x="350" y="40" width="260" height="58" rx="29" fill="#1b2330"/>
+        <text x="480" y="64" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">用户 · 创建 / 改进一个 AI 专家</text>
+        <text x="480" y="85" text-anchor="middle" font-size="12" fill="#cbd5e1">WebApp 入口 · 两条路径任选其一</text>
+      </g>
+
+      <!-- 分支箭头 -->
+      <g class="base">
+        <path d="M480,98 C470,122 300,140 260,164" fill="none" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arA)"/>
+        <path d="M480,98 C490,122 660,140 700,164" fill="none" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arB)"/>
+      </g>
+
+      <!-- 路径 A 车道 -->
+      <g class="lane lane-A">
+        <rect x="150" y="136" width="220" height="26" rx="13" fill="#eef4ff" stroke="#2563eb" stroke-width="1"/>
+        <text x="260" y="153" text-anchor="middle" font-size="12" font-weight="700" fill="#2563eb">路径 A · GUI 表单驱动</text>
+
+        <g class="ov-node" data-lane="A" data-card="card-a1">
+          <rect class="ndA" x="130" y="167" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="342" y="176" width="30" height="20" rx="10" fill="#2563eb"/><text x="357" y="190" text-anchor="middle">A</text></g>
+          <text class="ov-t" x="260" y="202" text-anchor="middle">① 表单填写</text>
+          <text class="ov-s" x="260" y="222" text-anchor="middle">结构化字段 · 校验即时反馈</text>
+          <text class="ov-s" x="260" y="240" text-anchor="middle">0 次后端调用 · 本地草稿</text>
+          <title>路径 A ① 表单填写：零后端调用</title>
+        </g>
+
+        <g class="ov-node" data-lane="A" data-card="card-a2">
+          <rect class="ndA" x="130" y="287" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="342" y="296" width="30" height="20" rx="10" fill="#2563eb"/><text x="357" y="310" text-anchor="middle">A</text></g>
+          <text class="ov-t" x="260" y="322" text-anchor="middle">② 审阅 · 按 Enter 才执行</text>
+          <text class="ov-s" x="260" y="342" text-anchor="middle">审阅面板 + diff 预览</text>
+          <text class="ov-s" x="260" y="360" text-anchor="middle">未确认不落库 / 不发布</text>
+          <title>路径 A ② 审阅执行：按 Enter 才执行</title>
+        </g>
+
+        <g class="ov-node" data-lane="A" data-card="card-a3">
+          <rect class="ndA" x="130" y="407" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="330" y="416" width="42" height="20" rx="10" fill="#0d9488"/><text x="351" y="430" text-anchor="middle">A+B</text></g>
+          <text class="ov-t" x="260" y="442" text-anchor="middle">③ 发布</text>
+          <text class="ov-s" x="260" y="462" text-anchor="middle">POST /expert-api/publish</text>
+          <text class="ov-s" x="260" y="480" text-anchor="middle">生成 evals 快照</text>
+          <title>发布：走专家 API（与路径 B 共用）</title>
+        </g>
+
+        <path class="ov-line" d="M260,253 L260,284" fill="none" stroke="#2563eb" stroke-width="1.6" marker-end="url(#arA)"/>
+        <path class="ov-line" d="M260,373 L260,404" fill="none" stroke="#2563eb" stroke-width="1.6" marker-end="url(#arA)"/>
+      </g>
+
+      <!-- 路径 B 车道 -->
+      <g class="lane lane-B">
+        <rect x="590" y="136" width="220" height="26" rx="13" fill="#f5f0ff" stroke="#7c3aed" stroke-width="1"/>
+        <text x="700" y="153" text-anchor="middle" font-size="12" font-weight="700" fill="#7c3aed">路径 B · 专家纯对话</text>
+
+        <g class="ov-node" data-lane="B" data-card="card-b1">
+          <rect class="ndB" x="570" y="167" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="782" y="176" width="30" height="20" rx="10" fill="#7c3aed"/><text x="797" y="190" text-anchor="middle">B</text></g>
+          <text class="ov-t" x="700" y="202" text-anchor="middle">① 纯对话 · 无表单</text>
+          <text class="ov-s" x="700" y="222" text-anchor="middle">聊天框输入自然语言</text>
+          <text class="ov-s" x="700" y="240" text-anchor="middle">一句话描述创建 / 改进意图</text>
+          <title>路径 B ① 纯对话：无表单</title>
+        </g>
+
+        <g class="ov-node" data-lane="B" data-card="card-b2">
+          <rect class="ndB" x="570" y="287" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="782" y="296" width="30" height="20" rx="10" fill="#7c3aed"/><text x="797" y="310" text-anchor="middle">B</text></g>
+          <text class="ov-t" x="700" y="322" text-anchor="middle">② 专家代建 / 代改</text>
+          <text class="ov-s" x="700" y="342" text-anchor="middle">expert-creator 创建技能</text>
+          <text class="ov-s" x="700" y="360" text-anchor="middle">expert-fixer 改进 / 修复</text>
+          <title>路径 B ② expert-creator / expert-fixer 代建代改</title>
+        </g>
+
+        <g class="ov-node" data-lane="B" data-card="card-b3">
+          <rect class="ndB" x="570" y="407" width="260" height="86" rx="14"/>
+          <g class="ov-badge"><rect x="770" y="416" width="42" height="20" rx="10" fill="#0d9488"/><text x="791" y="430" text-anchor="middle">A+B</text></g>
+          <text class="ov-t" x="700" y="442" text-anchor="middle">③ 发布</text>
+          <text class="ov-s" x="700" y="462" text-anchor="middle">POST /expert-api/publish</text>
+          <text class="ov-s" x="700" y="480" text-anchor="middle">对话确认后提交</text>
+          <title>发布：走专家 API（与路径 A 共用）</title>
+        </g>
+
+        <path class="ov-line" d="M700,253 L700,284" fill="none" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#arB)"/>
+        <path class="ov-line" d="M700,373 L700,404" fill="none" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#arB)"/>
+      </g>
+
+      <!-- 汇合 -->
+      <g class="base">
+        <path d="M260,493 C280,512 420,520 462,526" fill="none" stroke="#0d9488" stroke-width="1.8" marker-end="url(#arAB)"/>
+        <path d="M700,493 C680,512 540,520 498,526" fill="none" stroke="#0d9488" stroke-width="1.8" marker-end="url(#arAB)"/>
+        <rect x="428" y="504" width="104" height="22" rx="11" fill="#e7f7f4" stroke="#0d9488" stroke-width="1"/>
+        <text x="480" y="519" text-anchor="middle" font-size="11" font-weight="700" fill="#0d9488">汇合点 · A+B</text>
+      </g>
+
+      <g class="ov-node" data-lane="AB" data-card="card-ab">
+        <rect class="ndAB" x="320" y="530" width="320" height="58" rx="29"/>
+        <text class="ov-t" x="480" y="554" text-anchor="middle" font-size="15">已发布专家 + evals 快照</text>
+        <text class="ov-s" x="480" y="575" text-anchor="middle">两条路径在此汇合 · 产物同构 · 可复现</text>
+        <title>汇合：已发布专家 + evals 快照</title>
+      </g>
+    </svg>
+  </section>
+
+  <!-- ============ 路径 A 卡片 ============ -->
+  <section class="sec" id="sec-a">
+    <h2>路径 A <span class="chip chip-a"><i>A</i>GUI 表单驱动</span></h2>
+    <p class="lead">结构化、分步、可审阅。核心窄门：<b>表单阶段 0 次后端调用</b> → <b>审阅按 Enter 才执行</b> → <b>发布走专家 API</b>。</p>
+    <div class="cards">
+
+      <div class="card-wrap" id="card-a1">
+        <div class="card-cap"><span class="tt">A1 · 表单填写</span><span class="chip chip-a">A</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="路径A卡片1：表单填写界面">
+          <title>A1 · 表单填写（零后端调用）</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">A1 · 表单填写</text>
+          <g class="ov-badge"><rect x="320" y="6" width="34" height="22" rx="11" fill="#2563eb"/><text x="337" y="21" text-anchor="middle">A</text></g>
+          <text x="16" y="64" font-size="12" fill="#5b6673">技能名称</text>
+          <rect x="16" y="72" width="328" height="26" rx="6" fill="#fff" stroke="#cbd5e1"/>
+          <text x="24" y="89" font-size="11.5" fill="#94a3b8">zhuizhen-diagnosis</text>
+          <text x="16" y="120" font-size="12" fill="#5b6673">一句话描述 · 触发场景</text>
+          <rect x="16" y="126" width="328" height="44" rx="6" fill="#fff" stroke="#cbd5e1"/>
+          <text x="24" y="144" font-size="11.5" fill="#94a3b8">用户提问「追帧诊断」时自动触发…</text>
+          <text x="16" y="190" font-size="12" fill="#5b6673">触发词（可选）</text>
+          <rect x="16" y="196" width="328" height="26" rx="6" fill="#fff" stroke="#cbd5e1"/>
+          <circle cx="22" cy="241" r="4" fill="#059669"/>
+          <text x="34" y="245" font-size="11" fill="#059669">本地草稿 · 表单阶段 0 次后端调用</text>
+          <text x="344" y="245" text-anchor="end" font-size="11" fill="#94a3b8">未落库</text>
+        </svg>
+        <details><summary>为什么零后端调用</summary>表单只是纯前端草稿：字段本地校验、即时反馈，不触网。真正的网络动作被推迟到「审阅执行」与「发布」两扇窄门之后。</details>
+      </div>
+
+      <div class="card-wrap" id="card-a2">
+        <div class="card-cap"><span class="tt">A2 · 审阅执行</span><span class="chip chip-a">A</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="路径A卡片2：审阅执行界面">
+          <title>A2 · 审阅执行（按 Enter 才执行）</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">A2 · 审阅执行</text>
+          <g class="ov-badge"><rect x="320" y="6" width="34" height="22" rx="11" fill="#2563eb"/><text x="337" y="21" text-anchor="middle">A</text></g>
+          <rect x="16" y="44" width="328" height="26" rx="6" fill="#f8fafc" stroke="#e3e8ef"/>
+          <text x="28" y="61" font-size="12" font-weight="600" fill="#1b2330">审阅清单 · 待确认</text>
+          <rect x="16" y="76" width="328" height="24" rx="6" fill="#f0fdf4" stroke="#bbf7d0"/>
+          <text x="28" y="92" font-size="11.5" fill="#15803d">+ skills/zhuizhen-diagnosis/SKILL.md</text>
+          <rect x="16" y="104" width="328" height="24" rx="6" fill="#f0fdf4" stroke="#bbf7d0"/>
+          <text x="28" y="120" font-size="11.5" fill="#15803d">+ references/diagnosis-rules.md</text>
+          <rect x="16" y="140" width="328" height="44" rx="10" fill="#fff7ed" stroke="#fdba74"/>
+          <text x="180" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#c2410c">按 Enter 执行 ▸</text>
+          <text x="180" y="175" text-anchor="middle" font-size="10.5" fill="#9a3412">未确认前 · 不落库 / 不发布</text>
+          <text x="16" y="236" font-size="11" fill="#5b6673">审阅是执行窄门：只有按 Enter 才触发动作。</text>
+        </svg>
+        <details><summary>为什么按 Enter 才执行</summary>审阅面板展示将写入的文件与 diff，确认动作由用户按 Enter 触发，杜绝「填完就执行」的意外副作用。Enter 是唯一的执行窄门。</details>
+      </div>
+
+      <div class="card-wrap" id="card-a3">
+        <div class="card-cap"><span class="tt">A3 · 发布（专家 API）</span><span class="chip chip-ab">A+B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="发布卡片：走专家API">
+          <title>A3 · 发布：POST /expert-api/publish</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">A3 · 发布（专家 API）</text>
+          <g class="ov-badge"><rect x="310" y="6" width="44" height="22" rx="11" fill="#0d9488"/><text x="332" y="21" text-anchor="middle">A+B</text></g>
+          <rect x="16" y="46" width="328" height="28" rx="8" fill="#f1f5f9" stroke="#e3e8ef"/>
+          <text x="28" y="65" font-size="12" class="mono" fill="#1b2330">POST /expert-api/publish</text>
+          <text x="16" y="106" font-size="11" fill="#5b6673">发布进度</text>
+          <rect x="16" y="114" width="328" height="12" rx="6" fill="#e2e8f0"/>
+          <rect x="16" y="114" width="328" height="12" rx="6" fill="#0d9488"/>
+          <text x="344" y="124" text-anchor="end" font-size="11" font-weight="600" fill="#0d9488">100%</text>
+          <circle cx="22" cy="156" r="9" fill="#e7f7f4" stroke="#0d9488"/>
+          <text x="22" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#0d9488">✓</text>
+          <text x="38" y="160" font-size="12" font-weight="600" fill="#065f46">已发布</text>
+          <text x="16" y="186" font-size="11.5" fill="#5b6673">同步生成 evals 快照（版本可复现）</text>
+          <text x="16" y="236" font-size="11" fill="#5b6673">入口：表单审阅通过 → 提交专家 API。</text>
+        </svg>
+        <details><summary>发布细节</summary>A 侧发布 = 表单审阅通过后的提交动作，走与 B 侧完全相同的专家 API，产物落到「已发布专家 + evals 快照」。</details>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 路径 B 卡片 ============ -->
+  <section class="sec" id="sec-b">
+    <h2>路径 B <span class="chip chip-b"><i>B</i>专家纯对话</span></h2>
+    <p class="lead">无表单、自然语言。expert-creator 负责<b>创建</b>技能、expert-fixer 负责<b>改进 / 修复</b>，全程对话驱动，发布同样走专家 API。</p>
+    <div class="cards">
+
+      <div class="card-wrap" id="card-b1">
+        <div class="card-cap"><span class="tt">B1 · 纯对话（无表单）</span><span class="chip chip-b">B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="路径B卡片1：对话界面">
+          <title>B1 · 纯对话：无表单，自然语言</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">B1 · 纯对话（无表单）</text>
+          <g class="ov-badge"><rect x="320" y="6" width="34" height="22" rx="11" fill="#7c3aed"/><text x="337" y="21" text-anchor="middle">B</text></g>
+          <rect x="16" y="44" width="328" height="168" rx="10" fill="#fbfcfe" stroke="#e3e8ef"/>
+          <rect x="130" y="58" width="200" height="40" rx="12" fill="#7c3aed"/>
+          <text x="230" y="76" text-anchor="middle" font-size="11.5" fill="#fff">帮我建个技能：用户问</text>
+          <text x="230" y="92" text-anchor="middle" font-size="11.5" fill="#fff">「追帧诊断」就触发</text>
+          <rect x="24" y="112" width="210" height="48" rx="12" fill="#2563eb"/>
+          <text x="38" y="133" font-size="11.5" fill="#fff">收到，我是 expert-creator，</text>
+          <text x="38" y="151" font-size="11.5" fill="#fff">开始创建技能骨架…</text>
+          <rect x="16" y="222" width="328" height="26" rx="13" fill="#f1f5f9" stroke="#e3e8ef"/>
+          <text x="34" y="239" font-size="11.5" fill="#94a3b8">输入你的需求…（无表单）</text>
+          <circle cx="328" cy="235" r="6" fill="#7c3aed"/>
+        </svg>
+        <details><summary>为什么没有表单</summary>对话本身就是窄门：用户只给一句话意图，其余由 expert-creator / expert-fixer 补齐细节，按需追问，不强迫填写完整表单。</details>
+      </div>
+
+      <div class="card-wrap" id="card-b2">
+        <div class="card-cap"><span class="tt">B2 · expert-creator / expert-fixer</span><span class="chip chip-b">B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="路径B卡片2：专家活动界面">
+          <title>B2 · 专家代建代改</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">B2 · expert-creator / expert-fixer</text>
+          <g class="ov-badge"><rect x="320" y="6" width="34" height="22" rx="11" fill="#7c3aed"/><text x="337" y="21" text-anchor="middle">B</text></g>
+          <rect x="16" y="44" width="328" height="180" rx="10" fill="#0f172a"/>
+          <text x="32" y="68" font-size="11.5" class="mono" fill="#94a3b8">$ expert-creator 创建技能</text>
+          <text x="32" y="90" font-size="11.5" class="mono" fill="#4ade80">✓ SKILL.md 生成</text>
+          <text x="32" y="112" font-size="11.5" class="mono" fill="#4ade80">✓ 触发描述校验通过</text>
+          <text x="32" y="134" font-size="11.5" class="mono" fill="#94a3b8">$ expert-fixer 改进技能</text>
+          <text x="32" y="156" font-size="11.5" class="mono" fill="#4ade80">✓ references 修复</text>
+          <text x="32" y="178" font-size="11.5" class="mono" fill="#4ade80">✓ evals 3/3 通过</text>
+          <text x="16" y="240" font-size="11" fill="#5b6673">生成即执行 · 对话内可反复修正。</text>
+        </svg>
+        <details><summary>两个专家的分工</summary>创建走 expert-creator（搭骨架 + 校验描述），改进 / 修复走 expert-fixer（修 references、补 evals）。都在对话内即时执行，无需表单。</details>
+      </div>
+
+      <div class="card-wrap" id="card-b3">
+        <div class="card-cap"><span class="tt">B3 · 发布（专家 API）</span><span class="chip chip-ab">A+B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="发布卡片：对话确认后走专家API">
+          <title>B3 · 发布：POST /expert-api/publish</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">B3 · 发布（专家 API）</text>
+          <g class="ov-badge"><rect x="310" y="6" width="44" height="22" rx="11" fill="#0d9488"/><text x="332" y="21" text-anchor="middle">A+B</text></g>
+          <rect x="16" y="46" width="328" height="28" rx="8" fill="#f1f5f9" stroke="#e3e8ef"/>
+          <text x="28" y="65" font-size="12" class="mono" fill="#1b2330">POST /expert-api/publish</text>
+          <text x="16" y="106" font-size="11" fill="#5b6673">发布进度</text>
+          <rect x="16" y="114" width="328" height="12" rx="6" fill="#e2e8f0"/>
+          <rect x="16" y="114" width="328" height="12" rx="6" fill="#0d9488"/>
+          <text x="344" y="124" text-anchor="end" font-size="11" font-weight="600" fill="#0d9488">100%</text>
+          <circle cx="22" cy="156" r="9" fill="#e7f7f4" stroke="#0d9488"/>
+          <text x="22" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#0d9488">✓</text>
+          <text x="38" y="160" font-size="12" font-weight="600" fill="#065f46">已发布</text>
+          <text x="16" y="186" font-size="11.5" fill="#5b6673">同步生成 evals 快照（版本可复现）</text>
+          <text x="16" y="236" font-size="11" fill="#5b6673">入口：对话确认 → 提交专家 API。</text>
+        </svg>
+        <details><summary>与 A 侧发布的差异</summary>仅入口不同（对话确认 vs 表单审阅），网络请求、API、落库产物完全一致——这就是「发布环节两条路径同构」的依据。</details>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 汇合点 ============ -->
+  <section class="sec" id="sec-ab">
+    <h2>汇合点 <span class="chip chip-ab"><i>A+B</i>已发布专家 + evals 快照</span></h2>
+    <p class="lead">无论从哪条路径进来，终点都是同一份可复现产物：一个已发布的专家 + 与之绑定的 evals 评测快照。</p>
+    <div class="cards">
+
+      <div class="card-wrap" id="card-ab">
+        <div class="card-cap"><span class="tt">汇合 · 最终产物</span><span class="chip chip-ab">A+B</span></div>
+        <svg class="mockcard" viewBox="0 0 360 260" role="img" aria-label="汇合卡片：已发布专家与evals快照">
+          <title>汇合：已发布专家 + evals 快照</title>
+          <rect width="360" height="260" rx="12" fill="#ffffff" stroke="#e3e8ef" stroke-width="1.4"/>
+          <rect y="34" width="360" height="226" rx="12" fill="#fbfcfe"/>
+          <text x="16" y="22" font-size="12.5" font-weight="700" fill="#1b2330">汇合 · 已发布专家 + evals 快照</text>
+          <g class="ov-badge"><rect x="310" y="6" width="44" height="22" rx="11" fill="#0d9488"/><text x="332" y="21" text-anchor="middle">A+B</text></g>
+          <rect x="16" y="52" width="140" height="88" rx="12" fill="#e7f7f4" stroke="#b3e5df"/>
+          <circle cx="34" cy="72" r="8" fill="#0d9488"/>
+          <text x="34" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">✓</text>
+          <text x="48" y="76" font-size="12" font-weight="700" fill="#065f46">已发布专家</text>
+          <text x="26" y="100" font-size="10.5" fill="#0f766e">可被引用 / 对话调用</text>
+          <text x="26" y="118" font-size="10.5" fill="#0f766e">含 skills + references</text>
+          <rect x="204" y="52" width="140" height="88" rx="12" fill="#e7f7f4" stroke="#b3e5df"/>
+          <circle cx="222" cy="72" r="8" fill="#0d9488"/>
+          <text x="222" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">✓</text>
+          <text x="236" y="76" font-size="12" font-weight="700" fill="#065f46">evals 快照</text>
+          <text x="214" y="100" font-size="10.5" fill="#0f766e">同一版本 · 可复现</text>
+          <text x="214" y="118" font-size="10.5" fill="#0f766e">评测结果留档</text>
+          <text x="180" y="96" text-anchor="middle" font-size="18" font-weight="700" fill="#0d9488">⇣</text>
+          <text x="16" y="176" font-size="11.5" fill="#5b6673">两条路径的交付物可互换、可复现、可审计。</text>
+          <text x="16" y="236" font-size="11" fill="#5b6673">汇合不是二选一，而是同一条终点线。</text>
+        </svg>
+        <details><summary>汇合点如何保证一致</summary>两条路径都向同一专家 API 提交、绑定同一 evals 快照 schema，因此「表单建的专家」与「对话建的专家」在发布后不可区分。</details>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 异同对照表 ============ -->
+  <section class="sec" id="sec-compare">
+    <h2>两条路径在 表单 / 执行 / 发布 环节的异同</h2>
+    <p class="lead">搜索框为窄网关：输入关键词即过滤行（如「零后端」「Enter」「API」「对话」）。</p>
+
+    <div class="tbox">
+      <div class="tfilter">
+        <span>🔍</span>
+        <input id="tfilter" type="text" placeholder="过滤对照表，例如：零后端 / Enter / API / 对话…" oninput="filterTable()">
+      </div>
+      <table id="ctable">
+        <thead>
+          <tr>
+            <th>环节</th>
+            <th><span class="chip chip-a">A</span> GUI 表单驱动</th>
+            <th><span class="chip chip-b">B</span> 专家纯对话</th>
+            <th>异 / 同</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="tr">
+            <td>表单 / 入口</td>
+            <td>结构化表单：字段 + 即时校验；<b>0 次后端调用</b>，纯前端本地草稿。</td>
+            <td>无表单：聊天框自然语言一句话；由 expert-creator / expert-fixer 理解意图。</td>
+            <td><span class="chip chip-a">异</span>入口形态完全不同</td>
+          </tr>
+          <tr class="tr">
+            <td>执行</td>
+            <td>审阅面板 + 按 <b>Enter</b> 才执行；未确认不落库 / 不发布。</td>
+            <td>专家即时代建 / 代改技能文件；生成即执行，对话内可反复修正。</td>
+            <td><span class="chip chip-a">异</span>触发方式不同（确认闸门 vs 即时）</td>
+          </tr>
+          <tr class="tr">
+            <td>发布</td>
+            <td>表单审阅通过 → 提交 <b class="mono">POST /expert-api/publish</b>。</td>
+            <td>对话确认 → 提交 <b class="mono">POST /expert-api/publish</b>。</td>
+            <td><span class="chip chip-ab">同</span>同一专家 API</td>
+          </tr>
+          <tr class="tr">
+            <td>汇合产物</td>
+            <td>已发布专家 + evals 快照。</td>
+            <td>已发布专家 + evals 快照。</td>
+            <td><span class="chip chip-ab">同</span>产物同构可复现</td>
+          </tr>
+          <tr class="tr">
+            <td>适用</td>
+            <td>需要精确字段、逐步审阅、防误操作（新手 / 生产提交）。</td>
+            <td>快速试探、改进既有技能、一句话起建（探索 / 迭代）。</td>
+            <td><span class="chip chip-a">异</span>由场景决定</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="nohit" id="nohit">没有匹配的对照行。</div>
+    </div>
+  </section>
+
+  <!-- ============ 决策行动（窄门行动闭环） ============ -->
+  <section class="sec" id="sec-action">
+    <h2>下一步：选哪条路径</h2>
+    <p class="lead">勾选你的决策，进度自动推进，可一键复制为 Markdown 回传协作方。</p>
+    <div class="act">
+      <div class="prog"><i id="progbar"></i></div>
+      <label><input type="checkbox" data-check onchange="tick()">
+        <span><b>选 A</b>：需要精确字段 + 逐环节审阅 + 防误操作 —— 从表单开始，按 Enter 确认执行。</span></label>
+      <label><input type="checkbox" data-check onchange="tick()">
+        <span><b>选 B</b>：想快速试探 / 改进既有技能 —— 直接找 expert-creator / expert-fixer 对话，一句话起建。</span></label>
+      <label><input type="checkbox" data-check onchange="tick()">
+        <span><b>B → A 固化</b>：先在对话里定稿，再回到表单复现与审阅，最后走专家 API 发布。</span></label>
+      <div class="bars"><button class="btn" onclick="copyActions()">复制决策 Markdown</button></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>来源：<code>onepager</code> skill（old-skill-snapshot）· 生成于 eval-11 <code>svg-path-diagrams</code>（old_skill）· 2026-08-12。</div>
+    <div>产物：<code>/Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-11-svg-path-diagrams/old_skill/outputs/onepager-ai-expert-two-paths.html</code></div>
+    <div>内联声明：全页 8 个内联 <code>&lt;svg&gt;</code>（1 总览 + 7 界面 mock 卡片），零外链 script/link/img，离线可开。</div>
+    <div>校验：<code class="mono">grep -c '&lt;svg' file</code> → 8；SVG 内部未使用 span/div/code。</div>
+  </footer>
+
+</div>
+
+<script>
+  // 总览：悬停聚焦路径、点击跳转卡片
+  var ov = document.getElementById('overview');
+  ov.addEventListener('mouseover', function(e){
+    var n = e.target.closest('.ov-node'); if(!n) return;
+    var lane = n.getAttribute('data-lane');
+    ov.querySelectorAll('.lane,.base').forEach(function(g){ g.classList.toggle('dimmed', g.classList.contains('lane-'+lane) === false); });
+  });
+  ov.addEventListener('mouseout', function(e){
+    if(!e.target.closest('.ov-node')) return;
+    ov.querySelectorAll('.lane,.base').forEach(function(g){ g.classList.remove('dimmed'); });
+  });
+  ov.addEventListener('click', function(e){
+    var n = e.target.closest('.ov-node'); if(!n) return;
+    var id = n.getAttribute('data-card'); if(!id) return;
+    var el = document.getElementById(id); if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  });
+
+  // 对照表过滤（窄网关）
+  function filterTable(){
+    var q = (document.getElementById('tfilter').value||'').trim().toLowerCase();
+    var rows = document.querySelectorAll('#ctable .tr'); var hit = 0;
+    rows.forEach(function(r){
+      var m = !q || r.textContent.toLowerCase().indexOf(q) > -1;
+      r.style.display = m ? '' : 'none'; if(m) hit++;
+    });
+    document.getElementById('nohit').style.display = hit ? 'none' : 'block';
+  }
+
+  // 复制工具
+  function copy(text){
+    if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand('copy'); }catch(_){}
+    document.body.removeChild(ta);
+  }
+  var TLDR = 'AI 专家 WebApp 双路径结论：\n'+
+    '- 路径 A（GUI 表单）：表单阶段 0 次后端调用 → 审阅按 Enter 才执行 → 发布走专家 API。\n'+
+    '- 路径 B（专家对话）：与 expert-creator / expert-fixer 纯对话，无表单、自然语言创建或改进技能。\n'+
+    '- 汇合：两条路径发布共用同一专家 API，最终收敛于「已发布专家 + evals 快照」，产物同构。\n'+
+    '- 差异只在表单/执行（表单 vs 对话、确认闸门 vs 即时），发布与交付物一致。';
+  function copyTLDR(){ copy(TLDR); }
+  function copyActions(){
+    var lines = ['下一步路径决策：'];
+    document.querySelectorAll('[data-check]').forEach(function(c){ if(c.checked) lines.push('- [x] ' + c.parentElement.textContent.trim()); });
+    if(lines.length === 1) lines.push('- （尚未勾选）');
+    copy(lines.join('\n'));
+  }
+
+  // 行动闭环进度
+  function tick(){
+    var cs = document.querySelectorAll('[data-check]');
+    var done = Array.prototype.filter.call(cs, function(c){ return c.checked; }).length;
+    var pct = Math.round(done / cs.length * 100);
+    document.getElementById('progbar').style.width = pct + '%';
+  }
+</script>
+</div></template></div>
+      </div>
+      <div class="eval-block" id="ss-2">
+        <div class="eh"><span class="t">eval-12 · SVG 渲染修复<span class="v">new_skill · main.html</span></span><a class="go" href="onepager-workspace/iteration-3/eval-12-svg-render-fix/new_skill/run-1/outputs/main.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
+        <div class="ss-slot"><template class="ss-tpl"><style>
+  .ss-inner { color-scheme: dark; }
+  .ss-inner { font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; background: #11111b; color: #cdd6f4; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  .verdict { background: #1e1e2e; border-left: 4px solid #a6e3a1; padding: 12px 14px; border-radius: 8px; margin-bottom: 18px; }
+  .card { background: #181825; border: 1px solid #313244; border-radius: 12px; padding: 16px; margin-bottom: 18px; }
+  h2 { font-size: 16px; margin: 0 0 12px; color: #a6e3a1; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #11111b; background: #f38ba8; }
+  .badge.ok { background: #a6e3a1; }
+  input[type=search] { width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; border: 1px solid #45475a; background: #11111b; color: #cdd6f4; margin-bottom: 10px; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 7px 8px; text-align: left; border-bottom: 1px solid #313244; }
+  th { color: #a6adc8; cursor: pointer; user-select: none; }
+  th:hover { color: #cdd6f4; }
+  .actions { margin-top: 12px; }
+  .actions label { display: block; padding: 6px 0; cursor: pointer; }
+  .actions input { margin-right: 8px; }
+  .progress { height: 8px; border-radius: 999px; background: #313244; margin: 8px 0; overflow: hidden; }
+  .progress > span { display: block; height: 100%; background: #a6e3a1; width: 0; transition: width .2s; }
+  button { background: #313244; color: #cdd6f4; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer; }
+  button:hover { background: #45475a; }
+  details { border: 1px solid #313244; border-radius: 8px; padding: 10px 12px; margin-top: 14px; }
+  summary { cursor: pointer; color: #a6adc8; font-size: 13px; }
+  footer { margin-top: 24px; font-size: 12px; color: #7f849c; line-height: 1.7; }
+</style><div class="ss-inner">
+<div class="wrap">
+  <h1>机器散热诊断</h1>
+  <div class="verdict"><strong>结论：</strong>机器散热健康；唯一热源 = opencode 多会话（71% CPU，内存 6.8G）。其余进程均正常，瞬时尖峰已标注「非持续」。</div>
+
+  <div class="card">
+    <h2>热源分布</h2>
+    <!-- 已修复：徽标用 <g> 包裹，<text> 只放纯文本，不嵌 HTML 元素 -->
+    <svg viewBox="0 0 400 230" role="img" aria-label="热源分布横向条" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="400" height="230" rx="10" fill="#11111b" stroke="#313244"/>
+      <text x="20" y="30" font-size="15" font-weight="700" fill="#cdd6f4">热源分布</text>
+
+      <g transform="translate(20,64)">
+        <rect x="0" y="0" width="40" height="20" rx="10" fill="#f38ba8"/>
+        <text x="20" y="14" font-size="11" font-weight="700" fill="#11111b" text-anchor="middle">HOT</text>
+      </g>
+      <rect x="76" y="70" width="284" height="12" rx="6" fill="#f38ba8"/>
+      <text x="20" y="110" font-size="13" fill="#cdd6f4">opencode · 71%</text>
+
+      <g transform="translate(20,130)">
+        <rect x="0" y="0" width="40" height="20" rx="10" fill="#a6e3a1"/>
+        <text x="20" y="14" font-size="11" font-weight="700" fill="#11111b" text-anchor="middle">OK</text>
+      </g>
+      <rect x="76" y="136" width="56" height="12" rx="6" fill="#a6e3a1"/>
+      <text x="20" y="176" font-size="13" fill="#cdd6f4">chrome · 14%</text>
+
+      <g transform="translate(20,196)">
+        <rect x="0" y="0" width="40" height="20" rx="10" fill="#89b4fa"/>
+        <text x="20" y="14" font-size="11" font-weight="700" fill="#11111b" text-anchor="middle">OK</text>
+      </g>
+      <rect x="76" y="202" width="24" height="12" rx="6" fill="#89b4fa"/>
+      <text x="20" y="222" font-size="13" fill="#cdd6f4">其余 · 6%</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <h2>进程榜</h2>
+    <input type="search" id="q" placeholder="过滤进程…" aria-label="过滤进程">
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th data-k="proc">进程</th>
+          <th data-k="cpu">CPU</th>
+          <th data-k="mem">内存</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>opencode</td><td>71</td><td>6.8G</td></tr>
+        <tr><td>chrome</td><td>14</td><td>2.1G</td></tr>
+        <tr><td>其余</td><td>6</td><td>0.9G</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>行动清单</h2>
+    <div class="progress"><span id="bar"></span></div>
+    <div class="actions">
+      <label><input type="checkbox" data-action="重启闲置会话"> 重启或合并 idle 的 opencode 会话，释放 6.8G 内存</label>
+      <label><input type="checkbox" data-action="观察 chrome 尖峰"> 观察 chrome 14% 是否瞬时尖峰（非持续）</label>
+      <label><input type="checkbox" data-action="7 天后复查"> 7 天后复查热源分布</label>
+    </div>
+    <button id="copy">复制已勾选行动为 Markdown</button>
+  </div>
+
+  <details>
+    <summary>证据与方法（点击展开）</summary>
+    <p style="font-size:13px; color:#a6adc8;">采样命令：<code>ps -eo %cpu,rss,comm | sort -k1 -rn | head</code>。原始进程榜与采集时间戳见上表；本文档为单次采样，非持续尖峰已标注。</p>
+  </details>
+
+  <footer>
+    来源项目：opencode 多会话采样<br>
+    来源路径：/tmp/eval12/diagnostics<br>
+    会话 ID：implicit-session-12<br>
+    生成方式：AI onepager（窄门单页），内联 SVG 已按 onepager 纪律修复——徽标用 <code>&lt;g&gt;</code> 包裹、<code>&lt;text&gt;</code> 内仅纯文本、无 <code>&lt;span&gt;</code>/<code>&lt;div&gt;</code>/<code>&lt;code&gt;</code> 进入 SVG 命名空间。
+  </footer>
+</div>
+
+<script>
+(function () {
+  var q = document.getElementById('q');
+  var tbody = document.querySelector('#tbl tbody');
+  var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+  q.addEventListener('input', function () {
+    var k = q.value.trim().toLowerCase();
+    tbody.innerHTML = '';
+    rows.forEach(function (r) {
+      if (!k || r.textContent.toLowerCase().indexOf(k) !== -1) tbody.appendChild(r);
+    });
+  });
+
+  var ths = Array.prototype.slice.call(document.querySelectorAll('#tbl th'));
+  var asc = {};
+  ths.forEach(function (th) {
+    th.addEventListener('click', function () {
+      var k = th.getAttribute('data-k');
+      var dir = asc[k] = !asc[k];
+      var sorted = rows.slice().sort(function (a, b) {
+        var av = a.querySelector('td:nth-child(' + (ths.indexOf(th) + 1) + ')').textContent;
+        var bv = b.querySelector('td:nth-child(' + (ths.indexOf(th) + 1) + ')').textContent;
+        var numA = parseFloat(av), numB = parseFloat(bv);
+        var cmp = (!isNaN(numA) && !isNaN(numB)) ? numA - numB : av.localeCompare(bv, 'zh');
+        return dir ? cmp : -cmp;
+      });
+      tbody.innerHTML = '';
+      sorted.forEach(function (r) { tbody.appendChild(r); });
+      ths.forEach(function (x) { x.textContent = x.textContent.replace(/ [↑↓]$/, ''); });
+      th.textContent += dir ? ' ↓' : ' ↑';
+    });
+  });
+
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('input[data-action]'));
+  var bar = document.getElementById('bar');
+  function update() {
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    bar.style.width = (done / boxes.length * 100) + '%';
+  }
+  boxes.forEach(function (b) { b.addEventListener('change', update); });
+
+  document.getElementById('copy').addEventListener('click', function () {
+    var lines = boxes.filter(function (b) { return b.checked; })
+      .map(function (b) { return '- [ ] ' + b.getAttribute('data-action'); });
+    var text = lines.length ? lines.join('\n') : '（未勾选行动）';
+    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
+      .catch(function () {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+      });
+  });
+})();
+</script>
+</div></template></div>
+      </div>
+      <div class="eval-block" id="ss-3">
+        <div class="eh"><span class="t">eval-12 · SVG 渲染修复<span class="v">old_skill · onepager-pipeline-status-fixed.html</span></span><a class="go" href="onepager-workspace/iteration-3/eval-12-svg-render-fix/old_skill/run-1/outputs/onepager-pipeline-status-fixed.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
+        <div class="ss-slot"><template class="ss-tpl"><style>
+  .ss-inner{--bg:#1e1e2e;--panel:#313244;--panel2:#45475a;--fg:#cdd6f4;--dim:#a6adc8;--faint:#6c7086;--blue:#89b4fa;--green:#a6e3a1;--yellow:#f9e2af;--red:#f38ba8;--lav:#b4befe;}
+  *{box-sizing:border-box}
+  .ss-inner{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,'PingFang SC','Hiragino Sans GB',Menlo,monospace;line-height:1.5}
+  .wrap{max-width:980px;margin:0 auto;padding:18px}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:12px;letter-spacing:2px}
+  .verdict{background:var(--panel);border:1px solid var(--green);border-left:4px solid var(--green);border-radius:8px;padding:12px 14px;margin:14px 0}
+  .verdict b{color:var(--green)}
+  h2{font-size:15px;margin:22px 0 8px;color:var(--blue)}
+  .items{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+  .items li{display:flex;align-items:center;gap:10px;background:var(--panel);border-radius:8px;padding:10px 12px;border:1px solid var(--panel2)}
+  .items .name{font-weight:bold;min-width:110px}
+  .items .op{margin-left:auto;color:var(--blue);text-decoration:none;border:1px solid var(--blue);border-radius:12px;padding:2px 10px;font-size:12px}
+  .details{color:var(--faint);font-size:11px;margin-top:4px}
+  footer{margin-top:26px;padding-top:10px;border-top:1px solid var(--panel2);color:var(--faint);font-size:11px}
+  .svg-card{background:var(--panel);border:1px solid var(--panel2);border-radius:10px;padding:10px}
+  svg{width:100%;height:auto;display:block}
+  /* SVG 内组合元素用类控制配色：<g class="badge">，内部 <rect>+<text>，绝不用 <span>/<code> */
+  .badge rect{fill:#a6e3a1}
+  .badge text{fill:#11111b;font-size:10px;font-weight:bold;text-anchor:middle;dominant-baseline:central}
+  .badge.warn rect{fill:#f9e2af}
+  .badge.err rect{fill:#f38ba8}
+</style><div class="ss-inner">
+<div class="wrap">
+  <h1>素材生产流水线 · 状态总览</h1>
+  <div class="sub">MATERIAL PIPELINE STATUS</div>
+
+  <div class="verdict">
+    <b>结论：</b>主链路 3/4 阶段全绿，仅「转码」队列瞬时积压 12 条（非持续，30 分钟内消化）。今日无阻塞，无需人工介入。
+  </div>
+
+  <h2>流水线拓扑</h2>
+  <div class="svg-card">
+  <svg viewBox="0 0 960 470" role="img" aria-label="素材生产流水线四阶段拓扑图" font-family="Menlo, -apple-system, 'PingFang SC', monospace">
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#f9e2af"/>
+      </marker>
+    </defs>
+
+    <!-- outer frame -->
+    <rect x="6" y="6" width="948" height="458" rx="14" fill="#11111b" stroke="#45475a" stroke-width="2"/>
+
+    <!-- title block -->
+    <text x="480" y="42" fill="#f9e2af" font-size="19" font-weight="bold" text-anchor="middle">素材生产流水线</text>
+    <text x="480" y="64" fill="#a6adc8" font-size="11" text-anchor="middle" letter-spacing="4">LIVE · 采集 → 清洗 → 转码 → 质检</text>
+
+    <g class="badge" transform="translate(862,30)">
+      <rect width="52" height="18" rx="9"/>
+      <text x="26" y="10">LIVE</text>
+    </g>
+
+    <text x="56" y="128" fill="#89b4fa" font-size="13" font-weight="bold"><tspan font-family="Menlo, monospace">collect</tspan> 采集</text>
+    <rect x="56" y="138" width="190" height="120" rx="10" fill="#313244" stroke="#a6e3a1" stroke-width="2"/>
+    <text x="72" y="164" fill="#cdd6f4" font-size="12">拉取 1,240 素材</text>
+    <text x="72" y="184" fill="#a6adc8" font-size="11">队列 0</text>
+    <g class="badge" transform="translate(192,146)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">✓ 健康</text>
+    </g>
+
+    <text x="292" y="128" fill="#89b4fa" font-size="13" font-weight="bold"><tspan font-family="Menlo, monospace">clean</tspan> 清洗</text>
+    <rect x="292" y="138" width="190" height="120" rx="10" fill="#313244" stroke="#a6e3a1" stroke-width="2"/>
+    <text x="308" y="164" fill="#cdd6f4" font-size="12">去重 / 质检规则</text>
+    <text x="308" y="184" fill="#a6adc8" font-size="11">耗时 3.2s</text>
+    <g class="badge" transform="translate(428,146)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">✓ 健康</text>
+    </g>
+
+    <text x="528" y="128" fill="#89b4fa" font-size="13" font-weight="bold"><tspan font-family="Menlo, monospace">transcode</tspan> 转码</text>
+    <rect x="528" y="138" width="190" height="120" rx="10" fill="#313244" stroke="#f9e2af" stroke-width="2"/>
+    <text x="544" y="164" fill="#cdd6f4" font-size="12">H.264 → H.265</text>
+    <text x="544" y="184" fill="#a6adc8" font-size="11">积压 12 条</text>
+    <g class="badge warn" transform="translate(664,146)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">! 积压</text>
+    </g>
+
+    <text x="764" y="128" fill="#89b4fa" font-size="13" font-weight="bold"><tspan font-family="Menlo, monospace">qc</tspan> 质检</text>
+    <rect x="764" y="138" width="190" height="120" rx="10" fill="#313244" stroke="#a6e3a1" stroke-width="2"/>
+    <text x="780" y="164" fill="#cdd6f4" font-size="12">分辨率 / 帧率</text>
+    <text x="780" y="184" fill="#a6adc8" font-size="11">通过率 99.2%</text>
+    <g class="badge" transform="translate(900,146)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">✓ 健康</text>
+    </g>
+
+    <!-- 箭头 -->
+    <path d="M246,198 L286,198" stroke="#f9e2af" stroke-width="2" marker-end="url(#arr)"/>
+    <path d="M482,198 L522,198" stroke="#f9e2af" stroke-width="2" marker-end="url(#arr)"/>
+    <path d="M718,198 L758,198" stroke="#f9e2af" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- 底部图例 -->
+    <text x="480" y="322" fill="#a6adc8" font-size="11" text-anchor="middle">图例</text>
+    <g class="badge" transform="translate(393,332)">
+      <rect width="54" height="18" rx="9"/>
+      <text x="27" y="10">✓ 健康</text>
+    </g>
+    <g class="badge warn" transform="translate(455,332)">
+      <rect width="52" height="18" rx="9"/>
+      <text x="26" y="10">! 积压</text>
+    </g>
+    <g class="badge err" transform="translate(515,332)">
+      <rect width="52" height="18" rx="9"/>
+      <text x="26" y="10">✗ 异常</text>
+    </g>
+
+    <text x="56" y="406" fill="#6c7086" font-size="10">ps -A -o %cpu,rss,comm | sort -nr | head</text>
+    <text x="56" y="424" fill="#6c7086" font-size="10">curl -s localhost:8791/api/pipeline</text>
+    <text x="56" y="442" fill="#6c7086" font-size="10">采集时间 2026-08-12 14:30:00 · 仅瞬时一次</text>
+  </svg>
+  </div>
+
+  <h2>热源明细 · 每项一扇门</h2>
+  <ul class="items">
+    <li><span class="name">转码队列</span><span>积压 12 条（瞬时）</span><a class="op" href="javascript:void(0)">详情 ▾</a></li>
+    <li><span class="name">采集管道</span><span>1,240 素材 / 批</span><a class="op" href="javascript:void(0)">详情 ▾</a></li>
+    <li><span class="name">质检通过率</span><span>99.2%</span><a class="op" href="javascript:void(0)">详情 ▾</a></li>
+  </ul>
+  <p class="details">证据完整清单在折叠区：<a href="javascript:void(0)">展开全量证据 →</a></p>
+
+  <h2>行动清单</h2>
+  <div id="actions" style="background:var(--panel);border:1px solid var(--panel2);border-radius:8px;padding:12px">
+    <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" data-act> 复核转码队列 12 条是否消化</label>
+    <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" data-act> 如持续积压 &gt; 1h 则扩容 2 worker</label>
+    <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" data-act> 更新 onepager 采集命令到脚注</label>
+    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <span id="prog" style="color:var(--dim);font-size:12px">0/3</span>
+      <button onclick="copyMD()" style="background:var(--blue);color:#11111b;border:0;border-radius:12px;padding:4px 12px;font-size:12px;cursor:pointer">复制 Markdown</button>
+    </div>
+  </div>
+
+  <footer>
+    来源：素材生产流水线监控 · 绝对路径 /srv/pipeline/status · 会话 onepager-eval-12<br>
+    命令：<code>ps -A -o %cpu,rss,comm | sort -nr | head</code> · <code>curl -s localhost:8791/api/pipeline</code>
+  </footer>
+</div>
+<script>
+  document.querySelectorAll('#actions [data-act]').forEach(c=>c.addEventListener('change',()=>{
+    document.getElementById('prog').textContent = document.querySelectorAll('#actions [data-act]:checked').length + '/3';
+  }));
+  function copyMD(){
+    const s=[...document.querySelectorAll('#actions [data-act]:checked')].map(c=>'- [x] '+c.closest('label').childNodes[0].textContent.trim()).join('\n');
+    navigator.clipboard.writeText(s||'- [ ] 复核转码队列 12 条是否消化\n- [ ] 如持续积压 > 1h 则扩容 2 worker\n- [ ] 更新 onepager 采集命令到脚注');
+    alert('已复制');
+  }
+</script>
+</div></template></div>
+      </div>
+      <div class="eval-block" id="ss-4">
+        <div class="eh"><span class="t">eval-13 · 专家生命周期<span class="v">new_skill · ai-expert-lifecycle-onepager.html</span></span><a class="go" href="onepager-workspace/iteration-3/eval-13-process-flow-onepager-svg/new_skill/run-1/outputs/ai-expert-lifecycle-onepager.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
+        <div class="ss-slot"><template class="ss-tpl"><style>
+  .ss-inner{
+    --bg:#11111b; --card:#1e1e2e; --card2:#181825; --line:#313244;
+    --tx:#cdd6f4; --sub:#a6adc8; --muted:#6c7086;
+    --blue:#89b4fa; --green:#a6e3a1; --yellow:#f9e2af;
+    --mauve:#cba6f7; --teal:#94e2d5; --red:#f38ba8; --lav:#b4befe;
+  }
+  *{box-sizing:border-box}
+  .ss-inner{margin:0;background:var(--bg);color:var(--tx);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1060px;margin:0 auto;padding:20px 16px 48px}
+  .badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.5px;
+    padding:3px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--lav)}
+  h1{font-size:26px;margin:12px 0 6px;letter-spacing:.3px}
+  .tldr{background:var(--card);border-left:4px solid var(--blue);border-radius:10px;
+    padding:12px 14px;margin:14px 0 22px;color:var(--sub)}
+  .tldr b{color:var(--tx)}
+  h2{font-size:18px;margin:34px 0 12px;display:flex;align-items:center;gap:8px}
+  h2 .n{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+    border-radius:8px;background:var(--card);border:1px solid var(--line);color:var(--lav);font-size:13px}
+  .svgcard{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:14px 10px 6px}
+  svg{width:100%;height:auto;display:block}
+  .svgnote{font-size:12.5px;color:var(--muted);padding:6px 4px 2px}
+  .lifegroup{cursor:pointer}
+  .lifegroup:hover .nodebg{filter:brightness(1.22)}
+  .lifegroup:hover .nodebg{stroke-width:3}
+  /* ---- checklist ---- */
+  .ctlbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 14px}
+  .ctlbar input[type=search]{flex:1;min-width:180px;background:var(--card);border:1px solid var(--line);
+    color:var(--tx);border-radius:10px;padding:9px 12px;font-size:14px}
+  .ctlbar input[type=search]:focus{outline:1px solid var(--blue)}
+  .btn{background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:10px;
+    padding:9px 14px;font-size:14px;cursor:pointer}
+  .btn:hover{background:var(--line)}
+  .progrow{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .progbar{flex:1;height:10px;border-radius:999px;background:var(--card);overflow:hidden}
+  .progbar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .25s}
+  .progmeta{font-size:12.5px;color:var(--sub);white-space:nowrap}
+  .grp{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 12px}
+  .grp.flash{outline:2px solid var(--lav);box-shadow:0 0 0 4px rgba(180,190,254,.15)}
+  .grp h3{margin:0 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--c,#89b4fa)}
+  .check{display:flex;align-items:flex-start;gap:9px;padding:5px 4px;border-radius:8px;cursor:pointer}
+  .check:hover{background:var(--card2)}
+  .check input{margin-top:3px;accent-color:var(--blue);flex:0 0 auto}
+  .check span{flex:1}
+  .check:has(input:checked) span{color:var(--muted);text-decoration:line-through}
+  details{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  summary{cursor:pointer;font-weight:600;color:var(--sub)}
+  table{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}
+  th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:1px 5px;font-size:12px}
+  .foot{margin-top:30px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;line-height:1.7}
+  .ok{color:var(--green)} .warn{color:var(--yellow)} .info{color:var(--blue)}
+</style><div class="ss-inner">
+<div class="wrap">
+
+  <span class="badge">ONEPAGER · 窄门单页 · 流程产物</span>
+  <h1>AI 专家完整生命周期</h1>
+  <div class="tldr">
+    <b>结论：</b>一个 AI 专家走五阶段闭环——<b>创建</b>（表单 / 对话）→ <b>测试</b>（evals）→
+    <b>发布</b>（同时冻结 evals 快照当基线）→ <b>对话演进</b>（expert-fixer 改进）→
+    <b>版本归档</b>（可回滚）。演进失败即回炉重测，周而复始。
+    <br>行动清单 <b>16 项</b>：勾选 → 进度条 → 一键复制 Markdown 回传 agent。
+  </div>
+
+  <h2><span class="n">01</span>生命周期总览（SVG 泳道图）</h2>
+  <div class="svgcard">
+    <svg viewBox="0 0 1180 540" role="img" aria-label="AI 专家五阶段生命周期流程图：创建、测试、发布、对话演进、版本归档，演进可回炉重测">
+      <defs>
+        <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+          <path d="M0 0 L9 4.5 L0 9 Z" fill="#6c7086"/>
+        </marker>
+        <marker id="arrloop" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+          <path d="M0 0 L9 4.5 L0 9 Z" fill="#f9e2af"/>
+        </marker>
+      </defs>
+
+      <!-- 标题 -->
+      <text x="20" y="34" font-size="18" font-weight="700" fill="#cdd6f4">AI 专家完整生命周期 · 五阶段闭环</text>
+      <text x="20" y="60" font-size="13" fill="#a6adc8">创建 → 测试 → 发布（含 evals 快照）→ 对话演进 → 版本归档；演进失败回炉重测（迭代）</text>
+
+      <!-- 图例 -->
+      <line x1="955" y1="44" x2="979" y2="44" stroke="#6c7086" stroke-width="2.5" marker-end="url(#arr)"/>
+      <text x="989" y="48" font-size="11.5" fill="#a6adc8">正向流转</text>
+      <line x1="955" y1="70" x2="979" y2="70" stroke="#f9e2af" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrloop)"/>
+      <text x="989" y="74" font-size="11.5" fill="#a6adc8">演进回炉</text>
+
+      <!-- 节点 1 创建 -->
+      <g class="lifegroup" data-goto="create">
+        <title>创建 · 产物：专家骨架</title>
+        <rect class="nodebg" x="20" y="100" width="160" height="200" rx="14" fill="#1e1e2e" stroke="#89b4fa" stroke-width="2"/>
+        <circle cx="50" cy="130" r="16" fill="#89b4fa"/>
+        <text x="50" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#11111b">①</text>
+        <text x="74" y="136" font-size="16" font-weight="700" fill="#cdd6f4">创建</text>
+        <line x1="34" y1="152" x2="166" y2="152" stroke="#313244" stroke-width="1.5"/>
+        <text x="34" y="176" font-size="12" fill="#cdd6f4">用表单或对话创建</text>
+        <text x="34" y="196" font-size="12" fill="#cdd6f4">专家骨架 + 元数据</text>
+        <text x="34" y="216" font-size="12" fill="#cdd6f4">定义描述与触发词</text>
+        <rect x="32" y="268" width="136" height="22" rx="11" fill="#313244"/>
+        <text x="100" y="283" text-anchor="middle" font-size="11" fill="#a6adc8">入口：表单 / 对话</text>
+      </g>
+
+      <!-- 节点 2 测试 -->
+      <g class="lifegroup" data-goto="test">
+        <title>测试 · 产物：eval 报告</title>
+        <rect class="nodebg" x="270" y="100" width="160" height="200" rx="14" fill="#1e1e2e" stroke="#f9e2af" stroke-width="2"/>
+        <circle cx="300" cy="130" r="16" fill="#f9e2af"/>
+        <text x="300" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#11111b">②</text>
+        <text x="324" y="136" font-size="16" font-weight="700" fill="#cdd6f4">测试</text>
+        <line x1="284" y1="152" x2="416" y2="152" stroke="#313244" stroke-width="1.5"/>
+        <text x="284" y="176" font-size="12" fill="#cdd6f4">运行 evals 评估集</text>
+        <text x="284" y="196" font-size="12" fill="#cdd6f4">输出逐场景 pass/fail</text>
+        <text x="284" y="216" font-size="12" fill="#cdd6f4">报告与失败样本</text>
+        <rect x="282" y="268" width="136" height="22" rx="11" fill="#313244"/>
+        <text x="350" y="283" text-anchor="middle" font-size="11" fill="#a6adc8">出口：eval 报告</text>
+      </g>
+
+      <!-- 节点 3 发布 -->
+      <g class="lifegroup" data-goto="publish">
+        <title>发布 · 产物：上架 + evals 快照</title>
+        <rect class="nodebg" x="520" y="100" width="160" height="200" rx="14" fill="#1e1e2e" stroke="#a6e3a1" stroke-width="2"/>
+        <circle cx="550" cy="130" r="16" fill="#a6e3a1"/>
+        <text x="550" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#11111b">③</text>
+        <text x="574" y="136" font-size="16" font-weight="700" fill="#cdd6f4">发布</text>
+        <line x1="534" y1="152" x2="666" y2="152" stroke="#313244" stroke-width="1.5"/>
+        <text x="534" y="176" font-size="12" fill="#cdd6f4">发布专家上架</text>
+        <text x="534" y="196" font-size="12" fill="#cdd6f4">冻结 evals 快照</text>
+        <text x="534" y="216" font-size="12" fill="#cdd6f4">作为回归基线</text>
+        <rect x="532" y="268" width="136" height="22" rx="11" fill="#313244"/>
+        <text x="600" y="283" text-anchor="middle" font-size="11" fill="#a6adc8">出口：上架 + 快照</text>
+      </g>
+
+      <!-- 节点 4 对话演进 -->
+      <g class="lifegroup" data-goto="evolve">
+        <title>对话演进 · 产物：新版本 SKILL.md</title>
+        <rect class="nodebg" x="770" y="100" width="160" height="200" rx="14" fill="#1e1e2e" stroke="#cba6f7" stroke-width="2"/>
+        <circle cx="800" cy="130" r="16" fill="#cba6f7"/>
+        <text x="800" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#11111b">④</text>
+        <text x="824" y="136" font-size="16" font-weight="700" fill="#cdd6f4">对话演进</text>
+        <line x1="784" y1="152" x2="916" y2="152" stroke="#313244" stroke-width="1.5"/>
+        <text x="784" y="176" font-size="12" fill="#cdd6f4">把失败案例交给</text>
+        <text x="784" y="196" font-size="12" fill="#cdd6f4">expert-fixer 改进</text>
+        <text x="784" y="216" font-size="12" fill="#cdd6f4">SKILL.md 出新版本</text>
+        <rect x="782" y="268" width="136" height="22" rx="11" fill="#313244"/>
+        <text x="850" y="283" text-anchor="middle" font-size="11" fill="#a6adc8">出口：新版本 SKILL.md</text>
+      </g>
+
+      <!-- 节点 5 版本归档 -->
+      <g class="lifegroup" data-goto="archive">
+        <title>版本归档 · 产物：可回滚历史</title>
+        <rect class="nodebg" x="1020" y="100" width="160" height="200" rx="14" fill="#1e1e2e" stroke="#94e2d5" stroke-width="2"/>
+        <circle cx="1050" cy="130" r="16" fill="#94e2d5"/>
+        <text x="1050" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#11111b">⑤</text>
+        <text x="1074" y="136" font-size="16" font-weight="700" fill="#cdd6f4">版本归档</text>
+        <line x1="1034" y1="152" x2="1166" y2="152" stroke="#313244" stroke-width="1.5"/>
+        <text x="1034" y="176" font-size="12" fill="#cdd6f4">稳定版本归档</text>
+        <text x="1034" y="196" font-size="12" fill="#cdd6f4">到 .versions/</text>
+        <text x="1034" y="216" font-size="12" fill="#cdd6f4">保留可回滚历史</text>
+        <rect x="1032" y="268" width="136" height="22" rx="11" fill="#313244"/>
+        <text x="1100" y="283" text-anchor="middle" font-size="11" fill="#a6adc8">出口：可回滚归档</text>
+      </g>
+
+      <!-- 正向箭头 -->
+      <line x1="184" y1="200" x2="258" y2="200" stroke="#6c7086" stroke-width="2.5" marker-end="url(#arr)"/>
+      <line x1="434" y1="200" x2="508" y2="200" stroke="#6c7086" stroke-width="2.5" marker-end="url(#arr)"/>
+      <line x1="684" y1="200" x2="758" y2="200" stroke="#6c7086" stroke-width="2.5" marker-end="url(#arr)"/>
+      <line x1="934" y1="200" x2="1008" y2="200" stroke="#6c7086" stroke-width="2.5" marker-end="url(#arr)"/>
+
+      <!-- 演进回炉循环：节点4底部 -> 节点2底部 -->
+      <path d="M850 302 V 386 Q 850 400 836 400 H 364 Q 350 400 350 386 V 308"
+            fill="none" stroke="#f9e2af" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrloop)"/>
+      <text x="600" y="374" text-anchor="middle" font-size="11" fill="#a6adc8">演进未达标 → 回炉重测（迭代循环）</text>
+    </svg>
+    <div class="svgnote">单击节点可定位到下方对应阶段清单（窄门）。每节点 = 阶段名 + 一句产物 / 结果说明。</div>
+  </div>
+
+  <h2><span class="n">02</span>行动清单（可勾选 · 可复制 Markdown）</h2>
+  <div class="ctlbar">
+    <input type="search" id="q" placeholder="过滤行动项，如：evals / 快照 / 归档 …">
+    <button class="btn" id="copybtn">复制 Markdown 清单</button>
+  </div>
+  <div class="progrow">
+    <div class="progbar"><i id="bar"></i></div>
+    <div class="progmeta" id="meta">已勾选 0 / 16</div>
+  </div>
+
+  <div class="grp" id="chk-create">
+    <h3><span class="dot" style="--c:#89b4fa"></span>创建（表单 / 对话）</h3>
+    <label class="check"><input type="checkbox"><span>用「表单」或「对话」启动专家创建，给出角色 / 目标 / 能力描述</span></label>
+    <label class="check"><input type="checkbox"><span>生成专家骨架：SKILL.md + plugin.json + .claude-plugin 元数据</span></label>
+    <label class="check"><input type="checkbox"><span>编写 description 触发词，保证对话能准确命中该专家</span></label>
+    <label class="check"><input type="checkbox"><span>校验 manifest 结构（frontmatter / plugin.json 字段合法）</span></label>
+  </div>
+
+  <div class="grp" id="chk-test">
+    <h3><span class="dot" style="--c:#f9e2af"></span>测试（evals）</h3>
+    <label class="check"><input type="checkbox"><span>建立或复用 evals 评估集（覆盖正例与反例场景）</span></label>
+    <label class="check"><input type="checkbox"><span>运行测试，输出逐场景 pass / fail 报告</span></label>
+    <label class="check"><input type="checkbox"><span>对失败样本做根因归类（触发缺失 / 步骤错误 / 输出不符）</span></label>
+  </div>
+
+  <div class="grp" id="chk-publish">
+    <h3><span class="dot" style="--c:#a6e3a1"></span>发布（含 evals 快照）</h3>
+    <label class="check"><input type="checkbox"><span>发布专家上架，对目标工作区 / 运行时生效</span></label>
+    <label class="check"><input type="checkbox"><span>同时生成并保存 evals 快照（作为回归基线）</span></label>
+    <label class="check"><input type="checkbox"><span>记录发布版本号 + 时间戳</span></label>
+  </div>
+
+  <div class="grp" id="chk-evolve">
+    <h3><span class="dot" style="--c:#cba6f7"></span>对话演进（expert-fixer）</h3>
+    <label class="check"><input type="checkbox"><span>收集真实对话中的失败 / 低质量案例</span></label>
+    <label class="check"><input type="checkbox"><span>依据根因调用 expert-fixer 改进 SKILL.md</span></label>
+    <label class="check"><input type="checkbox"><span>产出新版本并触发回归测试（回到「测试」阶段）</span></label>
+  </div>
+
+  <div class="grp" id="chk-archive">
+    <h3><span class="dot" style="--c:#94e2d5"></span>版本归档</h3>
+    <label class="check"><input type="checkbox"><span>将稳定版本归档到 .versions/</span></label>
+    <label class="check"><input type="checkbox"><span>保留活跃副本与归档历史并存</span></label>
+    <label class="check"><input type="checkbox"><span>记录变更摘要（改了什么 / 为什么），支持回滚</span></label>
+  </div>
+
+  <details>
+    <summary>阶段产物 · 证据收窄门（展开查看）</summary>
+    <table>
+      <tr><th>阶段</th><th>关键产物（示意路径）</th><th>说明</th></tr>
+      <tr><td>创建</td><td><code>workspace/experts/&lt;expert-id&gt;/SKILL.md</code> · <code>plugin.json</code></td><td>骨架 + 描述 / 触发词，表单或对话生成</td></tr>
+      <tr><td>测试</td><td><code>evals/&lt;expert-id&gt;/…</code> 报告</td><td>逐场景 pass/fail 与失败样本</td></tr>
+      <tr><td>发布</td><td>上架目录 + <code>evals 快照 JSON</code></td><td>版本号 + 时间戳；快照为回归基线</td></tr>
+      <tr><td>对话演进</td><td><code>SKILL.md</code> v2（expert-fixer 输出）</td><td>依据失败根因改进；回到「测试」回归</td></tr>
+      <tr><td>版本归档</td><td><code>workspace/experts/.versions/&lt;expert-id&gt;-vN/</code></td><td>保留可回滚历史 + 变更摘要</td></tr>
+    </table>
+  </details>
+
+  <div class="foot">
+    来源：<b>onepager skill</b>（/Users/liushiyuwin/.claude/skills/onepager）· 交付文件：
+    /Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-13-process-flow-onepager-svg/new_skill/outputs/ai-expert-lifecycle-onepager.html
+    <br>会话：eval-13-process-flow-onepager-svg · 生成 2026-08-12 · 单文件自包含：无 CDN、无外链资源，全部 SVG 内联。
+  </div>
+</div>
+
+<script>
+(function(){
+  var checks=[].slice.call(document.querySelectorAll('.check input'));
+  var bar=document.getElementById('bar'),meta=document.getElementById('meta');
+
+  function update(){
+    var gs=[].slice.call(document.querySelectorAll('.grp'));
+    var tot=0,chk=0;
+    gs.forEach(function(g){
+      if(g.style.display==='none')return;
+      [].slice.call(g.querySelectorAll('.check')).forEach(function(c){
+        if(c.style.display==='none')return;
+        tot++;
+        if(c.querySelector('input').checked)chk++;
+      });
+    });
+    var p=tot?Math.round(chk/tot*100):0;
+    bar.style.width=p+'%';
+    meta.textContent='已勾选 '+chk+' / '+tot;
+  }
+  checks.forEach(function(c){c.addEventListener('change',update);});
+
+  var q=document.getElementById('q');
+  q.addEventListener('input',function(){
+    var s=q.value.trim().toLowerCase();
+    [].slice.call(document.querySelectorAll('.grp')).forEach(function(g){
+      var any=false;
+      [].slice.call(g.querySelectorAll('.check')).forEach(function(c){
+        var show=!s||c.querySelector('span').textContent.toLowerCase().indexOf(s)>=0;
+        c.style.display=show?'':'none';
+        if(show)any=true;
+      });
+      g.style.display=any?'':'none';
+    });
+    update();
+  });
+
+  document.getElementById('copybtn').addEventListener('click',function(){
+    var md='# AI 专家生命周期 · 行动清单\n\n';
+    [].slice.call(document.querySelectorAll('.grp')).forEach(function(g){
+      if(g.style.display==='none')return;
+      var name=g.querySelector('h3').textContent.replace(/^\s+|\s+$/g,'');
+      md+='## '+name+'\n';
+      [].slice.call(g.querySelectorAll('.check')).forEach(function(c){
+        if(c.style.display==='none')return;
+        var on=c.querySelector('input').checked;
+        md+=(on?'- [x] ':'- [ ] ')+c.querySelector('span').textContent+'\n';
+      });
+      md+='\n';
+    });
+    function fallback(){
+      var ta=document.createElement('textarea');ta.value=md;
+      document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');}catch(e){}
+      document.body.removeChild(ta);flash();
+    }
+    function flash(){
+      var b=document.getElementById('copybtn');
+      var t=b.textContent;b.textContent='✓ 已复制';b.style.borderColor='#a6e3a1';
+      setTimeout(function(){b.textContent=t;b.style.borderColor='';},1200);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(md).then(flash,fallback);
+    }else{fallback();}
+  });
+
+  [].slice.call(document.querySelectorAll('.lifegroup')).forEach(function(n){
+    n.addEventListener('click',function(){
+      var t=document.getElementById('chk-'+n.getAttribute('data-goto'));
+      if(!t)return;
+      t.scrollIntoView({behavior:'smooth',block:'start'});
+      t.classList.add('flash');
+      setTimeout(function(){t.classList.remove('flash');},1400);
+    });
+  });
+
+  update();
+})();
+</script>
+</div></template></div>
+      </div>
+      <div class="eval-block" id="ss-5">
+        <div class="eh"><span class="t">eval-14 · 显式画 SVG<span class="v">new_skill · index.html</span></span><a class="go" href="onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/run-1/outputs/index.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
+        <div class="ss-slot"><template class="ss-tpl"><style>
+  .ss-inner{
+    --bg:#f6f7fb;--card:#ffffff;--ink:#1a2233;--mut:#5b6472;--faint:#7c8494;
+    --line:#e2e6ee;--mcp:#4f6ef7;--mod:#0e9f6e;--amber:#f59e0b;
+    --violet:#8b5cf6;--blue:#2563eb;--green:#059669;
+  }
+  *{box-sizing:border-box}
+  .ss-inner{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 18px 48px}
+  header h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--faint);font-size:13px;margin:0 0 14px}
+  .verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--mcp);
+    border-radius:10px;padding:12px 16px;font-size:15px;line-height:1.6;margin:0 0 14px}
+  .verdict b{color:var(--mcp)}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+  .chip{padding:5px 13px;border:1px solid #cbd5e1;border-radius:999px;background:#fff;
+    cursor:pointer;font-size:13px;color:var(--mut);user-select:none}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .spacer{flex:1}
+  input#q{width:100%;max-width:300px;padding:7px 12px;border:1px solid #cbd5e1;border-radius:8px;
+    font-size:13px;background:#fff}
+  button.ghost{padding:7px 13px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;
+    cursor:pointer;font-size:13px;color:var(--mut)}
+  button.ghost:hover{border-color:var(--mcp);color:var(--mcp)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:16px}
+  section h2{font-size:15px;margin:0 0 4px}
+  .hint{color:var(--faint);font-size:12px;margin:0 0 10px}
+  svg{display:block;width:100%;height:auto;max-width:1000px}
+  /* ---- SVG node / edge styles ---- */
+  .node{cursor:pointer}
+  .node .nb{stroke-width:1.5}
+  .node .nb.mcp{fill:#eef2ff;stroke:#c7d2fe}
+  .node .nb.mod{fill:#ecfdf5;stroke:#a7f3d0}
+  .node:hover .nb.mcp{stroke:var(--mcp)}
+  .node:hover .nb.mod{stroke:var(--mod)}
+  .node.on .nb.mcp{fill:#e0e7ff;stroke:var(--mcp);stroke-width:2.6}
+  .node.on .nb.mod{fill:#d1fae5;stroke:var(--mod);stroke-width:2.6}
+  .n-name{font:600 15px system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;fill:var(--ink)}
+  .n-t{font:12px system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;fill:var(--mut)}
+  .n-u{font:12px system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;fill:var(--faint)}
+  line.edge{stroke:#94a3b8;stroke-width:1.6;opacity:.5}
+  line.edge.on{stroke:var(--amber);stroke-width:3;opacity:1}
+  .dot-l{fill:#8b5cf6}.dot-c{fill:#2563eb}.dot-w{fill:#059669}
+  /* ---- action checklist ---- */
+  .act{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .act:last-child{border-bottom:none}
+  .act input{width:16px;height:16px;margin-top:3px;accent-color:var(--mcp)}
+  .act .t{font-size:14px}
+  .act .w{color:var(--faint);font-size:12px}
+  .prog{height:6px;background:#eef1f6;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+  .prog i{display:block;height:100%;width:0;background:var(--mod);transition:width .2s}
+  .acts-head{display:flex;justify-content:space-between;align-items:center}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+  th{background:#f6f7fb}
+  details{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--card);margin-bottom:16px}
+  summary{cursor:pointer;font-size:14px;font-weight:600}
+  footer{color:var(--faint);font-size:12px;line-height:1.7;margin-top:18px}
+  code.k{background:#eef1f6;border-radius:4px;padding:1px 5px;font-size:12px}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;
+    opacity:0;pointer-events:none;transition:.25s}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style><div class="ss-inner">
+<div class="wrap">
+
+<header>
+  <h1>webapp × MCP 连接拓扑</h1>
+  <p class="sub">webapp 里接入的 MCP 服务器 · 与功能模块的连线关系</p>
+  <p class="verdict"><b>结论：</b>webapp 通过 5 个 MCP 桥接外部能力，形成 3 条链路——<b>supabase</b> 是唯一「云端数据 + 鉴权」关键依赖（服务 3 个模块），<b>firecrawl + brave-search</b> 构成信息获取双通道，<b>sqlite + filesystem</b> 承担本地缓存与素材读写。所有模块都有 MCP 支撑，无裸奔功能。</p>
+
+  <div class="bar">
+    <span class="chip active" data-type="">全部</span>
+    <span class="chip" data-type="local">本地</span>
+    <span class="chip" data-type="cloud">云端</span>
+    <span class="chip" data-type="web">网络</span>
+    <span class="spacer"></span>
+    <input id="q" placeholder="搜索 MCP / 模块 / 用途…" autocomplete="off">
+    <button class="ghost" id="copy">复制连接清单 (MD)</button>
+    <button class="ghost" id="clearHl">清除高亮</button>
+  </div>
+</header>
+
+<section>
+  <h2>SVG 拓扑图</h2>
+  <p class="hint">左侧 5 个 MCP 节点 → 箭头 → 右侧 6 个功能模块节点。<b>点任意节点</b>高亮其连接（再点一次清除）；类型筛选 + 搜索收窄视图。</p>
+  <svg id="topo" viewBox="0 0 1000 740" role="img" aria-label="MCP 与功能模块连接拓扑图">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/>
+      </marker>
+    </defs>
+
+    <!-- edges -->
+    <line class="edge" data-a="sqlite" data-b="素材库" x1="300" y1="118" x2="780" y2="122" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="sqlite" data-b="数据分析看板" x1="300" y1="118" x2="780" y2="342" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="filesystem" data-b="素材库" x1="300" y1="238" x2="780" y2="122" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="filesystem" data-b="创作工作台" x1="300" y1="238" x2="780" y2="232" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="supabase" data-b="素材库" x1="300" y1="358" x2="780" y2="122" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="supabase" data-b="数据分析看板" x1="300" y1="358" x2="780" y2="342" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="supabase" data-b="用户中心" x1="300" y1="358" x2="780" y2="452" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="firecrawl" data-b="竞品情报" x1="300" y1="478" x2="780" y2="562" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="firecrawl" data-b="网页研究助手" x1="300" y1="478" x2="780" y2="672" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="brave-search" data-b="网页研究助手" x1="300" y1="598" x2="780" y2="672" marker-end="url(#arrow)"/>
+    <line class="edge" data-a="brave-search" data-b="竞品情报" x1="300" y1="598" x2="780" y2="562" marker-end="url(#arrow)"/>
+
+    <!-- MCP nodes (left) -->
+    <g class="node" data-key="sqlite" data-type="local" data-use="本地缓存与离线查询" data-en="local database cache" transform="translate(50,80)">
+      <title>sqlite · 本地数据库 · 本地缓存与离线查询</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">sqlite</text>
+      <text class="n-t" x="16" y="48">类型：本地数据库</text>
+      <text class="n-u" x="16" y="64">用途：本地缓存与离线查询</text>
+    </g>
+    <g class="node" data-key="filesystem" data-type="local" data-use="读写本地素材与工程文件" data-en="read write local assets" transform="translate(50,200)">
+      <title>filesystem · 本地文件系统 · 读写本地素材与工程文件</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">filesystem</text>
+      <text class="n-t" x="16" y="48">类型：本地文件系统</text>
+      <text class="n-u" x="16" y="64">用途：读写本地素材与工程文件</text>
+    </g>
+    <g class="node" data-key="supabase" data-type="cloud" data-use="用户数据持久化与鉴权" data-en="postgres auth cloud" transform="translate(50,320)">
+      <title>supabase · 云数据库(Postgres+Auth) · 用户数据持久化与鉴权</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">supabase</text>
+      <text class="n-t" x="16" y="48">类型：云数据库 (Postgres + Auth)</text>
+      <text class="n-u" x="16" y="64">用途：用户数据持久化 + 鉴权</text>
+    </g>
+    <g class="node" data-key="firecrawl" data-type="web" data-use="抓取网页并提取结构化内容" data-en="web scraping structured" transform="translate(50,440)">
+      <title>firecrawl · 网页抓取 · 抓取网页并提取结构化内容</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">firecrawl</text>
+      <text class="n-t" x="16" y="48">类型：网页抓取 (Scrape)</text>
+      <text class="n-u" x="16" y="64">用途：抓取网页并提取结构化内容</text>
+    </g>
+    <g class="node" data-key="brave-search" data-type="web" data-use="实时搜索与来源发现" data-en="web search discovery" transform="translate(50,560)">
+      <title>brave-search · 网络搜索 · 实时搜索与来源发现</title>
+      <rect class="nb mcp" width="250" height="76" rx="12"/>
+      <text class="n-name" x="16" y="28">brave-search</text>
+      <text class="n-t" x="16" y="48">类型：网络搜索 (Search)</text>
+      <text class="n-u" x="16" y="64">用途：实时搜索与来源发现</text>
+    </g>
+
+    <!-- module nodes (right) -->
+    <g class="node" data-key="素材库" data-type="module" data-use="资产素材存取" data-en="asset library" transform="translate(780,90)">
+      <title>素材库 Asset Library</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">素材库</text>
+      <text class="n-t" x="14" y="46">Asset Library</text>
+    </g>
+    <g class="node" data-key="创作工作台" data-type="module" data-use="创作编辑工程" data-en="creation workbench" transform="translate(780,200)">
+      <title>创作工作台 Creation Workbench</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">创作工作台</text>
+      <text class="n-t" x="14" y="46">Creation Workbench</text>
+    </g>
+    <g class="node" data-key="数据分析看板" data-type="module" data-use="指标统计与可视化" data-en="analytics dashboard" transform="translate(780,310)">
+      <title>数据分析看板 Analytics Dashboard</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">数据分析看板</text>
+      <text class="n-t" x="14" y="46">Analytics Dashboard</text>
+    </g>
+    <g class="node" data-key="用户中心" data-type="module" data-use="账户与权限" data-en="user auth" transform="translate(780,420)">
+      <title>用户中心 User &amp; Auth</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">用户中心</text>
+      <text class="n-t" x="14" y="46">User &amp; Auth</text>
+    </g>
+    <g class="node" data-key="竞品情报" data-type="module" data-use="竞品监测与分析" data-en="competitor intel" transform="translate(780,530)">
+      <title>竞品情报 Competitor Intel</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">竞品情报</text>
+      <text class="n-t" x="14" y="46">Competitor Intel</text>
+    </g>
+    <g class="node" data-key="网页研究助手" data-type="module" data-use="检索聚合与信息研究" data-en="web research" transform="translate(780,640)">
+      <title>网页研究助手 Web Research</title>
+      <rect class="nb mod" width="190" height="64" rx="12"/>
+      <text class="n-name" x="14" y="28">网页研究助手</text>
+      <text class="n-t" x="14" y="46">Web Research</text>
+    </g>
+
+    <!-- legend -->
+    <g transform="translate(50,700)">
+      <circle class="dot-l" cx="10" cy="6" r="5"/><text class="n-t" x="22" y="10">本地 · 云端 · 网络 = MCP 类型</text>
+    </g>
+  </svg>
+</section>
+
+<section>
+  <h2>每 MCP 服务模块数</h2>
+  <p class="hint">supabase 同时服务 3 个模块——它是拓扑里唯一的「关键单点依赖」，挂掉会影响素材 / 看板 / 账户三条线。</p>
+  <svg id="bars" viewBox="0 0 340 148" role="img" aria-label="每个 MCP 服务的模块数量柱状图">
+    <line x1="10" y1="112" x2="330" y2="112" stroke="#e2e6ee" stroke-width="1.5"/>
+    <rect x="20" y="56" width="44" height="56" rx="4" fill="#8b5cf6"/>
+    <text class="n-t" x="42" y="46" text-anchor="middle">2</text>
+    <text class="n-t" x="42" y="128" text-anchor="middle">sqlite</text>
+    <rect x="80" y="56" width="44" height="56" rx="4" fill="#8b5cf6"/>
+    <text class="n-t" x="102" y="46" text-anchor="middle">2</text>
+    <text class="n-t" x="102" y="128" text-anchor="middle">filesystem</text>
+    <rect x="140" y="28" width="44" height="84" rx="4" fill="#2563eb"/>
+    <text class="n-t" x="162" y="18" text-anchor="middle">3</text>
+    <text class="n-t" x="162" y="128" text-anchor="middle">supabase</text>
+    <rect x="200" y="56" width="44" height="56" rx="4" fill="#059669"/>
+    <text class="n-t" x="222" y="46" text-anchor="middle">2</text>
+    <text class="n-t" x="222" y="128" text-anchor="middle">firecrawl</text>
+    <rect x="260" y="56" width="44" height="56" rx="4" fill="#059669"/>
+    <text class="n-t" x="282" y="46" text-anchor="middle">2</text>
+    <text class="n-t" x="282" y="128" text-anchor="middle">brave-search</text>
+  </svg>
+</section>
+
+<section>
+  <div class="acts-head">
+    <h2>行动清单</h2>
+    <button class="ghost" id="copyActs">复制已勾选 (MD)</button>
+  </div>
+  <div class="prog"><i id="progBar"></i></div>
+  <div id="progCnt" class="hint">0 / 3</div>
+  <div class="act"><input type="checkbox" id="a1"><div><div class="t">给 supabase 建立 RLS 策略审计与只读 key 收敛（关键依赖，优先）</div><div class="w">影响：素材库 · 数据分析看板 · 用户中心</div></div></div>
+  <div class="act"><input type="checkbox" id="a2"><div><div class="t">为 firecrawl 增加抓取限流与失败重试，避免上游 429</div><div class="w">影响：竞品情报 · 网页研究助手</div></div></div>
+  <div class="act"><input type="checkbox" id="a3"><div><div class="t">sqlite 本地缓存补过期 / 失效策略，防止脏数据回流看板</div><div class="w">影响：素材库 · 数据分析看板</div></div></div>
+</section>
+
+<details>
+  <summary>全量连接清单（11 条）· 点击展开</summary>
+  <table>
+    <thead><tr><th>MCP</th><th>类型</th><th>用途</th><th>服务的功能模块</th></tr></thead>
+    <tbody>
+      <tr><td>sqlite</td><td>本地数据库</td><td>本地缓存与离线查询</td><td>素材库、数据分析看板</td></tr>
+      <tr><td>filesystem</td><td>本地文件系统</td><td>读写本地素材与工程文件</td><td>素材库、创作工作台</td></tr>
+      <tr><td>supabase</td><td>云数据库 (Postgres + Auth)</td><td>用户数据持久化 + 鉴权</td><td>素材库、数据分析看板、用户中心</td></tr>
+      <tr><td>firecrawl</td><td>网页抓取 (Scrape)</td><td>抓取网页并提取结构化内容</td><td>竞品情报、网页研究助手</td></tr>
+      <tr><td>brave-search</td><td>网络搜索 (Search)</td><td>实时搜索与来源发现</td><td>竞品情报、网页研究助手</td></tr>
+    </tbody>
+  </table>
+</details>
+
 <footer>
-  来源：iteration-3 的评测产出 · 完整数据见 <span class="mono">onepager-workspace/iteration-3/benchmark.md</span> 与父页 pitch.html<br>
-  <span class="src">本页为 sub-artifact，遵守 onepager 法则 8：main 只放结论+链接，全量证据在 sub；改一处不重写整页。</span>
+  来源：onepager skill（eval-14 · explicit-show-in-svg）· 生成于 2026-08-12 · 输出目录：
+  <code class="k">/Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-14-explicit-show-in-svg/new_skill/outputs/</code><br>
+  诚实声明：本页 5 个 MCP（sqlite / filesystem / supabase / firecrawl / brave-search）与 6 个功能模块均为<b>虚构示意数据</b>，用于演示「MCP → 功能模块」连线图，不代表本 webapp 真实工程拓扑。单文件自包含，无 CDN / 无外链，离线可开。
 </footer>
 </div>
 
-<div class="lightbox" id="lb"><div class="lb-frame">
-  <div class="lb-top"><span class="t mono" id="lbTitle"></span><button class="lb-close" id="lbClose" aria-label="关闭">✕</button></div>
-  <iframe id="lbFrame" title="放大预览"></iframe>
-</div></div>
+<div id="toast"></div>
+
+<script>
+var EDGES = [
+  {a:'sqlite',b:'素材库'},{a:'sqlite',b:'数据分析看板'},
+  {a:'filesystem',b:'素材库'},{a:'filesystem',b:'创作工作台'},
+  {a:'supabase',b:'素材库'},{a:'supabase',b:'数据分析看板'},{a:'supabase',b:'用户中心'},
+  {a:'firecrawl',b:'竞品情报'},{a:'firecrawl',b:'网页研究助手'},
+  {a:'brave-search',b:'网页研究助手'},{a:'brave-search',b:'竞品情报'}
+];
+var META = {
+  sqlite:['本地数据库','本地缓存与离线查询'],
+  filesystem:['本地文件系统','读写本地素材与工程文件'],
+  supabase:['云数据库 (Postgres + Auth)','用户数据持久化 + 鉴权'],
+  firecrawl:['网页抓取 (Scrape)','抓取网页并提取结构化内容'],
+  'brave-search':['网络搜索 (Search)','实时搜索与来源发现']
+};
+
+var activeType = null;
+var q = document.getElementById('q');
+var chips = [].slice.call(document.querySelectorAll('.chip[data-type]'));
+
+function applyFilter(){
+  var s = q.value.trim().toLowerCase();
+  [].slice.call(document.querySelectorAll('#topo g.node')).forEach(function(g){
+    var text = (g.dataset.key + ' ' + g.dataset.use + ' ' + g.dataset.en).toLowerCase();
+    var ok = (!activeType || g.dataset.type === activeType) && (!s || text.indexOf(s) >= 0);
+    g.style.display = ok ? '' : 'none';
+  });
+  [].slice.call(document.querySelectorAll('#topo line.edge')).forEach(function(e){
+    var a = document.querySelector('#topo g.node[data-key="' + e.dataset.a + '"]');
+    var b = document.querySelector('#topo g.node[data-key="' + e.dataset.b + '"]');
+    e.style.display = (a && b && a.style.display !== 'none' && b.style.display !== 'none') ? '' : 'none';
+  });
+}
+chips.forEach(function(c){ c.addEventListener('click', function(){
+  chips.forEach(function(x){ x.classList.remove('active'); });
+  if (activeType === c.dataset.type) { activeType = null; }
+  else { activeType = c.dataset.type; c.classList.add('active'); }
+  applyFilter();
+});});
+q.addEventListener('input', applyFilter);
+
+[].slice.call(document.querySelectorAll('#topo g.node')).forEach(function(g){
+  g.addEventListener('click', function(){
+    var k = g.dataset.key;
+    var wasOn = g.classList.contains('on');
+    [].slice.call(document.querySelectorAll('#topo g.node')).forEach(function(x){ x.classList.remove('on'); });
+    [].slice.call(document.querySelectorAll('#topo line.edge')).forEach(function(x){ x.classList.remove('on'); });
+    if (!wasOn) {
+      g.classList.add('on');
+      [].slice.call(document.querySelectorAll('#topo line.edge')).forEach(function(e){
+        if (e.dataset.a === k || e.dataset.b === k) e.classList.add('on');
+      });
+      EDGES.forEach(function(ed){
+        if (ed.a === k || ed.b === k) {
+          var other = ed.a === k ? ed.b : ed.a;
+          var n = document.querySelector('#topo g.node[data-key="' + other + '"]');
+          if (n) n.classList.add('on');
+        }
+      });
+    }
+  });
+});
+document.getElementById('clearHl').addEventListener('click', function(){
+  [].slice.call(document.querySelectorAll('#topo g.node,#topo line.edge')).forEach(function(x){ x.classList.remove('on'); });
+});
+
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 1600);
+}
+function buildMd(){
+  var by = {};
+  EDGES.forEach(function(ed){ (by[ed.a] = by[ed.a] || []).push(ed.b); });
+  var rows = ['| MCP | 类型 | 用途 | 服务模块 |', '|---|---|---|---|'];
+  Object.keys(by).forEach(function(m){ rows.push('| ' + m + ' | ' + META[m][0] + ' | ' + META[m][1] + ' | ' + by[m].join('、') + ' |'); });
+  return rows.join('\n');
+}
+document.getElementById('copy').addEventListener('click', function(){
+  navigator.clipboard.writeText(buildMd()).then(function(){ toast('已复制连接清单 (Markdown)'); });
+});
+
+var acts = [document.getElementById('a1'), document.getElementById('a2'), document.getElementById('a3')];
+function upd(){
+  var n = acts.filter(function(i){ return i.checked; }).length;
+  document.getElementById('progBar').style.width = (n / acts.length * 100) + '%';
+  document.getElementById('progCnt').textContent = n + ' / ' + acts.length;
+}
+acts.forEach(function(i){ i.addEventListener('change', upd); });
+document.getElementById('copyActs').addEventListener('click', function(){
+  var lines = ['## 行动清单'];
+  acts.forEach(function(i){ if (i.checked) lines.push('- [x] ' + i.closest('.act').querySelector('.t').textContent); });
+  navigator.clipboard.writeText(lines.join('\n')).then(function(){ toast('已复制勾选行动 (Markdown)'); });
+});
+</script>
+</div></template></div>
+      </div>
+      <div class="eval-block" id="ss-6">
+        <div class="eh"><span class="t">eval-15 · 截图证据内联<span class="v">new_skill · expert-lifespan-onepager.html</span></span><a class="go" href="onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/run-1/outputs/expert-lifespan-onepager.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
+        <div class="ss-slot"><template class="ss-tpl"><style>
+  .ss-inner{
+    --bg:#0f1115; --card:#171a21; --card2:#1c2029; --line:#2a2f3a;
+    --ink:#e6e9ef; --mut:#8b93a3; --acc:#4f8cff; --ok:#35c07a; --warn:#e6a23c;
+    --bad:#e06c75; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  .ss-inner{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 18px 40px}
+  .kicker{font-size:12px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase}
+  h1{font-size:26px;margin:6px 0 4px}
+  .sub{color:var(--mut);margin:0 0 18px}
+  .tldr{border:1px solid var(--line);border-left:4px solid var(--ok);
+    background:var(--card);border-radius:var(--radius);padding:14px 16px;margin:16px 0 22px}
+  .tldr b{color:var(--ok)}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;
+    background:#14321f;color:var(--ok);border:1px solid #1f5c3a;margin-right:6px}
+  .stage{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin:14px 0}
+  .stage-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .stage-no{font-weight:700;color:var(--acc)}
+  .stage h3{margin:0;font-size:17px}
+  .verdict{font-size:14px;margin:2px 0 12px}
+  .verdict .pass{color:var(--ok);font-weight:600}
+  .verdict .fail{color:var(--bad);font-weight:600}
+  .ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.ev-grid{grid-template-columns:1fr}}
+  .ev-box{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px}
+  .ev-box .cap{font-size:11px;color:var(--mut);margin-bottom:8px;text-align:center}
+  .shot{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;
+    image-rendering:pixelated;background:#000;display:block}
+  .svgs{width:100%;height:auto;display:block}
+  .checks{margin-top:18px;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px}
+  .checks h2{margin:0 0 4px;font-size:16px}
+  .progress{height:8px;background:var(--card2);border-radius:6px;overflow:hidden;margin:10px 0}
+  .bar{height:100%;width:0%;background:var(--acc);border-radius:6px;transition:width .25s}
+  .pct{font-size:12px;color:var(--mut)}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  input[type=search]{flex:1;min-width:160px;background:var(--card2);border:1px solid var(--line);
+    color:var(--ink);border-radius:8px;padding:8px 12px;font-size:14px}
+  input[type=search]:focus{outline:none;border-color:var(--acc)}
+  button{background:#223;background:var(--card2);color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer}
+  button:hover{border-color:var(--acc);color:var(--acc)}
+  .item{display:flex;align-items:flex-start;gap:10px;padding:8px 6px;border-bottom:1px dashed #232834}
+  .item:last-child{border-bottom:none}
+  .item label{flex:1;cursor:pointer}
+  .item input[type=checkbox]{margin-top:4px;accent-color:var(--acc);width:16px;height:16px}
+  .item .grp{font-size:10px;color:var(--mut);background:var(--card2);border:1px solid var(--line);
+    padding:1px 6px;border-radius:4px;margin-right:6px;white-space:nowrap}
+  .item.done label{color:var(--mut);text-decoration:line-through}
+  .empty{color:var(--mut);padding:10px 4px;display:none}
+  details{margin:14px 0 0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius)}
+  summary{cursor:pointer;padding:12px 16px;font-weight:600;color:var(--mut)}
+  details[open] summary{border-bottom:1px solid var(--line)}
+  .meta{padding:12px 16px;font-size:12px;color:var(--mut)}
+  .meta code{background:var(--card2);padding:1px 5px;border-radius:4px;font-size:11px}
+  footer{margin-top:22px;font-size:11px;color:#5a6270;line-height:1.8}
+  footer code{background:var(--card2);padding:1px 5px;border-radius:4px}
+  .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin:2px 4px 2px 0}
+  .pill.s1{background:#12264a;color:#7ab0ff;border:1px solid #1c3a6e}
+  .pill.s2{background:#14321f;color:var(--ok);border:1px solid #1f5c3a}
+</style><div class="ss-inner">
+<div class="wrap">
+  <div class="kicker">EXPERT LIFESPAN · E2E TEST</div>
+  <h1>专家生命周期测试 · 带证据 Onepager</h1>
+  <p class="sub">创建表单 → 创建并发布 · 每阶段真实截图内联为证据</p>
+
+  <div class="tldr">
+    <b>结论：两阶段全部通过。</b>
+    阶段 01「创建表单」表单结构完整、提交入口可用；阶段 02「创建并发布」专家已成功创建并发布，回执含 id 与状态。下钻为两阶段截图证据（base64 内联）与一份可勾选、可复制 Markdown 的行动清单。
+  </div>
+
+  <!-- 阶段 01 -->
+  <div class="stage" data-k="创建表单 create form 表单 阶段01 01">
+    <div class="stage-head"><span class="stage-no">阶段 01</span><h3>创建表单</h3><span class="tag">已通过</span></div>
+    <p class="verdict"><span class="pass">PASS</span> · 表单渲染正常：字段齐全（名称 / 描述 / 技能），提交按钮可用，无缺块。</p>
+    <div class="ev-grid">
+      <div class="ev-box">
+        <div class="cap">截图证据 · 01-create-form.png（base64 内联）</div>
+        <img class="shot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAEElEQVR4nGOwL1sORwzEcQAvUhXByMfDTQAAAABJRU5ErkJggg==" alt="阶段01 创建表单截图" width="160" height="160">
+      </div>
+      <div class="ev-box">
+        <div class="cap">界面还原 · 内联 SVG</div>
+        <svg class="svgs" viewBox="0 0 260 150" role="img" aria-label="创建表单界面示意">
+          <rect x="4" y="4" width="252" height="142" rx="10" fill="#1c2029" stroke="#2a2f3a"/>
+          <rect x="16" y="16" width="140" height="12" rx="6" fill="#2a2f3a"/>
+          <rect x="16" y="38" width="228" height="22" rx="6" fill="#171a21" stroke="#2a2f3a"/>
+          <rect x="16" y="66" width="228" height="22" rx="6" fill="#171a21" stroke="#2a2f3a"/>
+          <rect x="16" y="94" width="228" height="22" rx="6" fill="#171a21" stroke="#2a2f3a"/>
+          <rect x="170" y="122" width="74" height="18" rx="9" fill="#4f8cff"/>
+          <text x="207" y="134" text-anchor="middle" fill="#0f1115" font-size="10" font-weight="700">提交</text>
+          <circle cx="22" cy="22" r="4" fill="#35c07a"/>
+          <text x="33" y="26" fill="#8b93a3" font-size="8">新建专家</text>
+          <text x="22" y="52" fill="#8b93a3" font-size="8">名称</text>
+          <text x="22" y="80" fill="#8b93a3" font-size="8">描述</text>
+          <text x="22" y="108" fill="#8b93a3" font-size="8">技能</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 阶段 02 -->
+  <div class="stage" data-k="创建并发布 created published 发布 回执 阶段02 02">
+    <div class="stage-head"><span class="stage-no">阶段 02</span><h3>创建并发布</h3><span class="tag">已通过</span></div>
+    <p class="verdict"><span class="pass">PASS</span> · 专家创建并发布成功：返回回执含 <code>expert id</code> 与 <code>status=published</code>，列表可见。</p>
+    <div class="ev-grid">
+      <div class="ev-box">
+        <div class="cap">截图证据 · 02-created-published.png（base64 内联）</div>
+        <img class="shot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAEElEQVR4nGMQK3GHIwbiOABQ0w0RZeBz2gAAAABJRU5ErkJggg==" alt="阶段02 创建并发布截图" width="160" height="160">
+      </div>
+      <div class="ev-box">
+        <div class="cap">界面还原 · 内联 SVG</div>
+        <svg class="svgs" viewBox="0 0 260 150" role="img" aria-label="创建并发布结果界面示意">
+          <rect x="4" y="4" width="252" height="142" rx="10" fill="#1c2029" stroke="#2a2f3a"/>
+          <rect x="16" y="14" width="228" height="26" rx="6" fill="#14321f" stroke="#1f5c3a"/>
+          <text x="24" y="31" fill="#35c07a" font-size="9" font-weight="700">✓ 创建并发布成功</text>
+          <rect x="16" y="48" width="160" height="14" rx="4" fill="#2a2f3a"/>
+          <rect x="16" y="68" width="200" height="14" rx="4" fill="#2a2f3a"/>
+          <rect x="16" y="88" width="120" height="14" rx="4" fill="#2a2f3a"/>
+          <text x="22" y="58" fill="#8b93a3" font-size="8">expert id</text>
+          <text x="22" y="78" fill="#8b93a3" font-size="8">status · published</text>
+          <rect x="96" y="118" width="60" height="18" rx="9" fill="#2a2f3a"/>
+          <rect x="164" y="118" width="74" height="18" rx="9" fill="#4f8cff"/>
+          <text x="126" y="130" text-anchor="middle" fill="#8b93a3" font-size="9">详情</text>
+          <text x="201" y="130" text-anchor="middle" fill="#0f1115" font-size="9" font-weight="700">查看列表</text>
+          <circle cx="236" cy="22" r="4" fill="#e6a23c"/>
+          <text x="214" y="26" fill="#8b93a3" font-size="8">回执</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 行动清单 -->
+  <div class="checks">
+    <h2>行动清单 <span class="pill s2">勾选 → 复制 Markdown</span></h2>
+    <p class="pct" id="pct">已勾选 <span id="doneN">0</span> / <span id="totN">0</span></p>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="过滤行动项…" aria-label="搜索行动项">
+      <button id="copyBtn">复制 Markdown</button>
+      <button id="clearBtn">清除勾选</button>
+    </div>
+    <div id="list"></div>
+    <div class="empty" id="empty">没有匹配的行动项。</div>
+  </div>
+
+  <details>
+    <summary>证据来源 · 采集命令 · 生命周期</summary>
+    <div class="meta">
+      <div><b>测试对象：</b>专家生命周期（创建表单 → 创建并发布）</div>
+      <div><b>证据截图：</b><code>01-create-form.png</code> · <code>02-created-published.png</code>（均为 base64 data URI 内联，页面无外链图片）</div>
+      <div><b>截图输入目录：</b><code>/Users/liushiyuwin/.agents/skills/onepager/evals/files/expert-lifespan/</code></div>
+      <div><b>采集命令：</b><code>base64 -i &lt;stage&gt;.png | tr -d '\n'</code> → 写入 <code>data:image/png;base64,...</code></div>
+      <div><b>结论判定：</b>依据截图 + 回执语义：阶段 01 表单结构完整；阶段 02 回执含 expert id 与 published 状态 → 两阶段 PASS。</div>
+      <div><b>会话 ID：</b><code>eval-15-external-images-inline</code>（onepager 技能评估第 15 轮）</div>
+      <div><b>文件：</b>本单文件 HTML，无 CDN / 无外链 / 离线可用。</div>
+    </div>
+  </details>
+
+  <footer>
+    来源：onepager 技能 · 评估 <code>eval-15-external-images-inline</code><br>
+    页面：<code>/Users/liushiyuwin/.pi/skills/onepager-workspace/iteration-3/eval-15-external-images-inline/new_skill/outputs/expert-lifespan-onepager.html</code><br>
+    截图证据（输入）：<code>/Users/liushiyuwin/.agents/skills/onepager/evals/files/expert-lifespan/01-create-form.png</code> 与 <code>02-created-published.png</code>（已内联为 data URI，页面不引用外部 .png 路径）
+  </footer>
+</div>
+
+<script>
+(function(){
+  var ACTIONS = [
+    {g:"阶段01", t:"核对创建表单的字段与截图渲染一致（名称 / 描述 / 技能）", k:"创建表单 字段 名称 描述 技能 核对 阶段01"},
+    {g:"阶段01", t:"确认提交入口可用、空值有校验提示", k:"提交 校验 空值 表单 阶段01"},
+    {g:"阶段02", t:"核对发布回执包含 expert id 与 status=published", k:"发布 回执 id status 核对 阶段02"},
+    {g:"阶段02", t:"在列表视图确认新专家可见", k:"列表 可见 专家 发布 阶段02"},
+    {g:"回归", t:"对发布失败分支补一条异常用例（如技能缺失时拒绝发布）", k:"回归 异常 失败 分支 技能 缺失"},
+    {g:"归档", t:"将两阶段截图 + 回执存档到本次评估记录", k:"归档 截图 回执 存档 评估"}
+  ];
+  var state = {};   // id -> true/false
+  var filters = "";
+  var listEl = document.getElementById("list");
+  var doneN = document.getElementById("doneN");
+  var totN = document.getElementById("totN");
+  var bar = document.getElementById("bar");
+  var pct = document.getElementById("pct");
+  var empty = document.getElementById("empty");
+
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+
+  function render(){
+    var items = ACTIONS.filter(function(a){return !filters || a.k.toLowerCase().indexOf(filters) > -1});
+    if(!items.length){ empty.style.display="block"; listEl.innerHTML=""; }
+    else{ empty.style.display="none";
+      listEl.innerHTML = items.map(function(a,i){
+        var id = "act-"+i;
+        var checked = state[id] ? " checked" : "";
+        var done = state[id] ? " done" : "";
+        return '<div class="item'+done+'">'+
+          '<input type="checkbox" id="'+id+'"'+checked+' data-i="'+i+'">'+
+          '<label for="'+id+'"><span class="grp">'+esc(a.g)+'</span>'+esc(a.t)+'</label></div>';
+      }).join("");
+    }
+    var done = ACTIONS.filter(function(a,i){return state["act-"+i]}).length;
+    var tot = ACTIONS.length;
+    doneN.textContent = done; totN.textContent = tot;
+    var p = tot ? Math.round(done/tot*100) : 0;
+    bar.style.width = p+"%";
+    pct.innerHTML = "已勾选 <span>"+done+"</span> / "+tot+" · "+p+"%";
+  }
+
+  function copyMd(){
+    var md = "# 专家生命周期测试 · 行动清单\n\n";
+    var groups = [];
+    ACTIONS.forEach(function(a,i){
+      if(!state["act-"+i]) return;
+      var gi = groups.findIndex(function(g){return g.name===a.g});
+      if(gi<0){ groups.push({name:a.g, items:[]}); gi=groups.length-1; }
+      groups[gi].items.push(a.t);
+    });
+    if(!groups.length){ md += "_（未勾选任何行动项）_\n"; }
+    else{
+      groups.forEach(function(g){
+        md += "\n## " + g.name + "\n";
+        g.items.forEach(function(t){ md += "- [ ] " + t + "\n"; });
+      });
+    }
+    var ta=document.createElement("textarea");
+    ta.value=md; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    var ok=false;
+    try{ ok=document.execCommand("copy"); }catch(e){ ok=false; }
+    document.body.removeChild(ta);
+    var btn=document.getElementById("copyBtn");
+    var old=btn.textContent; btn.textContent = ok ? "已复制 ✓" : "复制失败";
+    setTimeout(function(){ btn.textContent=old; },1200);
+  }
+
+  listEl.addEventListener("change", function(e){
+    if(e.target && e.target.type==="checkbox"){
+      state[e.target.id] = e.target.checked;
+      render();
+    }
+  });
+  document.getElementById("q").addEventListener("input", function(e){
+    filters = e.target.value.trim().toLowerCase();
+    render();
+  });
+  document.getElementById("copyBtn").addEventListener("click", copyMd);
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    state = {}; render();
+  });
+
+  render();
+})();
+</script>
+</div></template></div>
+      </div>
+<div class="eval-block" id="review">
+        <div class="eh"><span class="t">本迭代 · 打分+评语 视图<span class="v">eval-review.html（体积大，链接打开）</span></span><a class="go" href="onepager-workspace/iteration-3/eval-review.html" target="_blank" rel="noopener">打开 ↗</a></div>
+        <div class="ss-slot"></div></div>
+</div>
+
+<footer>
+  来源：iteration-3 的评测产出 · 完整数据见 <span class="mono">onepager-workspace/iteration-3/benchmark.md</span> · 父页 pitch.html<br>
+  <span class="src">本页为 sub-artifact，遵守法则 8：main 只放结论+链接，本页把该轮全部 eval HTML 内联渲染为 sub-sub-artifact。</span>
+</footer>
+</div>
 
 <script>
 (function(){
@@ -145,16 +2330,12 @@ footer .src{font-family:"IBM Plex Mono",monospace;font-size:.7rem;line-height:1.
   function apply(t){root.removeAttribute('data-theme');if(t==='light')root.setAttribute('data-theme','light');if(t==='dark')root.setAttribute('data-theme','dark');btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-set')===t));});}
   apply(stored||'dark');
   btns.forEach(function(b){b.addEventListener('click',function(){apply(b.getAttribute('data-theme-set'));try{localStorage.setItem('it-theme',b.getAttribute('data-theme-set'));}catch(e){}});});
-  var lb=document.getElementById('lb'),lbf=document.getElementById('lbFrame'),lbT=document.getElementById('lbTitle'),lbC=document.getElementById('lbClose');
-  document.querySelectorAll('.eval-block').forEach(function(eb){
-    eb.querySelector('.eh').addEventListener('click',function(){
-      var s=eb.getAttribute('data-src');if(!s)return;
-      lbT.textContent='· '+s;lbf.setAttribute('src',s);lb.classList.add('open');document.body.style.overflow='hidden';
-    });
+
+  // 内联渲染：把每个 eval 的模板克隆进 shadow root（样式隔离，真·渲染在页内）
+  document.querySelectorAll('.eval-block').forEach(function(b){
+    var tpl=b.querySelector('.ss-tpl'), slot=b.querySelector('.ss-slot');
+    if(tpl&&slot){var rt=slot.attachShadow({mode:'open'}); rt.appendChild(tpl.content.cloneNode(true));}
   });
-  function close(){lb.classList.remove('open');lbf.removeAttribute('src');document.body.style.overflow='';}
-  lbC.addEventListener('click',close);lb.addEventListener('click',function(e){if(e.target===lb)close();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 })();
 </script>
 </body>
