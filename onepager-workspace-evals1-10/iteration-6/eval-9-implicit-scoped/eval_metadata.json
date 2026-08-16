@@ -1,0 +1,11 @@
+{
+  "eval_id": 9,
+  "eval_name": "implicit-scoped",
+  "prompt": "Read the attached Pi transcript and create the requested handoff Onepager. Follow the transcript’s final user request.",
+  "assertions": [
+    "The main HTML directly links current-report.html and current-qa.json.",
+    "The output does not link or copy old-failure.webm.",
+    "The artifact links are visible in the main page rather than present only inside collapsed details.",
+    "The footer includes /tmp/scoped-recap and implicit-session-9."
+  ]
+}

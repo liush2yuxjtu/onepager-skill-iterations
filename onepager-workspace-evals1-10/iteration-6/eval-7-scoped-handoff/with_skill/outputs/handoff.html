@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scoped Handoff · eval-session-7</title>
+<style>
+  :root{
+    --bg:#fafaf8; --ink:#1a1d21; --muted:#6b7280; --line:#e5e7eb;
+    --accent:#286149; --accent-ink:#fff; --warn:#9a3412;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:15px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif}
+  .wrap{max-width:680px;margin:0 auto;padding:28px 20px 64px}
+  h1{font-size:22px;margin:0 0 4px}
+  .kicker{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .verdict{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+           border-radius:8px;padding:14px 16px;margin-bottom:20px}
+  .verdict b{color:var(--accent)}
+  section{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:16px}
+  h2{font-size:14px;margin:0 0 10px;color:var(--ink)}
+  .artrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+  .artrow:first-child{border-top:0}
+  .artrow .name{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+  .artrow .meta{color:var(--muted);font-size:12px;flex:1;min-width:0}
+  .artrow .meta b{color:var(--accent)}
+  a.btn{display:inline-block;background:var(--accent);color:var(--accent-ink);text-decoration:none;
+        border-radius:6px;padding:5px 12px;font-size:13px}
+  button.ghost{background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:6px;
+               padding:5px 12px;font-size:13px;cursor:pointer}
+  input[type=search]{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:13px}
+  details{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
+  summary{cursor:pointer;font-size:13px;color:var(--accent);user-select:none}
+  pre{background:#f4f4f2;border:1px solid var(--line);border-radius:6px;padding:10px;font-size:12px;overflow:auto}
+  ul.todo{list-style:none;padding:0;margin:0}
+  ul.todo li{display:flex;align-items:flex-start;gap:8px;padding:7px 0;font-size:14px}
+  ul.todo input[type=checkbox]{margin-top:3px}
+  .bar{height:6px;background:var(--line);border-radius:3px;margin:10px 0 4px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+  .foot{color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:26px;padding-top:12px}
+  .foot code{background:#f4f4f2;padding:1px 5px;border-radius:4px}
+  .exclude{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">ONEPAGER · 窄门 handoff · <code>eval-session-7</code></p>
+  <h1>Scoped Handoff · 本次会话交接</h1>
+
+  <div class="verdict">
+    <b>结论：</b>当前会话确认产物 1 个 —— <b>qa.json</b>（QA 通过：<code>passed=true</code> · <code>errors=[]</code>）。
+    输入目录中的旧会话遗留文件（如 failure.webm）未归属当前会话，已排除出交接范围。
+  </div>
+
+  <section>
+    <h2>会话产物（窄门清单）</h2>
+    <input type="search" id="q" placeholder="搜索产物…" oninput="filterList(this.value)">
+    <div id="artlist">
+      <div class="artrow" data-name="qa.json">
+        <span class="name">qa.json</span>
+        <span class="meta">本次会话 QA 结果 · <b>passed=true</b> · errors=0</span>
+        <a class="btn" href="qa.json" target="_blank">打开 →</a>
+        <button class="ghost" onclick="copyJson()">复制</button>
+      </div>
+    </div>
+    <details>
+      <summary>qa.json 内容快照</summary>
+      <pre id="snap">{"passed":true,"errors":[]}</pre>
+    </details>
+  </section>
+
+  <section>
+    <h2>交接行动清单</h2>
+    <ul class="todo" id="todo">
+      <li><input type="checkbox" onchange="tick()"><span>打开 qa.json，核对 <code>passed=true</code></span></li>
+      <li><input type="checkbox" onchange="tick()"><span>确认旧会话 failure.webm 不在本次交接范围</span></li>
+      <li><input type="checkbox" onchange="tick()"><span>交接确认，可继续后续任务</span></li>
+    </ul>
+    <div class="bar"><i id="barfill"></i></div>
+    <div id="tally" style="font-size:13px;color:var(--muted)">0 / 3 已完成</div>
+    <button class="ghost" style="margin-top:8px" onclick="copyTodo()">复制清单为 Markdown</button>
+  </section>
+
+  <section>
+    <h2>归集范围说明（诚实标注）</h2>
+    <div class="exclude">
+      仅归集<strong>有当前会话聊天证据</strong>的产物，避免把输入目录全部文件塞进页面混入其他会话。
+      未纳入的目录文件：<span class="name" style="font-family:ui-monospace,Menlo,monospace">failure.webm</span>（旧会话遗留，聊天未归属当前会话）、
+      <span class="name" style="font-family:ui-monospace,Menlo,monospace">report.html / run.webm / trace.zip / hero.svg</span>（无当前会话证据）。
+      以上仅说明，均未链接、未复制。
+    </div>
+  </section>
+
+  <div class="foot">
+    来源项目：<code>/tmp/scoped-handoff</code>（绝对路径）<br>
+    会话 ID：<code>eval-session-7</code> · 生成时间：2026-08-12<br>
+    产物：<code>qa.json</code>（本目录相对链接，可携带；源文件已复制到本交付目录）<br>
+    方法：Onepager 规则 7 会话产物主动归集（scoped）——仅接受聊天证据确认归属的条目；规则 11 子产物可见。
+  </div>
+</div>
+
+<script>
+  function filterList(v){
+    v=v.toLowerCase();
+    document.querySelectorAll('#artlist .artrow').forEach(r=>{
+      r.style.display=r.dataset.name.toLowerCase().includes(v)?'':'none';
+    });
+  }
+  function copyJson(){
+    navigator.clipboard.writeText('{"passed":true,"errors":[]}');
+  }
+  function tick(){
+    var n=document.querySelectorAll('#todo input:checked').length,t=document.querySelectorAll('#todo input').length;
+    document.getElementById('barfill').style.width=(n/t*100)+'%';
+    document.getElementById('tally').textContent=n+' / '+t+' 已完成';
+  }
+  function copyTodo(){
+    var md=document.querySelectorAll('#todo li').length+'\n';
+    document.querySelectorAll('#todo li').forEach(function(li){
+      var done=li.querySelector('input').checked;
+      var txt=li.querySelector('span').innerText;
+      md+=('- ['+(done?'x':' ')+'] '+txt+'\n');
+    });
+    navigator.clipboard.writeText(md);
+  }
+</script>
+</body>
+</html>

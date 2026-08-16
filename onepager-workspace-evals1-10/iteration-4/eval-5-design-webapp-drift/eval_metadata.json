@@ -1,0 +1,17 @@
+{
+  "eval_id": 5,
+  "eval_name": "design-webapp-drift",
+  "prompt": "我有一份设计稿（inputs/design-v1.html）和一个已实现的 WebApp（inputs/webapp-v2.html），帮我做一份「设计稿 vs WebApp」的基准对比报告：设计稿是意图，WebApp 是交付，我要知道交付和意图的差距在哪、多大。请按域对比两侧的交互动作，给出漂移结论，并可视化（含设计稿与实现页面的截图并排对比）。请生成完整的 HTML 交付物。",
+  "assertions": [
+    "verdict_first: 标题下 5 秒内出现结论（漂移结论 / 意图实现率 / Fidelity 分布）",
+    "not_selector_count: 不以「动作总数对比」为主要结论（不把数量当核心基准，用语义分类）",
+    "fidelity_4states: 使用 4 态分类 full/partial/gap/overflow（或其等价语义：全落地/部分/缺口/溢出）",
+    "per_domain: 按域（domain）分组对比（对话/工单/报表等），每域有共享/独有分析",
+    "venn_or_drift_viz: 有漂移可视化（Venne 双圆图 / 域级双栏条图 / 交集缺口溢出分布图）",
+    "snapshot_compare: 有设计稿与 WebApp 的截图并排对比（真实截图，非仅文字）",
+    "snapshot_in_sub: 截图（base64）不内联进 main——main < 100KB 或截图在独立 sub 文件（sub-snapshots.html）",
+    "main_links_sub: main 有到快照对比 sub 的链接（窄网关，按需加载）",
+    "interact: 保留窄网关交互（搜索/排序/勾选/复制至少其一）",
+    "honest: 结论标注采集方式/来源，且定性准确（如溢出标注为『工程超越设计』而非『偏离』）"
+  ]
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>索引优化建议</title>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="back" href="main.html">← 返回总结论</a>
+    <h1>索引优化建议</h1>
+    <p>12 条可直接执行的 DDL，均对应 Top 20 慢 SQL；执行前请在低峰期验证。</p>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>新增索引清单</h2>
+    <div class="sub">预估收益为「该 SQL 扫描行数 / 平均耗时」的粗略降幅，需上线后以 slow_query_log 复核。</div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr><th>#</th><th>DDL 建议</th><th>服务 SQL</th><th>预估收益</th><th>风险</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td><code>ALTER TABLE order_info ADD KEY idx_status_created (status, created_at);</code></td><td>#1、#10</td><td>扫描 184 万 → 数千行，耗时 -70%</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">2</td><td><code>ALTER TABLE operation_log ADD KEY idx_biz_log (biz_type, log_time);</code></td><td>#5</td><td>扫描 978 万 → 数十万行</td><td><span class="badge b-amber">中（表大）</span></td></tr>
+        <tr><td class="num">3</td><td><code>ALTER TABLE product_sku ADD KEY idx_brand_category (brand_id, category_id, sale_count);</code></td><td>#4</td><td>全表 → 命中索引，去除 filesort</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">4</td><td><code>ALTER TABLE refund_order ADD KEY idx_merchant_id (merchant_no, id);</code></td><td>#10</td><td>深分页扫描量大幅下降</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">5</td><td><code>ALTER TABLE member_coupon ADD KEY idx_member_status (member_id, status);</code></td><td>#11</td><td>过滤后行数降到个位</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">6</td><td><code>ALTER TABLE ad_campaign_stat ADD KEY idx_date (date, click, impression);</code></td><td>#12</td><td>聚合走覆盖索引，去 Using temporary</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">7</td><td><code>ALTER TABLE cart_items ADD KEY idx_user_updated (user_id, updated_at) INCLUDE (product_id, qty);</code></td><td>#13</td><td>覆盖索引避免回表 + filesort</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">8</td><td><code>ALTER TABLE promotion_rule ADD KEY idx_active_time (is_active, start_time, end_time);</code></td><td>#16</td><td>表达式改等值+范围，命中索引</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">9</td><td><code>ALTER TABLE logistics_track ADD KEY idx_waybill_event (waybill_no, event_time);</code></td><td>#18</td><td>组合条件命中，排序走索引</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">10</td><td><code>ALTER TABLE merchant_settle ADD KEY idx_settle_merchant (settle_date, merchant_id);</code></td><td>#19</td><td>过滤行数降到个位</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">11</td><td><code>ALTER TABLE product_review ADD KEY idx_product_created (product_id, created_at);</code></td><td>#20</td><td>排序走索引，分页扫描量下降</td><td><span class="badge b-green">低</span></td></tr>
+        <tr><td class="num">12</td><td><code>ALTER TABLE order_detail ADD KEY idx_order_id (order_id);</code></td><td>#3、#17</td><td>JOIN / 大 IN 聚合命中索引</td><td><span class="badge b-green">低</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>索引之外：需要应用层改造的问题</h2>
+    <div class="sub">加索引无法解决，需代码改造（详见 <a href="sub-dba.html">DBA 行动清单</a>）。</div>
+    <table>
+      <thead><tr><th>SQL</th><th>问题</th><th>建议方案</th></tr></thead>
+      <tbody>
+        <tr><td>#1 / #10 / #20</td><td>深分页 <code>OFFSET</code> 大值</td><td>改为 keyset 游标（<code>WHERE created_at &lt; 上一页最后一条 ORDER BY ... LIMIT 20</code>）</td></tr>
+        <tr><td>#2</td><td>高频 UPDATE 行锁争用</td><td>错峰/批量合并更新，或按 user_id 分片分散锁</td></tr>
+        <tr><td>#6</td><td>单条 INSERT 循环 500 次</td><td><code>INSERT ... VALUES (..),(..),..</code> 批量提交</td></tr>
+        <tr><td>#7 / #17</td><td>大 IN 列表</td><td>拆分 <code>IN</code> 为 ≤100 的批次，或改为临时表 JOIN</td></tr>
+        <tr><td>#8</td><td>报表重复计算</td><td>改为每日增量汇总表 + 结果缓存</td></tr>
+        <tr><td>#15</td><td>隐式转换</td><td>应用层把 order_no 传参改为字符串</td></tr>
+        <tr><td>#5</td><td><code>SELECT *</code> 返回大字段</td><td>收敛为需要的列</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    上线注意：<code>operation_log</code> 表约 1,200 万行，DDL 会持有写锁，务必用 <code>pt-online-schema-change</code> 或 MySQL 8.0 INSTANT/DML 兼容方式在低峰期执行，并先压测。
+  </div>
+</main>
+
+<footer>MySQL 慢查询性能诊断报告 · 索引优化建议 · 数据为虚构演示数据</footer>
+</body>
+</html>

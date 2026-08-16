@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>winBrain AI App 全景调研 · 6 问一页</title>
+    <style>
+      :root {
+        --bg: #f5f7fa;
+        --card: #ffffff;
+        --ink: #1a2a3a;
+        --sub: #5b6b7b;
+        --brand: #1769e8;
+        --brand2: #6758e8;
+        --ok: #167447;
+        --warn: #8f550b;
+        --miss: #b3261e;
+        --line: #e3e9f2;
+        --chip: #eef4ff;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.6 "PingFang SC",
+          "Hiragino Sans GB",
+          "Microsoft YaHei",
+          system-ui,
+          sans-serif;
+        padding: 20px;
+      }
+      .wrap {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      header {
+        background: linear-gradient(120deg, var(--brand), var(--brand2));
+        color: #fff;
+        border-radius: 16px;
+        padding: 22px 26px;
+        box-shadow: 0 2px 8px rgba(26, 42, 58, 0.15);
+      }
+      header h1 {
+        font-size: 22px;
+        margin-bottom: 6px;
+      }
+      header p {
+        font-size: 13px;
+        opacity: 0.85;
+      }
+      .concl {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .concl div {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--brand);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 13px;
+      }
+      .concl b {
+        color: var(--brand);
+        display: block;
+        margin-bottom: 4px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        margin: 14px 0;
+        flex-wrap: wrap;
+      }
+      .toolbar input {
+        flex: 1;
+        min-width: 200px;
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-size: 13px;
+        background: #fff;
+      }
+      .q {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        margin-bottom: 10px;
+        overflow: hidden;
+      }
+      .q > button {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font: inherit;
+        text-align: left;
+        color: var(--ink);
+      }
+      .q > button:hover {
+        background: #f0f5ff;
+      }
+      .q .tag {
+        font-size: 12px;
+        color: var(--brand);
+        background: var(--chip);
+        border-radius: 6px;
+        padding: 2px 8px;
+        white-space: nowrap;
+      }
+      .q .n {
+        font-size: 12px;
+        color: var(--sub);
+        min-width: 110px;
+        text-align: right;
+      }
+      .q .body {
+        display: none;
+        padding: 6px 18px 18px;
+        border-top: 1px dashed var(--line);
+      }
+      .q.open .body {
+        display: block;
+      }
+      .q.open > button .n::after {
+        content: " ▲";
+      }
+      .q > button .n::after {
+        content: " ▼";
+      }
+      h3 {
+        font-size: 14px;
+        color: var(--brand);
+        margin: 14px 0 8px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+        margin: 6px 0;
+      }
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 7px 9px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f2f6fd;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      tr:nth-child(even) td {
+        background: #fafcff;
+      }
+      .chip {
+        display: inline-block;
+        background: var(--chip);
+        color: var(--brand);
+        border-radius: 6px;
+        padding: 1px 7px;
+        margin: 2px 3px 2px 0;
+        font-size: 12px;
+      }
+      .ok {
+        color: var(--ok);
+      }
+      .warn {
+        color: var(--warn);
+      }
+      .miss {
+        color: var(--miss);
+        font-weight: 600;
+      }
+      ul {
+        margin: 6px 0 6px 20px;
+      }
+      li {
+        margin: 3px 0;
+      }
+      .gap {
+        border-left: 4px solid var(--miss);
+      }
+      .src {
+        margin-top: 18px;
+        padding: 12px 16px;
+        background: #eef1f6;
+        border-radius: 10px;
+        font-size: 12px;
+        color: var(--sub);
+      }
+      .src b {
+        color: var(--ink);
+      }
+      a {
+        color: var(--brand);
+        word-break: break-all;
+      }
+      .badge {
+        display: inline-block;
+        background: var(--miss);
+        color: #fff;
+        border-radius: 6px;
+        padding: 0 7px;
+        font-size: 11px;
+        margin-left: 6px;
+      }
+      .count {
+        color: var(--sub);
+        font-size: 12px;
+      }
+      .hide {
+        display: none !important;
+      }
+      @media (max-width: 640px) {
+        header h1 {
+          font-size: 18px;
+        }
+        .q .n {
+          min-width: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>🧭 winBrain AI App 全景调研 · 6 问一页</h1>
+        <p>
+          ① Vercel 插件 → ② Agent SDK 选项 → ③ Exa 补充 → ④ 我们 webapp 功能 → ⑤
+          用户级 skills 适配 → ⑥ 我们还缺什么
+        </p>
+      </header>
+
+      <div class="concl">
+        <div>
+          <b>结论 1 · 选型</b>前端交互用 <b>Vercel AI SDK</b>（useChat 流式
+          UI），自主 Agent 循环用
+          <b>Claude Agent SDK</b>（本项目已选后者），两者可混用。
+        </div>
+        <div>
+          <b>结论 2 · 现状</b>webapp 已具备 Agent SDK
+          大部分核心能力（MCP/Hooks/权限/沙盒/会话持久化），但缺 6
+          项：Checkpointing、OTel、结构化输出、Tool Search、子代理、托管部署。
+        </div>
+        <div>
+          <b>结论 3 · 最快补强</b>① 接 OTel + 成本追踪 ② 结构化输出接入业务 API
+          ③ 评估 Vercel 托管（vercel-functions/sandbox），把 LAN 版变公网版。
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input
+          id="f"
+          type="text"
+          placeholder="🔍 过滤：输入关键词（如 MCP / OTel / 部署 / 数据库）…"
+        />
+        <button
+          class="all"
+          onclick="
+            document
+              .querySelectorAll('.q')
+              .forEach((q) => q.classList.add('open'))
+          "
+          style="
+            padding: 8px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 13px;
+          "
+        >
+          全部展开
+        </button>
+        <button
+          class="all"
+          onclick="
+            document
+              .querySelectorAll('.q')
+              .forEach((q) => q.classList.remove('open'))
+          "
+          style="
+            padding: 8px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 13px;
+          "
+        >
+          全部收起
+        </button>
+      </div>
+
+      <!-- ① -->
+      <div class="q" data-k="vercel 插件 技能 ai app 部署 next react">
+        <button>
+          <span
+            ><b>① Vercel 插件 / Skills</b>（本地已装，用于构建 AI App）<span
+              class="count"
+              >≈25 个</span
+            ></span
+          ><span class="tag">Vercel</span><span class="n">点击展开</span>
+        </button>
+        <div class="body">
+          <h3>AI 应用构建（直接做 AI 功能）</h3>
+          <table>
+            <tr>
+              <th>Skill</th>
+              <th>用途</th>
+            </tr>
+            <tr>
+              <td>ai-sdk</td>
+              <td>
+                Vercel AI SDK：generateText / streamText / ToolLoopAgent /
+                useChat / useCompletion / embed / structured output / RAG / 多
+                Provider（OpenAI、Anthropic、Google…）
+              </td>
+            </tr>
+            <tr>
+              <td>chat-sdk</td>
+              <td>聊天应用 SDK（useChat 流式对话 UI）</td>
+            </tr>
+            <tr>
+              <td>ai-gateway</td>
+              <td>AI 网关（统一 Provider 路由 / 降级 / 成本控制）</td>
+            </tr>
+            <tr>
+              <td>vercel-agent</td>
+              <td>Vercel Agent 能力（平台侧 Agent 构建）</td>
+            </tr>
+          </table>
+          <h3>React / Next.js 前端</h3>
+          <table>
+            <tr>
+              <th>Skill</th>
+              <th>用途</th>
+            </tr>
+            <tr>
+              <td>vercel-react-best-practices</td>
+              <td>
+                Vercel 官方 70 条性能规则 × 8 类（Waterfall / Bundle / Server /
+                Client / Cache…）
+              </td>
+            </tr>
+            <tr>
+              <td>nextjs / next-best-practices / next-upgrade / next-forge</td>
+              <td>Next.js 开发、最佳实践、升级、Forge 模板</td>
+            </tr>
+            <tr>
+              <td>
+                next-cache-components / routing-middleware / runtime-cache /
+                cdn-caching
+              </td>
+              <td>缓存与路由体系</td>
+            </tr>
+            <tr>
+              <td>react / react-best-practices / shadcn / frontend-design</td>
+              <td>组件与设计系统</td>
+            </tr>
+            <tr>
+              <td>microfrontends / turbopack</td>
+              <td>微前端 / 打包器</td>
+            </tr>
+          </table>
+          <h3>部署与平台</h3>
+          <table>
+            <tr>
+              <th>Skill</th>
+              <th>用途</th>
+            </tr>
+            <tr>
+              <td>deploy-to-vercel</td>
+              <td>一键 Preview/Production 部署（含 git push 集成流程）</td>
+            </tr>
+            <tr>
+              <td>vercel-cli / vercel-cli-with-tokens</td>
+              <td>CLI 部署 / Token 注入</td>
+            </tr>
+            <tr>
+              <td>vercel-functions / vercel-storage / vercel-sandbox</td>
+              <td>Serverless 函数、存储（KV/Postgres/Blob）、沙盒</td>
+            </tr>
+            <tr>
+              <td>
+                vercel-connect / vercel-firewall / env-vars / deployments-cicd
+              </td>
+              <td>数据连接 / WAF / 环境变量 / CI-CD</td>
+            </tr>
+            <tr>
+              <td>vercel-composition-patterns</td>
+              <td>React 组合模式（compound components 等）</td>
+            </tr>
+          </table>
+          <p class="count">
+            来源：<code>~/.pi/agent/skills/</code>（vercel-* 官方系 +
+            deploy-to-vercel + ai-sdk 等）
+          </p>
+        </div>
+      </div>
+
+      <!-- ② -->
+      <div
+        class="q"
+        data-k="agent sdk 选项 文档 claude code 库 python typescript mcp hooks 会话"
+      >
+        <button>
+          <span
+            ><b>② Claude Agent SDK 全部选项</b
+            >（code.claude.com/docs/en/agent-sdk/overview）<span class="count"
+              >29 个页面</span
+            ></span
+          ><span class="tag">Agent SDK</span><span class="n">点击展开</span>
+        </button>
+        <div class="body">
+          <h3>先选型：Agent SDK vs 其他工具</h3>
+          <table>
+            <tr>
+              <th>场景</th>
+              <th>用哪个</th>
+              <th>原因</th>
+            </tr>
+            <tr>
+              <td>自己进程里跑 agent loop</td>
+              <td><b>Agent SDK</b></td>
+              <td>Python/TS 库，自带工具与上下文管理</td>
+            </tr>
+            <tr>
+              <td>终端日常交互</td>
+              <td>Claude Code CLI</td>
+              <td>面向日常交互的终端界面</td>
+            </tr>
+            <tr>
+              <td>自己实现 tool loop</td>
+              <td>Client SDK</td>
+              <td>直连 Anthropic API</td>
+            </tr>
+            <tr>
+              <td>长跑异步、不想管沙盒</td>
+              <td>Managed Agents</td>
+              <td>托管 REST API（另算产品）</td>
+            </tr>
+          </table>
+          <h3>完整页面地图（29 页）</h3>
+          <table>
+            <tr>
+              <th>分组</th>
+              <th>页面</th>
+            </tr>
+            <tr>
+              <td>入门</td>
+              <td>
+                Overview · Quickstart · Build agents · Examples ·
+                Troubleshooting
+              </td>
+            </tr>
+            <tr>
+              <td>核心概念</td>
+              <td>
+                How the agent loop works · Use Claude Code features · Work with
+                sessions · Persist sessions to external storage
+              </td>
+            </tr>
+            <tr>
+              <td>输入输出</td>
+              <td>
+                Streaming input · Handle approvals and user input · Stream
+                responses in real-time · <b>Get structured output</b>
+              </td>
+            </tr>
+            <tr>
+              <td>扩展工具</td>
+              <td>
+                Give Claude custom tools · Connect to external tools with MCP ·
+                <b>Scale to many tools with tool search</b> · Subagents in the
+                SDK
+              </td>
+            </tr>
+            <tr>
+              <td>自定义行为</td>
+              <td>
+                Modifying system prompts · Slash Commands in the SDK · Agent
+                Skills in the SDK · Plugins in the SDK
+              </td>
+            </tr>
+            <tr>
+              <td>控制与观测</td>
+              <td>
+                Configure permissions · Intercept with <b>hooks</b> ·
+                <b>Checkpointing</b>（rewind）· Track cost and usage ·
+                <b>OpenTelemetry</b> · Todo lists
+              </td>
+            </tr>
+            <tr>
+              <td>部署</td>
+              <td>Hosting the Agent SDK · Securely deploying AI agents</td>
+            </tr>
+            <tr>
+              <td>参考</td>
+              <td>
+                TypeScript SDK · Python SDK · Migration Guide · What's New ·
+                Changelog
+              </td>
+            </tr>
+          </table>
+          <p class="count">
+            要点：SDK 仅提供 Python / TypeScript 库；其他语言需驱动 CLI。已内置
+            agent loop + 上下文管理，与 Claude Code 同源。
+          </p>
+        </div>
+      </div>
+
+      <!-- ③ -->
+      <div class="q" data-k="exa 搜索 对比 vercel ai sdk 生产 部署 playbook">
+        <button>
+          <span
+            ><b>③ Exa 搜索补充细节</b>（3 组查询 × 5 结果）<span class="count"
+              >15 条</span
+            ></span
+          ><span class="tag">Exa</span><span class="n">点击展开</span>
+        </button>
+        <div class="body">
+          <h3>查询 1 · Agent SDK 能力（官方）</h3>
+          <ul>
+            <li>
+              <a href="https://code.claude.com/docs/en/agent-sdk/overview"
+                >Agent SDK overview</a
+              >
+              ·
+              <a href="https://code.claude.com/docs/en/agent-sdk/agent-loop"
+                >How the agent loop works</a
+              >
+              ·
+              <a href="https://code.claude.com/docs/en/agent-sdk/python"
+                >Python 参考</a
+              >
+              ·
+              <a
+                href="https://docs.anthropic.com/en/docs/claude-code/sdk/sdk-typescript"
+                >TS 参考</a
+              >
+              ·
+              <a
+                href="https://code.claude.com/docs/en/agent-sdk/claude-code-features"
+                >Claude Code features</a
+              >
+            </li>
+          </ul>
+          <h3>查询 2 · Vercel AI SDK vs Claude Agent SDK（2026）</h3>
+          <table>
+            <tr>
+              <th>来源</th>
+              <th>关键结论</th>
+            </tr>
+            <tr>
+              <td>
+                developersdigest.tech / moeed.app / koenig / dev.to / medium
+              </td>
+              <td>
+                共识：<b>Vercel AI SDK 6</b> 偏前端流式
+                UI（useChat/streamText、Provider 抽象、结构化输出）；<b
+                  >Claude Agent SDK</b
+                >
+                偏自主 Agent（自带
+                loop、工具/MCP、hooks、sandbox）。做"聊天+Agent
+                混合应用"可两者混用。
+              </td>
+            </tr>
+          </table>
+          <h3>查询 3 · 生产部署最佳实践</h3>
+          <ul>
+            <li>
+              <a href="https://code.claude.com/docs/en/agent-sdk/hosting"
+                >Hosting the Agent SDK</a
+              >
+              —— 官方托管指南
+            </li>
+            <li>
+              <a href="https://code.claude.com/docs/en/agent-sdk/plugins"
+                >Plugins in the SDK</a
+              >
+              —— SDK 内插件体系
+            </li>
+            <li>
+              <a
+                href="https://autoolize.com/blog/claude-agent-sdk-production-playbook/"
+                >Autoolize 生产 playbook</a
+              >
+              —— hooks 链（chaining/ordering/precedence）+ 5 个生产模式
+            </li>
+            <li>
+              <a href="https://aiarch.dev/workflows/agent-sdk-delivery"
+                >Agent SDK Delivery Workflow</a
+              >
+              —— 从构建到上生产的交付流水线
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ④ -->
+      <div
+        class="q"
+        data-k="webapp 功能 tui web 本体 专家 项目 agentbay 沙盒 前端"
+      >
+        <button>
+          <span
+            ><b>④ 我们 webapp 的功能</b>（winBrain Creator Lab）<span
+              class="count"
+              >双端 + 5 大域</span
+            ></span
+          ><span class="tag">webapp</span><span class="n">点击展开</span>
+        </button>
+        <div class="body">
+          <h3>双端形态</h3>
+          <table>
+            <tr>
+              <th>端</th>
+              <th>说明</th>
+            </tr>
+            <tr>
+              <td>Ink TUI（src/）</td>
+              <td>
+                Creator OS 首页、员工/专家选择器、热加载项目聊天、Ontology
+                Studio、业务工厂、AgentBay Cloud Agent
+              </td>
+            </tr>
+            <tr>
+              <td>Enterprise V4 Web（frontend/）</td>
+              <td>
+                PCB Scroll World 首页、浅色蓝
+                Token、业务工作台、专家详情/进化、Chat 渲染（Markdown / SVG
+                artifact / thinking）
+              </td>
+            </tr>
+          </table>
+          <h3>核心业务能力（WORKBENCH_CAPABILITIES v1）</h3>
+          <table>
+            <tr>
+              <th>域</th>
+              <th>能力</th>
+            </tr>
+            <tr>
+              <td>三层创建</td>
+              <td>
+                员工 = Skill（多轮聊天创建/改进）· 专家 = Plugin（表单编译大
+                Prompt + 隔离 SDK 创建/进化）· 项目 = N 专家 + M Ontology MCP →
+                统一 API
+              </td>
+            </tr>
+            <tr>
+              <td>chat</td>
+              <td>会话模式，目标：project / expert / employee 三类</td>
+            </tr>
+            <tr>
+              <td>creator</td>
+              <td>
+                kind：project / expert / employee；支持进化（evolution）+
+                隔离草稿（isolatedDrafts）
+              </td>
+            </tr>
+            <tr>
+              <td>projects</td>
+              <td>任务 tasks / 会议 meetings / 活动 activity / webhook 配置</td>
+            </tr>
+            <tr>
+              <td>resources</td>
+              <td>database / document / file 三类资源</td>
+            </tr>
+            <tr>
+              <td>experts</td>
+              <td>
+                生命周期 lifecycle / 版本 versions / 测试用例 testCases / 遥测
+                telemetry
+              </td>
+            </tr>
+            <tr>
+              <td>Business App</td>
+              <td>AI 应用或传统看板，一 App 一 Project，一 Project 多 App</td>
+            </tr>
+          </table>
+          <h3>Ontology Studio（本体）</h3>
+          <ul>
+            <li>
+              Typeless 三步导入：内嵌浏览器多选（MD/TXT/YAML/SQL/JSON）→ AI
+              生成待审核草稿 → Enter 显式批准（无 fallback 假数据）
+            </li>
+            <li>
+              DB Scanner：隔离 Python 进程只读扫描 FMCG OceanBase/MySQL、ARO
+              MySQL、Video SQL Server
+            </li>
+            <li>
+              六页切换：1 概览 / 2 业务本体 / 3 数据语义 / 4 映射审核 / 5
+              知识图谱 / 6 语义问答
+            </li>
+            <li>
+              真实 Data Ontology MCP server（stdio +
+              HTTP），发布前阻断未批准内容
+            </li>
+          </ul>
+          <h3>AgentBay Cloud Agent</h3>
+          <ul>
+            <li>
+              每会话独享 browser_latest 云沙盒；空闲 10 分钟销毁，预览最长 60
+              分钟
+            </li>
+            <li>
+              /preview 静态预览 · /takeover 浏览器接管 · /resume 恢复 ·
+              /sessions 容量 · /bill 账单 · /shutdown-all SHUTDOWN ALL
+            </li>
+            <li>
+              10 个白名单工具；文件读写限制 /tmp 与 /home/wuying；错误信息脱敏
+            </li>
+          </ul>
+          <h3>安全基线（Sandbox B）</h3>
+          <ul>
+            <li>
+              OS Sandbox + PreToolUse 路径门禁双保险，fail closed，绝不降级裸跑
+            </li>
+            <li>
+              Sandbox 不继承宿主环境变量（env={}）；凭据仅经 Credential MCP 注入
+            </li>
+            <li>
+              会话 10 分钟销毁 / 聊天导出按项目隔离保留 30 天；LAN 仅绑定
+              RFC1918
+            </li>
+          </ul>
+          <p class="count">
+            验证：npm run check（typecheck + test + TUI check + web check + axe
+            十场景 a11y + build）+ smoke:chat / agentbay / ontology
+          </p>
+        </div>
+      </div>
+
+      <!-- ⑤ -->
+      <div class="q" data-k="用户级 skills 适配 架构 测试 设计 部署 协同 云">
+        <button>
+          <span
+            ><b>⑤ 用户级 Skills 中适配 webapp 的</b>（~/.agents/skills 280 +
+            ~/.pi/agent/skills 330）<span class="count">精选 ≈45 个</span></span
+          ><span class="tag">Skills</span><span class="n">点击展开</span>
+        </button>
+        <div class="body">
+          <table>
+            <tr>
+              <th>类别</th>
+              <th>适配 Skill</th>
+              <th>怎么用</th>
+            </tr>
+            <tr>
+              <td>架构</td>
+              <td>hexagonal-architecture</td>
+              <td>
+                本项目强制规则：依赖方向 adapters → application/domain，端口注入
+              </td>
+            </tr>
+            <tr>
+              <td>Agent 构建</td>
+              <td>
+                agent-sdk-dev · my-agent-sdk · new-agent-sdk · new-sdk-app ·
+                skill-creator
+              </td>
+              <td>
+                SDK 应用验证 / Creator 生成新项目（继承 Sandbox B 基线）/
+                员工=Skill 创建
+              </td>
+            </tr>
+            <tr>
+              <td>测试质量</td>
+              <td>
+                agent-webapp-testing · webapp-testing · uat-snapshot-runner ·
+                agent-browser · verification
+              </td>
+              <td>AI webapp 端到端测试、UAT 快照、浏览器自动化</td>
+            </tr>
+            <tr>
+              <td>设计前端</td>
+              <td>
+                ui-ux-pro-max · web-design-guidelines · frontend-design · shadcn
+                · gsap-*（8）· scroll-world · hyperframes
+              </td>
+              <td>
+                84 风格/192 色板/74 字体；Web 界面规范；PCB Scroll World
+                同款动效
+              </td>
+            </tr>
+            <tr>
+              <td>部署分享</td>
+              <td>
+                deploy-to-vercel · expose-local-public · gitpage-artifacts ·
+                html-artifacts · lan-artifacts · herdr-dashboard-focus
+              </td>
+              <td>
+                Vercel 预览部署 / cloudflared 公网隧道（本页即此通道）/ 产物发布
+              </td>
+            </tr>
+            <tr>
+              <td>产物沟通</td>
+              <td>
+                onepager · internal-comms · ui-demo ·
+                pi-session-imessage-handoff
+              </td>
+              <td>窄门报告、周报/汇报、录屏演示、工程交接</td>
+            </tr>
+            <tr>
+              <td>协同集成</td>
+              <td>lark-*（18）· wecomcli-*（3）· cnb-*（13）</td>
+              <td>
+                飞书 IM/文档/表格/审批；企微文档/表格/待办；代码平台
+                PR/CI/知识库
+              </td>
+            </tr>
+            <tr>
+              <td>云基础设施</td>
+              <td>alibabacloud-*（≈200）</td>
+              <td>ECS/RDS/OSS/PAI/SLS/MaxCompute/AgentBay 全系运维与数据</td>
+            </tr>
+            <tr>
+              <td>元技能</td>
+              <td>ponytail · caveman · no-followup · find-skills · teach</td>
+              <td>极简实现 / 简洁表达 / 不追问 / 找技能 / 教学</td>
+            </tr>
+          </table>
+          <p class="count">
+            注：vercel-* 官方技能包已在 ① 单独列出；~/.pi/agent/skills 与
+            ~/.agents/skills 有部分同源重复。
+          </p>
+        </div>
+      </div>
+
+      <!-- ⑥ -->
+      <div
+        class="q gap"
+        data-k="差距 缺什么 checkpointing otel 结构化输出 tool search 子代理 托管 部署 数据库 认证"
+      >
+        <button>
+          <span
+            ><b>⑥ 我们还缺什么？</b>（差距分析）<span class="count"
+              >12 项</span
+            ></span
+          ><span class="tag">Gap</span><span class="n">点击展开</span>
+        </button>
+        <div class="body">
+          <h3>
+            A · Agent SDK 能力未启用
+            <span class="count">（官方 29 页中 6 页）</span>
+          </h3>
+          <table>
+            <tr>
+              <th>缺口</th>
+              <th>价值</th>
+              <th>补法</th>
+            </tr>
+            <tr>
+              <td class="miss">Checkpointing（rewind）</td>
+              <td>Agent 改坏文件可回滚</td>
+              <td>SDK options 开 checkpoint，接现有 Sandbox B</td>
+            </tr>
+            <tr>
+              <td class="miss">OpenTelemetry 观测</td>
+              <td>trace 每一步 agent 调用</td>
+              <td>SDK OTel exporter → 现有 herdr / SLS 链路</td>
+            </tr>
+            <tr>
+              <td class="miss">Structured output</td>
+              <td>Agent 结果直出 JSON 契约</td>
+              <td>接业务 API / 本体发布前校验</td>
+            </tr>
+            <tr>
+              <td class="miss">Tool search（大规模工具）</td>
+              <td>几十个工具自动检索</td>
+              <td>专家工具多时启用（现靠白名单 10 个）</td>
+            </tr>
+            <tr>
+              <td class="miss">Subagents in SDK</td>
+              <td>主 Agent 内嵌套子代理</td>
+              <td>专家=Plugin 编排场景可引入</td>
+            </tr>
+            <tr>
+              <td class="miss">Todo lists</td>
+              <td>长任务可见进度</td>
+              <td>SDK 内置 todo 事件 → TUI/Web 渲染</td>
+            </tr>
+          </table>
+          <h3>B · Vercel / 平台侧未集成</h3>
+          <table>
+            <tr>
+              <th>缺口</th>
+              <th>现状</th>
+              <th>补法</th>
+            </tr>
+            <tr>
+              <td class="miss">Vercel AI SDK 流式 UI</td>
+              <td>Web chat 走自研渲染</td>
+              <td>useChat 接入流式输出（可混用）</td>
+            </tr>
+            <tr>
+              <td class="miss">公网托管</td>
+              <td>仅 LAN + 临时 cloudflared 隧道</td>
+              <td>vercel-functions / vercel-sandbox 评估托管部署</td>
+            </tr>
+            <tr>
+              <td class="miss">持久化 DB</td>
+              <td>文件系统 + gitignore（P4 才迁 DB）</td>
+              <td>2026-09-03 后重新评估迁移</td>
+            </tr>
+            <tr>
+              <td class="miss">多租户认证</td>
+              <td>auth: private_lan</td>
+              <td>公网化必须先做登录/密钥管理</td>
+            </tr>
+            <tr>
+              <td class="miss">成本追踪</td>
+              <td>无用量仪表</td>
+              <td>Track cost and usage + /bill 合并</td>
+            </tr>
+          </table>
+          <h3>C · 用户级 Skills 缺口</h3>
+          <ul>
+            <li>
+              <span class="miss">无 exa 正式 skill</span> —— 本次调研是临时用
+              API 调的；可做成 skill 供以后检索复用
+              <span class="badge">建议</span>
+            </li>
+            <li>
+              <span class="miss">无 winBrain 专属部署/监控 skill</span> ——
+              每次公网发布都手搓隧道
+            </li>
+            <li>
+              <span class="miss">Managed Agents 未评估</span> —— 托管 REST API
+              是否替代自建沙盒值得一测
+            </li>
+          </ul>
+          <h3 class="ok">✅ 已经有的（不重复造）</h3>
+          <ul>
+            <li>
+              MCP（自定义工具 + 外部 MCP 注册）· Hooks（PreToolUse 路径门禁）·
+              Permissions · 会话持久化（外部存储）· Skills /
+              Plugins（员工=Skill、专家=Plugin）· System prompt 修改 · Sandbox
+              隔离 · 云沙盒 AgentBay
+            </li>
+          </ul>
+          <h3>建议优先级</h3>
+          <table>
+            <tr>
+              <th>#</th>
+              <th>动作</th>
+              <th>理由</th>
+            </tr>
+            <tr>
+              <td>P0</td>
+              <td>OTel + 成本追踪接入</td>
+              <td>上线前提：看不见就跑不了</td>
+            </tr>
+            <tr>
+              <td>P1</td>
+              <td>Structured output 接业务 API</td>
+              <td>把 Agent 结果变成可靠数据</td>
+            </tr>
+            <tr>
+              <td>P2</td>
+              <td>Vercel 托管评估 + AI SDK 流式 UI</td>
+              <td>从 LAN 走向公网产品</td>
+            </tr>
+            <tr>
+              <td>P3</td>
+              <td>Checkpointing · Todo lists</td>
+              <td>体验与安全双提升</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="src">
+        <b>来源标注</b>（AGENTS.md 合规）｜ 项目：winBrain Creator Lab ·
+        <code>/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean</code>
+        ｜ 当前 Pi session：<code>sess-msr7dp0g-or0e</code>（worker1 @
+        企业微信） ｜ 数据：本地 skills 目录实扫 +
+        <a href="https://code.claude.com/docs/en/agent-sdk/overview"
+          >Agent SDK 官方文档</a
+        >（实时抓取）+ Exa API（3 组查询） ｜ 生成：2026-08-12 · 单文件自包含 ·
+        无外链请求
+      </div>
+    </div>
+
+    <script>
+      // 窄门：点击展开/收起
+      document
+        .querySelectorAll(".q>button")
+        .forEach((b) =>
+          b.addEventListener("click", () =>
+            b.parentElement.classList.toggle("open"),
+          ),
+        );
+      // 过滤
+      const f = document.getElementById("f");
+      f.addEventListener("input", () => {
+        const k = f.value.trim().toLowerCase();
+        document.querySelectorAll(".q").forEach((q) => {
+          const hit =
+            !k ||
+            q.dataset.k.includes(k) ||
+            q.innerText.toLowerCase().includes(k);
+          q.classList.toggle("hide", !hit);
+          if (hit && k) q.classList.add("open");
+        });
+      });
+    </script>
+  </body>
+</html>

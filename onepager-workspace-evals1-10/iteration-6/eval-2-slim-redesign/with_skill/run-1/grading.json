@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Output is a single self-contained HTML file",
+      "passed": true,
+      "evidence": "no external http resources",
+      "manual": false
+    },
+    {
+      "text": "The first visible content is a one-line verdict, not a table",
+      "passed": true,
+      "evidence": "verdict-first structure",
+      "manual": false
+    },
+    {
+      "text": "Bulk detail content sits behind collapsible sections or on-demand filters",
+      "passed": true,
+      "evidence": "collapsible present",
+      "manual": false
+    },
+    {
+      "text": "Search, sort, clickable rows, checklist, and copy affordances all still function",
+      "passed": true,
+      "evidence": "checklist affordance",
+      "manual": false
+    },
+    {
+      "text": "No section renders its full data table expanded on page load",
+      "passed": true,
+      "evidence": "manual check advised",
+      "manual": true
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

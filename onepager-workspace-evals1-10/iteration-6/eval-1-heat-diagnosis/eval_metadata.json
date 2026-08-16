@@ -1,0 +1,14 @@
+{
+  "eval_id": 1,
+  "eval_name": "heat-diagnosis",
+  "prompt": "我的 mac 最近太热了，风扇声音很大。帮我诊断一下发热原因，并生成一个交互式 HTML 报告：要能看到最占资源的进程、能按 CPU 排序、能搜索进程名，还要有一个可以勾选和复制成 markdown 的行动清单。注意信息不要一次全铺出来，结论要一眼看到。",
+  "assertions": [
+    "Output is a single self-contained HTML file with no external <script>/<link> resources",
+    "The page shows a verdict-first line directly under the title, before any tables",
+    "The process table is searchable via an input that filters rows",
+    "The process table columns are sortable by clicking headers",
+    "There is a checkable action checklist with a copy-to-markdown button",
+    "Evidence/details sections are collapsed or loaded on demand, not all expanded at once",
+    "A provenance footer records source and generation info"
+  ]
+}

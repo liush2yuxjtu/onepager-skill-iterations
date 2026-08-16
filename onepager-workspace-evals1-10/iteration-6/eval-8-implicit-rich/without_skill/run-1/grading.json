@@ -1,0 +1,34 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML directly links report.html, qa.json, run.webm, and trace.zip using portable relative paths.",
+      "passed": true,
+      "evidence": "linked/referenced: ['report.html', 'qa.json', 'run.webm', 'trace.zip']",
+      "manual": false
+    },
+    {
+      "text": "run.webm is rendered in a controls-enabled video player outside any details element.",
+      "passed": false,
+      "evidence": "video+controls: False, details blocks: 0",
+      "manual": false
+    },
+    {
+      "text": "The artifact links are visible in the main page rather than present only inside collapsed details.",
+      "passed": true,
+      "evidence": "4 links outside details",
+      "manual": false
+    },
+    {
+      "text": "The footer includes /tmp/pitch-video and implicit-session-8.",
+      "passed": true,
+      "evidence": "provenance found: ['/tmp/pitch-video', 'implicit-session-8']",
+      "manual": false
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

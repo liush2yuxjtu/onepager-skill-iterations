@@ -1,0 +1,105 @@
+{
+  "description": "用「窄门」哲学（SMALL_INTERFACE）设计交互式 HTML：结论前置，以搜索、筛选、排序、折叠、行动、复制或 状态回传等窄网关按需交换最小信息。仅当用户明确要求交互式 HTML / dashboard / diagnosis page，或交互、 状态、按需下钻能明显改善任务完成时使用；也用于保留交互地瘦身臃肿报告、归集当前会话产物的 HTML recap、 超长 HTML 改动预览、设计稿与 WebApp 漂移评测，以及需要密码、API key、token、2FA 或二维码的人机凭据页。 不因 report、summary、plan、explainer 或 HTML 等单个词自动触发；普通文字报告、领导汇报、短总结、静态计划、 代码修改和产品 UI 小改动保持其最小合适格式，除非用户明确要求交互式 HTML。",
+  "results": [
+    {
+      "query": "我的 MacBook 这两天一开本地 agent 就发烫。请采集当前 CPU、内存和进程数据，做一个离线可打开的交互式诊断页：顶部先告诉我主要热源，进程可以搜索和按 CPU 排序，修复动作可以勾选并复制成 Markdown。",
+      "decision": true,
+      "reason": "明确要求离线交互式诊断页，并包含结论前置、搜索、排序、勾选与状态复制，和 description 的核心交互模式高度一致。"
+    },
+    {
+      "query": "帮我从零做一个采购审批的可点击单页原型。左边是待处理申请，右边看详情并填写意见，要能通过、驳回、切换已处理状态，还要演示空队列和校验失败。最终给我一个直接双击就能打开的文件，我不准备起前端项目。",
+      "decision": true,
+      "reason": "这是无需前端项目、可直接打开的复杂可点击单页原型，包含多状态流转、表单校验和空状态，适合先调用 onepager。"
+    },
+    {
+      "query": "运营同学每天排查投放异常很痛苦，能不能给他们一个很小的浏览器工具：按渠道和日期筛异常，展开证据，只勾选需要重跑的任务，然后把选择结果复制给 agent。数据可以先写死，重点是交互流程能跑。",
+      "decision": true,
+      "reason": "用户要可运行的浏览器交互工具，筛选、证据下钻、选择与复制回 agent 正是窄网关式交互，明显需要该 skill。"
+    },
+    {
+      "query": "`~/Downloads/Q3-acceptance.html` 有 480KB、六个 tab，每页几十行表，评审说信息太多，但搜索、排序、点行看证据和勾选整改项都不能丢。请把它重构成结论优先、细节按需展开的轻量交互式 HTML。",
+      "decision": true,
+      "reason": "明确要求在保留交互的前提下瘦身臃肿 HTML，并改为结论优先和按需展开，直接命中 description 的专项场景。"
+    },
+    {
+      "query": "把这次 UAT 会话产生的 report.html、qa.json、run.webm 和 trace.zip 整理成一个 HTML handoff。最终录像要直接在正文播放，其他产物有真实链接；只收本次聊天能证明属于当前会话的文件。",
+      "decision": true,
+      "reason": "要求归集当前会话产物为 HTML handoff，且涉及内嵌录像、真实链接和证据范围判断，直接符合 HTML recap 场景。"
+    },
+    {
+      "query": "我改了一个 600KB 的 hash-router SPA 原型，改动分别藏在 chat、experts、projects 三个视图。做个评审入口：默认只显示一条很窄的改动栏，点每个 tag 能先切到对应视图再闪烁定位，评审结果能勾选和复制。",
+      "decision": true,
+      "reason": "这是超长 HTML/SPA 的改动评审入口，要求跨视图定位、窄改动栏、勾选和复制，属于 description 明列的复杂交互预览。"
+    },
+    {
+      "query": "设计稿在 `/tmp/design-intent.html`，实际 WebApp 导出的交互清单在 `/tmp/implemented-actions.json`。请做一个可浏览的对比页，按 domain 标出 full / partial / gap / overflow，先给意图实现率，再允许点进每个域看证据。",
+      "decision": true,
+      "reason": "明确要求设计稿与 WebApp 漂移评测的可浏览对比页，并需先给指标再按域下钻证据，直接匹配专项触发描述。"
+    },
+    {
+      "query": "部署脚本现在停在人工认证：先输云平台密码，再填 sk- 开头的 key，有时还要 6 位短信码或扫码。请做一个本地凭据接力页，默认遮蔽、格式错误可重试、二维码有过期倒计时，完成状态能复制回 agent，不能向远程地址发送任何内容。",
+      "decision": true,
+      "reason": "本地密码、API key、短信码、二维码和完成状态回传的人机凭据页是 description 明确列出的高匹配场景。"
+    },
+    {
+      "query": "need a onepager for our incident war room — one sentence verdict first, then a searchable owner list, collapsible evidence, checkboxes for mitigations, and a copy button so i can paste the current state back into the claude session. single html pls, offline.",
+      "decision": true,
+      "reason": "用户明确点名 onepager 和离线单 HTML，且要求结论前置、搜索、折叠、勾选及状态复制，毫无歧义地应调用。"
+    },
+    {
+      "query": "给我做一个 MCP 与专家创建、技能进化、诊断模块之间的交互关系页面。我要在浏览器里点某个 MCP 只高亮它实际连接的模块，节点详情按需展开，全部放在一个离线 HTML 里，不要依赖图表 CDN。",
+      "decision": true,
+      "reason": "要求离线单 HTML 的交互关系页，包含点击高亮和详情按需展开，交互对于理解关系明显有益，应调用 onepager。"
+    },
+    {
+      "query": "请直接改 `frontend/src/components/ApprovalPanel.tsx`：按钮圆角改成 8px，驳回按钮 hover 变深红，移动端间距缩到 12px，并补上现有 Vitest 测试。不要另做 demo 或 HTML 报告。",
+      "decision": false,
+      "reason": "这是明确限定的产品 UI 代码小改动与测试任务，并明确不要独立 demo 或 HTML 报告，description 要求保持最小合适格式。"
+    },
+    {
+      "query": "我们要重做企业后台的审批体验。请先给一份 UX 需求文档：列角色、任务流、信息架构、错误状态和无障碍验收标准，Markdown 就好，暂时不要原型和页面。",
+      "decision": false,
+      "reason": "用户只要 Markdown 静态需求文档并明确暂不制作页面，虽然任务专业且多步，但不需要交互式 HTML。"
+    },
+    {
+      "query": "用 Skill Creator 自带的 eval viewer 展示我这批 skill run 的 outputs、grading.json 和 benchmark.json。必须用 generate_review.py，别重新设计一个评测页面。",
+      "decision": false,
+      "reason": "用户指定使用既有 eval viewer 和 generate_review.py，且明确禁止重新设计评测页面，应遵循指定工具而非调用 onepager。"
+    },
+    {
+      "query": "把本周研发进度整理成给 VP 的五段式周报：目标、完成、风险、下周计划、需要决策。只在聊天输出，控制在 500 字以内，不要 HTML。",
+      "decision": false,
+      "reason": "这是短篇聊天内文字周报，且明确不要 HTML，属于 description 排除的领导汇报和短总结。"
+    },
+    {
+      "query": "给数据库迁移写一个三阶段执行计划，包含负责人、回滚条件和检查清单。放到 `docs/migration-plan.md`，这是静态文档，不需要筛选或状态回传。",
+      "decision": false,
+      "reason": "明确要求静态 Markdown 计划且不需要筛选或状态回传，属于普通静态计划而非交互页面。"
+    },
+    {
+      "query": "法务给了 `privacy-policy.html`，请只修正其中三处错别字和一个失效链接，保持现有结构和样式，直接编辑原文件，不要转换成交互页面。",
+      "decision": false,
+      "reason": "HTML 只是被编辑的文件格式，任务是简单定点修正并明确禁止转换成交互页面，不能因 HTML 关键词触发。"
+    },
+    {
+      "query": "在当前 Next.js 产品里实现一个新的客户列表页面，数据从 `/api/customers` 获取，使用现有 design system、路由和权限中间件，并补加载/空/错误状态。请直接写 React 代码并跑测试。",
+      "decision": false,
+      "reason": "这是现有产品中的 React 页面实现任务，要求复用项目架构并跑测试，不是独立交互式 HTML 交付物。"
+    },
+    {
+      "query": "现有 analytics dashboard 的 Recharts 折线图缺少 tooltip 和同比序列，请直接修改 `apps/web/app/analytics/page.tsx`，复用项目颜色 token，不要生成独立报告。",
+      "decision": false,
+      "reason": "虽然出现 dashboard 和交互提示，但用户明确要求修改现有产品代码且不要独立报告，属于代码小改动而非 onepager 场景。"
+    },
+    {
+      "query": "review `reports/security-audit.html` for XSS and accessibility issues, then give me findings with file:line references. do not modify the file and don't build a separate review UI.",
+      "decision": false,
+      "reason": "任务是只读代码审查并以 file:line 返回文字发现，且明确不要独立评审 UI，HTML 文件名本身不足以触发。"
+    },
+    {
+      "query": "用三句话比较方案 A 的 Redis 队列和方案 B 的数据库轮询，最后推荐一个。不要图、不要页面、不要 artifact，我只需要快速判断。",
+      "decision": false,
+      "reason": "这是极简的一步文字比较，明确排除图、页面和 artifact，不需要专业交互式交付。"
+    }
+  ]
+}

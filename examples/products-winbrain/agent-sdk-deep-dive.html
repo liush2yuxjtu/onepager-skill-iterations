@@ -1,0 +1,1287 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claude Agent SDK 深潜 · Deep Dive</title>
+    <style>
+      :root {
+        --bg: #f5f7fa;
+        --card: #ffffff;
+        --ink: #1a2a3a;
+        --sub: #5b6b7b;
+        --brand: #1769e8;
+        --brand2: #6758e8;
+        --ok: #167447;
+        --warn: #8f550b;
+        --miss: #b3261e;
+        --line: #e3e9f2;
+        --chip: #eef4ff;
+        --code: #f0f3f8;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.65 "PingFang SC",
+          "Hiragino Sans GB",
+          "Microsoft YaHei",
+          system-ui,
+          sans-serif;
+        padding: 20px;
+      }
+      .wrap {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      header {
+        background: linear-gradient(120deg, var(--brand), var(--brand2));
+        color: #fff;
+        border-radius: 16px;
+        padding: 22px 26px;
+        box-shadow: 0 2px 8px rgba(26, 42, 58, 0.15);
+      }
+      header h1 {
+        font-size: 22px;
+        margin-bottom: 6px;
+      }
+      header p {
+        font-size: 13px;
+        opacity: 0.85;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .stats div {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        text-align: center;
+      }
+      .stats b {
+        display: block;
+        font-size: 20px;
+        color: var(--brand);
+      }
+      .stats span {
+        font-size: 12px;
+        color: var(--sub);
+      }
+      .concl {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--brand);
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin: 12px 0;
+        font-size: 13px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        margin: 14px 0;
+        flex-wrap: wrap;
+      }
+      .toolbar input {
+        flex: 1;
+        min-width: 200px;
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-size: 13px;
+        background: #fff;
+      }
+      .toolbar button {
+        padding: 8px 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .q {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        margin-bottom: 10px;
+        overflow: hidden;
+      }
+      .q > button {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font: inherit;
+        text-align: left;
+        color: var(--ink);
+      }
+      .q > button:hover {
+        background: #f0f5ff;
+      }
+      .q .tag {
+        font-size: 12px;
+        color: var(--brand);
+        background: var(--chip);
+        border-radius: 6px;
+        padding: 2px 8px;
+        white-space: nowrap;
+      }
+      .q .n {
+        font-size: 12px;
+        color: var(--sub);
+        min-width: 100px;
+        text-align: right;
+      }
+      .q .n::after {
+        content: " ▼";
+      }
+      .q.open .n::after {
+        content: " ▲";
+      }
+      .q .body {
+        display: none;
+        padding: 6px 18px 18px;
+        border-top: 1px dashed var(--line);
+      }
+      .q.open .body {
+        display: block;
+      }
+      h3 {
+        font-size: 14px;
+        color: var(--brand);
+        margin: 14px 0 8px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+        margin: 6px 0;
+      }
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 7px 9px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f2f6fd;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      tr:nth-child(even) td {
+        background: #fafcff;
+      }
+      code {
+        background: var(--code);
+        border-radius: 5px;
+        padding: 1px 6px;
+        font-size: 12px;
+        font-family: "SF Mono", Menlo, monospace;
+      }
+      pre {
+        background: #15202b;
+        color: #dce6f2;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 12px;
+        overflow-x: auto;
+        margin: 8px 0;
+        line-height: 1.55;
+      }
+      pre code {
+        background: none;
+        color: inherit;
+        padding: 0;
+      }
+      .ok {
+        color: var(--ok);
+        font-weight: 600;
+      }
+      .warn {
+        color: var(--warn);
+        font-weight: 600;
+      }
+      .miss {
+        color: var(--miss);
+        font-weight: 600;
+      }
+      ul {
+        margin: 6px 0 6px 20px;
+      }
+      li {
+        margin: 3px 0;
+      }
+      .map td:first-child {
+        white-space: nowrap;
+      }
+      .src {
+        margin-top: 18px;
+        padding: 12px 16px;
+        background: #eef1f6;
+        border-radius: 10px;
+        font-size: 12px;
+        color: var(--sub);
+      }
+      .src b {
+        color: var(--ink);
+      }
+      a {
+        color: var(--brand);
+        word-break: break-all;
+      }
+      .hide {
+        display: none !important;
+      }
+      .pill {
+        display: inline-block;
+        border-radius: 6px;
+        padding: 0 7px;
+        font-size: 11px;
+        margin-left: 4px;
+      }
+      .pill.y {
+        background: #e6f6ec;
+        color: var(--ok);
+      }
+      .pill.n {
+        background: #fdeeee;
+        color: var(--miss);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>🔬 Claude Agent SDK 深潜</h1>
+        <p>
+          官方 32 页文档全量抓取（2026-08-13）· 核心概念 / 完整 API / 26 个
+          hooks / 会话 / 工具 / 控制观测 / 部署 · 附 winBrain 应用对照
+        </p>
+      </header>
+
+      <div class="stats">
+        <div><b>32</b><span>官方文档页</span></div>
+        <div><b>6</b><span>核心函数</span></div>
+        <div><b>26</b><span>hooks 事件</span></div>
+        <div><b>10,000</b><span>tool search 上限</span></div>
+        <div><b>4</b><span>权限模式</span></div>
+        <div><b>2</b><span>输入模式</span></div>
+      </div>
+
+      <div class="concl">
+        <b>一句话本质</b>：Agent SDK 是 <b>Claude Code 的库化版本</b>——agent
+        loop（规划→工具→上下文管理）已在内部跑完，你的进程只负责输入
+        prompt、收流式消息、挂 hooks/MCP/权限。winBrain 已用其中 <b>60%</b>（MCP
+        / hooks / 权限 / 会话 / 系统提示 / 沙盒），缺口集中在
+        <b>结构化输出 / Checkpointing / OTel / Tool Search / 子代理</b>。
+      </div>
+
+      <div class="toolbar">
+        <input
+          id="f"
+          type="text"
+          placeholder="🔍 过滤：checkpoint / otel / hooks / mcp / 会话 / 子代理…"
+        />
+        <button
+          onclick="
+            document
+              .querySelectorAll('.q')
+              .forEach((q) => q.classList.add('open'))
+          "
+        >
+          全部展开
+        </button>
+        <button
+          onclick="
+            document
+              .querySelectorAll('.q')
+              .forEach((q) => q.classList.remove('open'))
+          "
+        >
+          全部收起
+        </button>
+      </div>
+
+      <!-- 1 架构 -->
+      <div
+        class="q"
+        data-k="架构 agent loop 子进程 输入模式 streaming single query"
+      >
+        <button>
+          <span><b>① 架构：agent loop 与两种输入模式</b></span
+          ><span class="tag">核心</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <h3>Agent loop（消息生命周期）</h3>
+          <ul>
+            <li>
+              你的进程 → SDK 子进程（Claude Code 内核）→ 模型 API；往返流式消息
+            </li>
+            <li>
+              循环内自动处理：工具调用 → 工具执行 → 结果回填 →
+              继续推理，直到停止条件
+            </li>
+            <li>
+              上下文管理（压缩）、错误结果（error_max_turns
+              等）、会话持久化全部内置
+            </li>
+          </ul>
+          <h3>两种输入模式</h3>
+          <table>
+            <tr>
+              <th>模式</th>
+              <th>用法</th>
+              <th>适合</th>
+              <th>限制</th>
+            </tr>
+            <tr>
+              <td><b>Streaming Input</b>（推荐）</td>
+              <td>
+                <code>ClaudeSDKClient</code>（Py）/ 持续
+                session（TS），先发首条消息、等待条件、再追图/追问
+              </td>
+              <td>交互式多轮、需要中途追加图片/文件、长会话</td>
+              <td>需要自己管理生命周期</td>
+            </tr>
+            <tr>
+              <td><b>Single Message</b></td>
+              <td>
+                <code>query(prompt, options)</code> 一次性调用，返回消息流
+              </td>
+              <td>单轮任务、无状态 API、脚本自动化</td>
+              <td>
+                单条 prompt 定生死；错误结果会抛异常；继续对话要靠 session_id
+              </td>
+            </tr>
+          </table>
+          <pre><code>// 单轮 query（winBrain 当前用法）
+for await (const message of query({ prompt, options })) { … }</code></pre>
+        </div>
+      </div>
+
+      <!-- 2 API -->
+      <div
+        class="q"
+        data-k="api 函数 query streamQuery agent startup tool createSdkMcpServer listSessions getSessionMessages options"
+      >
+        <button>
+          <span><b>② 完整 API 面（TypeScript 参考）</b></span
+          ><span class="tag">API</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <h3>6 个核心导出函数</h3>
+          <table>
+            <tr>
+              <th>函数</th>
+              <th>作用</th>
+            </tr>
+            <tr>
+              <td><code>query(prompt, options)</code></td>
+              <td>
+                单轮查询；流式产出 assistant 消息与 result 消息；错误结果抛异常
+              </td>
+            </tr>
+            <tr>
+              <td><code>queryStream</code> / 流式接口</td>
+              <td>实时流式响应（文字 + 工具调用逐条到达），供 UI 逐字渲染</td>
+            </tr>
+            <tr>
+              <td><code>startup(options)</code></td>
+              <td>前台交互式 agent 会话（终端式），把 stdin/stdout 交给用户</td>
+            </tr>
+            <tr>
+              <td><code>tool()</code></td>
+              <td>
+                定义自定义工具（含 ToolAnnotations：只读/敏感/破坏性标注）
+              </td>
+            </tr>
+            <tr>
+              <td><code>createSdkMcpServer()</code></td>
+              <td>把自定义工具打包成进程内 MCP server（本地工具的标准姿势）</td>
+            </tr>
+            <tr>
+              <td><code>listSessions() / getSessionMessages()</code></td>
+              <td>列出/读取历史会话消息（审计、恢复、UI 历史）</td>
+            </tr>
+          </table>
+          <h3>Options 关键字段（配置面）</h3>
+          <ul>
+            <li>
+              <code>model</code> — 模型路由；<code>systemPrompt</code> —
+              系统提示（预设 <code>claude_code</code> 或自定义）
+            </li>
+            <li>
+              <code>mcpServers</code> — MCP 注册表（stdio / HTTP / SDK 内建）
+            </li>
+            <li>
+              <code>permissionMode</code> — 权限模式；<code>allowedTools</code>
+              / <code>disallowedTools</code> — 工具白/黑名单
+            </li>
+            <li>
+              <code>hooks</code> — 事件拦截表；<code>checkpoint</code> —
+              文件回滚开关
+            </li>
+            <li>
+              <code>env</code> — 子进程环境（winBrain 强制
+              <code>{}</code>，不继承宿主）
+            </li>
+            <li>
+              <code>settings</code> — Claude Code 配置（含 apiKeyHelper
+              等启动例外）
+            </li>
+            <li>
+              <code>sessionId</code> / <code>resume</code> /
+              <code>continue</code> / <code>fork</code> — 会话控制
+            </li>
+            <li>
+              <code>cwd</code> — 工作目录；<code>executable</code> — CLI 路径
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 3 hooks -->
+      <div class="q" data-k="hooks 事件 拦截 全部 列表">
+        <button>
+          <span
+            ><b>③ 26 个 hooks 事件全清单</b
+            ><span class="pill y">winBrain 已用</span></span
+          ><span class="tag">控制</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <table>
+            <tr>
+              <th>事件</th>
+              <th>Py</th>
+              <th>TS</th>
+              <th>触发点</th>
+              <th>典型用途</th>
+            </tr>
+            <tr>
+              <td><code>PreToolUse</code></td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>工具调用前（可拦截/修改）</td>
+              <td>🔒 路径门禁（winBrain 已用）</td>
+            </tr>
+            <tr>
+              <td><code>PostToolUse</code></td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>工具执行后</td>
+              <td>记录结果、审计</td>
+            </tr>
+            <tr>
+              <td><code>PostToolUseFailure</code></td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>工具执行失败</td>
+              <td>失败计数/告警</td>
+            </tr>
+            <tr>
+              <td><code>PostToolBatch</code></td>
+              <td>—</td>
+              <td>✅</td>
+              <td>整批工具调用解决后</td>
+              <td>批量记账</td>
+            </tr>
+            <tr>
+              <td><code>UserPromptSubmit</code></td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>用户消息提交</td>
+              <td>脱敏/改写输入</td>
+            </tr>
+            <tr>
+              <td><code>MessageDisplay</code></td>
+              <td>—</td>
+              <td>✅</td>
+              <td>assistant 文本完成</td>
+              <td>UI 通知</td>
+            </tr>
+            <tr>
+              <td><code>Stop</code> / <code>StopFailure</code></td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>执行停止 / 出错停止</td>
+              <td>收尾、会话归档</td>
+            </tr>
+            <tr>
+              <td><code>SubagentStart</code> / <code>SubagentStop</code></td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>子代理起止</td>
+              <td>子代理追踪</td>
+            </tr>
+            <tr>
+              <td><code>PreCompact</code> / <code>PostCompact</code></td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>上下文压缩前后</td>
+              <td>压缩通知/统计</td>
+            </tr>
+            <tr>
+              <td>
+                <code>PermissionRequest</code> / <code>PermissionDenied</code>
+              </td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>需要权限决策 / 自动拒绝</td>
+              <td>审批流（winBrain 的 can_use_tool 通道）</td>
+            </tr>
+            <tr>
+              <td><code>SessionStart</code> / <code>SessionEnd</code></td>
+              <td>—</td>
+              <td>✅</td>
+              <td>会话起止</td>
+              <td>生命周期钩子</td>
+            </tr>
+            <tr>
+              <td><code>Notification</code></td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>Agent 状态消息</td>
+              <td>进度通知</td>
+            </tr>
+            <tr>
+              <td><code>Setup</code></td>
+              <td>—</td>
+              <td>✅</td>
+              <td>会话设置/维护</td>
+              <td>初始化检查</td>
+            </tr>
+            <tr>
+              <td><code>TaskCreated</code> / <code>TaskCompleted</code></td>
+              <td>—</td>
+              <td>✅</td>
+              <td>后台任务创建/完成</td>
+              <td>任务看板联动</td>
+            </tr>
+            <tr>
+              <td><code>Elicitation</code> / <code>ElicitationResult</code></td>
+              <td>—</td>
+              <td>✅</td>
+              <td>MCP 中途要输入 / 用户应答</td>
+              <td>MCP 交互桥</td>
+            </tr>
+            <tr>
+              <td>
+                <code>ConfigChange</code> / <code>InstructionsLoaded</code>
+              </td>
+              <td>—</td>
+              <td>✅</td>
+              <td>配置变更 / CLAUDE.md 载入</td>
+              <td>规则审计</td>
+            </tr>
+            <tr>
+              <td>
+                <code>WorktreeCreate/Remove</code> · <code>CwdChanged</code> ·
+                <code>FileChanged</code> · <code>DirectoryAdded</code>
+              </td>
+              <td>—</td>
+              <td>✅</td>
+              <td>工作区变化</td>
+              <td>沙盒状态同步</td>
+            </tr>
+            <tr>
+              <td><code>TeammateIdle</code></td>
+              <td>—</td>
+              <td>✅</td>
+              <td>队友空闲</td>
+              <td>多代理协作</td>
+            </tr>
+          </table>
+          <h3>hooks 配置特性</h3>
+          <ul>
+            <li>
+              <b>Matchers</b>：按工具名过滤（如只拦
+              <code>Write</code>/<code>Edit</code>）
+            </li>
+            <li>
+              回调可返回：修改工具输入、注入上下文、<b>阻止执行</b>（hookSpecificOutput.block）
+            </li>
+            <li>异步输出：可启动后台任务立即返回（用于审计管道）</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4 会话 -->
+      <div
+        class="q"
+        data-k="会话 sessions continue resume fork 外部存储 持久化"
+      >
+        <button>
+          <span><b>④ 会话：continue / resume / fork + 外部存储</b></span
+          ><span class="tag">会话</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <table>
+            <tr>
+              <th>操作</th>
+              <th>语义</th>
+              <th>典型场景</th>
+            </tr>
+            <tr>
+              <td><code>continue: true</code>（TS）/ 自动 client（Py）</td>
+              <td>同一会话自动续聊</td>
+              <td>连续对话（winBrain 的热加载聊天）</td>
+            </tr>
+            <tr>
+              <td><code>resume: sessionId</code></td>
+              <td>按 ID 恢复旧会话</td>
+              <td>崩溃恢复、/resume 语义（winBrain AgentBay 已做）</td>
+            </tr>
+            <tr>
+              <td><code>fork: sessionId</code></td>
+              <td>从某会话分支出新会话，原会话不动</td>
+              <td>探索备选方案、A/B 实验</td>
+            </tr>
+            <tr>
+              <td>外部存储（session-storage）</td>
+              <td>镜像到 S3 / Redis / 自有后端</td>
+              <td>多主机恢复、审计、跨部署迁移</td>
+            </tr>
+          </table>
+          <h3>官方 API</h3>
+          <ul>
+            <li>
+              <code>listSessions()</code> → <code>SDKSessionInfo[]</code>；<code
+                >getSessionMessages(sessionId)</code
+              >
+              读取任意历史
+            </li>
+            <li>
+              result 消息携带 <code>session_id</code> /
+              <code>checkpoint_uuid</code>，先存后用于恢复
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 5 工具 -->
+      <div
+        class="q"
+        data-k="工具 tools mcp 传输 stdio http sse tool search 10000 自定义"
+      >
+        <button>
+          <span><b>⑤ 工具体系：自定义 / MCP / Tool Search</b></span
+          ><span class="tag">工具</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <h3>自定义工具（in-process MCP）</h3>
+          <ul>
+            <li>
+              推荐路径：<code>tool()</code> 定义 →
+              <code>createSdkMcpServer()</code> 打包 → 注册进 mcpServers
+            </li>
+            <li>
+              <code>ToolAnnotations</code>：<b>readOnlyHint</b>（只读）/
+              <b>destructiveHint</b>（破坏性）/ <b>sensitiveHint</b>（敏感）→
+              影响权限评估
+            </li>
+            <li>
+              winBrain 的 winbrain_credentials MCP
+              即此模式（每次读取需填写用途）
+            </li>
+          </ul>
+          <h3>外部 MCP：3 种传输</h3>
+          <table>
+            <tr>
+              <th>传输</th>
+              <th>说明</th>
+              <th>winBrain 现状</th>
+            </tr>
+            <tr>
+              <td><b>stdio</b></td>
+              <td>子进程启动，本地私有工具</td>
+              <td>✅ 本体/外部 MCP stdio</td>
+            </tr>
+            <tr>
+              <td><b>HTTP / SSE</b></td>
+              <td>远程服务器（可带认证）</td>
+              <td>✅ Data Ontology MCP HTTP 版</td>
+            </tr>
+            <tr>
+              <td><b>SDK MCP servers</b></td>
+              <td>进程内直接挂载</td>
+              <td>✅ 自定义工具</td>
+            </tr>
+          </table>
+          <h3>
+            Tool search（大规模工具检索）<span class="pill n"
+              >winBrain 未用</span
+            >
+          </h3>
+          <ul>
+            <li>
+              目录上限 <b>10,000 个工具</b>；按需检索，每次返回最相关 ≤5 个
+            </li>
+            <li>模型要求：Sonnet 4.5 / Haiku 4.5 / Opus 4.5 及更新</li>
+            <li>
+              价值：AgentBay 白名单 10
+              个工具靠人工维护；未来专家工具膨胀时可切换检索式
+            </li>
+            <li>优化：工具名/描述写清晰（检索质量 = 描述质量）</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 6 输入输出 -->
+      <div
+        class="q"
+        data-k="结构化输出 structured zod pydantic json schema 审批 user input can_use_tool askuserquestion 流式"
+      >
+        <button>
+          <span><b>⑥ 结构化输出 + 审批/提问 + 流式响应</b></span
+          ><span class="tag">I/O</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <h3>Structured output <span class="pill n">winBrain 未用</span></h3>
+          <ul>
+            <li>
+              多轮工具调用后，返回<b>经过验证的 JSON</b>（JSON Schema /
+              <b>Zod</b> / <b>Pydantic</b>）
+            </li>
+            <li>
+              result 消息携带
+              <code>structured_output</code>，类型安全直出业务数据
+            </li>
+            <li>失败类型：error_max_structured_output_retries → 可重试/降级</li>
+            <li>
+              示例：TODO 提取 agent（Grep 找 TODO + Bash git blame 后输出 JSON
+              清单）
+            </li>
+            <li>
+              winBrain 落点：专家 API 响应校验、本体导入草稿结构化、业务 App
+              数据契约
+            </li>
+          </ul>
+          <pre><code>// 定义 schema → 结果自动校验
+const result = await query({ prompt, options: { structuredOutput: mySchema } });</code></pre>
+          <h3>审批与用户输入（can_use_tool / AskUserQuestion）</h3>
+          <ul>
+            <li>
+              <code>can_use_tool</code> 审批回调：展示工具请求 → 用户 allow/deny
+              → 放行或阻止（可改写输入）
+            </li>
+            <li>
+              ⚠️ 已知 workaround：需要 <b>dummy hook</b> 保持流开启才能收到
+              can_use_tool
+            </li>
+            <li>
+              <code>AskUserQuestion</code> 澄清问题：结构化选项（TS
+              支持选项预览），用于信息不足时提问
+            </li>
+            <li>
+              winBrain 现状：PreToolUse 门禁已有；can_use_tool 审批流 +
+              AskUserQuestion 未接入 UI
+            </li>
+          </ul>
+          <h3>流式响应</h3>
+          <ul>
+            <li>
+              文字与工具调用逐条实时到达 → 适合逐字渲染（chat-renderer
+              可升级为流式打字机）
+            </li>
+            <li>
+              Vercel AI SDK 的 <code>useChat</code> 是同一体验的前端封装，可混用
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 7 权限 -->
+      <div
+        class="q"
+        data-k="权限 permission 模式 acceptEdits dontAsk bypassPermissions plan 沙盒"
+      >
+        <button>
+          <span
+            ><b>⑦ 权限：4 种模式 + 规则</b
+            ><span class="pill y">winBrain 已用</span></span
+          ><span class="tag">安全</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <table>
+            <tr>
+              <th>模式</th>
+              <th>行为</th>
+              <th>适用</th>
+            </tr>
+            <tr>
+              <td><code>default</code></td>
+              <td>按工具规则提示确认</td>
+              <td>交互式终端</td>
+            </tr>
+            <tr>
+              <td><code>acceptEdits</code></td>
+              <td>文件编辑免确认</td>
+              <td>受控沙盒内自动修文件</td>
+            </tr>
+            <tr>
+              <td><code>dontAsk</code></td>
+              <td>不询问，按 allow/deny 规则放行</td>
+              <td>自动化流水线</td>
+            </tr>
+            <tr>
+              <td><code>bypassPermissions</code></td>
+              <td>全部放行（仅限沙盒内！）</td>
+              <td>
+                🔒 winBrain Sandbox B：只在 OS Sandbox +
+                路径门禁双保险内使用，绝不绕过沙盒本身
+              </td>
+            </tr>
+            <tr>
+              <td><code>plan</code></td>
+              <td>只读规划，不执行</td>
+              <td>方案评审</td>
+            </tr>
+          </table>
+          <ul>
+            <li>
+              allow/deny 规则：<b>声明式</b>（如
+              <code>Bash(npm run *)</code>）或 hooks 回调式（如 winBrain 的
+              PreToolUse 路径门禁）
+            </li>
+            <li>模式可会话中途动态切换（如先 plan 后 acceptEdits）</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 8 控制观测 -->
+      <div
+        class="q"
+        data-k="checkpointing otel 成本 观测 telemetry 追踪 todo 列表"
+      >
+        <button>
+          <span
+            ><b>⑧ Checkpointing · OTel · 成本追踪 · Todo（观测四件套）</b></span
+          ><span class="tag">观测</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <h3>
+            Checkpointing（文件回滚）<span class="pill n">winBrain 未用</span>
+          </h3>
+          <ul>
+            <li>
+              开启后：首条消息返回 <code>checkpoint_uuid</code> +
+              <code>session_id</code>
+            </li>
+            <li><b>Rewind</b>：resume 会话 + 空 prompt → 文件恢复到该检查点</li>
+            <li>
+              模式：风险操作前打点、错误/校验失败自动回滚、多恢复点（存
+              checkpoint 元数据）
+            </li>
+            <li>
+              winBrain 落点：专家改文件失败 →
+              自动回滚到回合前，双保险叠加沙盒隔离
+            </li>
+          </ul>
+          <h3>OpenTelemetry <span class="pill n">winBrain 未用</span></h3>
+          <ul>
+            <li>
+              导出 <b>traces / metrics / log events</b> 到任意后端（OTLP）
+            </li>
+            <li>
+              traces 在
+              beta，需显式开启；可关联应用上下文（用户属性）、控制敏感数据脱敏
+            </li>
+            <li>
+              winBrain 落点：接现有 herdr 监控 / SLS，trace 每步 agent 调用
+            </li>
+          </ul>
+          <h3>成本追踪（cost-tracking）</h3>
+          <ul>
+            <li>
+              token 用量四维：输入 / 输出 / 缓存读写（cache tokens，TTL 可扩到
+              1h）/ 每步 per-step、每模型 per-model
+            </li>
+            <li>单 query 总成本、跨调用累计、失败会话成本、崩溃后恢复总量</li>
+            <li>winBrain 落点：与 AgentBay /bill 合并成统一成本仪表</li>
+          </ul>
+          <h3>Todo Lists <span class="pill n">winBrain 未用</span></h3>
+          <ul>
+            <li>
+              SDK 内置 todo 事件流（TaskCreated/TaskCompleted hooks 同步）
+            </li>
+            <li>winBrain 落点：TUI/Web 渲染 Agent 长任务的实时进度清单</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 9 子代理 -->
+      <div class="q" data-k="子代理 subagents 并行 隔离 上下文 工具限制">
+        <button>
+          <span
+            ><b>⑨ 子代理（Subagents）</b
+            ><span class="pill n">winBrain 未用</span></span
+          ><span class="tag">编排</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <h3>四大收益</h3>
+          <table>
+            <tr>
+              <th>收益</th>
+              <th>说明</th>
+            </tr>
+            <tr>
+              <td>上下文隔离</td>
+              <td>子代理独立上下文窗口，主代理不被杂物污染</td>
+            </tr>
+            <tr>
+              <td>并行化</td>
+              <td>多子代理同时跑不同任务，总耗时显著下降</td>
+            </tr>
+            <tr>
+              <td>专用指令</td>
+              <td>每个子代理专属 prompt（专业知识/风格）</td>
+            </tr>
+            <tr>
+              <td>工具限制</td>
+              <td>子代理级 tools 白名单（如只读）</td>
+            </tr>
+          </table>
+          <h3>定义与调用</h3>
+          <pre><code>// AgentDefinition：name + description + prompt + tools + model
+agents: [{
+  name: "code-reviewer",
+  description: "当需要代码审查时使用",
+  prompt: "你是资深审查者，只读分析",
+  tools: ["Read", "Grep"],
+  model: "claude-sonnet-4-5"
+}]</code></pre>
+          <ul>
+            <li>自动调用（Claude 自己决定）或显式调用；支持运行时动态配置</li>
+            <li>继承：主会话的工具/MCP/权限按子代理定义裁剪</li>
+            <li>
+              winBrain 落点：专家 = 主代理，员工 = 子代理（正好对应 Skill
+              语义）；或并行质检多个草稿
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 10 扩展 -->
+      <div
+        class="q"
+        data-k="skills plugins slash commands 系统提示 claude_code 自定义"
+      >
+        <button>
+          <span
+            ><b
+              >⑩ 扩展与定制：Skills / Plugins / Slash Commands / 系统提示</b
+            ></span
+          ><span class="tag">定制</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <h3>系统提示</h3>
+          <ul>
+            <li>
+              预设 <code>claude_code</code>（完整 Claude Code 行为）vs
+              <b>完全自定义</b>（从零控制）
+            </li>
+            <li>
+              自定义维度：CLAUDE.md
+              注入、输出风格（outputStyle）、追加、或全量替换
+            </li>
+            <li>
+              winBrain：每个场景（Creator 对话/项目聊天/专家 API）定制
+              systemPrompt ✅
+            </li>
+          </ul>
+          <h3>Agent Skills / Plugins</h3>
+          <ul>
+            <li>
+              Skills：<code>.claude/skills/</code>
+              目录（用户级/项目级）；可发现、可测试、工具受限
+            </li>
+            <li>
+              Plugins：把 skills + agents + hooks + MCP servers
+              打包成一个单元加载
+            </li>
+            <li>
+              winBrain：员工=Skill、专家=Plugin 的模型完全对应 SDK 语义
+              ✅（skill-bundle-registry 已实现）
+            </li>
+          </ul>
+          <h3>Slash Commands</h3>
+          <ul>
+            <li>
+              SDK 内可用斜杠命令控制会话（如 /resume、/compact、自定义命令）
+            </li>
+            <li>
+              winBrain：AgentBay 的 /resume /sessions /bill /shutdown-all
+              即同思路 ✅
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 11 部署 -->
+      <div
+        class="q"
+        data-k="部署 hosting docker kubernetes 沙盒 多租户 安全 凭据 网络"
+      >
+        <button>
+          <span><b>⑪ 生产部署与安全（Hosting / Secure deployment）</b></span
+          ><span class="tag">部署</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <h3>Hosting 官方指南</h3>
+          <ul>
+            <li>
+              <b>子进程架构</b>：SDK 子进程即执行单元，建议每任务隔离（进程池 +
+              超时回收）
+            </li>
+            <li><b>会话持久化</b>：外部存储（S3/Redis）跨实例恢复</li>
+            <li><b>水平扩展</b>：无状态 worker 池 + 队列；观测（OTel）接入</li>
+            <li>
+              <b>多租户隔离</b>：Docker / Kubernetes / 沙盒提供商（如
+              E2B）每租户独立进程
+            </li>
+          </ul>
+          <h3>Secure deployment 要点</h3>
+          <table>
+            <tr>
+              <th>维度</th>
+              <th>官方建议</th>
+              <th>winBrain 对照</th>
+            </tr>
+            <tr>
+              <td>隔离</td>
+              <td>进程/容器/沙盒分层</td>
+              <td>✅ Sandbox B 双门禁（OS Sandbox + PreToolUse）</td>
+            </tr>
+            <tr>
+              <td>凭据</td>
+              <td>密钥服务注入，不进上下文</td>
+              <td>✅ Credential MCP + helper 桥接，env={}</td>
+            </tr>
+            <tr>
+              <td>网络</td>
+              <td>最小出站、禁止敏感网段</td>
+              <td>✅ 沙盒内允许互联网但禁宿主资源；LAN RFC1918</td>
+            </tr>
+            <tr>
+              <td>模型凭据</td>
+              <td>apiKeyHelper 作为启动例外</td>
+              <td>✅ 唯一例外：固定本地模型地址 + apiKeyHelper 路径</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- 12 对照 -->
+      <div class="q" data-k="winbrain 对照 已用 未用 差距 路线图">
+        <button>
+          <span><b>⑫ winBrain 应用对照表（已用 / 缺口 / 落点）</b></span
+          ><span class="tag">对照</span><span class="n">展开</span>
+        </button>
+        <div class="body">
+          <table class="map">
+            <tr>
+              <th>SDK 能力</th>
+              <th>状态</th>
+              <th>winBrain 落点</th>
+              <th>缺失根因</th>
+            </tr>
+            <tr>
+              <td>agent loop / query 单轮</td>
+              <td class="ok">✅ 已用</td>
+              <td>claude-agent-sdk.ts 全场景（Creator/项目/专家 API/本体）</td>
+            </tr>
+            <tr>
+              <td>Streaming Input（交互多轮）</td>
+              <td class="warn">🟡 部分</td>
+              <td>热加载项目聊天是会话式；未用 ClaudeSDKClient 流式输入模式</td>
+            </tr>
+            <tr>
+              <td>MCP（stdio/HTTP/SDK）</td>
+              <td class="ok">✅ 已用</td>
+              <td>
+                本体 MCP + 外部 MCP 注册 + 自定义工具（winbrain_credentials）
+              </td>
+            </tr>
+            <tr>
+              <td>Custom tools（tool()）</td>
+              <td class="ok">✅ 已用</td>
+              <td>in-process MCP 打包（createSdkMcpServer 思路）</td>
+            </tr>
+            <tr>
+              <td>Hooks（PreToolUse）</td>
+              <td class="ok">✅ 已用</td>
+              <td>路径门禁 fail closed；其余 25 事件未挂</td>
+            </tr>
+            <tr>
+              <td>Permissions（bypassPermissions）</td>
+              <td class="ok">✅ 已用</td>
+              <td>仅沙盒内；未用 plan/acceptEdits 动态切换</td>
+            </tr>
+            <tr>
+              <td>Sessions（continue/resume/fork）</td>
+              <td class="ok">✅ 已用</td>
+              <td>项目聊天复用 + AgentBay /resume + JSONL 归档</td>
+            </tr>
+            <tr>
+              <td>系统提示定制</td>
+              <td class="ok">✅ 已用</td>
+              <td>每场景专属 systemPrompt</td>
+            </tr>
+            <tr>
+              <td>Skills / Plugins 语义</td>
+              <td class="ok">✅ 已用</td>
+              <td>员工=Skill、专家=Plugin、skill-bundle-registry</td>
+            </tr>
+            <tr>
+              <td>Slash Commands</td>
+              <td class="ok">✅ 已用</td>
+              <td>/preview /takeover /resume /sessions /bill /shutdown-all</td>
+            </tr>
+            <tr>
+              <td>外部会话存储</td>
+              <td class="ok">✅ 已用</td>
+              <td>FileCloudSessionArchive（/tmp 归档）</td>
+            </tr>
+            <tr>
+              <td>Structured output</td>
+              <td class="miss">❌ 缺口</td>
+              <td>专家 API 响应校验 / 本体导入草稿 / App 数据契约</td>
+              <td>
+                dependency：Zod 未接业务 API（contracts
+                已有结构化活动流）；模型兼容性待验 → 最该早补
+              </td>
+            </tr>
+            <tr>
+              <td>Checkpointing（rewind）</td>
+              <td class="miss">❌ 缺口</td>
+              <td>专家改文件失败自动回滚</td>
+              <td>
+                scope：沙盒隔离 + 会话 10 分钟销毁已近似保护，POC 阶段收益低
+              </td>
+            </tr>
+            <tr>
+              <td>OpenTelemetry</td>
+              <td class="ok">✅ 已实现 08-13</td>
+              <td>trace 接入 herdr / SLS</td>
+              <td>
+                已做：ObservabilityPort + 本地事件账本（turns/traces JSONL）+
+                标准 OTLP/HTTP trace exporter（WINBRAIN_OTEL_ENDPOINT）+
+                /api/v1/observability + Web 观测卡片；不向 SDK
+                子进程传宿主环境， 保持 Sandbox B env={}
+              </td>
+            </tr>
+            <tr>
+              <td>Tool search（10k 工具）</td>
+              <td class="miss">❌ 缺口</td>
+              <td>专家工具膨胀后替代手工白名单</td>
+              <td>
+                by design：白名单=安全基石；且模型 gpt-5.6-luna 非 Anthropic 4.5
+                系，API 不支持
+              </td>
+            </tr>
+            <tr>
+              <td>Subagents</td>
+              <td class="miss">❌ 缺口</td>
+              <td>专家=主代理、员工=子代理；并行质检</td>
+              <td>
+                by design：已用进程/沙盒级隔离替代（更硬）；活动流已渲染
+                subagent 类型消息
+              </td>
+            </tr>
+            <tr>
+              <td>Todo lists</td>
+              <td class="ok">✅ 已实现 08-13</td>
+              <td>TUI/Web 实时任务清单</td>
+              <td>
+                task_started/updated/progress/notification → Todo
+                账本（todos.jsonl）+ Web 项目页清单；聊天流 activity 同步展示
+              </td>
+            </tr>
+            <tr>
+              <td>can_use_tool 审批流</td>
+              <td class="miss">❌ 缺口</td>
+              <td>把门禁从"自动拒绝"升级为"人工批准"</td>
+              <td>
+                by design：POC 单机无登录，无人机审批 UI；自动化门禁更可靠
+              </td>
+            </tr>
+            <tr>
+              <td>成本追踪</td>
+              <td class="ok">✅ 已实现 08-13</td>
+              <td>AgentBay /bill 有；SDK 本地用量未统计</td>
+              <td>
+                result 消息 total_cost_usd + usage
+                全场景落账（chat/creator/expert-api）+ 今日/累计/Token 快照
+              </td>
+            </tr>
+          </table>
+          <h3>路线图（对应上页 P0-P3）</h3>
+          <ul>
+            <li>
+              <b>P0</b> OTel + 成本追踪（先看见）→ ② hooks 补
+              SessionStart/Stop/PostToolUse 埋点
+            </li>
+            <li>
+              <b>P1</b> Structured output 接业务 API（Zod schema 复用
+              contracts/operations）
+            </li>
+            <li>
+              <b>P2</b> Checkpointing + Todo
+              lists（体验/安全双升）；can_use_tool 人工审批
+            </li>
+            <li><b>P3</b> Subagents（专家编排）+ Tool search（工具规模）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="src">
+        <b>来源标注</b>（AGENTS.md 合规）｜ 项目：winBrain Creator Lab ·
+        <code>/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean</code>
+        ｜ 当前 Pi session：<code>sess-msr7dp0g-or0e</code>（worker1 @
+        企业微信） ｜ 数据：<a href="https://code.claude.com/docs/llms.txt"
+          >code.claude.com/docs/llms.txt</a
+        >
+        全索引 32 页 + 14 页正文实时抓取（685KB）+ 本项目
+        <code>src/adapters/outbound/claude-agent-sdk.ts</code>（2302
+        行）实测对照 ｜ 生成：2026-08-13 · 单文件自包含 · 无外链请求
+      </div>
+    </div>
+
+    <script>
+      document
+        .querySelectorAll(".q>button")
+        .forEach((b) =>
+          b.addEventListener("click", () =>
+            b.parentElement.classList.toggle("open"),
+          ),
+        );
+      const f = document.getElementById("f");
+      f.addEventListener("input", () => {
+        const k = f.value.trim().toLowerCase();
+        document.querySelectorAll(".q").forEach((q) => {
+          const hit =
+            !k ||
+            q.dataset.k.includes(k) ||
+            q.innerText.toLowerCase().includes(k);
+          q.classList.toggle("hide", !hit);
+          if (hit && k) q.classList.add("open");
+        });
+      });
+    </script>
+  </body>
+</html>

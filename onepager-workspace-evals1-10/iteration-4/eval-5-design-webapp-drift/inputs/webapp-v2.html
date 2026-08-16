@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>实现 v2 · 智能客服平台（交付）</title>
+<style>body{font:13px/1.5 sans-serif;margin:20px}.sec{border:1px solid #cde;border-radius:8px;padding:12px;margin-bottom:10px}.badge{font-size:10px;background:#4ade80;color:#fff;border-radius:99px;padding:1px 6px}h3{margin:0 0 8px}.row{display:flex;gap:8px;margin:4px 0}</style>
+</head>
+<body>
+<h2>实现 v2 · 智能客服平台</h2>
+<p class="sec">状态：线上交付 · 真后端 · 7 导航</p>
+
+<div class="sec" id="chat-view">
+  <h3>对话</h3>
+  <div class="row"><button data-action="chat-send">发送</button> <span class="badge">同设计</span></div>
+  <div class="row"><button data-action="chat-attach">附件</button></div>
+  <div class="row"><button data-action="chat-emoji">表情</button></div>
+  <div class="row"><button data-action="chat-history">历史</button></div>
+  <div class="row"><button data-action="chat-transfer">转人工</button></div>
+  <div class="row"><button data-action="chat-ai-suggest">AI 建议回复 <span class="badge">新增</span></button></div>
+  <div class="row"><button data-action="chat-voice">语音转文字 <span class="badge">新增</span></button></div>
+</div>
+
+<div class="sec" id="ticket-view">
+  <h3>工单</h3>
+  <div class="row"><button data-action="ticket-create">新建</button></div>
+  <div class="row"><button data-action="ticket-assign">指派</button></div>
+  <div class="row"><button data-action="ticket-priority">优先级</button></div>
+  <div class="row"><button data-action="ticket-close">关闭</button></div>
+  <div class="row"><button data-action="ticket-merge">合并工单 <span class="badge">新增</span></button></div>
+</div>
+
+<div class="sec" id="report-view">
+  <h3>报表</h3>
+  <div class="row"><button data-action="report-daily">日报</button></div>
+  <div class="row"><button data-action="report-weekly">周报</button></div>
+  <div class="row"><button data-action="report-export">导出</button></div>
+</div>
+
+<div class="sec" id="knowledge-view">
+  <h3>知识库 <span class="badge">设计未规划</span></h3>
+  <div class="row"><button data-action="kb-create">新建知识</button></div>
+  <div class="row"><button data-action="kb-search">搜索</button></div>
+  <div class="row"><button data-action="kb-tag">打标签</button></div>
+</div>
+
+<div class="sec" id="analytics-view">
+  <h3>智能分析 <span class="badge">设计未规划</span></h3>
+  <div class="row"><button data-action="ana-sentiment">情绪分析</button></div>
+  <div class="row"><button data-action="ana-topic">主题聚类</button></div>
+</div>
+</body>
+</html>

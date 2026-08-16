@@ -1,0 +1,23 @@
+{
+  "skill_name": "onepager",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我的 mac 最近太热了，风扇声音很大。帮我诊断一下发热原因，并生成一个交互式 HTML 报告：要能看到最占资源的进程、能按 CPU 排序、能搜索进程名，还要有一个可以勾选和复制成 markdown 的行动清单。注意信息不要一次全铺出来，结论要一眼看到。",
+      "expected_output": "A single self-contained interactive HTML file: verdict-first line under title, searchable + sortable process table, checkable action list with copy-to-markdown button, evidence collapsed or on-demand, provenance footer. Saved to outputs/.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我上个月做的项目验收报告 HTML 太臃肿了，一个页面有 6 个大 tab、每 tab 都是几十行表格，评审说看不动。帮我把这份报告重做成一个精炼的交互式单页：结论放最上面，细节折叠起来，但搜索、筛选、可点击的条目、勾选清单这些交互一个都不能丢。",
+      "expected_output": "A redesigned single-page HTML: one-line verdict first, details behind collapsible sections or on-demand filters, ALL interactive affordances preserved (search / sort / clickable rows / checklist / copy), self-contained. Saved to outputs/.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "帮我做一份 MySQL 慢查询性能诊断报告（虚构数据即可）。数据量很大：Top 20 慢 SQL 明细、每条的执行计划分析、索引建议、周趋势图表、还有一份给 DBA 的行动清单。内容太多一个页面装不下，我想先看总结论，然后按需点开每个部分的详细内容。请生成完整的 HTML 交付物。",
+      "expected_output": "A multi-page HTML deliverable: a lightweight main.html with verdict-first + one-line summary per section + links/iframes to sub pages; separate sub HTML files (one per section: top-sql detail, execution plans, index advice, trend charts, action checklist), each self-contained and independently openable; relative-path links so it works offline; main stays lean (<50KB), sub content NOT inlined into main. Saved to outputs/.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>本体入口：自动跳转与主题一致性设计</title>
+    <style>
+      :root {
+        --bg: #f2f6f3;
+        --paper: #fff;
+        --ink: #16342a;
+        --muted: #63766f;
+        --line: #d8e3dd;
+        --accent: #147653;
+        --soft: #e5f3ec;
+        --blue: #216a8b;
+        --warn: #a15f17;
+        --shadow: 0 18px 60px rgba(22, 52, 42, 0.1);
+      }
+      html[data-theme="dark"] {
+        --bg: #101815;
+        --paper: #17231f;
+        --ink: #eaf4ef;
+        --muted: #9db0a8;
+        --line: #31423b;
+        --accent: #62d4a5;
+        --soft: #203b31;
+        --blue: #75c9ed;
+        --warn: #f3bd70;
+        --shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 90% 0, var(--soft), transparent 34rem),
+          var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.65 ui-rounded,
+          "SF Pro Rounded",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        transition:
+          0.25s background,
+          0.25s color;
+      }
+      .wrap {
+        width: min(1080px, calc(100% - 28px));
+        margin: auto;
+        padding: 28px 0 48px;
+      }
+      .panel {
+        background: color-mix(in srgb, var(--paper) 94%, transparent);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+      }
+      header {
+        padding: clamp(25px, 5vw, 52px);
+        position: relative;
+        overflow: hidden;
+      }
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 900;
+      }
+      .theme {
+        border: 1px solid var(--line);
+        background: var(--paper);
+        color: var(--ink);
+        padding: 9px 13px;
+        border-radius: 999px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      h1 {
+        font-size: clamp(34px, 6vw, 68px);
+        line-height: 1.03;
+        letter-spacing: -0.045em;
+        max-width: 900px;
+        margin: 18px 0;
+      }
+      .lede {
+        max-width: 790px;
+        color: var(--muted);
+        font-size: 17px;
+      }
+      .verdict {
+        margin-top: 24px;
+        padding: 18px 20px;
+        background: var(--soft);
+        border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+        border-left: 6px solid var(--accent);
+        border-radius: 14px;
+      }
+      .verdict b {
+        display: block;
+        font-size: 18px;
+      }
+      .verdict p {
+        margin: 4px 0 0;
+        color: var(--muted);
+      }
+      .section {
+        margin-top: 18px;
+        padding: clamp(22px, 4vw, 38px);
+      }
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .head h2 {
+        font-size: clamp(24px, 4vw, 38px);
+        line-height: 1.15;
+        margin: 5px 0;
+      }
+      .head p {
+        max-width: 420px;
+        margin: 0;
+        color: var(--muted);
+      }
+      .mock {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 16px 0;
+      }
+      .controls button,
+      .copy {
+        border: 1px solid var(--line);
+        background: var(--paper);
+        color: var(--ink);
+        padding: 9px 13px;
+        border-radius: 10px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .controls button.on {
+        background: var(--ink);
+        color: var(--paper);
+        border-color: var(--ink);
+      }
+      .demo {
+        display: grid;
+        grid-template-columns: 1fr 66px 1fr;
+        align-items: center;
+        gap: 12px;
+      }
+      .site {
+        min-height: 240px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--paper);
+      }
+      .sitebar {
+        height: 28px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: -4px 0 18px;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--line);
+      }
+      .route {
+        font:
+          12px/1.5 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        color: var(--muted);
+        overflow-wrap: anywhere;
+      }
+      .site h3 {
+        font-size: 21px;
+        margin: 20px 0 5px;
+      }
+      .site p {
+        color: var(--muted);
+        margin: 0;
+      }
+      .arrow {
+        text-align: center;
+        color: var(--accent);
+        font-size: 34px;
+        font-weight: 900;
+      }
+      .badge {
+        display: inline-flex;
+        margin-top: 18px;
+        padding: 6px 9px;
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 900;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      .card {
+        padding: 19px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--paper);
+      }
+      .card h3 {
+        margin: 0 0 7px;
+        font-size: 18px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: var(--soft);
+        padding: 2px 5px;
+        border-radius: 5px;
+      }
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .step {
+        min-height: 145px;
+        padding: 17px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--paper);
+        position: relative;
+      }
+      .step:not(:last-child):after {
+        content: "→";
+        position: absolute;
+        right: -13px;
+        top: 55px;
+        width: 25px;
+        height: 25px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--accent);
+        color: var(--paper);
+        z-index: 2;
+      }
+      .step b {
+        display: block;
+        margin-bottom: 8px;
+      }
+      .step small {
+        color: var(--muted);
+      }
+      .check {
+        display: flex;
+        gap: 10px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .check:last-child {
+        border: 0;
+      }
+      .check input {
+        margin-top: 5px;
+        accent-color: var(--accent);
+      }
+      .progress {
+        height: 8px;
+        margin: 16px 0;
+        background: var(--line);
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .progress span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--accent);
+        transition: 0.25s;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .copy {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--paper);
+      }
+      #status {
+        color: var(--accent);
+        font-weight: 800;
+      }
+      .meta {
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+      details {
+        margin-top: 16px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: var(--paper);
+        padding: 12px 15px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 850;
+      }
+      .fact {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 12px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .fact:last-child {
+        border: 0;
+      }
+      .fact span:last-child {
+        color: var(--muted);
+      }
+      @media (max-width: 760px) {
+        .head {
+          display: block;
+        }
+        .demo,
+        .grid,
+        .flow {
+          grid-template-columns: 1fr;
+        }
+        .arrow {
+          transform: rotate(90deg);
+        }
+        .step:not(:last-child):after {
+          content: "↓";
+          right: auto;
+          left: 20px;
+          top: auto;
+          bottom: -13px;
+        }
+        .fact {
+          grid-template-columns: 1fr;
+        }
+        .top {
+          align-items: flex-start;
+        }
+        h1 {
+          font-size: 39px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="panel">
+        <div class="top">
+          <div class="eyebrow">winBrain · ontology entry design</div>
+          <button class="theme" id="theme" aria-label="切换浅色或深色主题">
+            ◐ 主题预览
+          </button>
+        </div>
+        <h1>入口只负责引路，<br />主题一路跟过去。</h1>
+        <p class="lede">
+          访问 Creator OS 的
+          <span class="code">#/ontology</span>
+          不应停在一个重复看板；它应立即跳转到独立的本体平台，并把用户当前的浅色
+          / 深色偏好一起带走。
+        </p>
+        <div class="verdict">
+          <b>推荐：同页自动跳转 + URL 传递主题 + 目标页落地持久化</b>
+          <p>
+            默认无中间页；仅在跳转失败时显示轻量兜底。两个在线端点已验证可访问，但本页是设计提案，不把未实施行为标成完成。
+          </p>
+        </div>
+      </header>
+
+      <section class="panel section">
+        <div class="head">
+          <div>
+            <div class="eyebrow">01 · visual</div>
+            <h2>用户只感知一次导航</h2>
+          </div>
+          <p>切换下方主题，查看来源页与目标页如何保持同一视觉模式。</p>
+        </div>
+        <div class="controls" role="group" aria-label="主题预览">
+          <button data-mode="light" class="on">浅色链路</button
+          ><button data-mode="dark">深色链路</button>
+        </div>
+        <div class="demo">
+          <article class="site">
+            <div class="sitebar">
+              <i class="dot"></i><i class="dot"></i><i class="dot"></i>
+            </div>
+            <div class="route">192.168.26.254:4173/index.html#/ontology</div>
+            <h3>winBrain Creator OS</h3>
+            <p>检测当前主题：<strong class="mode-name">浅色</strong></p>
+            <span class="badge">入口 · 不重复承载业务</span>
+          </article>
+          <div class="arrow" aria-hidden="true">→</div>
+          <article class="site">
+            <div class="sitebar">
+              <i class="dot"></i><i class="dot"></i><i class="dot"></i>
+            </div>
+            <div class="route">
+              192.168.26.254:3012/?theme=<span class="mode-param">light</span>
+            </div>
+            <h3>本体平台看板</h3>
+            <p>首次读取参数并持久化：<strong class="mode-name">浅色</strong></p>
+            <span class="badge">目标 · 唯一业务看板</span>
+          </article>
+        </div>
+        <div class="mock" style="margin-top: 18px">
+          <svg
+            viewBox="0 0 1000 210"
+            role="img"
+            aria-label="自动跳转与主题传递流程图"
+          >
+            <defs>
+              <marker
+                id="a"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path d="M0 0L8 4L0 8Z" fill="var(--accent)" />
+              </marker>
+            </defs>
+            <rect
+              x="45"
+              y="54"
+              width="220"
+              height="104"
+              rx="18"
+              fill="var(--soft)"
+              stroke="var(--accent)"
+            />
+            <text
+              x="155"
+              y="92"
+              text-anchor="middle"
+              fill="var(--ink)"
+              font-size="16"
+              font-weight="800"
+            >
+              命中 #/ontology
+            </text>
+            <text
+              x="155"
+              y="121"
+              text-anchor="middle"
+              fill="var(--muted)"
+              font-size="13"
+            >
+              读取当前 light / dark
+            </text>
+            <path
+              d="M280 106H385"
+              stroke="var(--accent)"
+              stroke-width="3"
+              marker-end="url(#a)"
+            />
+            <rect
+              x="400"
+              y="54"
+              width="200"
+              height="104"
+              rx="18"
+              fill="var(--paper)"
+              stroke="var(--line)"
+            />
+            <text
+              x="500"
+              y="92"
+              text-anchor="middle"
+              fill="var(--ink)"
+              font-size="16"
+              font-weight="800"
+            >
+              replace 跳转
+            </text>
+            <text
+              x="500"
+              y="121"
+              text-anchor="middle"
+              fill="var(--muted)"
+              font-size="13"
+            >
+              不污染浏览器返回栈
+            </text>
+            <path
+              d="M615 106H720"
+              stroke="var(--accent)"
+              stroke-width="3"
+              marker-end="url(#a)"
+            />
+            <rect
+              x="735"
+              y="54"
+              width="220"
+              height="104"
+              rx="18"
+              fill="var(--soft)"
+              stroke="var(--accent)"
+            />
+            <text
+              x="845"
+              y="92"
+              text-anchor="middle"
+              fill="var(--ink)"
+              font-size="16"
+              font-weight="800"
+            >
+              本体平台落地
+            </text>
+            <text
+              x="845"
+              y="121"
+              text-anchor="middle"
+              fill="var(--muted)"
+              font-size="13"
+            >
+              应用主题并写入偏好
+            </text>
+          </svg>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <div class="head">
+          <div>
+            <div class="eyebrow">02 · behavior</div>
+            <h2>四步，够了</h2>
+          </div>
+          <p>
+            不引入共享主题服务；URL 参数是两个独立站点之间最窄、最可调试的契约。
+          </p>
+        </div>
+        <div class="flow">
+          <div class="step">
+            <b>1 · 识别入口</b
+            ><small
+              >路由命中
+              <span class="code">#/ontology</span>，不渲染旧本体页。</small
+            >
+          </div>
+          <div class="step">
+            <b>2 · 读取主题</b
+            ><small>优先当前 DOM / 本地偏好；没有值时沿用系统色彩偏好。</small>
+          </div>
+          <div class="step">
+            <b>3 · 替换地址</b
+            ><small
+              ><span class="code">location.replace(3012/?theme=…)</span
+              >，返回键回到跳转前页面。</small
+            >
+          </div>
+          <div class="step">
+            <b>4 · 目标接管</b
+            ><small
+              >3012 校验参数、应用主题并持久化；无参数则读自身偏好。</small
+            >
+          </div>
+        </div>
+        <div class="grid" style="margin-top: 15px">
+          <article class="card">
+            <h3>正常路径</h3>
+            <p>无倒计时、无确认弹窗、无“正在跳转”闪屏。导航就是动作本身。</p>
+          </article>
+          <article class="card">
+            <h3>失败兜底</h3>
+            <p>
+              若目标页不可达，浏览器原生错误可返回；若产品需要友好态，仅保留「重新打开本体平台」一个动作。
+            </p>
+          </article>
+          <article class="card">
+            <h3>主题契约</h3>
+            <p>
+              只接受 <span class="code">light</span> /
+              <span class="code">dark</span>；非法值忽略，避免把任意字符串写入
+              DOM。
+            </p>
+          </article>
+          <article class="card">
+            <h3>一致性边界</h3>
+            <p>
+              一致的是模式与语义色，不要求两个独立产品逐像素相同；目标平台保留自己的组件语言。
+            </p>
+          </article>
+        </div>
+        <details>
+          <summary>已核对的在线事实</summary>
+          <div class="fact">
+            <span>Creator OS</span
+            ><span
+              >HTTP 200；HTML 当前声明
+              <span class="code">data-theme="light"</span>，存在 theme
+              toggle。</span
+            >
+          </div>
+          <div class="fact">
+            <span>本体平台</span
+            ><span
+              >HTTP 200；标题为「本体平台」，当前由 Vite / React 提供。</span
+            >
+          </div>
+          <div class="fact">
+            <span>未验证</span
+            ><span
+              >3012 是否已实现主题参数读取；4173
+              是否已实现自动跳转。故本设计不标“已完成”。</span
+            >
+          </div>
+        </details>
+      </section>
+
+      <section class="panel section">
+        <div class="head">
+          <div>
+            <div class="eyebrow">03 · acceptance</div>
+            <h2>验收只看用户结果</h2>
+          </div>
+          <p>勾选后可复制为 Markdown，作为实现回传窄门。</p>
+        </div>
+        <label class="check"
+          ><input type="checkbox" /><span
+            >打开
+            <span class="code"
+              >http://192.168.26.254:4173/index.html#/ontology</span
+            >
+            后自动到达
+            <span class="code">http://192.168.26.254:3012</span>。</span
+          ></label
+        >
+        <label class="check"
+          ><input type="checkbox" /><span
+            >浅色模式跳转后仍为浅色；深色模式跳转后仍为深色。</span
+          ></label
+        >
+        <label class="check"
+          ><input type="checkbox" /><span
+            >浏览器返回键不会回到一个再次自动跳转的死循环入口。</span
+          ></label
+        >
+        <label class="check"
+          ><input type="checkbox" /><span
+            >目标 URL 的非法 theme 值被忽略，未产生脚本注入或异常样式。</span
+          ></label
+        >
+        <label class="check"
+          ><input type="checkbox" /><span
+            >窄屏、键盘操作与减少动态效果偏好不受影响。</span
+          ></label
+        >
+        <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+        <div class="actions">
+          <button class="copy" id="copy">复制验收清单</button
+          ><span id="status" role="status"></span>
+        </div>
+        <footer class="meta">
+          来源项目：winBrain Creator OS ·
+          /Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean<br />产物：/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean/onepager/ontology-entry-redirect-theme-design.html<br />Pi
+          session ID：019ffa0b-a23b-7331-b211-2edad5440598 ·
+          生成时间：2026-08-14 15:21 +0800
+        </footer>
+      </section>
+    </main>
+    <script>
+      const root = document.documentElement;
+      const modeButtons = [...document.querySelectorAll("[data-mode]")];
+      function setMode(mode) {
+        root.dataset.theme = mode;
+        modeButtons.forEach((b) =>
+          b.classList.toggle("on", b.dataset.mode === mode),
+        );
+        document
+          .querySelectorAll(".mode-name")
+          .forEach((n) => (n.textContent = mode === "dark" ? "深色" : "浅色"));
+        document
+          .querySelectorAll(".mode-param")
+          .forEach((n) => (n.textContent = mode));
+      }
+      modeButtons.forEach((b) =>
+        b.addEventListener("click", () => setMode(b.dataset.mode)),
+      );
+      document
+        .querySelector("#theme")
+        .addEventListener("click", () =>
+          setMode(root.dataset.theme === "dark" ? "light" : "dark"),
+        );
+      const checks = [...document.querySelectorAll(".check input")];
+      function update() {
+        document.querySelector("#bar").style.width =
+          `${(checks.filter((x) => x.checked).length / checks.length) * 100}%`;
+      }
+      checks.forEach((c) => c.addEventListener("change", update));
+      document.querySelector("#copy").addEventListener("click", async () => {
+        const text = [
+          "# 本体入口跳转与主题一致性验收",
+          ...checks.map(
+            (c, i) =>
+              `- [${c.checked ? "x" : " "}] ${c.parentElement.textContent.trim()}`,
+          ),
+        ].join("\n");
+        await navigator.clipboard.writeText(text);
+        document.querySelector("#status").textContent = "已复制";
+        setTimeout(
+          () => (document.querySelector("#status").textContent = ""),
+          1800,
+        );
+      });
+    </script>
+  </body>
+</html>

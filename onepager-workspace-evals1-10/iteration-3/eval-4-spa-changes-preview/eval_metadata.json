@@ -1,0 +1,18 @@
+{
+  "eval_id": 4,
+  "eval_name": "spa-changes-preview",
+  "prompt": "我手上有一个设计师交付的 500KB 单文件 SPA 原型（hash 路由，三个导航视图 chat/experts/projects，fixed 侧边栏布局），我改了 4 处：① 侧边栏 AI 对话导航加 NEW 徽章 ② 品牌区加版本号 ③ 专家团视图里「供应链经营总控」卡片加新技能徽章 ④ 项目组视图里「Q3 交付保障」卡片加里程碑徽章。请给这个原型做一个改动预览：打开文件先看到改动总览，点击任意一处能定位到改动处（包括需要先切换视图的子视图改动），评审可以勾选确认并复制 Markdown 清单。",
+  "assertions": [
+    "fixed_top_bar: 注入固定顶栏（position:fixed/sticky），含结论『N 处改动』",
+    "default_collapsed: 顶栏默认折叠为单行（高度 <40px），展开按钮可见",
+    "tag_per_change: 每处改动一个可点击 tag（含 id 或 data-target 指向 chg-N）",
+    "badge_in_template: 改动徽章 id=chg-N 注入在 JS 渲染模板字符串内（非纯静态 HTML 标签位置）",
+    "subview_jump: 跳转逻辑包含视图映射（如 chg→experts/projects）+ 元素不存在时点导航切换",
+    "poll_wait: 跳转含轮询/等待渲染逻辑（setInterval/setTimeout 重试 find）",
+    "no_hash_anchor: 跳转不用 <a href=\"#chg-N\">（防 SPA 路由劫持），用 javascript:void(0)/button + JS",
+    "flash_locate: 定位用闪烁动画或持久 outline（chg-flash/chg-located/box-shadow/outline）",
+    "locate_clear: 切换定位目标时清除上一个目标的定位状态",
+    "checklist_copy: 有勾选确认 + 复制 Markdown 清单按钮",
+    "original_nav_works: 注入后原三导航（chat/experts/projects）切换仍可用（不破坏原逻辑）"
+  ]
+}

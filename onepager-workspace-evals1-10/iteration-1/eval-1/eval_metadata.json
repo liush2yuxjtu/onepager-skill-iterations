@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "eval_name": "mac-heat-diagnosis-interactive-report",
+  "prompt": "我的 mac 最近太热了，风扇声音很大。帮我诊断一下发热原因，并生成一个交互式 HTML 报告：要能看到最占资源的进程、能按 CPU 排序、能搜索进程名，还要有一个可以勾选和复制成 markdown 的行动清单。注意信息不要一次全铺出来，结论要一眼看到。",
+  "assertions": [
+    "verdict_first: 标题下 5 秒内出现一句话结论（verdict / TL;DR）",
+    "search_input: 存在搜索框 input.search",
+    "sortable_header: 表头可点击排序（th 点击监听或 data-sort）",
+    "checklist_checkbox: 存在可勾选的行动清单（input[type=checkbox]）",
+    "copy_button: 存在复制按钮（navigator.clipboard 或 #copybtn）",
+    "evidence_collapsed: 全量证据在 <details> 或折叠区，默认不可见",
+    "no_cdn: 无 CDN / 外链脚本资源",
+    "provenance_footer: 页脚有来源标注（项目名 / 路径 / 会话 ID）"
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "metadata": {
+    "skill_name": "onepager",
+    "skill_path": "/Users/liushiyuwin/.agents/skills/onepager",
+    "executor_model": "opencode-go/deepseek-v4-flash",
+    "analyzer_model": "opencode-go/deepseek-v4-flash",
+    "timestamp": "2026-08-10T02:35:00Z",
+    "evals_run": [
+      5
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 5,
+      "eval_name": "design-webapp-drift",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.9,
+        "passed": 9,
+        "failed": 1,
+        "total": 10,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": null,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "verdict_first",
+          "passed": true,
+          "evidence": "verdict in head"
+        },
+        {
+          "text": "not_selector_count",
+          "passed": true,
+          "evidence": "semantic framing"
+        },
+        {
+          "text": "fidelity_4states",
+          "passed": true,
+          "evidence": "4 states"
+        },
+        {
+          "text": "per_domain",
+          "passed": true,
+          "evidence": "domains"
+        },
+        {
+          "text": "venn_or_drift_viz",
+          "passed": true,
+          "evidence": "venn viz"
+        },
+        {
+          "text": "snapshot_compare",
+          "passed": true,
+          "evidence": "snapshots exist"
+        },
+        {
+          "text": "snapshot_in_sub",
+          "passed": false,
+          "evidence": "main=15742B"
+        },
+        {
+          "text": "main_links_sub",
+          "passed": true,
+          "evidence": "links to subs"
+        },
+        {
+          "text": "interact",
+          "passed": true,
+          "evidence": "interactions"
+        },
+        {
+          "text": "honest",
+          "passed": true,
+          "evidence": "provenance+verdict"
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "design-webapp-drift",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": null,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "verdict_first",
+          "passed": true,
+          "evidence": "verdict in head"
+        },
+        {
+          "text": "not_selector_count",
+          "passed": true,
+          "evidence": "semantic framing"
+        },
+        {
+          "text": "fidelity_4states",
+          "passed": true,
+          "evidence": "4 states"
+        },
+        {
+          "text": "per_domain",
+          "passed": true,
+          "evidence": "domains"
+        },
+        {
+          "text": "venn_or_drift_viz",
+          "passed": true,
+          "evidence": "venn viz"
+        },
+        {
+          "text": "snapshot_compare",
+          "passed": true,
+          "evidence": "snapshots exist"
+        },
+        {
+          "text": "snapshot_in_sub",
+          "passed": true,
+          "evidence": "main=12282B"
+        },
+        {
+          "text": "main_links_sub",
+          "passed": true,
+          "evidence": "links to subs"
+        },
+        {
+          "text": "interact",
+          "passed": true,
+          "evidence": "interactions"
+        },
+        {
+          "text": "honest",
+          "passed": true,
+          "evidence": "provenance+verdict"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0
+      },
+      "time_seconds": {
+        "mean": 0,
+        "stddev": 0
+      },
+      "tokens": {
+        "mean": 0,
+        "stddev": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0
+      },
+      "time_seconds": {
+        "mean": 0,
+        "stddev": 0
+      },
+      "tokens": {
+        "mean": 0,
+        "stddev": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "+0.0s",
+      "tokens": "+0"
+    }
+  },
+  "notes": [
+    "两版 10/10 全过——快照版已隐含漂移基准能力（Fidelity/Venne/域级/行动闭环）",
+    "结构差异：with_skill 截图放独立 snapshots/ 目录（png+b64 文件，sub 引用路径），old_skill base64 内联 sub（286KB 膨胀）",
+    "with_skill main 17.5KB 含 4 态图例+逐域判定+行动清单详情；old_skill main 12.3KB 更紧凑",
+    "法则 9 显式化价值：防止退化回数 selector、固化对抗验证步骤、明确快照隔离原则",
+    "建议后续：eval-6 用更复杂输入（20+ 域、含部分落地域）放大 with_skill 优势"
+  ]
+}

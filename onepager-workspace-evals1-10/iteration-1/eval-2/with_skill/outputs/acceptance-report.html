@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>星瀚零售中台 Web v2.3 · 验收报告（精炼版）</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1a2332; --mut:#6b7686;
+    --line:#e3e8ef; --ok:#0e9f6e; --warn:#e08b00; --bad:#d64545;
+    --acc:#2563eb; --chip:#eef2ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.55 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:880px;margin:0 auto;padding:20px 16px 60px}
+  header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  h1{font-size:22px;margin:4px 0 2px}
+  .meta{color:var(--mut);font-size:12.5px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:600}
+  .badge.ok{background:#e7f7f0;color:var(--ok)} .badge.warn{background:#fdf0dc;color:var(--warn)}
+  .verdict{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ok);
+    border-radius:10px;padding:14px 16px;margin:14px 0 6px;box-shadow:0 1px 3px rgba(20,30,50,.05)}
+  .verdict .tl{font-size:16px;font-weight:700;margin:0 0 4px}
+  .verdict .sub{color:var(--mut);font-size:13px;margin:0}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .kpi .n{font-size:22px;font-weight:800} .kpi .l{font-size:12px;color:var(--mut)}
+  .kpi .n.ok{color:var(--ok)} .kpi .n.warn{color:var(--warn)} .kpi .n.bad{color:var(--bad)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;box-shadow:0 1px 3px rgba(20,30,50,.05)}
+  .row-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+  input[type=search]{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fafbfc}
+  input[type=search]:focus{outline:2px solid var(--acc);outline-offset:0}
+  .cnt{font-size:12.5px;color:var(--mut);white-space:nowrap}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{position:sticky;top:0;background:#f1f4f9;text-align:left;padding:7px 8px;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--line)}
+  th:hover{color:var(--acc)} th .arrow{color:var(--acc);font-size:11px}
+  td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr.clickable{cursor:pointer}
+  tr.clickable:hover{background:#f6f9ff}
+  tr.hl{background:#eef4ff}
+  tr.hidden{display:none}
+  .chip{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11.5px;background:var(--chip);color:#3b4a9e}
+  .tag{font-size:11px;font-weight:600;padding:1px 8px;border-radius:6px;white-space:nowrap}
+  .tag.s{background:#fde8e8;color:#b42318}.tag.a{background:#fdf0dc;color:#9a6200}.tag.b{background:#e8f0fd;color:#1d4ed8}
+  .op{font-size:12.5px;color:var(--acc);text-decoration:none;white-space:nowrap}
+  .op:hover{text-decoration:underline}
+  details{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-top:8px;background:#fafbfc}
+  summary{cursor:pointer;font-weight:600;font-size:13.5px;color:var(--ink)}
+  summary:hover{color:var(--acc)}
+  details table{margin-top:8px}
+  .row-detail{font-size:12.5px;color:var(--mut);margin-top:6px;padding:6px 8px;background:#f6f9ff;border-radius:6px}
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .bar{flex:1;min-width:120px;height:10px;background:#edf0f5;border-radius:99px;overflow:hidden}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#0e9f6e);border-radius:99px;transition:width .25s}
+  .chk{font-size:13.5px;margin:4px 0;display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+  .chk input{margin-top:3px;accent-color:var(--ok)}
+  .chk.done .txt{text-decoration:line-through;color:var(--mut)}
+  button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit}
+  button:hover{border-color:var(--acc);color:var(--acc)}
+  button:disabled{opacity:.5;cursor:default}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1a2332;color:#fff;font-size:13px;
+    padding:8px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+  #toast.show{opacity:1}
+  footer{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--mut);line-height:1.7}
+  .src{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:#eef1f5;padding:1px 5px;border-radius:4px;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>星瀚零售中台 Web v2.3 · 验收报告</h1>
+      <div class="meta">验收范围：12 个交付模块 · 统计截止 2026-08-07 18:00 · 数据虚构仅供演示</div>
+    </div>
+    <span class="badge ok">结论：通过（有条件）</span>
+  </header>
+
+  <div class="verdict">
+    <p class="tl">✅ 整体可验收：12/12 模块通过功能验收，测试通过率 98.6%，12 个 Bug 已全部闭环；但搜索性能（P1）与 2 个移动端样式（P3）需在下一次迭代首周修复后放量。</p>
+    <p class="sub">评审意见汇总：功能达标、文档完整；建议按下方行动清单逐项销项，并在复查记录中留痕。</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n ok">12/12</div><div class="l">模块验收通过</div></div>
+    <div class="kpi"><div class="n ok">12/12</div><div class="l">Bug 已闭环</div></div>
+    <div class="kpi"><div class="n ok">98.6%</div><div class="l">自动化测试通过率</div></div>
+    <div class="kpi"><div class="n warn">1</div><div class="l">遗留 P1 问题</div></div>
+  </div>
+
+  <section class="card">
+    <div class="row-tools">
+      <input type="search" id="search" class="search-input" placeholder="搜索模块 / Bug 标题 / 负责人…">
+      <span class="cnt" id="cnt"></span>
+    </div>
+
+    <table id="mods">
+      <thead>
+        <tr>
+          <th data-k="name">模块</th>
+          <th data-k="status">状态</th>
+          <th data-k="owner">负责人</th>
+          <th data-k="bugs">闭环 Bug</th>
+          <th data-k="tests">测试通过率</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="row-detail" id="moddetail" style="display:none"></div>
+
+    <details>
+      <summary>全量证据 · 12 个模块明细（测试用例、风险、遗留项）</summary>
+      <table>
+        <thead>
+          <tr><th>模块</th><th>用例数</th><th>通过</th><th>失败</th><th>遗留问题</th><th>评审备注</th></tr>
+        </thead>
+        <tbody id="fullrows"></tbody>
+      </table>
+    </details>
+  </section>
+
+  <section class="card">
+    <h3 style="margin:2px 0 6px">Bug 统计</h3>
+    <p style="margin:0 0 6px;font-size:13.5px">总计 12 个 Bug：<span class="tag s">P0 0</span> <span class="tag a">P1 1</span> <span class="tag b">P2 6</span> <span class="tag b" style="background:#eef2ff;color:#4b5563">P3 5</span> · 已修复并回归通过 <b>12</b>，剩余开放 <b>0</b>。</p>
+    <details>
+      <summary>全量 Bug 清单（12 条，含修复人 / 回归结果）</summary>
+      <table>
+        <thead><tr><th>#</th><th>标题</th><th>级别</th><th>模块</th><th>状态</th><th>修复人</th></tr></thead>
+        <tbody id="bugrows"></tbody>
+      </table>
+    </details>
+  </section>
+
+  <section class="card">
+    <h3 style="margin:2px 0 4px">行动清单 <span id="achv" style="font-size:12.5px;color:var(--mut)"></span></h3>
+    <div class="actions">
+      <div class="bar"><i id="pbar"></i></div>
+      <span id="ptxt" class="cnt"></span>
+      <button id="copybtn" disabled>复制已勾选为 Markdown</button>
+    </div>
+    <div id="actions" style="margin-top:8px"></div>
+  </section>
+
+  <footer>
+    <b>来源</b>：星瀚零售中台 Web（虚构演示数据）<br>
+    <span>报告文件：</span><span class="src">/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-1/eval-2/with_skill/outputs/acceptance-report.html</span><br>
+    生成会话：<span class="src">pi-session: eval-2 / with_skill</span> · 生成器：opencode（NarrowGate 窄门法则 v1）<br>
+    数据口径：虚构，仅用于演示窄门交互；验收结论与统计不可作为真实评审依据。
+  </footer>
+</div>
+<div id="toast"></div>
+
+<script>
+(function(){
+  var MODS = [
+    {name:"订单中心",status:"通过",owner:"陈一",bugs:3,tests:99.2,use:186,risk:"低",note:"并发下单压测 500 并发无失败"},
+    {name:"商品管理",status:"通过",owner:"陈一",bugs:2,tests:98.7,use:152,risk:"低",note:"图片批量上传优化完成"},
+    {name:"库存看板",status:"通过",owner:"林岚",bugs:1,tests:99.5,use:98,risk:"低",note:"实时库存 5s 内刷新"},
+    {name:"用户中心",status:"通过",owner:"王芳",bugs:1,tests:98.1,use:141,risk:"低",note:"权限矩阵用例全覆盖"},
+    {name:"搜索服务",status:"通过",owner:"赵凯",bugs:2,tests:96.8,use:174,risk:"中",note:"P1：首屏 P95 2.4s > 目标 1.5s，列入行动 3"},
+    {name:"营销中心",status:"通过",owner:"王芳",bugs:1,tests:98.9,use:129,risk:"低",note:"满减规则边界用例通过"},
+    {name:"结算中心",status:"通过",owner:"李涛",bugs:1,tests:99.0,use:167,risk:"低",note:"对账差异用例全绿"},
+    {name:"物流跟踪",status:"通过",owner:"林岚",bugs:0,tests:99.7,use:88,risk:"低",note:"外部承运商 mock 切换正常"},
+    {name:"消息中心",status:"通过",owner:"赵凯",bugs:1,tests:97.5,use:104,risk:"中",note:"P3：移动端通知角标错位，列入行动 2"},
+    {name:"报表中心",status:"通过",owner:"李涛",bugs:0,tests:98.3,use:121,risk:"低",note:"导出 Excel 大文件 30s 内完成"},
+    {name:"系统设置",status:"通过",owner:"王芳",bugs:0,tests:99.4,use:76,risk:"低",note:"角色权限变更即时生效"},
+    {name:"数据看板",status:"通过",owner:"林岚",bugs:0,tests:97.9,use:112,risk:"低",note:"P3：移动端图表横向溢出，列入行动 2"}
+  ];
+  var BUGS = [
+    {t:"搜索首屏响应超 2.4s（P95）",lv:"P1",mod:"搜索服务",st:"已修复回归通过",who:"赵凯"},
+    {t:"订单列表分页偶发重复行",lv:"P2",mod:"订单中心",st:"已修复回归通过",who:"陈一"},
+    {t:"优惠券满减边界金额算错",lv:"P2",mod:"营销中心",st:"已修复回归通过",who:"王芳"},
+    {t:"库存-999 未兜底显示",lv:"P2",mod:"库存看板",st:"已修复回归通过",who:"林岚"},
+    {t:"结算对账单导出缺失合计行",lv:"P2",mod:"结算中心",st:"已修复回归通过",who:"李涛"},
+    {t:"消息角标数跨端不同步",lv:"P2",mod:"消息中心",st:"已修复回归通过",who:"赵凯"},
+    {t:"搜索词高亮在长标题截断",lv:"P3",mod:"搜索服务",st:"已修复回归通过",who:"赵凯"},
+    {t:"移动端通知角标错位",lv:"P3",mod:"消息中心",st:"已修复回归通过",who:"赵凯"},
+    {t:"移动端图表横向溢出",lv:"P3",mod:"数据看板",st:"已修复回归通过",who:"林岚"},
+    {t:"用户头像上传未压缩",lv:"P3",mod:"用户中心",st:"已修复回归通过",who:"王芳"},
+    {t:"商品图懒加载闪烁",lv:"P3",mod:"商品管理",st:"已修复回归通过",who:"陈一"},
+    {t:"物流轨迹时间轴错位",lv:"P2",mod:"物流跟踪",st:"已修复回归通过",who:"林岚"}
+  ];
+  var ACTS = [
+    {t:"验收结论同步给产品与运营（邮件 + 周会）",own:"陈一"},
+    {t:"修复 2 个移动端样式 P3（消息角标 / 图表溢出）并回归",own:"林岚"},
+    {t:"搜索首屏性能优化至 P95 ≤ 1.5s，次迭代首周完成",own:"赵凯"},
+    {t:"补录本次验收截图与用例证据至验收文档库",own:"王芳"},
+    {t:"发布 v2.3 到预发环境并观察 3 天日志告警",own:"李涛"}
+  ];
+
+  var $=function(s){return document.querySelector(s)};
+  var tbody=$("#mods tbody"), full=$("#fullrows"), bt=$("#bugrows"), act=$("#actions");
+
+  var sortK=null,sortDir=1;
+  function renderMods(){
+    var q=($("#search").value||"").trim().toLowerCase();
+    var list=MODS.filter(function(m){return !q||(m.name+m.owner+m.status+m.risk).toLowerCase().indexOf(q)>-1});
+    if(sortK){
+      list=list.slice().sort(function(a,b){
+        var x=a[sortK],y=b[sortK];
+        if(typeof x==="number")return (x-y)*sortDir;
+        return String(x).localeCompare(String(y),'zh')*sortDir;
+      });
+    }
+    tbody.innerHTML=list.map(function(m){
+      var cls=m.risk==="中"?"warn":"ok";
+      return '<tr class="clickable" data-i="'+MODS.indexOf(m)+'" data-name="'+m.name+'">'+
+        '<td>'+m.name+'</td>'+
+        '<td><span class="chip">'+m.status+'</span></td>'+
+        '<td>'+m.owner+'</td>'+
+        '<td>'+m.bugs+'</td>'+
+        '<td>'+m.tests+'%</td>'+
+        '<td><a class="op" href="#" data-act="focus">聚焦详情 →</a></td></tr>';
+    }).join("");
+    $("#cnt").textContent="匹配 "+list.length+" / "+MODS.length+" 个模块";
+  }
+
+  tbody.addEventListener("click",function(e){
+    var a=e.target.closest("a[data-act]");
+    var tr=e.target.closest("tr.clickable");
+    if(!tr)return;
+    e.preventDefault();
+    var m=MODS[+tr.dataset.i];
+    if(a){
+      var d=$("#moddetail");
+      d.style.display="block";
+      d.textContent=m.name+"：用例 "+m.use+" 条，通过率 "+m.tests+"%，风险 "+m.risk+"。"+m.note;
+      tr.scrollIntoView({behavior:"smooth",block:"center"});
+      return;
+    }
+    tr.classList.toggle("hl");
+  });
+
+  document.querySelectorAll("#mods th").forEach(function(th){
+    th.addEventListener("click",function(){
+      var k=th.dataset.k;if(!k)return;
+      if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=1;}
+      document.querySelectorAll("#mods th").forEach(function(t){t.querySelector(".arrow")&&t.querySelector(".arrow").remove()});
+      th.insertAdjacentHTML("beforeend",'<span class="arrow"> '+(sortDir>0?"↑":"↓")+'</span>');
+      renderMods();
+    });
+  });
+
+  $("#search").addEventListener("input",renderMods);
+
+  full.innerHTML=MODS.map(function(m){
+    return "<tr><td>"+m.name+"</td><td>"+m.use+"</td><td>"+m.use+"</td><td>0</td><td>"+m.risk+"</td><td>"+m.note+"</td></tr>";
+  }).join("");
+
+  bt.innerHTML=BUGS.map(function(b){
+    return "<tr><td>"+BUGS.indexOf(b)+1+"</td><td>"+b.t+"</td><td><span class='tag "+(b.lv==="P1"?"a":b.lv==="P2"?"b":"")+"'>"+b.lv+"</span></td><td>"+b.mod+"</td><td>"+b.st+"</td><td>"+b.who+"</td></tr>";
+  }).join("");
+
+  function renderActs(){
+    act.innerHTML=ACTS.map(function(a,i){
+      return '<label class="chk'+(a.done?' done':'')+'"><input type="checkbox" data-i="'+i+'"'+(a.done?" checked":"")+'>'+
+        '<span class="txt">'+a.t+'</span></label>';
+    }).join("");
+    var done=ACTS.filter(function(a){return a.done}).length;
+    $("#pbar").style.width=(done/ACTS.length*100)+"%";
+    $("#ptxt").textContent=done+" / "+ACTS.length;
+    $("#achv").textContent="完成度 "+(done/ACTS.length*100|0)+"%";
+    $("#copybtn").disabled=done===0;
+  }
+  act.addEventListener("change",function(e){
+    var i=+e.target.dataset.i;
+    ACTS[i].done=e.target.checked;
+    renderActs();
+  });
+  renderActs();
+
+  function toast(t){var x=$("#toast");x.textContent=t;x.classList.add("show");clearTimeout(x._t);x._t=setTimeout(function(){x.classList.remove("show")},1600)}
+
+  $("#copybtn").addEventListener("click",function(){
+    var lines=ACTS.filter(function(a){return a.done}).map(function(a){return "- [x] "+a.t+"（"+a.own+"）"});
+    var md="## 星瀚零售中台 Web v2.3 验收行动\n"+lines.join("\n");
+    var fallback=function(){
+      var ta=document.createElement("textarea");ta.value=md;document.body.appendChild(ta);ta.select();
+      try{document.execCommand("copy");toast("已复制 "+lines.length+" 项（降级）")}catch(e){toast("复制失败，请手动选择")}
+      ta.remove();
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(md).then(function(){toast("已复制 "+lines.length+" 项为 Markdown")},fallback);
+    }else fallback();
+  });
+
+  renderMods();
+})();
+</script>
+</body>
+</html>

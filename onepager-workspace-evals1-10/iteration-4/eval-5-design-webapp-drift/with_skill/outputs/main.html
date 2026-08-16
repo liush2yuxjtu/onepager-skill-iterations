@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计稿 vs WebApp · 漂移基准报告</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --ink:#1a202c; --mut:#6b7280; --line:#e5e7eb;
+  --full:#059669; --full-bg:#ecfdf5;
+  --partial:#d97706; --partial-bg:#fffbeb;
+  --gap:#dc2626; --gap-bg:#fef2f2;
+  --overflow:#4f46e5; --overflow-bg:#eef2ff;
+  --chip:#e2e8f0; --accent:#2563eb;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:16px 16px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}
+h1{font-size:22px;margin:0 0 4px}
+h2{font-size:16px;margin:0 0 8px}
+.sub{color:var(--mut);font-size:13px;margin-bottom:8px}
+.verdict{background:linear-gradient(135deg,#111827,#1e3a8a);color:#fff;border-radius:12px;padding:16px 18px;margin:12px 0}
+.verdict .tldr{font-size:15px;font-weight:600}
+.verdict .detail{font-size:13px;opacity:.92;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{font-size:12px;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25)}
+.kpis{display:flex;flex-wrap:wrap;gap:12px}
+.kpi{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi .n{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.kpi .l{font-size:12px;color:var(--mut);margin-top:2px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;vertical-align:middle}
+.b-full{background:var(--full-bg);color:var(--full)}
+.b-partial{background:var(--partial-bg);color:var(--partial)}
+.b-gap{background:var(--gap-bg);color:var(--gap)}
+.b-overflow{background:var(--overflow-bg);color:var(--overflow)}
+.vizgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.vizgrid{grid-template-columns:1fr}}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.vizbox h2{font-size:14px}
+.drow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.drow:last-child{border-bottom:none}
+.drow .nm{width:64px;font-weight:600;font-size:13px;flex-shrink:0}
+.bars{flex:1}
+.bar{display:flex;align-items:center;gap:6px;margin:2px 0;font-size:11px;color:var(--mut)}
+.bar .track{flex:1;height:10px;background:#f1f5f9;border-radius:5px;overflow:hidden}
+.bar .fill{height:100%;border-radius:5px}
+.bar .cnt{width:22px;text-align:right;font-weight:700;font-size:12px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+input[type=search]{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;outline:none}
+input[type=search]:focus{border-color:var(--accent)}
+.fbtn{padding:6px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:12px;cursor:pointer;color:var(--ink)}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--mut);margin-bottom:8px}
+.legend .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:12px;color:var(--mut);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--accent)}
+tr.hidden{display:none}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;background:#fbfcfd}
+summary{cursor:pointer;font-weight:600;font-size:13px}
+.foot{color:var(--mut);font-size:11px;margin-top:20px;line-height:1.7;word-break:break-all}
+.foot code{background:#eef1f5;border-radius:4px;padding:1px 5px;font-size:11px}
+.copybtn{font-size:12px;padding:5px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+.copybtn:hover{border-color:var(--accent);color:var(--accent)}
+.prog{height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden;margin:6px 0}
+.prog .fill{height:100%;background:var(--full);transition:width .3s}
+.actions li{margin:4px 0;list-style:none;font-size:13px}
+.actions input{margin-right:6px}
+.venn{position:relative;width:100%;aspect-ratio:2/1.1;max-height:300px}
+.venn svg{width:100%;height:100%}
+.venn .lbl{position:absolute;font-size:11px;font-weight:700;text-align:center;line-height:1.3;pointer-events:none}
+.navlink{display:inline-block;text-decoration:none;color:#fff;background:var(--accent);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;margin:4px 6px 0 0}
+.navlink.ghost{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.tag{font-size:11px;color:var(--mut)}
+.rate-note{font-size:12px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>设计稿 vs WebApp · 漂移基准报告</h1>
+<div class="sub">意图（design-v1.html）→ 交付（webapp-v2.html）· 语义 Fidelity 对比，非数量对比</div>
+
+<div class="verdict">
+  <div class="tldr">TL;DR：核心工作流 100% 落地，但「设置域」整体缺失，另有 8 条工程溢出需回写设计稿。</div>
+  <div class="detail">
+    意图实现率 <b>80%</b>（12/15 动作全落地）· 对话 / 工单 / 报表 三域意图<b>全落地</b>（full）；
+    唯一真缺口 = <b>设置域（个人资料 / SLA / 排班）整体缺失</b>（gap）；
+    溢出 8 条（AI 建议、语音转文字、合并工单、知识库×3、智能分析×2）——<b>溢出 ≠ 偏离，是工程超越设计</b>。
+  </div>
+  <div class="chips">
+    <span class="chip">full ×3 域</span>
+    <span class="chip">partial ×0</span>
+    <span class="chip">gap ×1 域（设置）</span>
+    <span class="chip">overflow ×2 域 + 3 动作</span>
+    <span class="chip">结论：演进非偏离</span>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="n">80%</div><div class="l">意图实现率（12/15 共享动作）</div></div>
+  <div class="kpi"><div class="n">3</div><div class="l">缺口动作（全部在设置域）</div></div>
+  <div class="kpi"><div class="n">8</div><div class="l">溢出动作（工程超越设计）</div></div>
+  <div class="kpi"><div class="n">100%</div><div class="l">对话·工单·报表 意图全落地</div></div>
+</div>
+
+<div class="vizgrid">
+
+  <div class="vizbox">
+    <h2>漂移 Venne 图 <span class="tag">意图 15 · 落地 12 · 缺口 3 · 溢出 8</span></h2>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--gap)"></span>缺口 3（仅设计稿）</span>
+      <span><span class="dot" style="background:var(--full)"></span>落地 12（共享）</span>
+      <span><span class="dot" style="background:var(--overflow)"></span>溢出 8（仅 WebApp）</span>
+    </div>
+    <div class="venn">
+      <svg viewBox="0 0 400 220">
+        <circle cx="140" cy="110" r="86" fill="rgba(220,38,38,.05)" stroke="var(--gap)" stroke-width="2"/>
+        <circle cx="260" cy="110" r="86" fill="rgba(79,70,229,.05)" stroke="var(--overflow)" stroke-width="2"/>
+        <path d="M140,24 A86,86 0 0 1 260,24 L 228,24 A68,68 0 0 0 172,24 Z" fill="rgba(5,150,105,.14)"/>
+        <text x="86" y="116" text-anchor="middle" font-size="12" font-weight="800" fill="var(--gap)">3</text>
+        <text x="86" y="132" text-anchor="middle" font-size="9" fill="var(--mut)">缺口</text>
+        <text x="200" y="112" text-anchor="middle" font-size="15" font-weight="800" fill="var(--full)">12</text>
+        <text x="200" y="128" text-anchor="middle" font-size="9" fill="var(--mut)">落地</text>
+        <text x="314" y="116" text-anchor="middle" font-size="12" font-weight="800" fill="var(--overflow)">8</text>
+        <text x="314" y="132" text-anchor="middle" font-size="9" fill="var(--mut)">溢出</text>
+        <text x="58" y="26" font-size="11" font-weight="700" fill="var(--ink)">设计稿·意图</text>
+        <text x="342" y="26" font-size="11" font-weight="700" fill="var(--ink)">WebApp·交付</text>
+      </svg>
+    </div>
+    <div class="rate-note">意图实现率 = 落地/意图 = 12/15 = <b>80%</b></div>
+  </div>
+
+  <div class="vizbox">
+    <h2>域级双栏对比 <span class="tag">设计数 vs 实现数</span></h2>
+    <div id="chart"></div>
+    <div class="rate-note">爆点：设置域 3→0（真缺口）；知识库 0→3 / 智能分析 0→2（工程溢出）</div>
+  </div>
+
+</div>
+
+<div class="card">
+  <h2>逐域 Fidelity 判定 <span class="tag">按域提取两侧动作 → 4 态分类（full / partial / gap / overflow）</span></h2>
+  <div class="tools">
+    <input type="search" id="q" placeholder="搜索域 / 动作…（窄网关：输入即过滤）">
+    <button class="fbtn on" data-f="all">全部</button>
+    <button class="fbtn" data-f="full">full</button>
+    <button class="fbtn" data-f="partial">partial</button>
+    <button class="fbtn" data-f="gap">gap</button>
+    <button class="fbtn" data-f="overflow">overflow</button>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--full)"></span>full 意图全落地</span>
+    <span><span class="dot" style="background:var(--partial)"></span>partial 部分落地</span>
+    <span><span class="dot" style="background:var(--gap)"></span>gap 设计有·实现无</span>
+    <span><span class="dot" style="background:var(--overflow)"></span>overflow 实现有·设计未规划</span>
+  </div>
+  <table id="dom">
+    <thead><tr>
+      <th data-s="name">域</th>
+      <th data-s="state">Fidelity</th>
+      <th data-s="des">设计动作</th>
+      <th data-s="imp">实现动作</th>
+      <th data-s="shared">共享</th>
+      <th>结论</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>行动清单 · 回写设计稿 <span class="tag">可勾选 · 进度跟踪 · 一键复制为 Markdown</span></h2>
+  <div class="prog"><div class="fill" id="progfill" style="width:0%"></div></div>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:8px">已勾选 <span id="ckn">0</span>/<span id="ckt">4</span> · <button class="copybtn" onclick="copyMD()">复制 Markdown →</button></div>
+  <ul class="actions" id="actions">
+    <li><label><input type="checkbox" data-ai="settings"> 补齐设置域：个人资料 / SLA 配置 / 排班（真缺口，优先级最高）</label></li>
+    <li><label><input type="checkbox" data-ai="overflow-doc"> 将 8 条溢出写回设计稿：AI 建议回复 / 语音转文字 / 合并工单 / 知识库×3 / 智能分析×2</label></li>
+    <li><label><input type="checkbox" data-ai="nav7"> 核对「7 导航」与 DOM 仅 5 视图的不一致（设置页在导航中是否占位）</label></li>
+    <li><label><input type="checkbox" data-ai="sla"> 设置域若为二期范围，请在设计稿标注「已排期」，避免被误判为缺陷</label></li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>下钻（窄网关 · 按需加载）</h2>
+  <a class="navlink" href="sub-snapshots.html">截图并排对比 →</a>
+  <a class="navlink ghost" href="sub-domains.html">逐域动作矩阵 / 搜索 / 排序 →</a>
+  <details>
+    <summary>查看采集证据（命令 / 来源 / 口径）</summary>
+    <div class="sub" style="margin-top:8px">
+      <b>来源</b>：设计稿 <code>inputs/design-v1.html</code>（意图）· WebApp <code>inputs/webapp-v2.html</code>（交付）<br>
+      <b>截图命令</b>：<code>Google Chrome --headless=new --screenshot --window-size=760,920</code>（design-v1.png / webapp-v2.png）<br>
+      <b>判定方法</b>：按域提取两侧 <code>data-action</code> 动作集 → 共享/独有 → 4 态 Fidelity → 对抗验证（chat 实现 7 动作 > 设计 5，但 5 个意图动作全落地 → <b>full 而非 partial</b>）。<br>
+      <b>口径</b>：非数量对比（15 vs 20 无意义）；以语义 Fidelity 为准。
+    </div>
+  </details>
+</div>
+
+<div class="foot">
+  <b>来源项目</b>：onepager-workspace/iteration-4/eval-5-design-webapp-drift（skill: onepager）<br>
+  <b>绝对路径</b>：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-4/eval-5-design-webapp-drift/with_skill/outputs/<br>
+  <b>生成者</b>：opencode（deepseek-v4-flash）· 会话生成于 2026-08-10 · 产物 main.html + sub-snapshots.html + sub-domains.html<br>
+  <b>采集命令</b>：<code>Google Chrome --headless=new --disable-gpu --hide-scrollbars --window-size=760,920 --screenshot=…/snapshots/{design-v1,webapp-v2}.png file://…/inputs/*.html</code> ·
+  <code>base64 -i *.png -o *.b64</code>（base64 仅内联于 sub-snapshots.html）
+</div>
+
+</div>
+
+<script>
+const DOMS=[
+  {name:"对话",id:"chat",state:"full",des:5,imp:7,shared:5,con:"意图 5/5 落地；溢出 AI 建议回复、语音转文字"},
+  {name:"工单",id:"ticket",state:"full",des:4,imp:5,shared:4,con:"意图 4/4 落地；溢出 合并工单"},
+  {name:"报表",id:"report",state:"full",des:3,imp:3,shared:3,con:"意图 3/3 落地；与设计完全一致"},
+  {name:"设置",id:"settings",state:"gap",des:3,imp:0,shared:0,con:"个人资料 / SLA / 排班 整体缺失——唯一真缺口"},
+  {name:"知识库",id:"knowledge",state:"overflow",des:0,imp:3,shared:0,con:"新建知识 / 搜索 / 打标签，设计未规划（工程溢出）"},
+  {name:"智能分析",id:"analytics",state:"overflow",des:0,imp:2,shared:0,con:"情绪分析 / 主题聚类，设计未规划（工程溢出）"}
+];
+const stateLabel={full:["full 全落地","b-full"],partial:["partial 部分","b-partial"],gap:["gap 缺口","b-gap"],overflow:["overflow 溢出","b-overflow"]};
+const stateColor={full:"var(--full)",partial:"var(--partial)",gap:"var(--gap)",overflow:"var(--overflow)"};
+function rowHTML(d){
+  const[s,cls]=stateLabel[d.state];
+  return `<tr data-name="${d.name}" data-id="${d.id}" data-state="${d.state}" data-des="${d.des}" data-imp="${d.imp}" data-shared="${d.shared}">
+    <td><b>${d.name}</b></td>
+    <td><span class="badge ${cls}">${s}</span></td>
+    <td>${d.des}</td><td>${d.imp}</td><td>${d.shared}</td>
+    <td class="sub">${d.con}</td></tr>`;
+}
+function render(){document.querySelector("#dom tbody").innerHTML=DOMS.map(rowHTML).join("");}
+let q="",f="all",sortK="des",sortD=-1;
+function apply(){
+  const rows=[...document.querySelectorAll("#dom tbody tr")];
+  rows.forEach(r=>{
+    const ok=(q===""||r.dataset.name.includes(q)||r.dataset.id.includes(q)||r.dataset.con&&r.dataset.con.includes(q))&&(f==="all"||r.dataset.state===f);
+    r.classList.toggle("hidden",!ok);
+  });
+  const tbl=[...document.querySelectorAll("#dom tbody tr")].filter(r=>!r.classList.contains("hidden"));
+  tbl.sort((a,b)=>(a.dataset[sortK]-b.dataset[sortK]||String(a.dataset.name).localeCompare(b.dataset.name,"zh"))*sortD);
+  const tb=document.querySelector("#dom tbody");tbl.forEach(r=>tb.appendChild(r));
+}
+document.querySelector("#q").addEventListener("input",e=>{q=e.target.value.trim().toLowerCase();apply();});
+document.querySelectorAll(".fbtn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".fbtn").forEach(x=>x.classList.remove("on"));b.classList.add("on");f=b.dataset.f;apply();
+}));
+document.querySelectorAll("th[data-s]").forEach(th=>th.addEventListener("click",()=>{
+  const k=th.dataset.s;
+  if(sortK===k)sortD*=-1;else{sortK=k;sortD=-1;}
+  document.querySelectorAll("th[data-s]").forEach(x=>{x.textContent=x.textContent.replace(/\s*[↑↓]$/,"");});
+  th.textContent+=sortD<0?" ↓":" ↑";
+  apply();
+}));
+
+(function chart(){
+  const el=document.getElementById("chart");
+  const max=Math.max(...DOMS.map(d=>Math.max(d.des,d.imp)),1);
+  el.innerHTML=DOMS.map(d=>`
+    <div class="drow">
+      <div class="nm">${d.name}</div>
+      <div class="bars">
+        <div class="bar"><span style="width:34px">设计</span><div class="track"><div class="fill" style="width:${d.des/max*100}%;background:#94a3b8"></div></div><span class="cnt">${d.des}</span></div>
+        <div class="bar"><span style="width:34px">实现</span><div class="track"><div class="fill" style="width:${d.imp/max*100}%;background:${stateColor[d.state]}"></div></div><span class="cnt">${d.imp}</span></div>
+      </div>
+      <span class="badge ${stateLabel[d.state][1]}">${d.state}</span>
+    </div>`).join("");
+})();
+
+const acts=["settings","overflow-doc","nav7","sla"];
+function update(){
+  const n=acts.filter(a=>document.querySelector(`[data-ai="${a}"]`).checked).length;
+  document.getElementById("ckn").textContent=n;
+  document.getElementById("ckt").textContent=acts.length;
+  document.getElementById("progfill").style.width=(n/acts.length*100)+"%";
+}
+acts.forEach(a=>{document.querySelector(`[data-ai="${a}"]`).addEventListener("change",update);});
+function copyMD(){
+  const lines=[
+    "## 设计稿 vs WebApp · 漂移基准回写清单",
+    "- 意图实现率 80%（12/15）· 对话/工单/报表 意图全落地 · 设置域整体缺失(gap) · 溢出 8 条(工程超越设计)",
+  ];
+  acts.forEach(a=>{
+    const ck=document.querySelector(`[data-ai="${a}"]`);
+    const txt=ck.parentNode.textContent.trim();
+    lines.push(`- [${ck.checked?"x":" "}] ${txt}`);
+  });
+  const all=lines.join("\n");
+  navigator.clipboard.writeText(all).then(()=>{alert("已复制 Markdown 清单");});
+}
+render();apply();update();
+</script>
+</body>
+</html>

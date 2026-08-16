@@ -1,0 +1,15 @@
+{
+  "eval_id": 4,
+  "eval_name": "spa-changes-preview",
+  "prompt": "我手上有一个设计师交付的 500KB 单文件 SPA 原型（hash 路由，三个导航视图 chat/experts/projects，fixed 侧边栏布局），我改了 4 处：① 侧边栏 AI 对话导航加 NEW 徽章 ② 品牌区加版本号 ③ 专家团视图里「供应链经营总控」卡片加新技能徽章 ④ 项目组视图里「Q3 交付保障」卡片加里程碑徽章。请给这个原型做一个改动预览：打开文件先看到改动总览，点击任意一处能定位到改动处（包括需要先切换视图的子视图改动），评审可以勾选确认并复制 Markdown 清单。",
+  "assertions": [
+    "The SPA has a fixed changes bar, default collapsed to one slim row under 40px tall",
+    "Collapsed bar shows 'N 处改动' verdict plus one clickable tag per change",
+    "Expanded bar shows per-change rows with summary + jump link + checkbox + copy-markdown",
+    "Each change is marked with an id=chg-N badge injected in the render template, surviving view switching",
+    "Jumping to a change in another sub-view clicks the nav and waits for render before locating",
+    "Locating uses flash animation + persistent outline, not hash anchors or scrollIntoView alone",
+    "Switching target clears the previous locate highlight",
+    "Original nav switching still works with zero console errors"
+  ]
+}

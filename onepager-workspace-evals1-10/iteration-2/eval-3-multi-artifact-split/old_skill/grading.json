@@ -1,0 +1,55 @@
+{
+  "run_id": "eval-3-multi-artifact-split-old_skill",
+  "expectations": [
+    {
+      "text": "split_main_exists: 存在 main.html 主入口",
+      "passed": false,
+      "evidence": "main=NONE"
+    },
+    {
+      "text": "sub_files_exist: 至少 3 个独立 sub-*.html",
+      "passed": false,
+      "evidence": "[]"
+    },
+    {
+      "text": "main_verdict_first: main 标题下 5 秒内出现结论",
+      "passed": false,
+      "evidence": "no main"
+    },
+    {
+      "text": "main_summaries: main 中每个 sub 有一行摘要 + 链接",
+      "passed": false,
+      "evidence": "3+ sub links found"
+    },
+    {
+      "text": "main_lean: main.html < 50KB",
+      "passed": false,
+      "evidence": "no main"
+    },
+    {
+      "text": "sub_self_contained: 每个 sub 含完整 <html> 结构",
+      "passed": false,
+      "evidence": "0 subs with html structure"
+    },
+    {
+      "text": "relative_paths: main→sub 用相对路径",
+      "passed": false,
+      "evidence": "relative href=sub-*.html"
+    },
+    {
+      "text": "sub_interactive: 至少一个 sub 有交互组件",
+      "passed": false,
+      "evidence": "search/checkbox/clipboard/sort found in subs"
+    },
+    {
+      "text": "no_cdn: 所有 HTML 无外链脚本资源",
+      "passed": true,
+      "evidence": "no external script/CDN"
+    },
+    {
+      "text": "provenance_footer: main 与 sub 有来源标注",
+      "passed": false,
+      "evidence": "provenance in main + subs"
+    }
+  ]
+}

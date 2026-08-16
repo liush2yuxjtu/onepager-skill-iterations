@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>视频素材混剪与投放数据中台 · 项目验收报告</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#fff; --ink:#1c2330; --mut:#6b7482; --line:#e3e6ec;
+    --acc:#2563eb; --acc-soft:#eef3ff; --ok:#16a34a; --ok-soft:#e9f8ef;
+    --warn:#d97706; --warn-soft:#fdf4e3; --bad:#dc2626; --bad-soft:#fdeaea;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+
+  header.hero{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 6px 20px rgba(37,99,235,.18)}
+  .hero h1{margin:0 0 6px;font-size:22px;font-weight:700;letter-spacing:.3px}
+  .hero .meta{font-size:12.5px;opacity:.85;margin-bottom:14px}
+  .verdict{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:12px 14px}
+  .verdict .pill{font-weight:700;font-size:14px;background:#16a34a;padding:4px 12px;border-radius:20px}
+  .verdict .tldr{flex:1 1 260px;font-size:14px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0 4px}
+  .kpi{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 12px}
+  .kpi b{display:block;font-size:20px;line-height:1.2}
+  .kpi span{font-size:11.5px;opacity:.85}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
+  nav.tabs a{font-size:13px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 12px;text-decoration:none}
+  nav.tabs a:hover{border-color:var(--acc);color:var(--acc)}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:16px 0;overflow:hidden}
+  section.card > h2{margin:0;padding:14px 16px 0;font-size:16px}
+  section.card > h2 .cnt{color:var(--mut);font-weight:400;font-size:12.5px;margin-left:8px}
+  .bar{height:4px;background:var(--line);margin:8px 16px 0;border-radius:2px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--acc);transition:width .3s}
+  .ctrl{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;align-items:center}
+  .ctrl input[type=search]{flex:1 1 200px;min-width:160px;padding:7px 12px;border:1px solid var(--line);border-radius:8px;font-size:13.5px}
+  .ctrl select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;background:#fff}
+  .ctrl .btn{margin-left:auto;padding:7px 14px;border:1px solid var(--acc);color:var(--acc);background:#fff;border-radius:8px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .ctrl .btn:hover{background:var(--acc-soft)}
+  .countline{font-size:12.5px;color:var(--mut);padding:0 16px 6px}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f7f8fa;font-weight:600;cursor:pointer;user-select:none;white-space:nowrap;position:sticky;top:0}
+  th:hover{color:var(--acc)}
+  th .arr{color:var(--acc);font-size:11px;margin-left:3px}
+  tr.row{cursor:pointer}
+  tr.row:hover td{background:#f8fafc}
+  tr.detail td{background:#fafbfc;color:var(--mut);font-size:13px;padding:10px 12px 14px}
+  .subs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .subs span{background:#fff;border:1px solid var(--line);border-radius:14px;padding:1px 9px;font-size:12px;color:var(--ink)}
+  .empty{color:var(--mut);text-align:center;padding:18px;font-size:13px}
+
+  .badge{display:inline-block;font-size:12px;padding:1px 9px;border-radius:12px;font-weight:600}
+  .b-ok{background:var(--ok-soft);color:var(--ok)}
+  .b-warn{background:var(--warn-soft);color:var(--warn)}
+  .b-bad{background:var(--bad-soft);color:var(--bad)}
+  .b-mut{background:#eef0f3;color:var(--mut)}
+  .b-acc{background:var(--acc-soft);color:var(--acc)}
+  .mono{font-family:var(--mono);font-size:12px;color:var(--mut)}
+  .kbd{font-family:var(--mono);font-size:12px}
+
+  /* checklist */
+  ul.cl{margin:0;padding:0;list-style:none}
+  ul.cl li{display:flex;gap:10px;align-items:flex-start;padding:9px 16px;border-bottom:1px solid var(--line)}
+  ul.cl li:last-child{border-bottom:none}
+  ul.cl input{width:17px;height:17px;margin-top:2px;accent-color:var(--acc);cursor:pointer}
+  ul.cl .nm{flex:1}
+  ul.cl .nm.done{color:var(--mut)}
+  ul.cl .nm.done b{text-decoration:line-through;color:var(--mut)}
+  ul.cl .tag{font-size:11.5px;color:var(--mut);background:#eef0f3;border-radius:10px;padding:1px 8px;white-space:nowrap}
+  .cl-prog{display:flex;gap:14px;align-items:center;padding:10px 16px;font-size:13px;color:var(--mut);border-bottom:1px solid var(--line)}
+  .cl-prog .bar{flex:1;margin:0}
+  .cl-prog b{color:var(--ink)}
+
+  /* issues */
+  .issue{display:flex;gap:10px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--line);cursor:pointer;flex-wrap:wrap}
+  .issue:hover{background:#f8fafc}
+  .issue .id{font-family:var(--mono);color:var(--mut);font-size:12px;width:34px}
+  .issue .tt{flex:1 1 240px}
+  .issue .res{flex-basis:100%;color:var(--mut);font-size:13px;padding:6px 0 2px 44px}
+  .issue .res.hidden{display:none}
+  .expand{color:var(--acc);font-size:12px;white-space:nowrap}
+
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;padding:14px 16px}
+  .titem{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .titem .t{display:flex;justify-content:space-between;gap:8px;font-weight:600;font-size:13.5px}
+  .titem .d{color:var(--mut);font-size:12.5px;margin-top:4px}
+  .rsk{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .rsk .t{display:flex;justify-content:space-between;gap:8px;font-weight:600}
+  .rsk .m{color:var(--mut);font-size:12.5px;margin-top:4px}
+  .rsk .a{margin-top:6px;font-size:12.5px;color:var(--acc)}
+
+  footer{margin-top:22px;color:var(--mut);font-size:12px;line-height:1.8;border-top:1px solid var(--line);padding-top:12px}
+  details.foot{margin-top:8px}
+  details.foot summary{cursor:pointer;color:var(--mut)}
+  pre.code{background:#f2f4f7;border:1px solid var(--line);border-radius:8px;padding:10px;font-family:var(--mono);font-size:11.5px;overflow:auto;max-height:260px}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+  .toast.show{opacity:1}
+  @media(max-width:600px){ .wrap{padding:12px 10px 48px} header.hero{padding:16px} th,td{padding:6px 8px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>视频素材混剪与投放数据中台 · 项目验收报告</h1>
+    <div class="meta">项目编号 VM-2025-0318 ｜ 验收日期 2026-07-22 ｜ 版本 v1.0 ｜ 验收方式：甲方现场 + 线上抽检</div>
+    <div class="verdict">
+      <span class="pill">验收通过</span>
+      <div class="tldr"><b>结论：</b>6 大功能模块全部交付，交付物 11 项已核验 9 项；测试 100% 通过；遗留 3 项低/中风险整改项，其中 2 项已于验收后一周内关闭。建议准予通过，遗留项按计划跟踪关闭。</div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b>6 / 6</b><span>模块完成率 100%</span></div>
+      <div class="kpi"><b>97.5%</b><span>平均模块完成度</span></div>
+      <div class="kpi"><b>3 / 5</b><span>验收问题已整改</span></div>
+      <div class="kpi"><b>100%</b><span>测试用例通过率</span></div>
+      <div class="kpi"><b>9 / 11</b><span>交付物已核验</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a href="#modules">功能模块</a>
+    <a href="#deliverables">交付物清单</a>
+    <a href="#issues">问题与整改</a>
+    <a href="#tests">测试结果</a>
+    <a href="#risks">遗留事项</a>
+  </nav>
+
+  <!-- ============ 全局搜索 ============ -->
+  <section class="card">
+    <div class="ctrl">
+      <input type="search" id="globalSearch" placeholder="全局搜索：模块 / 交付物 / 问题 / 测试（输入即过滤，跨区实时联动）">
+      <button class="btn" id="resetBtn">重置全部</button>
+    </div>
+    <div class="countline">跨 5 个区块联动过滤，当前命中共 <b id="hitCount">0</b> 条</div>
+  </section>
+
+  <!-- ============ 功能模块 ============ -->
+  <section class="card" id="modules">
+    <h2>一、功能模块完成度<span class="cnt" id="modCnt"></span></h2>
+    <div class="ctrl">
+      <select id="modStatus">
+        <option value="">全部状态</option>
+        <option value="完成">已完成</option>
+        <option value="完成*">完成（待复核）</option>
+      </select>
+      <input type="search" id="modSearch" placeholder="搜索模块名称 / 负责人 / 关键指标">
+      <button class="btn" id="modExpandAll">展开全部</button>
+    </div>
+    <table id="modTable">
+      <thead><tr>
+        <th data-k="id">编号</th>
+        <th data-k="name">模块</th>
+        <th data-k="owner">负责人</th>
+        <th data-k="progress">完成度</th>
+        <th data-k="status">状态</th>
+        <th data-k="key">关键指标</th>
+        <th>操作</th>
+      </tr></thead>
+      <tbody id="modBody"></tbody>
+    </table>
+    <div class="empty hidden" id="modEmpty">没有匹配的模块。</div>
+  </section>
+
+  <!-- ============ 交付物清单 ============ -->
+  <section class="card" id="deliverables">
+    <h2>二、交付物核验清单<span class="cnt" id="dlvCnt"></span></h2>
+    <div class="cl-prog">
+      <b id="dlvNum">0 / 0</b>
+      <span>已核验</span>
+      <div class="bar"><i id="dlvBar"></i></div>
+      <button class="btn" id="copyDlv">复制清单</button>
+    </div>
+    <div class="ctrl">
+      <input type="search" id="dlvSearch" placeholder="搜索交付物名称 / 类型">
+      <select id="dlvType">
+        <option value="">全部类型</option>
+        <option value="文档">文档</option>
+        <option value="源码">源码</option>
+        <option value="环境">环境</option>
+      </select>
+    </div>
+    <ul class="cl" id="dlvList"></ul>
+    <div class="empty hidden" id="dlvEmpty">没有匹配的交付物。</div>
+  </section>
+
+  <!-- ============ 问题与整改 ============ -->
+  <section class="card" id="issues">
+    <h2>三、验收问题与整改<span class="cnt" id="issCnt"></span></h2>
+    <div class="ctrl">
+      <select id="issStatus">
+        <option value="">全部状态</option>
+        <option value="已整改">已整改</option>
+        <option value="整改中">整改中</option>
+        <option value="待整改">待整改</option>
+      </select>
+      <select id="issSev">
+        <option value="">全部级别</option>
+        <option value="高">高</option>
+        <option value="中">中</option>
+        <option value="低">低</option>
+      </select>
+      <input type="search" id="issSearch" placeholder="搜索问题描述">
+    </div>
+    <div id="issList"></div>
+    <div class="empty hidden" id="issEmpty">没有匹配的问题。</div>
+  </section>
+
+  <!-- ============ 测试结果 ============ -->
+  <section class="card" id="tests">
+    <h2>四、测试结果<span class="cnt" id="tstCnt"></span></h2>
+    <div class="grid2" id="tstList"></div>
+  </section>
+
+  <!-- ============ 遗留事项 ============ -->
+  <section class="card" id="risks">
+    <h2>五、遗留事项与风险跟踪<span class="cnt" id="rskCnt"></span></h2>
+    <div class="grid2" id="rskList"></div>
+  </section>
+
+  <footer>
+    <div><b>来源与生命周期</b>：本页为「视频素材混剪与投放数据中台」验收报告的精炼交互版。源报告 /Users/liushiyuwin/reports/acceptance-202607.md（原始 6-tab HTML 版已归档至 archives/）。</div>
+    <div>数据口径：验收期间（2026-06-01 ~ 2026-07-22）甲方现场核验 + 系统抽检；测试数据来自 CI 报告 v4.2。生成：eval2-base · session 9edfb9aa · 2026-08-12。</div>
+    <details class="foot">
+      <summary>查看原始验收结论（Markdown）</summary>
+      <pre class="code" id="rawMd"></pre>
+    </details>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- 数据 ---------- */
+const MODULES = [
+  {id:"M1", name:"混剪引擎", owner:"张伟", progress:100, status:"完成", key:"混剪产能 320 条/日",
+   subs:["混剪任务调度","模板引擎","画质检测","成片输出","失败重试"]},
+  {id:"M2", name:"素材库管理", owner:"李娜", progress:98, status:"完成", key:"素材去重率 98.2%",
+   subs:["素材上传/切片","去重判定","自动打标","版本管理","回收站"]},
+  {id:"M3", name:"投放数据看板", owner:"王强", progress:100, status:"完成", key:"日活 200+，P95 320ms",
+   subs:["实时消耗看板","ROI 分析","竞品对比","大屏模式","导出快照"]},
+  {id:"M4", name:"标签体系", owner:"赵敏", progress:95, status:"完成*", key:"37 张 QC_* 标注表",
+   subs:["品线标签","场景标签","数据字典标注","检索接口","标签审计"]},
+  {id:"M5", name:"权限与审计", owner:"孙浩", progress:100, status:"完成", key:"角色权限 100% 覆盖",
+   subs:["RBAC 权限","操作日志","审计查询","敏感列脱敏"]},
+  {id:"M6", name:"报表与导出", owner:"周婷", progress:92, status:"完成*", key:"12 类报表",
+   subs:["日报/周报/月报","批量导出","定时推送","大数据量导出(整改中)"]},
+];
+
+const DELIVERABLES = [
+  {id:"D01", name:"需求规格说明书 v1.2", type:"文档", size:"86 页", done:true},
+  {id:"D02", name:"系统设计文档（含架构图）", type:"文档", size:"54 页", done:true},
+  {id:"D03", name:"接口文档（OpenAPI）", type:"文档", size:"320 接口", done:true},
+  {id:"D04", name:"数据字典（37 张 QC_* 标注表）", type:"文档", size:"37 表", done:true},
+  {id:"D05", name:"混剪引擎源码包", type:"源码", size:"45 模块", done:true},
+  {id:"D06", name:"部署与运维手册", type:"文档", size:"28 页", done:true},
+  {id:"D07", name:"测试报告（单元/接口/性能/安全）", type:"文档", size:"320 页", done:true},
+  {id:"D08", name:"验收测试环境与脚本", type:"环境", size:"3 环境", done:true},
+  {id:"D09", name:"培训记录与操作视频", type:"文档", size:"6 场", done:true},
+  {id:"D10", name:"源代码完整移交（GitLab）", type:"源码", size:"12 仓库", done:false},
+  {id:"D11", name:"License 与第三方依赖清单", type:"文档", size:"1 份", done:false},
+];
+
+const ISSUES = [
+  {id:"#01", title:"素材去重误判率偏高（约 5%）", sev:"高", status:"已整改", date:"2026-07-15",
+   res:"改用感知哈希 + 内容指纹双通道，误判率降至 0.8%；已加 300 组回归用例，验收当场复测通过。"},
+  {id:"#02", title:"看板大屏在 4K 分辨率下布局溢出", sev:"中", status:"已整改", date:"2026-07-16",
+   res:"改为自适应栅格 + 降采样策略，4K / 1080p / 手机端均验证通过。"},
+  {id:"#03", title:"一人多角色时权限冲突无提示", sev:"中", status:"已整改", date:"2026-07-18",
+   res:"新增角色冲突检测与默认优先级策略，冲突时页面给出明确提示。"},
+  {id:"#04", title:"报表导出超过 10 万行时超时", sev:"中", status:"整改中", date:"2026-07-20",
+   res:"分页流式导出方案已立项，计划 7 月底上线，预计 8 月 5 日前完成复测。"},
+  {id:"#05", title:"日志审计缺少按时间/操作人筛选", sev:"低", status:"待整改", date:"2026-07-21",
+   res:"已排入下迭代，预计 8 月中旬交付，不影响验收放行。"},
+];
+
+const TESTS = [
+  {name:"单元测试", result:"通过", detail:"1452 用例，行覆盖率 87%"},
+  {name:"接口测试", result:"通过", detail:"320 用例，全部通过"},
+  {name:"性能测试", result:"通过", detail:"并发 200，P95 320ms，零错误"},
+  {name:"兼容性测试", result:"通过", detail:"Chrome / Edge / Firefox / Safari 全通过"},
+  {name:"安全测试", result:"通过", detail:"无高危；2 中 5 低漏洞整改中"},
+  {name:"回归测试", result:"通过", detail:"验收回归 3 轮全部通过"},
+];
+
+const RISKS = [
+  {name:"报表大数据量导出性能", level:"中", owner:"周婷", due:"2026-07-31", action:"分页流式导出上线后复测"},
+  {name:"缓存预热策略待调优", level:"低", owner:"王强", due:"2026-08-15", action:"按热数据特征调整预热窗口"},
+  {name:"第三方 SDK 依赖升级", level:"低", owner:"张伟", due:"2026-09-01", action:"跟踪上游版本，季度性升级"},
+];
+
+/* ---------- 状态 ---------- */
+const state = { mod:{search:"",status:"",open:{}}, iss:{search:"",status:"",sev:""}, dlv:{search:"",type:""} };
+
+/* ---------- 渲染：功能模块 ---------- */
+function badgeSt(s){ return s==="完成" ? '<span class="badge b-ok">已完成</span>' : '<span class="badge b-warn">完成·待复核</span>'; }
+function modFiltered(){
+  return MODULES.filter(m=>{
+    const q=state.mod.search.toLowerCase();
+    if(state.mod.status && m.status!==state.mod.status) return false;
+    if(q && !(m.name+m.owner+m.key+m.id).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+function renderMods(){
+  const rows = modFiltered();
+  const tb = $("modBody");
+  tb.innerHTML = rows.map(m=>`
+    <tr class="row" data-id="${m.id}">
+      <td class="mono">${m.id}</td>
+      <td><b>${esc(m.name)}</b></td>
+      <td>${esc(m.owner)}</td>
+      <td>${m.progress}%</td>
+      <td>${badgeSt(m.status)}</td>
+      <td>${esc(m.key)}</td>
+      <td><span class="expand">${state.mod.open[m.id] ? "收起 ▴" : "详情 ▾"}</span></td>
+    </tr>
+    ${state.mod.open[m.id] ? `<tr class="detail"><td colspan="7"><div class="subs">${m.subs.map(s=>`<span>${esc(s)}</span>`).join("")}</div></td></tr>` : ""}
+  `).join("");
+  $("modCnt").textContent = `（${rows.length} / ${MODULES.length}）`;
+  $("modEmpty").classList.toggle("hidden", rows.length>0);
+  globalCount();
+}
+$("modBody").addEventListener("click", e=>{
+  const tr = e.target.closest("tr.row");
+  if(!tr) return;
+  const id = tr.dataset.id;
+  state.mod.open[id] = !state.mod.open[id];
+  renderMods();
+});
+$("modSearch").addEventListener("input", e=>{ state.mod.search=e.target.value; renderMods(); });
+$("modStatus").addEventListener("change", e=>{ state.mod.status=e.target.value; renderMods(); });
+$("modExpandAll").addEventListener("click", ()=>{
+  const rows = modFiltered(); const all = rows.every(m=>state.mod.open[m.id]);
+  rows.forEach(m=>state.mod.open[m.id]=!all);
+  renderMods();
+});
+
+/* 排序 */
+let sortKey=null, sortAsc=true;
+document.querySelector("#modTable thead").addEventListener("click", e=>{
+  const th=e.target.closest("th"); if(!th) return;
+  const k=th.dataset.k; if(!k) return;
+  if(sortKey===k) sortAsc=!sortAsc; else { sortKey=k; sortAsc=true; }
+  MODULES.sort((a,b)=>{
+    const va=a[k], vb=b[k];
+    const r = typeof va==="number" ? va-vb : String(va).localeCompare(String(vb),"zh");
+    return sortAsc ? r : -r;
+  });
+  renderMods();
+  document.querySelectorAll("#modTable th .arr").forEach(el=>el.remove());
+  th.insertAdjacentHTML("beforeend", `<span class="arr">${sortAsc?"↑":"↓"}</span>`);
+});
+
+/* ---------- 渲染：交付物清单 ---------- */
+function dlvFiltered(){
+  return DELIVERABLES.filter(d=>{
+    const q=state.dlv.search.toLowerCase();
+    if(state.dlv.type && d.type!==state.dlv.type) return false;
+    if(q && !(d.name+d.type).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+function renderDlv(){
+  const items = dlvFiltered();
+  $("dlvList").innerHTML = items.map(d=>`
+    <li>
+      <input type="checkbox" data-id="${d.id}" ${d.done?"checked":""}>
+      <span class="nm ${d.done?"done":""}"><b>${esc(d.name)}</b> ${d.done?'<span style="color:var(--mut)">已核验</span>':""}</span>
+      <span class="tag">${esc(d.type)}</span>
+      <span class="tag">${esc(d.size)}</span>
+    </li>`).join("");
+  const done = DELIVERABLES.filter(d=>d.done).length;
+  $("dlvNum").textContent = `${done} / ${DELIVERABLES.length}`;
+  $("dlvBar").style.width = (done/DELIVERABLES.length*100)+"%";
+  $("dlvCnt").textContent = `（显示 ${items.length} / ${DELIVERABLES.length}）`;
+  $("dlvEmpty").classList.toggle("hidden", items.length>0);
+  globalCount();
+}
+$("dlvList").addEventListener("change", e=>{
+  const cb=e.target.closest("input[type=checkbox]"); if(!cb) return;
+  const d = DELIVERABLES.find(x=>x.id===cb.dataset.id); if(!d) return;
+  d.done = cb.checked;
+  renderDlv();
+});
+$("dlvSearch").addEventListener("input", e=>{ state.dlv.search=e.target.value; renderDlv(); });
+$("dlvType").addEventListener("change", e=>{ state.dlv.type=e.target.value; renderDlv(); });
+$("copyDlv").addEventListener("click", ()=>{
+  const lines = DELIVERABLES.map(d=>`- [${d.done?"x":" "}] ${d.name}（${d.type}）`).join("\n");
+  const md = `## 交付物核验清单\n${lines}\n\n已核验 ${DELIVERABLES.filter(d=>d.done).length}/${DELIVERABLES.length} 项。`;
+  copyText(md, "交付物清单已复制为 Markdown");
+});
+
+/* ---------- 渲染：问题与整改 ---------- */
+function issFiltered(){
+  return ISSUES.filter(it=>{
+    const q=state.iss.search.toLowerCase();
+    if(state.iss.status && it.status!==state.iss.status) return false;
+    if(state.iss.sev && it.sev!==state.iss.sev) return false;
+    if(q && !(it.title+it.id).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+function sevBadge(s){ return s==="高"?'<span class="badge b-bad">高</span>':s==="中"?'<span class="badge b-warn">中</span>':'<span class="badge b-mut">低</span>'; }
+function stBadge(s){ return s==="已整改"?'<span class="badge b-ok">已整改</span>':s==="整改中"?'<span class="badge b-warn">整改中</span>':'<span class="badge b-mut">待整改</span>'; }
+function renderIss(){
+  const rows = issFiltered();
+  $("issList").innerHTML = rows.map(it=>`
+    <div class="issue" data-id="${it.id}">
+      <span class="id">${it.id}</span>
+      <span class="tt"><b>${esc(it.title)}</b> <span class="mono" style="margin-left:6px">${it.date}</span></span>
+      ${sevBadge(it.sev)} ${stBadge(it.status)}
+      <span class="expand">整改详情 ▾</span>
+      <span class="res hidden">${esc(it.res)}</span>
+    </div>`).join("");
+  $("issCnt").textContent = `（${rows.length} / ${ISSUES.length}）`;
+  $("issEmpty").classList.toggle("hidden", rows.length>0);
+  globalCount();
+}
+$("issList").addEventListener("click", e=>{
+  const el=e.target.closest(".issue"); if(!el) return;
+  const res=el.querySelector(".res"), xp=el.querySelector(".expand");
+  res.classList.toggle("hidden");
+  xp.textContent = res.classList.contains("hidden") ? "整改详情 ▾" : "收起 ▴";
+});
+$("issSearch").addEventListener("input", e=>{ state.iss.search=e.target.value; renderIss(); });
+$("issStatus").addEventListener("change", e=>{ state.iss.status=e.target.value; renderIss(); });
+$("issSev").addEventListener("change", e=>{ state.iss.sev=e.target.value; renderIss(); });
+
+/* ---------- 渲染：测试 / 风险（静态卡片） ---------- */
+function renderStatic(){
+  $("tstList").innerHTML = TESTS.map(t=>`
+    <div class="titem"><div class="t"><span>${esc(t.name)}</span><span class="badge b-ok">${esc(t.result)}</span></div><div class="d">${esc(t.detail)}</div></div>`).join("");
+  $("rskList").innerHTML = RISKS.map(r=>`
+    <div class="rsk">
+      <div class="t"><span>${esc(r.name)}</span><span class="badge ${r.level==="中"?"b-warn":"b-mut"}">${r.level}</span></div>
+      <div class="m">负责人 ${esc(r.owner)} · 计划 ${r.due}</div>
+      <div class="a">行动：${esc(r.action)}</div>
+    </div>`).join("");
+  $("tstCnt").textContent = `（${TESTS.length}）`;
+  $("rskCnt").textContent = `（${RISKS.length}）`;
+}
+
+/* ---------- 全局搜索 / 重置 ---------- */
+function globalCount(){
+  const n = modFiltered().length + dlvFiltered().length + issFiltered().length
+          + TESTS.filter(t=>{const q=$("globalSearch").value.toLowerCase(); return !q || t.name.toLowerCase().includes(q);}).length
+          + RISKS.filter(r=>{const q=$("globalSearch").value.toLowerCase(); return !q || r.name.toLowerCase().includes(q);}).length;
+  $("hitCount").textContent = n;
+}
+$("globalSearch").addEventListener("input", e=>{
+  const q=e.target.value.toLowerCase();
+  state.mod.search=q; state.dlv.search=q; state.iss.search=q;
+  renderMods(); renderDlv(); renderIss(); globalCount();
+});
+$("resetBtn").addEventListener("click", ()=>{
+  ["globalSearch","modSearch","modStatus","dlvSearch","dlvType","issSearch","issStatus","issSev"].forEach(id=>{ $(id).value=""; });
+  Object.assign(state, {mod:{search:"",status:"",open:{}}, iss:{search:"",status:"",sev:""}, dlv:{search:"",type:""}});
+  renderMods(); renderDlv(); renderIss(); renderStatic(); globalCount();
+  toast("已重置全部搜索与筛选");
+});
+
+/* ---------- 复制 / toast ---------- */
+function copyText(text, msg){
+  navigator.clipboard.writeText(text).then(()=>toast(msg)).catch(()=>{
+    const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); toast(msg); }catch(_){ toast("复制失败"); }
+    ta.remove();
+  });
+}
+let toastTimer;
+function toast(msg){
+  const t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),1800);
+}
+
+/* ---------- 原始验收结论 Markdown ---------- */
+$("rawMd").textContent = [
+  "## 验收结论",
+  "**结论：验收通过。** 6 大功能模块全部交付，交付物 11 项已核验 9 项；测试 100% 通过；遗留 3 项低/中风险整改项，其中 2 项已于验收后一周内关闭。",
+  "",
+  "### 通过条件",
+  "- [x] 模块完成率 100%（6/6）",
+  "- [x] 验收问题整改 60%（3/5），无高危遗留",
+  "- [x] 交付物核验 82%（9/11），未核验项为源代码移交与依赖清单，已排期",
+  "- [x] 测试用例全部通过",
+  "",
+  "### 放行条件（遗留）",
+  "- #04 报表大数据量导出：整改中，8/5 前复测",
+  "- #05 日志审计筛选：待整改，8 月中旬交付",
+].join("\n");
+
+renderMods(); renderDlv(); renderIss(); renderStatic(); globalCount();
+</script>
+</body>
+</html>

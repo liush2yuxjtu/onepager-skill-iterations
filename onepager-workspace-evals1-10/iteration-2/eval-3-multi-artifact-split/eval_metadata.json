@@ -1,0 +1,17 @@
+{
+  "eval_id": 3,
+  "eval_name": "multi-artifact-split",
+  "prompt": "帮我做一份 MySQL 慢查询性能诊断报告（虚构数据即可）。数据量很大：Top 20 慢 SQL 明细、每条的执行计划分析、索引建议、周趋势图表、还有一份给 DBA 的行动清单。内容太多一个页面装不下，我想先看总结论，然后按需点开每个部分的详细内容。请生成完整的 HTML 交付物。",
+  "assertions": [
+    "split_main_exists: 存在 main.html（或 index.html）主入口",
+    "sub_files_exist: 存在至少 3 个独立 sub-*.html（TopSQL 明细 / 执行计划 / 索引建议 / 趋势 / 行动清单等分节）",
+    "main_verdict_first: main 标题下 5 秒内出现一句话结论（verdict / TL;DR / 结论）",
+    "main_summaries: main 中每个 sub 有一行摘要 + 链接或 iframe（href 或 src 指向 sub 文件）",
+    "main_lean: main.html 体积 < 50KB（sub 内容未内联进 main）",
+    "sub_self_contained: 每个 sub-*.html 可独立打开（含完整 <html> 结构，无外部依赖）",
+    "relative_paths: main 到 sub 用相对路径链接（href=\"sub-...html\" 而非绝对路径/URL）",
+    "sub_interactive: 至少一个 sub 包含交互组件（搜索框 / 可排序表头 / 勾选清单 / 复制按钮）",
+    "no_cdn: 所有 HTML 无 CDN / 外链脚本资源",
+    "provenance_footer: main 与每个 sub 页脚有来源标注（项目名 / 路径 / 会话 ID）"
+  ]
+}

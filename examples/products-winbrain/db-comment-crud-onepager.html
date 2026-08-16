@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据库字段注释文档 CRUD → winBrain 会发生什么？</title>
+<style>
+  :root{--bg:#0f1115;--card:#171a21;--card2:#1d212b;--line:#2a2f3a;--tx:#e8eaf0;--dim:#9aa3b2;--acc:#4da3ff;--ok:#3ecf8e;--warn:#ffb454;--bad:#ff6b6b;--gold:#ffd166}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--tx);font:15px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;padding:20px 14px 60px}
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:22px;line-height:1.4;margin-bottom:6px}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:18px}
+  .tldr{background:linear-gradient(135deg,#14304d,#12203a);border:1px solid #24466e;border-left:4px solid var(--acc);border-radius:10px;padding:14px 16px;margin-bottom:18px}
+  .tldr b{color:var(--acc)}
+  .tldr .verdict{display:block;font-size:16px;font-weight:700;margin-bottom:6px;color:#fff}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+  .card h2{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim);vertical-align:middle}
+  .tag.good{color:var(--ok);border-color:#2c5a46}
+  .tag.bad{color:var(--bad);border-color:#5a3030}
+  .tag.warn{color:var(--warn);border-color:#5a4a26}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--dim);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  tr:hover td{background:var(--card2)}
+  .op{white-space:nowrap;color:var(--acc);cursor:pointer;text-decoration:none;font-size:12.5px}
+  .op:hover{text-decoration:underline}
+  input[type=search]{width:100%;background:var(--card2);border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:9px 12px;font-size:14px;margin-bottom:10px;outline:none}
+  input[type=search]:focus{border-color:var(--acc)}
+  details{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:6px 0}
+  summary{cursor:pointer;font-size:13.5px;color:var(--acc);font-weight:600}
+  pre{background:#0c0e12;border:1px solid var(--line);border-radius:6px;padding:10px;font:12px/1.5 ui-monospace,Menlo,monospace;overflow-x:auto;white-space:pre-wrap;color:#c6d0e0}
+  .kpi{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .kpi div{flex:1;min-width:140px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .kpi b{display:block;font-size:20px;color:var(--acc)}
+  .kpi span{font-size:12px;color:var(--dim)}
+  .check{display:flex;align-items:flex-start;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .check:last-child{border-bottom:none}
+  .check input{margin-top:3px;accent-color:var(--acc);width:15px;height:15px}
+  .check.done{opacity:.45}
+  .bar{height:6px;background:var(--card2);border-radius:3px;overflow:hidden;margin:10px 0}
+  .bar i{display:block;height:100%;background:var(--acc);width:0%;transition:width .3s}
+  .btn{background:var(--acc);border:none;color:#04121f;font-weight:700;font-size:12.5px;border-radius:6px;padding:6px 12px;cursor:pointer}
+  .btn.ghost{background:var(--card2);color:var(--tx);border:1px solid var(--line)}
+  .foot{color:var(--dim);font-size:11.5px;line-height:1.7;margin-top:20px;border-top:1px solid var(--line);padding-top:12px}
+  .foot code{background:var(--card2);padding:1px 5px;border-radius:4px}
+  .src{font-size:11.5px;color:var(--dim);margin-top:4px}
+  .flow-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin:8px 0}
+  .flow-row b{color:var(--tx)}
+  .arrow{color:var(--acc)}
+  .hl{color:var(--warn);font-weight:600}
+  .ok{color:var(--ok)} .bad{color:var(--bad)}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#232a36;border:1px solid var(--line);border-radius:8px;padding:8px 16px;font-size:13px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+  svg text{font-family:-apple-system,"PingFang SC",sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>数据库字段注释文档 CRUD，winBrain 会发生什么？</h1>
+  <div class="sub">探索对象：winBrain Creator OS（Ink + Claude Agent SDK）· Data Ontology 链路 · 2026-08-13 · 基于仓库源码事实</div>
+
+  <div class="tldr">
+    <span class="verdict">TL;DR：改注释文档，系统默认「无感」——skill 文件不会变，但专家知道的会过期。</span>
+    已发布的 Ontology MCP 是 <b>静态快照</b>（<code>.pi/ontology-state.json</code>），磁盘上改文档没有监听、没有指纹对比，release 不会自动失效。<br>
+    唯一更新路径：<b>走 TUI/Web 重新导入 → 批准草稿 → 重新发布</b>。批准时 release 才回 draft；新 releaseId 会让旧客户端收到 <code>ONTOLOGY_RELEASE_CONFLICT</code>。<br>
+    <b>skill 文件（SKILL.md）本身 100% 不受影响</b>；受影响的是专家的「运行时知识面」与「评测语料」。
+  </div>
+
+  <div class="kpi">
+    <div><b>0</b><span>文档监听/指纹校验（发布后外部 CRUD 零感知）</span></div>
+    <div><b>5+1</b><span>release 回 draft 的触发点（批准/分析/确认/映射/建图…）</span></div>
+    <div><b>4</b><span>发布阻塞条件（空本体/待批草稿/待审映射/待确认字段）</span></div>
+    <div><b>2</b><span>受影响层次（专家知识面 + 评测语料）≠ skill 文件</span></div>
+  </div>
+
+  <!-- 状态机 -->
+  <div class="card">
+    <h2>① release 状态机 <span class="tag">核心机制</span></h2>
+    <svg viewBox="0 0 900 240" role="img" aria-label="release 状态机图" style="width:100%;height:auto">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="#4da3ff"/>
+        </marker>
+        <marker id="arrGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/>
+        </marker>
+      </defs>
+      <!-- published 节点 -->
+      <rect x="40" y="90" width="200" height="70" rx="12" fill="#14304d" stroke="#4da3ff" stroke-width="2"/>
+      <text x="140" y="122" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">PUBLISHED</text>
+      <text x="140" y="143" text-anchor="middle" fill="#9aa3b2" font-size="11">releaseId 固定快照</text>
+      <!-- draft 节点 -->
+      <rect x="660" y="90" width="200" height="70" rx="12" fill="#3a2a14" stroke="#ffb454" stroke-width="2"/>
+      <text x="760" y="122" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">DRAFT</text>
+      <text x="760" y="143" text-anchor="middle" fill="#9aa3b2" font-size="11">MCP 拒绝服务（NOT_PUBLISHED）</text>
+      <!-- 主箭头 -->
+      <line x1="240" y1="125" x2="656" y2="125" stroke="#4da3ff" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="448" y="112" text-anchor="middle" fill="#4da3ff" font-size="11">批准导入 / AI分析 / 确认标注 / 映射审核 / 建图谱</text>
+      <!-- 发布检查箭头（下） -->
+      <line x1="760" y1="160" x2="760" y2="215" stroke="#4da3ff" stroke-width="2"/>
+      <line x1="760" y1="215" x2="140" y2="215" stroke="#4da3ff" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="450" y="230" text-anchor="middle" fill="#9aa3b2" font-size="11">重新发布：4 条件全过（非空本体、无待批草稿、无 pending 映射、无 suggested 字段）→ 新 releaseId</text>
+      <!-- 外部 CRUD 虚线 -->
+      <rect x="300" y="12" width="300" height="52" rx="10" fill="#171a21" stroke="#ff6b6b" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="450" y="33" text-anchor="middle" fill="#ff6b6b" font-size="12" font-weight="700">数据库维护人员 CRUD 字段注释/释义文档</text>
+      <text x="450" y="51" text-anchor="middle" fill="#9aa3b2" font-size="11">虚线 = 无连线：系统无监听、无指纹，release 保持 PUBLISHED</text>
+      <!-- 唯一入口 -->
+      <line x1="450" y1="64" x2="140" y2="88" stroke="#9aa3b2" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrGray)"/>
+      <text x="180" y="60" fill="#9aa3b2" font-size="10.5">唯一入口：TUI/Web 重新导入</text>
+    </svg>
+    <div class="flow-row">关键事实：<b>暂存文档、生成导入草稿时 release 仍为 published</b>；批准（<code>approveOntologyImport</code>）时才回 draft → 必须重新发布。客户端固定旧 releaseId 读取会得到 <code>ONTOLOGY_RELEASE_CONFLICT</code>，禁止混读。</div>
+    <details><summary>代码证据 · domain/ontology.ts</summary>
+<pre>// 发布阻塞（ontologyPublicationBlocker, L183）：
+// ① 本体为空  ② 仍有待批准的导入草稿  ③ 仍有 pending 映射  ④ 仍有 suggested 字段标注
+// release 回 draft 的触发点（mcpRelease: {status:"draft"}）：
+//   approveOntologyImport L263 · analyzeOntologyAsset L315 · confirmOntologyAsset L347
+//   reviewOntologyMapping L355 · buildOntologyGraph L386
+// 发布（publishOntologyMcp）：mcpRelease = {status:"published", publishedAt}</pre></details>
+  </div>
+
+  <!-- CRUD 矩阵 -->
+  <div class="card">
+    <h2>② CRUD 影响矩阵 <span class="tag">逐个操作</span></h2>
+    <input type="search" id="q" placeholder="🔍 过滤：如 新增 / 删除 / 批准 / skill…（输入即过滤）">
+    <table id="mx">
+      <thead><tr><th>操作</th><th>立即发生</th><th>下一步（走 UI 时）</th><th>skill 影响</th><th></th></tr></thead>
+      <tbody id="mxBody"></tbody>
+    </table>
+    <details><summary>边界与校验门（导入文档）</summary>
+<pre>validateOntologyDocuments / ontology-document-policy.ts：
+  · 扩展名白名单：.md .txt .yaml .yml .sql .json（md/txt → role=material，其余 → role=schema）
+  · 单文件 ≤ 256KB，总 ≤ 512KB；纯 UTF-8（拒绝 NUL / U+FFFD）
+  · .json 必须可解析；文件名不得以 . 开头、不含路径分隔符
+Schema Scanner（scripts/ontology-schema-scanner.py，60s 超时）：
+  · 只读直连 FMCG/ARO/Video Management，读 INFORMATION_SCHEMA 注释
+  · 扫描结果按「与已选 .md 注释文档同名的表」过滤，防整库混入
+  · 生成 schema.<source>.<stamp> 快照文档 → 草稿 → 同发布门</pre></details>
+  </div>
+
+  <!-- Skill 影响 -->
+  <div class="card">
+    <h2>③ skill 受影响吗？ <span class="tag warn">分三层看</span></h2>
+    <svg viewBox="0 0 900 210" role="img" aria-label="skill 影响分层图" style="width:100%;height:auto">
+      <!-- 文档 -->
+      <rect x="360" y="10" width="180" height="44" rx="8" fill="#14304d" stroke="#4da3ff"/>
+      <text x="450" y="31" text-anchor="middle" fill="#fff" font-size="12.5" font-weight="700">字段注释文档（CRUD）</text>
+      <text x="450" y="46" text-anchor="middle" fill="#9aa3b2" font-size="10">DB COMMENT / 释义 Markdown</text>
+      <!-- 三个分支 -->
+      <line x1="450" y1="54" x2="450" y2="76" stroke="#4da3ff" stroke-width="1.5"/>
+      <line x1="150" y1="76" x2="750" y2="76" stroke="#9aa3b2" stroke-width="1.5"/>
+      <line x1="150" y1="76" x2="150" y2="96" stroke="#9aa3b2" stroke-width="1.5"/>
+      <line x1="450" y1="76" x2="450" y2="96" stroke="#9aa3b2" stroke-width="1.5"/>
+      <line x1="750" y1="76" x2="750" y2="96" stroke="#9aa3b2" stroke-width="1.5"/>
+      <!-- 分支1: skill 文件 -->
+      <rect x="40" y="98" width="220" height="92" rx="10" fill="#0f2118" stroke="#3ecf8e" stroke-width="1.5"/>
+      <text x="150" y="122" text-anchor="middle" fill="#3ecf8e" font-size="12.5" font-weight="700">① skill 文件本体 · 不受影响</text>
+      <text x="150" y="142" text-anchor="middle" fill="#9aa3b2" font-size="10.5">workspace/experts/*/skills/*/SKILL.md</text>
+      <text x="150" y="158" text-anchor="middle" fill="#9aa3b2" font-size="10.5">mcp-builder / mcp-fixer 是通用 MCP</text>
+      <text x="150" y="174" text-anchor="middle" fill="#9aa3b2" font-size="10.5">开发指南，不绑定任何表结构</text>
+      <!-- 分支2: 知识面 -->
+      <rect x="340" y="98" width="220" height="92" rx="10" fill="#3a2a14" stroke="#ffb454" stroke-width="1.5"/>
+      <text x="450" y="122" text-anchor="middle" fill="#ffb454" font-size="12.5" font-weight="700">② 专家运行时知识面 · 会过期</text>
+      <text x="450" y="142" text-anchor="middle" fill="#9aa3b2" font-size="10.5">专家经 Ontology MCP 读 release 快照</text>
+      <text x="450" y="158" text-anchor="middle" fill="#9aa3b2" font-size="10.5">不重发布 → 回答基于旧语义</text>
+      <text x="450" y="174" text-anchor="middle" fill="#9aa3b2" font-size="10.5">重发布 → 旧 citation 冲突需刷新</text>
+      <!-- 分支3: 评测 -->
+      <rect x="640" y="98" width="220" height="92" rx="10" fill="#3a1414" stroke="#ff6b6b" stroke-width="1.5"/>
+      <text x="750" y="122" text-anchor="middle" fill="#ff6b6b" font-size="12.5" font-weight="700">③ mcp-generator-lab 语料 · 变</text>
+      <text x="750" y="142" text-anchor="middle" fill="#9aa3b2" font-size="10.5">37 个释义 Markdown 是 Generator</text>
+      <text x="750" y="158" text-anchor="middle" fill="#9aa3b2" font-size="10.5">正式输入；改动后重跑 lab 才生效</text>
+      <text x="750" y="174" text-anchor="middle" fill="#9aa3b2" font-size="10.5">corpus hash 变化 → 评测基线漂移</text>
+    </svg>
+    <details><summary>为什么 skill 文件安全？</summary>
+<pre>· 专家 = Plugin（skills/SKILL.md + .claude-plugin/plugin.json + mcpServers 绑定），skill 是「操作方法」静态资产
+· 文档 CRUD 只改变 Data Ontology 的「数据」，不触碰专家目录任何文件
+· 专家会话里的 Ontology MCP（describe_contract / search_ontology / get_ontology_item / get_app_context）
+  读的是 .pi/ontology-state.json 的 release 快照 —— 数据过期与否取决于是否重新导入发布
+· 发布阻塞期（有草稿/pending 映射等）describe_contract 返回 release: null → 专家「看不见」新本体</pre></details>
+  </div>
+
+  <!-- 行动闭环 -->
+  <div class="card">
+    <h2>④ 行动清单 <span class="tag">保持语义诚实</span></h2>
+    <div class="bar"><i id="bar"></i></div>
+    <div id="acts">
+      <div class="check" data-md="文档 CRUD 后必须走 TUI/Web「重新导入」；直接改磁盘文件系统不会感知"><input type="checkbox"><span><b>文档 CRUD 后走 UI 重新导入</b> —— 直接改磁盘文件，系统零感知，release 不会自动失效</span></div>
+      <div class="check" data-md="有「待批准导入草稿」时发布被阻塞；先批准或驳回（驳回后本体数据不变）"><input type="checkbox"><span><b>批准或驳回导入草稿</b> —— 草稿存在时 publicationBlocker 禁止发布；驳回只是丢弃草稿，已入库数据不变</span></div>
+      <div class="check" data-md="批准导入会使 release 回 DRAFT，必须重新发布生成新 releaseId"><input type="checkbox"><span><b>批准后重新发布</b> —— 批准时 release 回 draft，不重发布则 MCP 返回 NOT_PUBLISHED</span></div>
+      <div class="check" data-md="删除草稿引用的源文档后无法批准（“导入草稿引用的源文件已失效”）"><input type="checkbox"><span><b>删除文档前先处理草稿</b> —— 草稿引用的源文档被删后批准直接失败</span></div>
+      <div class="check" data-md="MCP 客户端固定 releaseId：收到 ONTOLOGY_RELEASE_CONFLICT 后重新 describe_contract 刷新"><input type="checkbox"><span><b>客户端收到冲突就刷新</b> —— 固定旧 releaseId 读新 release 会冲突，禁止混读</span></div>
+      <div class="check" data-md="（建议）发布时记录文档 hash，启动/运行期检测漂移并提示重新导入"><input type="checkbox"><span><b>（建议）发布时记录文档指纹</b> —— 当前实现缺这一层，属诚实性缺口</span></div>
+    </div>
+    <p style="margin-top:10px;font-size:13px;color:var(--dim)">进度 <b id="cnt">0/6</b>　<button class="btn" onclick="copyActs()">复制 Markdown 行动清单</button>　<button class="btn ghost" onclick="clearActs()">清空</button></p>
+  </div>
+
+  <!-- 关键代码引用 -->
+  <div class="card">
+    <h2>⑤ 证据速查 <span class="tag">文件 → 行号</span></h2>
+    <table>
+      <thead><tr><th>事实</th><th>位置</th></tr></thead>
+      <tbody>
+        <tr><td>release 静态快照持久化（0o600 原子写）</td><td><code>src/adapters/outbound/file-system-ontology-store.ts</code></td></tr>
+        <tr><td>发布 4 项阻塞检查</td><td><code>src/domain/ontology.ts</code> · ontologyPublicationBlocker</td></tr>
+        <tr><td>批准导入 → release 回 draft；源文档失效拒绝</td><td><code>src/domain/ontology.ts</code> · approveOntologyImport</td></tr>
+        <tr><td>导入文档校验门（大小/类型/UTF-8）</td><td><code>src/application/ontology-document-policy.ts</code></td></tr>
+        <tr><td>LLM 提取（不可信数据 + JSON schema 强制）</td><td><code>src/adapters/outbound/claude-ontology-importer.ts</code></td></tr>
+        <tr><td>Schema Scanner 只读直连 + 同名表过滤</td><td><code>src/application/ontology-workbench.ts</code> · scanOntologySchema</td></tr>
+        <tr><td>MCP 只读 4 工具 + releaseId 冲突</td><td><code>src/adapters/inbound/mcp/data-ontology-mcp.ts</code> · docs/architecture/data-ontology-mcp-contract.md</td></tr>
+        <tr><td>专家会话装载 Ontology MCP（进程内）</td><td><code>src/adapters/outbound/claude-ontology-assistant.ts</code></td></tr>
+        <tr><td>skill 静态资产 = 专家 Plugin</td><td><code>workspace/experts/*/skills/*/SKILL.md</code> + <code>.claude-plugin/plugin.json</code></td></tr>
+        <tr><td>评测语料 37 Markdown + corpus hash</td><td><code>mcp-generator-lab/README.md</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="foot">
+    来源项目：<b>winBrain Creator OS</b>（<code>/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean</code>）· 当前 Pi 会话：wecom 消息 <code>woS2JwEQAAngkN6HDnK45AZyVU_z_u4w</code><br>
+    采集命令：<code>read src/domain/ontology.ts · src/application/ontology-workbench.ts · ontology-document-policy.ts · claude-ontology-importer.ts · file-system-ontology-store.ts · claude-ontology-assistant.ts · config/ontology-schema-sources.json · workspace/experts/*/skills</code><br>
+    生成时间：2026-08-13 · 结论基于源码事实（非运行态观测）；「系统无感知」= 无文件监听/指纹逻辑，需以 TUI 重新导入触发
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const rows = [
+  ["新增 Create","MCP 无感：release 保持 published，继续服务旧语义；新表/字段不出现","重新导入 → 生成草稿 → 发布被阻塞（待批草稿）→ 批准 → 回 draft → 重发布 → 新 releaseId","skill 文件不受影响；专家只有重发布后才能搜到新条目",0],
+  ["修改/更新 Update","MCP 无感：旧语义继续对外服务（无指纹对比）","重新导入：同 id 文档内容被覆盖（mergeById）→ 草稿 → 批准 → 重发布；超 256KB/512KB、非 UTF-8、JSON 非法 → 校验拒绝","专家经 MCP 读到的是旧数据，直到重新发布",1],
+  ["删除 Delete","已入库 business/assets 不自动删（mergeById 已合并）；knowledge 图谱独立存在","草稿引用源文档被删 → 批准失败「导入草稿引用的源文件已失效」；清空文档（clearOntologyDocuments）→ 同时清空 importDraft + 知识图谱","skill 文件不受影响；引用旧 releaseId 的 citation 随重发布失效（CONFLICT）",2],
+  ["改 DB COMMENT（Schema 扫描路径）","MCP 无感；下次扫描（人工触发，60s 超时）才读取新注释","扫描 → 按已选 .md 同名表过滤 → 生成 schema 快照 + 草稿 → 批准 → 重发布","同左；扫描是只读直连，不经 skill",3],
+  ["改评测语料（mcp-generator-lab 37 个 MD）","lab 不自动感知；下次 prepare/运行才生效","重跑 lab → corpus hash 变化 → 评测基线漂移（Gold 不进 Agent 上下文）","skill 文件不受影响；PASS/FAIL 由非 Agent Scorer 决定",4]
+];
+const tbody = document.getElementById("mxBody");
+function render(filter){
+  tbody.replaceChildren();
+  rows.filter(r => !filter || r.join(" ").toLowerCase().includes(filter)).forEach(r => {
+    const tr = document.createElement("tr");
+    const cells = [r[0], r[1], r[2], r[3]].map(text => {
+      const td = document.createElement("td");
+      if (text === r[0]) {
+        const b = document.createElement("b");
+        b.textContent = text;
+        td.appendChild(b);
+      } else td.textContent = text;
+      return td;
+    });
+    const link = document.createElement("a");
+    link.className = "op";
+    link.textContent = "→ 行动";
+    link.addEventListener("click", () => toast(`${r[0]}：已标记，见上方行动清单`));
+    const tdLink = document.createElement("td");
+    tdLink.appendChild(link);
+    tr.append(...cells, tdLink);
+    tbody.appendChild(tr);
+  });
+}
+render("");
+document.getElementById("q").addEventListener("input", e => render(e.target.value.trim().toLowerCase()));
+document.querySelectorAll("#acts .check input").forEach(cb => cb.addEventListener("change", () => {
+  cb.closest(".check").classList.toggle("done", cb.checked);
+  const n = document.querySelectorAll("#acts .check input:checked").length;
+  document.getElementById("cnt").textContent = n + "/6";
+  document.getElementById("bar").style.width = (n/6*100) + "%";
+}));
+function copyActs(){
+  const done = [...document.querySelectorAll("#acts .check")].filter(c => c.querySelector("input").checked).map(c => c.dataset.md);
+  const lines = done.length ? done : [...document.querySelectorAll("#acts .check")].map(c => c.dataset.md);
+  navigator.clipboard.writeText("## 行动清单（数据库字段注释文档 CRUD 应对）\n" + lines.map(l => "- [ ] " + l).join("\n")).then(() => toast("已复制 Markdown 行动清单"));
+}
+function clearActs(){ document.querySelectorAll("#acts .check input").forEach(c => { c.checked = false; c.closest(".check").classList.remove("done"); }); document.getElementById("cnt").textContent = "0/6"; document.getElementById("bar").style.width = "0%"; }
+let toastTimer;
+function toast(msg){ const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2200); }
+</script>
+</body>
+</html>

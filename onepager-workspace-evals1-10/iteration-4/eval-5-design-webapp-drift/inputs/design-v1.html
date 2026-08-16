@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>设计稿 V1 · 智能客服平台（意图）</title>
+<style>body{font:13px/1.5 sans-serif;margin:20px}.sec{border:1px solid #ddd;border-radius:8px;padding:12px;margin-bottom:10px}h3{margin:0 0 8px}.row{display:flex;gap:8px;margin:4px 0}</style>
+</head>
+<body>
+<h2>设计稿 V1 · 智能客服平台</h2>
+<p class="sec">状态：静态设计稿 · 8 个页面 · 仅交互意图</p>
+
+<div class="sec" id="chat-page">
+  <h3>对话页</h3>
+  <div class="row"><button data-action="chat-send">发送消息</button></div>
+  <div class="row"><button data-action="chat-attach">上传附件</button></div>
+  <div class="row"><button data-action="chat-emoji">表情</button></div>
+  <div class="row"><button data-action="chat-history">历史记录</button></div>
+  <div class="row"><button data-action="chat-transfer">转人工</button></div>
+</div>
+
+<div class="sec" id="ticket-page">
+  <h3>工单页</h3>
+  <div class="row"><button data-action="ticket-create">新建工单</button></div>
+  <div class="row"><button data-action="ticket-assign">指派</button></div>
+  <div class="row"><button data-action="ticket-priority">改优先级</button></div>
+  <div class="row"><button data-action="ticket-close">关闭</button></div>
+</div>
+
+<div class="sec" id="report-page">
+  <h3>报表页</h3>
+  <div class="row"><button data-action="report-daily">日报</button></div>
+  <div class="row"><button data-action="report-weekly">周报</button></div>
+  <div class="row"><button data-action="report-export">导出</button></div>
+</div>
+
+<div class="sec" id="settings-page">
+  <h3>设置页</h3>
+  <div class="row"><button data-action="settings-profile">个人资料</button></div>
+  <div class="row"><button data-action="settings-sla">SLA 配置</button></div>
+  <div class="row"><button data-action="settings-roster">排班</button></div>
+</div>
+</body>
+</html>

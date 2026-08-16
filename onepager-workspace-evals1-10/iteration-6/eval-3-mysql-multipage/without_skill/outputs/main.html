@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MySQL 慢查询性能诊断报告 · 总结论</title>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <h1>MySQL 慢查询性能诊断报告</h1>
+    <p>实例 db-master-01 (8C16G, MySQL 8.0.36) · slow_query_log 阈值 1s · 采样周期 2026-08-05 ~ 2026-08-11 (7 天)</p>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>一、关键指标</h2>
+    <div class="sub">数据来源：slow_query_log + performance_schema 汇总，指标为 7 天累计/日均。</div>
+    <div class="kpis">
+      <div class="kpi"><div class="v">48,291</div><div class="l">慢查询总数 (7 天)</div><div class="d">日均 6,899 条</div></div>
+      <div class="kpi"><div class="v">3.2%</div><div class="l">慢查询率</div><div class="d">总查询约 150 万/天</div></div>
+      <div class="kpi"><div class="v">2.8s</div><div class="l">平均执行耗时</div><div class="d">中位数 1.4s</div></div>
+      <div class="kpi"><div class="v">37.6h</div><div class="l">慢查询周累计耗时</div><div class="d">≈ 135,000s</div></div>
+      <div class="kpi"><div class="v">63%</div><div class="l">Top 20 耗时占比</div><div class="d">≈ 82,500s / 周</div></div>
+      <div class="kpi"><div class="v">12</div><div class="l">缺失索引建议</div><div class="d">多数单条 DDL 可解决</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>二、核心发现</h2>
+    <ol>
+      <li><b>Top 5 SQL 吃掉 Top 20 总耗时的 47%</b>——其中 #1 订单深分页查询单条占 19%，是最大单一瓶颈（<span class="badge b-red">P0</span>）。</li>
+      <li><b>12/20 慢 SQL 缺失复合索引</b>，可通过单条 <code>CREATE INDEX</code> 立即解决，预计降低慢查询耗时 40%~55%。</li>
+      <li><b>深分页问题集中在 <code>order_info</code> / <code>operation_log</code></b>：大 <code>OFFSET</code> + <code>ORDER BY ... DESC</code> 触发全表扫描 + filesort。</li>
+      <li><b>报表重复计算</b>：<code>report_flow</code> 同一聚合每天跑 3 次，可改为增量或缓存。</li>
+      <li><b>批量写入以单条 <code>INSERT</code> 循环执行</b>（<code>coupon_claim</code>，每次 500 次往返），应改为批量 <code>VALUES</code>。</li>
+      <li><b>高峰时段集中</b>：慢查询在 14:00–18:00 陡增，峰值为凌晨低谷的 15 倍（详见趋势页）。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>三、优先级快照</h2>
+    <div class="sub">按「投入/收益」排序的行动优先级，完整清单见「DBA 行动清单」。</div>
+    <table>
+      <thead><tr><th>优先级</th><th>动作</th><th>预计影响</th><th>风险</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge b-red">P0 · 立即</span></td><td>为 order_info / operation_log 补复合索引 + 深分页改造</td><td>慢查询耗时 -25% 以上</td><td>低，需灰度上线</td></tr>
+        <tr><td><span class="badge b-amber">P1 · 本周</span></td><td>product_sku / ad_campaign_stat / refund_order 索引 + 报表增量改造</td><td>再 -15%~20%</td><td>中，涉及应用改造</td></tr>
+        <tr><td><span class="badge b-blue">P2 · 本月</span></td><td>批量写入、覆盖索引、大 IN 拆分、巡检自动化</td><td>回落至基线</td><td>低~中</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>四、报告导航</h2>
+    <div class="sub">先看结论，需要细节时再点开对应部分。</div>
+    <div class="grid2" style="margin-top:14px">
+      <a class="section-link" href="sub-top20.html">
+        <h3>Top 20 慢 SQL 明细</h3>
+        <p>排名 · SQL 指纹 · 执行次数 · 平均/最大耗时 · 周总耗时 · 问题归类（支持按关键字过滤）</p>
+        <span class="go">查看明细 →</span>
+      </a>
+      <a class="section-link" href="sub-explain.html">
+        <h3>执行计划分析 (EXPLAIN)</h3>
+        <p>6 条代表性慢 SQL 的 EXPLAIN 解读：全表扫描、filesort、索引失效的逐条诊断</p>
+        <span class="go">查看分析 →</span>
+      </a>
+      <a class="section-link" href="sub-index.html">
+        <h3>索引优化建议</h3>
+        <p>12 条可直接执行的 DDL，附预估收益与风险，对应到具体慢 SQL 编号</p>
+        <span class="go">查看建议 →</span>
+      </a>
+      <a class="section-link" href="sub-trend.html">
+        <h3>周趋势图表</h3>
+        <p>每日慢查询量 · 平均耗时 · 时段分布 · Top 5 耗时占比（SVG 图表）</p>
+        <span class="go">查看趋势 →</span>
+      </a>
+      <a class="section-link" href="sub-dba.html">
+        <h3>DBA 行动清单</h3>
+        <p>P0/P1/P2 分级任务：动作 · 负责人建议 · 验收方式，可直接分发执行</p>
+        <span class="go">查看清单 →</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    说明：本报告为演示用虚构数据，用于展示诊断报告的交付形态；上线前需以真实 slow_query_log 复核各项结论。
+  </div>
+</main>
+
+<footer>MySQL 慢查询性能诊断报告 · 生成于 2026-08-12 · 数据为虚构演示数据</footer>
+</body>
+</html>

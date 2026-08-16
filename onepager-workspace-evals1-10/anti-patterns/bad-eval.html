@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--
+  ⚠️ 反面教材 anti-pattern — 仅供教学对照，请勿模仿。
+  踩坑：① 结论埋深处（第 5 屏底部）② 全量铺开不折叠 ③ 依赖外部 CDN ④ 无来源标注（页面无 footer）
+  来源项目：onepager skill 评测 · /Users/liushiyuwin/.agents/skills/onepager-workspace/anti-patterns/bad-eval.html
+  Pi Session ID: ses_01f5c8264ffeHN5Qp1V36b
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>NarrowGate 评测运行报告（v7 最终版）</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<style>
+  /* 坑③：字体依赖 Google Fonts CDN，离线环境整体降级成 Times 默认字体 */
+  body{font-family:'Inter',sans-serif;margin:0;padding:24px;background:#f8f9fa;color:#333}
+  h1{font-size:22px;border-bottom:3px solid #999;padding-bottom:8px}
+  h2{font-size:16px;margin-top:36px;color:#555}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;background:#fff}
+  th{background:#e9ecef;text-align:left;padding:6px;border:1px solid #ccc;cursor:default}
+  td{padding:6px;border:1px solid #eee}
+  .block{background:#fff;border:1px solid #ddd;border-radius:6px;padding:14px;margin:18px 0}
+  .metric{display:inline-block;width:22%;background:#eef;padding:10px;margin:6px;border-radius:6px;text-align:center}
+  .metric b{display:block;font-size:20px}
+  .note{font-size:11px;color:#888}
+</style>
+</head>
+<body>
+
+<h1>NarrowGate 评测运行报告（v7 最终版）</h1>
+<p class="note">本文档记录 2026-08-08 评测运行全部过程与数据。</p>
+
+<h2>1. 评测环境说明</h2>
+<div class="block">
+  <p>本次评测在 macOS (darwin) 上进行。评测技能：onepager。评测工作区：iteration-1。共 4 路运行：eval-1/2 × with_skill / without_skill。子代理类型：build。</p>
+  <p>评分脚本：scripts/grade.py，8 条断言。聚合脚本：aggregate_benchmark。查看器：generate_review.py (localhost:3117)。</p>
+  <p class="note">环境信息：系统 Python 3.9.6 无法运行 viewer（dict | None 语法），已改用 python3.12。</p>
+</div>
+
+<h2>2. 数据采集与工具链</h2>
+<div class="block">
+  <p>工具链：lsof / sqlite3 / curl / sample（macOS 进程堆栈采样）。调试过程记录了 6 轮 server 启动日志，文件大小从 16KB 到 145KB 不等。</p>
+  <p class="note">上述内容为过程性说明，与最终结论无直接关系。</p>
+</div>
+
+<h2>3. 各轮运行明细（全量数据，未折叠）</h2>
+<div class="block">
+  <table>
+    <thead><tr><th>轮次</th><th>配置</th><th>输出文件</th><th>文件大小</th><th>断言通过</th><th>断言总数</th><th>pass_rate</th><th>备注</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>eval-1 / with_skill</td><td>outputs/report.html</td><td>16326 B</td><td>8</td><td>8</td><td>1.000</td><td>热源速览窄卡片，聚焦链接保留</td></tr>
+      <tr><td>2</td><td>eval-1 / without_skill</td><td>outputs/report.html</td><td>16647 B</td><td>8</td><td>8</td><td>1.000</td><td>banner 结论 + KPI 卡片</td></tr>
+      <tr><td>3</td><td>eval-2 / with_skill</td><td>outputs/acceptance-report.html</td><td>16332 B</td><td>8</td><td>8</td><td>1.000</td><td>12 模块，详情折叠</td></tr>
+      <tr><td>4</td><td>eval-2 / without_skill</td><td>outputs/acceptance-report.html</td><td>19429 B</td><td>8</td><td>8</td><td>1.000</td><td>4 个 details 分区</td></tr>
+      <tr><td>5</td><td>eval-1 / with_skill</td><td>report.html（二次校验）</td><td>16326 B</td><td>8</td><td>8</td><td>1.000</td><td>校验 verdict 正则</td></tr>
+      <tr><td>6</td><td>eval-1 / without_skill</td><td>report.html（二次校验）</td><td>16647 B</td><td>8</td><td>8</td><td>1.000</td><td>checkbox 动态渲染修正</td></tr>
+      <tr><td>7</td><td>eval-2 / with_skill</td><td>acceptance-report.html（二次校验）</td><td>16332 B</td><td>8</td><td>8</td><td>1.000</td><td>无</td></tr>
+      <tr><td>8</td><td>eval-2 / without_skill</td><td>acceptance-report.html（二次校验）</td><td>19429 B</td><td>8</td><td>8</td><td>1.000</td><td>无</td></tr>
+      <tr><td>9</td><td>viewer 调试 / 1</td><td>vw.log</td><td>0 B</td><td>-</td><td>-</td><td>-</td><td>stdout 缓冲未落盘</td></tr>
+      <tr><td>10</td><td>viewer 调试 / 2</td><td>vw2.log</td><td>548 B</td><td>-</td><td>-</td><td>-</td><td>curl 000 复现</td></tr>
+      <tr><td>11</td><td>viewer 调试 / 3</td><td>vw3.log</td><td>2148 B</td><td>-</td><td>-</td><td>-</td><td>exec wrapper FileNotFoundError</td></tr>
+      <tr><td>12</td><td>viewer 调试 / 4</td><td>vw4.log</td><td>158 B</td><td>-</td><td>-</td><td>-</td><td>进程 47541 消失</td></tr>
+      <tr><td>13</td><td>viewer 调试 / 5</td><td>vw5.log</td><td>158 B</td><td>-</td><td>-</td><td>-</td><td>原始路径 000 无 traceback</td></tr>
+      <tr><td>14</td><td>viewer 调试 / 6</td><td>vw6.log</td><td>158 B</td><td>-</td><td>-</td><td>-</td><td>t+1/5/12s 全 000</td></tr>
+      <tr><td>15</td><td>viewer 调试 / 7</td><td>vw7.log</td><td>3120 B</td><td>-</td><td>-</td><td>-</td><td>settimeout AttributeError×5</td></tr>
+      <tr><td>16</td><td>viewer 调试 / 8</td><td>vw8.log</td><td>3528 B</td><td>-</td><td>-</td><td>-</td><td>self.request AttributeError×9</td></tr>
+      <tr><td>17</td><td>viewer 调试 / 9</td><td>vw9.log</td><td>158 B</td><td>-</td><td>-</td><td>-</td><td>HTTP 200 连续三次</td></tr>
+      <tr><td>18</td><td>viewer 调试 / 10</td><td>vw_http_1.html</td><td>145197 B</td><td>-</td><td>-</td><td>-</td><td>200 OK</td></tr>
+      <tr><td>19</td><td>viewer 调试 / 11</td><td>vw_http_2.html</td><td>145197 B</td><td>-</td><td>-</td><td>-</td><td>200 OK</td></tr>
+      <tr><td>20</td><td>viewer 调试 / 12</td><td>vw_http_3.html</td><td>145197 B</td><td>-</td><td>-</td><td>-</td><td>200 OK</td></tr>
+      <tr><td>21</td><td>viewer 调试 / 13</td><td>mini.log</td><td>0 B</td><td>-</td><td>-</td><td>-</td><td>最小 server 200 对照</td></tr>
+      <tr><td>22</td><td>viewer 调试 / 14</td><td>vw_sample.txt</td><td>118 B</td><td>-</td><td>-</td><td>-</td><td>sample 失败：进程已退出</td></tr>
+      <tr><td>23</td><td>viewer 调试 / 15</td><td>dbg.log</td><td>9448 B</td><td>-</td><td>-</td><td>-</td><td>FileNotFoundError /tmp/viewer.html</td></tr>
+      <tr><td>24</td><td>viewer 调试 / 16</td><td>dbg2.log</td><td>12408 B</td><td>-</td><td>-</td><td>-</td><td>NameError html</td></tr>
+      <tr><td>25</td><td>viewer 调试 / 17</td><td>vw7-9.log</td><td>多文件</td><td>-</td><td>-</td><td>-</td><td>timeout 修复验证</td></tr>
+      <tr><td>26</td><td>viewer 调试 / 18</td><td>lsof 输出</td><td>-</td><td>-</td><td>-</td><td>-</td><td>Chrome ESTABLISHED 连接</td></tr>
+      <tr><td>27</td><td>viewer 调试 / 19</td><td>lldb bt</td><td>-</td><td>-</td><td>-</td><td>-</td><td>阻塞在 __recvfrom</td></tr>
+      <tr><td>28</td><td>viewer 调试 / 20</td><td>vw_stack.log</td><td>-</td><td>-</td><td>-</td><td>-</td><td>SIGUSR1 堆栈 dump</td></tr>
+      <tr><td>29</td><td>viewer 调试 / 21</td><td>vw4.log</td><td>158 B</td><td>-</td><td>-</td><td>-</td><td>无 traceback 000</td></tr>
+      <tr><td>30</td><td>viewer 调试 / 22</td><td>vw_debug_wrapper.py</td><td>276 B</td><td>-</td><td>-</td><td>-</td><td>faulthandler 注入</td></tr>
+      <tr><td>31</td><td>viewer 调试 / 23</td><td>gen_debug.py</td><td>16415 B</td><td>-</td><td>-</td><td>-</td><td>打点复刻</td></tr>
+      <tr><td>32</td><td>viewer 调试 / 24</td><td>gen_debug2.py</td><td>16434 B</td><td>-</td><td>-</td><td>-</td><td>硬编码模板路径</td></tr>
+      <tr><td>33</td><td>viewer 调试 / 25</td><td>vw_pid 文件</td><td>6 B</td><td>-</td><td>-</td><td>-</td><td>PID 记录</td></tr>
+      <tr><td>34</td><td>viewer 调试 / 26</td><td>out.html</td><td>0 B</td><td>-</td><td>-</td><td>-</td><td>curl 空输出</td></tr>
+      <tr><td>35</td><td>viewer 调试 / 27</td><td>onepager-viewer.log</td><td>0 B</td><td>-</td><td>-</td><td>-</td><td>59622 启动日志</td></tr>
+      <tr><td>36</td><td>viewer 调试 / 28</td><td>vw8.log</td><td>3528 B</td><td>-</td><td>-</td><td>-</td><td>args[0] timeout 修复</td></tr>
+      <tr><td>37</td><td>viewer 调试 / 29</td><td>vw9.log</td><td>158 B</td><td>-</td><td>-</td><td>-</td><td>最终验证通过</td></tr>
+      <tr><td>38</td><td>viewer 调试 / 30</td><td>benchmark.json</td><td>-</td><td>-</td><td>-</td><td>-</td><td>聚合输出</td></tr>
+    </tbody>
+  </table>
+  <p class="note">以上 38 行过程数据全部平铺展示，未做任何折叠。读者需要自行滚动并对照后才能得出任何判断。</p>
+</div>
+
+<h2>4. 过程补充说明</h2>
+<div class="block">
+  <p>评测期间同时存在以下背景情况：磁盘空间、系统负载、浏览器缓存、DNS 解析、代理设置均未记录。上述情况可能影响本次结果，但未采集、无法复现。</p>
+  <p class="note">（此段为占位说明，无实际结论。）</p>
+</div>
+
+<h2>5. 历史版本回顾</h2>
+<div class="block">
+  <p>早期版本 v1-v6 的差异：v2 曾使用字体栈 'Inter'；v3 调整了表格边框颜色；v4 增加 section 4；v5 修正拼写；v6 增加 section 5。各版本详情未保留。</p>
+</div>
+
+<h2>6. 附录：临时文件清单</h2>
+<div class="block">
+  <table>
+    <thead><tr><th>文件</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>vw.log</td><td>第一次 server 启动</td></tr>
+      <tr><td>vw2.log</td><td>第二次启动</td></tr>
+      <tr><td>vw3.log</td><td>exec wrapper</td></tr>
+      <tr><td>vw4.log</td><td>真实脚本</td></tr>
+      <tr><td>vw5.log</td><td>原始路径</td></tr>
+      <tr><td>vw6.log</td><td>时序测试</td></tr>
+      <tr><td>vw7.log</td><td>settimeout 尝试</td></tr>
+      <tr><td>vw8.log</td><td>self.request 尝试</td></tr>
+      <tr><td>vw9.log</td><td>最终修复</td></tr>
+      <tr><td>vw_sample.txt</td><td>sample 输出</td></tr>
+      <tr><td>vw_stack.log</td><td>SIGUSR1 堆栈</td></tr>
+      <tr><td>dbg.log / dbg2.log</td><td>打点调试</td></tr>
+      <tr><td>mini.log</td><td>最小 server</td></tr>
+      <tr><td>vw_http_1.html 等</td><td>curl 保存页面</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2>7. 最终结论（⚠ 结论被埋在文档最底部）</h2>
+<div class="block">
+  <p><b>结论：4 路运行全部通过 8/8 断言（pass_rate 100%），with_skill 与 without_skill 无差异（delta +0.00）。</b></p>
+  <p>8 条自动断言全为存在性检查，两侧基线均命中，区分度不足；定性差异（窄门哲学应用深度）需人工评审。</p>
+  <p>viewer 曾因单线程 server 被浏览器空闲连接占死而 000，已通过连接超时修复；另修复模板路径 resolve() 与 </script> 转义。</p>
+  <p class="note">读者必须滚动约 4 屏、跳过 6 个章节后才看到本结论。若只需结论，请勿参考本文档的排版。</p>
+</div>
+
+</body>
+</html>

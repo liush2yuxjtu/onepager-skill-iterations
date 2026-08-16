@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mac 发热诊断 · 单页结论</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2128; --border:#30363d;
+    --text:#e6edf3; --muted:#8b98a5; --dim:#6e7681;
+    --accent:#58a6ff; --accent-soft:rgba(88,166,255,.14);
+    --hot:#f85149; --warm:#f0883e; --warn:#d29922; --ok:#3fb950;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 18px 60px}
+  .kicker{font-size:12px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+  h1{font-size:26px;margin:6px 0 4px;font-weight:700}
+  .meta{font-size:12.5px;color:var(--muted);margin-bottom:22px}
+  .meta code{background:var(--panel);padding:1px 6px;border-radius:5px;font-size:11.5px}
+
+  .verdict{background:linear-gradient(180deg,var(--panel),#141a22);border:1px solid var(--border);
+    border-left:3px solid var(--warm);border-radius:12px;padding:16px 18px;margin-bottom:26px}
+  .verdict-tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--warm);
+    padding:2px 9px;border-radius:999px;margin-bottom:8px;letter-spacing:.08em}
+  .verdict-line{font-size:16.5px;font-weight:650;margin:0 0 10px}
+  .verdict-line b{color:var(--warm)}
+  .verdict-sub{font-size:13px;color:var(--muted);margin:0}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chip{font-size:11.5px;padding:3px 10px;border-radius:999px;border:1px solid var(--border);color:var(--muted)}
+  .chip.hot{color:var(--hot);border-color:rgba(248,81,73,.45);background:rgba(248,81,73,.08)}
+  .chip.warm{color:var(--warm);border-color:rgba(240,136,62,.45);background:rgba(240,136,62,.08)}
+  .chip.ok{color:var(--ok);border-color:rgba(63,185,80,.4);background:rgba(63,185,80,.07)}
+  .chip.gray{color:var(--dim)}
+
+  section{margin-bottom:30px}
+  h2{font-size:17px;margin:0 0 12px;font-weight:650}
+  h2 .n{color:var(--dim);font-size:13px;font-weight:500;margin-left:6px}
+
+  .cards{display:grid;gap:10px}
+  .card{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--border);
+    border-radius:10px;padding:12px 14px}
+  .card .bar{width:4px;align-self:stretch;border-radius:2px;background:var(--warm)}
+  .card .bar.hot{background:var(--hot)}
+  .card .bar.warn{background:var(--warn)}
+  .card .bar.ok{background:var(--ok)}
+  .card .cname{font-weight:600;font-size:14.5px}
+  .card .cname .grp{color:var(--dim);font-weight:400;font-size:12px;margin-left:6px}
+  .card .cmetric{font-size:13px;color:var(--muted);margin-top:1px}
+  .card .cmetric b{color:var(--text);font-weight:600}
+  .card .ops{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;flex-shrink:0}
+  .op{font-size:11.5px;padding:3px 9px;border-radius:6px;cursor:pointer;border:1px solid var(--border);
+    background:var(--panel2);color:var(--accent);text-decoration:none;white-space:nowrap;font-weight:600}
+  .op:hover{background:var(--accent-soft);border-color:var(--accent)}
+  .op.dim{color:var(--dim);cursor:default;background:transparent}
+  .op.dim:hover{background:transparent;border-color:var(--border)}
+
+  .toolbar{display:flex;gap:10px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
+  input[type=search]{flex:1;min-width:200px;background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:9px 12px;border-radius:8px;font-size:13.5px;outline:none}
+  input[type=search]:focus{border-color:var(--accent)}
+  .count{font-size:12px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);border-radius:10px;overflow:hidden}
+  thead th{position:sticky;top:0;background:var(--panel2);color:var(--muted);text-align:right;font-weight:600;
+    font-size:11.5px;padding:8px 12px;cursor:pointer;user-select:none;white-space:nowrap}
+  thead th.name{text-align:left}
+  thead th:hover{color:var(--text)}
+  thead th .arrow{color:var(--accent);margin-left:3px}
+  tbody td{padding:7px 12px;border-top:1px solid #21262d;vertical-align:middle}
+  tbody td.name{text-align:left;font-weight:600}
+  tbody td .grp{color:var(--dim);font-size:11px;font-weight:400;margin-left:6px}
+  tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .cpu-hot{color:var(--hot);font-weight:700}
+  .cpu-warm{color:var(--warm);font-weight:600}
+  td.focus{text-align:center;white-space:nowrap}
+  tr.flash{animation:flash 1.4s ease 2}
+  @keyframes flash{0%,60%{background:rgba(240,136,62,.22)}100%{background:transparent}}
+  tr.hidden{display:none}
+  .tablewrap{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:10px}
+
+  .actions{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+  .progrow{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .prog{flex:1;height:8px;background:#21262d;border-radius:999px;overflow:hidden}
+  .prog>div{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--ok));transition:width .25s}
+  .progcount{font-size:12.5px;color:var(--muted);white-space:nowrap}
+  ul.acts{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px}
+  ul.acts li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;padding:9px 11px;border:1px solid var(--border);
+    border-radius:8px;background:var(--panel2)}
+  ul.acts li input{width:15px;height:15px;margin-top:2px;accent-color:var(--accent);flex-shrink:0;cursor:pointer}
+  ul.acts li .t{flex:1}
+  ul.acts li .t .sub{display:block;color:var(--muted);font-size:12px;margin-top:1px}
+  ul.acts li.done .t{text-decoration:line-through;color:var(--muted)}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap}
+  button,.bmlink{background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent);font-size:12.5px;
+    padding:6px 13px;border-radius:7px;cursor:pointer;font-weight:600}
+  button:hover{background:rgba(88,166,255,.24)}
+  .bmlink{background:transparent;border-color:var(--border);color:var(--muted)}
+  .bmlink:hover{color:var(--text);border-color:var(--muted)}
+  #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#fff;color:#0d1117;
+    font-size:13px;padding:8px 16px;border-radius:8px;opacity:0;transition:.25s;pointer-events:none;z-index:9;font-weight:600}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  details.ev{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px 14px 12px}
+  details.ev summary{cursor:pointer;font-size:13.5px;font-weight:600;padding:11px 0;color:var(--accent)}
+  details.ev pre{background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11.5px;
+    overflow:auto;color:#9db1c5;line-height:1.5}
+  details.ev .srcline{font-size:12.5px;color:var(--muted);margin:12px 0 4px}
+  .foot{margin-top:26px;font-size:11.5px;color:var(--dim);border-top:1px solid var(--border);padding-top:14px;line-height:1.7}
+  .foot code{background:var(--panel);padding:1px 6px;border-radius:5px}
+  @media(max-width:600px){
+    .card{flex-wrap:wrap}
+    .card .ops{width:100%;margin-left:0}
+    h1{font-size:22px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">Mac 发热 · 诊断报告 · eval-1</div>
+  <h1>风扇为什么全速转</h1>
+  <div class="meta">采集时点 2026-08-12 11:30 · 快照型 · Apple Silicon 10 核 / 16GB · <code>ps / top / pmset / vm_stat</code></div>
+
+  <!-- 结论前置 -->
+  <section class="verdict">
+    <span class="verdict-tag">TL;DR · 一句结论</span>
+    <p class="verdict-line">热源 = <b>AI agent 并发群</b>：8+ 个 agent 进程（opencode + claude×6 + pi + herdr + claudex）累计 <b>&gt;185% CPU（≈2 个核）</b>；同时<b>内存 16GB 打满</b>（仅剩 416MB，压缩器占 4.5G，swap 已用 3.4G）持续换页压缩 → 发热、风扇全速。</p>
+    <p class="verdict-sub">不是单点故障、不是瞬时尖峰，是持续负载。系统暂未触发降频警告（pmset 热记录为空），但风扇已高转速——先把并发收窄、把内存释放，再谈物理散热。</p>
+    <div class="chips">
+      <span class="chip hot">高 CPU 持续负载</span>
+      <span class="chip warm">内存压力高 · 压缩器 4.5G</span>
+      <span class="chip ok">未触发系统降频</span>
+      <span class="chip gray">快照时点</span>
+    </div>
+  </section>
+
+  <!-- 热源排行 -->
+  <section>
+    <h2>热源排行<span class="n">每项一个窄操作：定位进程 / 聚焦窗口</span></h2>
+    <div class="cards">
+      <div class="card"><div class="bar hot"></div>
+        <div><div class="cname">opencode 会话<span class="grp">AI agent</span></div>
+          <div class="cmetric">PID 11321 · <b>55.9% CPU</b>（单点最高）· claude-agent-sdk</div></div>
+        <div class="ops"><a class="op dim" href="javascript:void(0)">聚焦 —</a>
+          <a class="op" href="javascript:void(0)" onclick="locate([11321])">定位进程 →</a></div>
+      </div>
+      <div class="card"><div class="bar hot"></div>
+        <div><div class="cname">claude 会话群 ×6<span class="grp">AI agent</span></div>
+          <div class="cmetric">PID 97270/28387/10384/60007/73277/76566 · 累计 <b>~64% CPU</b> · 两个在 herdr 窗口里</div></div>
+        <div class="ops"><a class="op" href="http://127.0.0.1:8793/focus?pane=w5H:p1J" target="_blank" title="查看素材库连接">聚焦 w5H:p1J →</a>
+          <a class="op" href="http://127.0.0.1:8793/focus?pane=w5H:p1K" target="_blank" title="检查 vibe-code">聚焦 w5H:p1K →</a>
+          <a class="op" href="javascript:void(0)" onclick="locate([97270,28387,10384,60007,73277,76566])">定位进程 →</a></div>
+      </div>
+      <div class="card"><div class="bar warm"></div>
+        <div><div class="cname">herdr + claudex 调度/代理层<span class="grp">agent 生态</span></div>
+          <div class="cmetric">PID 3378 (25.2%) + 80506 (20.8%) · 合计 <b>46% CPU</b></div></div>
+        <div class="ops"><a class="op dim" href="javascript:void(0)">聚焦 —</a>
+          <a class="op" href="javascript:void(0)" onclick="locate([3378,80506])">定位进程 →</a></div>
+      </div>
+      <div class="card"><div class="bar warn"></div>
+        <div><div class="cname">内存压力<span class="grp">根因之二</span></div>
+          <div class="cmetric">15.4/16G 用满 · <b>压缩器 4.5G</b> · swap 已用 3.4G · 持续换页→CPU 发热</div></div>
+        <div class="ops"><a class="op" href="javascript:void(0)" onclick="copyCmd()">复制查内存命令</a>
+          <a class="op" href="javascript:void(0)" onclick="document.querySelector('details.ev').open=true;document.querySelector('details.ev').scrollIntoView({behavior:'smooth'})">看证据 →</a></div>
+      </div>
+      <div class="card"><div class="bar warm"></div>
+        <div><div class="cname">Clash Verge 代理<span class="grp">网络</span></div>
+          <div class="cmetric">mihomo 8.9% + verge 4.7% · 合计 <b>13.6% CPU</b> · 常驻转发</div></div>
+        <div class="ops"><a class="op" href="javascript:void(0)" onclick="locate([1833,1374])">定位进程 →</a></div>
+      </div>
+      <div class="card"><div class="bar warn"></div>
+        <div><div class="cname">WindowServer<span class="grp">系统 · GPU 合成</span></div>
+          <div class="cmetric">PID 171 · <b>19.7% CPU</b> · 多窗口/终端高频刷新推高合成负载</div></div>
+        <div class="ops"><a class="op" href="javascript:void(0)" onclick="locate([171])">定位进程 →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 进程榜 -->
+  <section>
+    <h2>进程榜<span class="n">搜索即过滤 · 点表头排序 · 可聚焦的行带 🔍</span></h2>
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="搜索进程名 / PID / 分组…" autocomplete="off">
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th class="name" data-key="name">进程名 <span class="arrow"></span></th>
+          <th data-key="cpu">CPU% <span class="arrow"></span></th>
+          <th data-key="mem">MEM% <span class="arrow"></span></th>
+          <th data-key="pid">PID <span class="arrow"></span></th>
+          <th class="focus">聚焦</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 行动清单 -->
+  <section class="actions">
+    <h2 style="margin-bottom:10px">行动清单<span class="n">勾选有进度 · 一键复制成 Markdown</span></h2>
+    <div class="progrow">
+      <div class="prog"><div id="progbar"></div></div>
+      <span class="progcount" id="progcount">0 / 8</span>
+    </div>
+    <ul class="acts" id="acts"></ul>
+    <div class="btnrow">
+      <button id="copybtn">复制为 Markdown</button>
+      <button class="bmlink" id="allbtn">全选</button>
+      <button class="bmlink" id="clearbtn">清空</button>
+    </div>
+  </section>
+
+  <!-- 证据收窄门 -->
+  <details class="ev">
+    <summary>证据与采集命令（全量快照收窄门，默认折叠）</summary>
+
+    <div class="srcline">采集命令 1 · 进程榜（按 CPU 排序）</div>
+    <pre>ps -A -o pid=,pcpu=,pmem=,comm= -r | head -30</pre>
+    <div class="srcline">采集命令 2 · 系统摘要</div>
+    <pre>top -l 1 -n 1 -s 0</pre>
+    <div class="srcline">采集命令 3 · 热状态 / 负载 / 硬件</div>
+    <pre>pmset -g therm
+sysctl -n machdep.xcpm.cpu_thermal_level vm.loadavg
+sysctl -n hw.memsize hw.ncpu</pre>
+    <div class="srcline">采集命令 4 · 内存与 swap</div>
+    <pre>vm_stat | head -8
+sysctl -n vm.swapusage</pre>
+    <div class="srcline">采集命令 5 · herdr 窗口映射</div>
+    <pre>herdr pane list
+herdr pane process-info --pane w5H:p1J   # → PID 28387 claude
+herdr pane process-info --pane w5H:p1K   # → PID 60007 claude
+herdr pane process-info --pane w5D:p1    # → PID 27405 pi</pre>
+
+    <div class="srcline">系统摘要（top 快照）</div>
+    <pre>Processes: 583 total · Load Avg: 3.09, 3.30, 3.05
+CPU: 18.13% user, 14.73% sys, 67.13% idle
+PhysMem: 15G used (3166M wired, 4572M compressor), 416M unused
+VM swap: 1875120 swapouts · vm.swapusage: total 4096M, used 3467M
+hw: 17179869184 bytes RAM (16GB) · 10 cores · Apple Silicon</pre>
+
+    <div class="srcline">热状态（pmset -g therm）</div>
+    <pre>No thermal warning level has been recorded
+No performance warning level has been recorded
+No CPU power status has been recorded</pre>
+
+    <div class="srcline">电池</div>
+    <pre>Now drawing from 'AC Power' · InternalBattery 99% · charging</pre>
+
+    <div class="srcline">原始进程快照（按 CPU 降序，前 25）</div>
+    <pre>  PID   %CPU  %MEM  COMMAND
+11321  55.9   2.1  claude-agent-sdk-darwin-arm64 (opencode)
+97270  27.5   2.8  claude
+ 3378  25.2   0.2  herdr
+28387  20.9   2.7  claude (pane w5H:p1J)
+80506  20.8   0.9  claudex cli-proxy-api
+  171  19.7   0.5  WindowServer
+27405  19.5   1.4  pi (pane w5D:p1, centrum evaluate.py)
+10384  10.2   2.4  claude
+ 1833   8.9   0.6  Clash Verge mihomo
+  309   6.0   0.2  AppleBCMWLAN dext
+  548   5.6   0.7  Terminal
+ 1374   4.7   0.3  clash-verge
+66418   4.1   1.3  WorkBuddy Helper (Renderer)
+  179   3.5   0.1  trustd
+  139   3.2   0.1  opendirectoryd
+  512   3.1   0.1  tccd
+  172   3.0   0.1  tccd
+  184   2.8   0.1  coreaudiod
+60007   2.7   2.2  claude (pane w5H:p1K)
+73277   2.4   1.3  claude
+76566   2.0   2.2  claude
+24583   1.8   1.6  企业微信
+66408   1.5   0.3  WorkBuddy Helper (GPU)
+88337   1.4   1.1  Typeless Helper (Renderer)
+10370   1.4   0.2  python3.12</pre>
+  </details>
+
+  <div class="foot">
+    <b>来源与可复现</b><br>
+    生成项目：onepager skill · 输出：<code>/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-6/eval-1-heat-diagnosis/with_skill/outputs/heat-diagnosis.html</code><br>
+    会话 ID：<code>eval-1-heat-diagnosis / with_skill</code> · 数据为 2026-08-12 11:30 快照，非持续采集<br>
+    聚焦服务（仅 loopback，端口 8793）：已后台常驻，停止命令 <code>lsof -tiTCP:8793 -sTCP:LISTEN | xargs kill</code><br>
+    诚实声明：本报告基于单次快照；瞬时值可能波动，行动后请重跑采集命令对比。系统未报告热警告，不代表风扇异常——负载本身是主因。
+  </div>
+
+</div>
+<div id="toast"></div>
+
+<script>
+/* ---------- 数据 ---------- */
+const rows = [
+  {pid:11321,cpu:55.9,mem:2.1,name:"opencode · claude-agent-sdk",grp:"AI agent",pane:null},
+  {pid:97270,cpu:27.5,mem:2.8,name:"claude",grp:"AI agent",pane:null},
+  {pid:3378, cpu:25.2,mem:0.2,name:"herdr",grp:"agent 调度",pane:null},
+  {pid:28387,cpu:20.9,mem:2.7,name:"claude · 查看素材库连接",grp:"AI agent",pane:"w5H:p1J"},
+  {pid:80506,cpu:20.8,mem:0.9,name:"claudex cli-proxy-api",grp:"代理层",pane:null},
+  {pid:171,  cpu:19.7,mem:0.5,name:"WindowServer",grp:"系统 · GPU",pane:null},
+  {pid:27405,cpu:19.5,mem:1.4,name:"pi · centrum evaluate",grp:"AI agent",pane:"w5D:p1"},
+  {pid:10384,cpu:10.2,mem:2.4,name:"claude",grp:"AI agent",pane:null},
+  {pid:1833, cpu:8.9, mem:0.6,name:"Clash Verge · mihomo",grp:"网络代理",pane:null},
+  {pid:309,  cpu:6.0, mem:0.2,name:"AppleBCMWLAN",grp:"系统 · 网络",pane:null},
+  {pid:548,  cpu:5.6, mem:0.7,name:"Terminal",grp:"终端",pane:null},
+  {pid:1374, cpu:4.7, mem:0.3,name:"clash-verge",grp:"网络代理",pane:null},
+  {pid:66418,cpu:4.1, mem:1.3,name:"WorkBuddy Helper (Renderer)",grp:"App",pane:null},
+  {pid:179,  cpu:3.5, mem:0.1,name:"trustd",grp:"系统",pane:null},
+  {pid:139,  cpu:3.2, mem:0.1,name:"opendirectoryd",grp:"系统",pane:null},
+  {pid:512,  cpu:3.1, mem:0.1,name:"tccd",grp:"系统",pane:null},
+  {pid:60007,cpu:2.7, mem:2.2,name:"claude · 检查 vibe-code",grp:"AI agent",pane:"w5H:p1K"},
+  {pid:73277,cpu:2.4, mem:1.3,name:"claude",grp:"AI agent",pane:null},
+  {pid:76566,cpu:2.0, mem:2.2,name:"claude",grp:"AI agent",pane:null},
+  {pid:24583,cpu:1.8, mem:1.6,name:"企业微信",grp:"App",pane:null}
+];
+const FOCUS = "http://127.0.0.1:8793/focus?pane=";
+let sortKey="cpu", sortDir=-1, q="";
+
+/* ---------- 进程表 ---------- */
+function render(){
+  const t=document.getElementById("tbody");
+  const data=rows.filter(r=>!q || (r.name+r.grp+r.pid+"").toLowerCase().includes(q));
+  data.sort((a,b)=>{const A=a[sortKey],B=b[sortKey];
+    return typeof A==="string"? A.localeCompare(B)*sortDir : (A-B)*sortDir;});
+  t.innerHTML=data.map(r=>{
+    const cls=r.cpu>=20?"cpu-hot":r.cpu>=8?"cpu-warm":"";
+    const foc=r.pane?`<a class="op" href="${FOCUS}${r.pane}" target="_blank" title="${r.pane}">🔍 聚焦</a>`:"<span class='op dim'>—</span>";
+    return `<tr data-pid="${r.pid}"><td class="name">${r.name}<span class="grp">${r.grp}</span></td>
+      <td class="num ${cls}">${r.cpu.toFixed(1)}</td><td class="num">${r.mem.toFixed(1)}</td>
+      <td class="num">${r.pid}</td><td class="focus">${foc}</td></tr>`;
+  }).join("");
+  document.getElementById("count").textContent=`${data.length} / ${rows.length} 行`;
+}
+document.querySelectorAll("thead th[data-key]").forEach(th=>{
+  th.addEventListener("click",()=>{
+    const k=th.dataset.key;
+    if(sortKey===k)sortDir*=-1; else {sortKey=k; sortDir=(k==="name")?1:-1;}
+    document.querySelectorAll("thead th[data-key]").forEach(h=>h.querySelector(".arrow").textContent="");
+    th.querySelector(".arrow").textContent=sortDir>0?"↑":"↓";
+    render();
+  });
+});
+document.getElementById("search").addEventListener("input",e=>{q=e.target.value.trim().toLowerCase();render();});
+document.querySelector('thead th[data-key="cpu"]').querySelector(".arrow").textContent="↓";
+render();
+
+/* ---------- 定位（窄门：从热源卡跳进程行） ---------- */
+function locate(pids){
+  document.getElementById("search").value="";q="";render();
+  pids.forEach(p=>{const el=document.querySelector(`tr[data-pid="${p}"]`);if(el)el.scrollIntoView({behavior:"smooth",block:"center"});});
+  setTimeout(()=>pids.forEach(p=>{const el=document.querySelector(`tr[data-pid="${p}"]`);if(el)el.classList.add("flash");}),350);
+  setTimeout(()=>pids.forEach(p=>{const el=document.querySelector(`tr[data-pid="${p}"]`);if(el)el.classList.remove("flash");}),4300);
+}
+
+/* ---------- 行动清单 ---------- */
+const acts=[
+  ["关闭空闲 agent 会话","退出 herdr 中状态为 done 的 pane（w5H:p1M、w5H:p1N），立即释放 1-2 个 claude 进程"],
+  ["收窄并发：同时只跑 1-2 个 agent","其余会话暂停/退出；目标把 agent 累计 CPU 从 185% 压到 80% 以内"],
+  ["结束确无任务的高 CPU claude","`kill 97270 10384 73277`（先确认这三个没有正在运行的任务再杀）"],
+  ["重启 claudex 代理 / 退出多余 Claude Desktop","PID 80506 常驻 20.8% CPU；不需要时直接退出"],
+  ["清理内存大户 App","关闭 WorkBuddy / ChatGPT / Typeless / 企业微信 等非必要 App，缓解压缩器 4.5G 压力"],
+  ["网络代理瘦身","Clash Verge 关闭全局代理或精简规则（mihomo 8.9% + verge 4.7%）"],
+  ["复查闭环","30 分钟后重跑采集命令对比 load avg / 内存 / pmset -g therm"],
+  ["物理散热兜底","垫高通风、清灰、降低亮度；仍热再用 powermetrics 观察功率确认"]
+];
+let state=new Array(acts.length).fill(false);
+const ul=document.getElementById("acts");
+acts.forEach((a,i)=>{
+  const li=document.createElement("li");
+  const cb=document.createElement("input");cb.type="checkbox";cb.id="a"+i;
+  cb.addEventListener("change",()=>{state[i]=cb.checked;li.classList.toggle("done",cb.checked);updateProg();});
+  const t=document.createElement("label");t.htmlFor="a"+i;t.className="t";
+  t.appendChild(document.createTextNode(a[0]));
+  const s=document.createElement("span");s.className="sub";s.textContent=a[1];t.appendChild(s);
+  li.appendChild(cb);li.appendChild(t);ul.appendChild(li);
+});
+function updateProg(){const n=state.filter(Boolean).length;
+  document.getElementById("progbar").style.width=(n/acts.length*100)+"%";
+  document.getElementById("progcount").textContent=`${n} / ${acts.length}`;}
+document.getElementById("allbtn").onclick=()=>{state.fill(true);sync();};
+document.getElementById("clearbtn").onclick=()=>{state.fill(false);sync();};
+function sync(){document.querySelectorAll("#acts li").forEach((li,i)=>{
+  const cb=li.querySelector("input");cb.checked=state[i];li.classList.toggle("done",state[i]);});
+  updateProg();}
+document.getElementById("copybtn").onclick=()=>{
+  const md=["## Mac 发热 · 行动清单（eval-1-heat-diagnosis）","",
+    ...acts.map((a,i)=>`- [${state[i]?"x":" "}] ${i+1}. ${a[0]} — ${a[1]}`),"",
+    `采集时点 2026-08-12 11:30 · 生成 via onepager skill`];
+  copy(md.join("\n"));};
+
+/* ---------- 复制工具 ---------- */
+function copy(txt){
+  const toast=document.getElementById("toast");
+  const done=()=>{toast.textContent="已复制 ✓";toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1600);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done);}
+  else{const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();
+    document.execCommand("copy");ta.remove();done();}
+}
+function copyCmd(){copy("ps -A -o pid=,rss=,comm= -m | head -15   # 按内存排序，找内存大户");}
+</script>
+</body>
+</html>

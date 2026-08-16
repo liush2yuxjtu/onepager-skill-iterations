@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WinOps 控制台 · 原型（改动预览版）</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:14px/1.6 -apple-system,sans-serif;background:#f6f7f9;color:#1a2332}
+  .app{display:flex;min-height:100vh}
+  .side{width:220px;background:#1a2332;color:#fff;padding:16px;position:fixed;top:0;bottom:0;left:0}
+  .side .brand{font-weight:700;margin-bottom:20px;letter-spacing:.3px}
+  .side .brand small{display:block;font-weight:400;font-size:10px;color:#7d8db0;margin-top:2px}
+  .side .navgroup{color:#5b6b8c;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin:14px 0 4px}
+  .side button{display:flex;align-items:center;width:100%;text-align:left;background:none;border:none;color:#cbd5e1;padding:10px;margin:4px 0;border-radius:6px;cursor:pointer;font-size:14px}
+  .side button.on{background:#2a3a55;color:#fff}
+  .side button:hover{background:#2a3a55}
+  .main{margin-left:220px;padding:24px;flex:1;max-width:900px}
+  h1{font-size:18px;margin-bottom:12px}
+  .view{display:none}
+  .view.on{display:block}
+  .card{background:#fff;border:1px solid #e3e8ef;border-radius:10px;padding:16px;margin-bottom:12px;max-width:560px}
+  .card h3{font-size:15px;margin-bottom:6px}
+  .card p{color:#6b7686;font-size:13px}
+  .tag{display:inline-block;background:#eef2ff;color:#2563eb;border-radius:99px;padding:2px 8px;font-size:11px;margin-top:6px}
+  .hint{color:#8b96a8;font-size:12px}
+
+  /* ---- 改动预览注入（onepager skill §9 · 冻结窄门条） ---- */
+  body{padding-top:38px}
+  .side{top:38px}
+  .chgbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:#1a2332;color:#fff;font:12px/1.4 system-ui,-apple-system,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+  .chgbar-line{display:flex;align-items:center;gap:8px;padding:6px 12px;flex-wrap:wrap;min-height:30px}
+  .chgbar-t{font-weight:700;font-size:12px;white-space:nowrap}
+  .chgbar-t b{color:#f59e0b}
+  .chgbar-more{margin-left:auto;color:#93a4c0;text-decoration:none;white-space:nowrap;padding:4px 8px;border-radius:6px;cursor:pointer}
+  .chgbar-more:hover{color:#fff;background:#2a3a55}
+  .chgdetail{display:none;padding:0 12px 10px;border-top:1px solid #2a3a55}
+  .chgbar.open .chgdetail{display:block}
+  .chgitem{display:flex;align-items:center;gap:8px;padding:6px 0;color:#cbd5e1;font-size:12px}
+  .chgitem input{accent-color:#f59e0b}
+  .chgitem b{color:#f59e0b}
+  .chg-go{color:#f59e0b;text-decoration:none;white-space:nowrap;cursor:pointer;font-size:11px}
+  .chg-go:hover{text-decoration:underline}
+  .chgbar-actions{display:flex;align-items:center;gap:12px;padding:8px 0 2px;color:#93a4c0;font-size:11px;border-top:1px solid #2a3a55;margin-top:4px}
+  .chgbar-actions #chgcopy{font-weight:700}
+  .chgbar-src{color:#64748b;font-size:10px;padding:6px 0 2px}
+  .chg-tag{display:inline-flex;align-items:center;gap:5px;background:#2a3a55;color:#fff;border-radius:99px;padding:3px 10px;text-decoration:none;font-size:11px;cursor:pointer;border:1px solid #3b4c6b;white-space:nowrap}
+  .chg-tag i{font-style:normal;opacity:.65;font-size:10px}
+  .chg-tag:hover{border-color:#f59e0b}
+  .chg-tag.on{background:#f59e0b;color:#1a2332;border-color:#f59e0b;font-weight:700}
+  .chg-badge{display:inline-block;background:#f59e0b;color:#fff;font-size:10px;font-weight:700;line-height:1;padding:3px 7px;border-radius:99px;vertical-align:middle;margin-left:6px;letter-spacing:.4px;white-space:nowrap}
+  .chg-badge.chg-located{outline:2px solid #f59e0b;outline-offset:2px;animation:chgflash .8s ease 2}
+  @keyframes chgflash{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}50%{box-shadow:0 0 0 8px rgba(245,158,11,.5)}}
+</style>
+</head>
+<body>
+<div id="chgbar" class="chgbar" role="region" aria-label="改动预览">
+  <div class="chgbar-line">
+    <span class="chgbar-t">▣ 本次 <b>4</b> 处改动</span>
+    <a href="javascript:void(0)" class="chg-tag" data-chg="chg-1">NEW <i>#chg-1</i></a>
+    <a href="javascript:void(0)" class="chg-tag" data-chg="chg-2">v1.2 <i>#chg-2</i></a>
+    <a href="javascript:void(0)" class="chg-tag" data-chg="chg-3">新技能 <i>#chg-3</i></a>
+    <a href="javascript:void(0)" class="chg-tag" data-chg="chg-4">里程碑 <i>#chg-4</i></a>
+    <a href="javascript:void(0)" id="chgtoggle" class="chgbar-more">展开 ▾</a>
+  </div>
+  <div class="chgdetail">
+    <div class="chgitem">
+      <input type="checkbox" data-item="chg-1" checked>
+      <span>① 侧边栏「AI 对话」导航加 <b>NEW</b> 徽章（原：无 → 新：新入口提示）</span>
+      <a href="javascript:void(0)" class="chg-go" data-locate="chg-1">定位 →</a>
+    </div>
+    <div class="chgitem">
+      <input type="checkbox" data-item="chg-2" checked>
+      <span>② 品牌区「WinOps」加版本号 <b>v1.2</b>（原：无 → 新：v1.2）</span>
+      <a href="javascript:void(0)" class="chg-go" data-locate="chg-2">定位 →</a>
+    </div>
+    <div class="chgitem">
+      <input type="checkbox" data-item="chg-3" checked>
+      <span>③ 专家团「供应链经营总控」卡片加 <b>新技能</b> 徽章（子视图：自动切到专家团）</span>
+      <a href="javascript:void(0)" class="chg-go" data-locate="chg-3">定位 →</a>
+    </div>
+    <div class="chgitem">
+      <input type="checkbox" data-item="chg-4" checked>
+      <span>④ 项目组「Q3 交付保障」卡片加 <b>里程碑</b> 徽章（子视图：自动切到项目组）</span>
+      <a href="javascript:void(0)" class="chg-go" data-locate="chg-4">定位 →</a>
+    </div>
+    <div class="chgbar-actions">
+      <span>已勾选 <b id="chgcount">4</b>/4</span>
+      <a href="javascript:void(0)" class="chg-go" id="chgcopy">复制 Markdown 清单</a>
+    </div>
+    <div class="chgbar-src">来源：设计师交付的 WinOps 控制台 SPA 原型 · 注入 onepager skill 改动预览（eval-4 / with_skill）· 2026-08-12 · 文件：spa-changes-preview.html</div>
+  </div>
+</div>
+<div class="app">
+  <aside class="side">
+    <div class="brand">WinOps<em id="chg-2" class="chg-badge">v1.2</em></div>
+    <div class="navgroup">工作台</div>
+    <button data-nav="chat" class="on">AI 对话<em id="chg-1" class="chg-badge">NEW</em></button>
+    <div class="navgroup">团队</div>
+    <button data-nav="experts">专家团</button>
+    <button data-nav="projects">项目组</button>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+  const EXPERTS = [
+    {id:'supply-chief', name:'供应链经营总控', category:'供应链', version:'v3.2', desc:'统一理解经营目标，调用专项员工形成综合判断。'},
+    {id:'shortage', name:'缺料诊断员', category:'供应链', version:'v1.3', desc:'定位缺料根因并给出替代方案。'},
+    {id:'pricing', name:'价格策略顾问', category:'商品', version:'v2.0', desc:'基于竞品与毛利目标给出调价建议。'}
+  ];
+  const PROJECTS = [
+    {id:'q3-delivery', name:'Q3 重点客户交付保障', status:'进行中', progress:68, goal:'降低重点客户延期风险。'},
+    {id:'store-growth', name:'华东门店会员增长', status:'规划中', progress:34, goal:'找到可复制的门店增长动作。'},
+    {id:'inv-optimize', name:'库存周转优化', status:'评审中', progress:52, goal:'压降呆滞库存，提升资金效率。'}
+  ];
+
+  // hash 路由
+  function currentNav(){ return (location.hash||'#/chat').split('/')[1] || 'chat'; }
+
+  function expertCard(e){
+    // chg-3：改动锚点标在渲染模板里——专家团视图切换后该元素才存在
+    const skill = e.id === 'supply-chief' ? `<em id="chg-3" class="chg-badge">新技能</em>` : '';
+    return `<article class="card" data-expert-id="${e.id}">
+      <h3>${e.name}${skill}</h3><p>${e.category} · ${e.version}</p><p>${e.desc}</p>
+      <span class="tag">专家</span>
+    </article>`;
+  }
+  function projectCard(p){
+    // chg-4：改动锚点标在渲染模板里——项目组视图切换后该元素才存在
+    const ms = p.id === 'q3-delivery' ? `<em id="chg-4" class="chg-badge">里程碑</em>` : '';
+    return `<article class="card" data-project-id="${p.id}">
+      <h3>${p.name}${ms}</h3><p>${p.status} · ${p.progress}%</p><p>${p.goal}</p>
+      <span class="tag">项目</span>
+    </article>`;
+  }
+
+  function render(){
+    const nav = currentNav();
+    document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('on', b.dataset.nav===nav));
+    const main = document.getElementById('main');
+    if (nav === 'experts') {
+      main.innerHTML = `<h1>专家团</h1>` + EXPERTS.map(expertCard).join('');
+    } else if (nav === 'projects') {
+      main.innerHTML = `<h1>项目组</h1>` + PROJECTS.map(projectCard).join('');
+    } else {
+      main.innerHTML = `<h1>AI 对话</h1><p class="hint">选择工作对象，开始第一次对话。</p>`;
+    }
+  }
+
+  document.querySelectorAll('[data-nav]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      location.hash = '#/' + btn.dataset.nav;
+    });
+  });
+  window.addEventListener('hashchange', render);
+  render();
+</script>
+<script>
+(function(){
+  var bar = document.getElementById('chgbar');
+  var toggle = document.getElementById('chgtoggle');
+  // 每处改动所在视图：chg-1/chg-2 在固定侧边栏，chg-3/chg-4 在子视图（需先切视图）
+  var CHG_VIEW = {'chg-1':'chat','chg-2':'chat','chg-3':'experts','chg-4':'projects'};
+  var CHG_NAME = {
+    'chg-1':'① 侧边栏「AI 对话」导航加 NEW 徽章',
+    'chg-2':'② 品牌区「WinOps」加版本号 v1.2',
+    'chg-3':'③ 专家团「供应链经营总控」卡片加「新技能」徽章',
+    'chg-4':'④ 项目组「Q3 重点客户交付保障」卡片加「里程碑」徽章'
+  };
+  function currentNav(){ return (location.hash||'#/chat').split('/')[1] || 'chat'; }
+
+  // 展开态会增高顶栏，同步把 body 与 fixed 侧边栏往下推，避免遮挡
+  function syncPad(){
+    var h = bar.offsetHeight;
+    document.body.style.paddingTop = h + 'px';
+    var s = document.querySelector('.side');
+    if (s) s.style.top = h + 'px';
+  }
+
+  // 定位：切视图 + 轮询等待渲染 + 闪烁 + 持久金色边框（fixed 元素 scrollIntoView 无效）
+  function locateChg(id){
+    // 切换目标时清除上一个定位高亮与 active tag
+    document.querySelectorAll('.chg-located').forEach(function(el){ el.classList.remove('chg-located'); });
+    document.querySelectorAll('.chg-tag.on').forEach(function(el){ el.classList.remove('on'); });
+    var tag = bar.querySelector('.chg-tag[data-chg="'+id+'"]');
+    if (tag) tag.classList.add('on');
+    var el = document.getElementById(id);
+    function flash(){
+      if (!el) return;
+      el.classList.remove('chg-located');
+      void el.offsetWidth; // 重启动画
+      el.classList.add('chg-located');
+      try { el.scrollIntoView({behavior:'smooth', block:'center'}); }
+      catch(e) { el.scrollIntoView(); }
+    }
+    if (el) { flash(); return; }
+    // 子视图改动：当前不在目标视图 → 点对应导航，轮询等渲染
+    var view = CHG_VIEW[id];
+    if (view && currentNav() !== view) {
+      var btn = document.querySelector('[data-nav="'+view+'"]');
+      if (btn) btn.click();
+    }
+    var tries = 0;
+    var t = setInterval(function(){
+      tries++;
+      el = document.getElementById(id);
+      if (el) { clearInterval(t); flash(); }
+      else if (tries >= 30) { clearInterval(t); } // 150ms × 30 上限
+    }, 150);
+  }
+
+  toggle.addEventListener('click', function(e){
+    e.preventDefault();
+    var open = !bar.classList.contains('open');
+    bar.classList.toggle('open', open);
+    toggle.textContent = open ? '收起 ▴' : '展开 ▾';
+    syncPad();
+  });
+
+  bar.querySelectorAll('.chg-tag').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      locateChg(a.getAttribute('data-chg'));
+    });
+  });
+  bar.querySelectorAll('.chg-go[data-locate]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      locateChg(a.getAttribute('data-locate'));
+    });
+  });
+
+  function updateCount(){
+    var n = bar.querySelectorAll('input[data-item]:checked').length;
+    document.getElementById('chgcount').textContent = n;
+  }
+  bar.querySelectorAll('input[data-item]').forEach(function(c){
+    c.addEventListener('change', updateCount);
+  });
+
+  function fallbackCopy(md, done){
+    var ta = document.createElement('textarea');
+    ta.value = md; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); }
+    catch(err){ alert('复制失败，请手动复制：\n'+md); }
+    document.body.removeChild(ta);
+  }
+
+  document.getElementById('chgcopy').addEventListener('click', function(e){
+    e.preventDefault();
+    var lines = ['## 改动预览清单（4 处）'];
+    bar.querySelectorAll('input[data-item]').forEach(function(c){
+      lines.push('- ' + (c.checked ? '[x]' : '[ ]') + ' ' + CHG_NAME[c.getAttribute('data-item')]);
+    });
+    var md = lines.join('\n');
+    var done = function(){
+      var orig = toggle.textContent;
+      toggle.textContent = '已复制 ✓';
+      setTimeout(function(){ toggle.textContent = bar.classList.contains('open') ? '收起 ▴' : '展开 ▾'; }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(md).then(done, function(){ fallbackCopy(md, done); });
+    } else { fallbackCopy(md, done); }
+  });
+
+  syncPad();
+  window.addEventListener('resize', syncPad);
+})();
+</script>
+</body>
+</html>

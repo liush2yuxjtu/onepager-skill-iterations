@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "slim-redesign",
+  "prompt": "我上个月做的项目验收报告 HTML 太臃肿了，一个页面有 6 个大 tab、每 tab 都是几十行表格，评审说看不动。帮我把这份报告重做成一个精炼的交互式单页：结论放最上面，细节折叠起来，但搜索、筛选、可点击的条目、勾选清单这些交互一个都不能丢。",
+  "assertions": [
+    "Output is a single self-contained HTML file",
+    "The first visible content is a one-line verdict, not a table",
+    "Bulk detail content sits behind collapsible sections or on-demand filters",
+    "Search, sort, clickable rows, checklist, and copy affordances all still function",
+    "No section renders its full data table expanded on page load"
+  ]
+}

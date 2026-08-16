@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session Recap · pitch-video UAT</title>
+<style>
+  :root{
+    --paper:#faf9f6;
+    --card:#ffffff;
+    --ink:#1c1b19;
+    --muted:#6b675f;
+    --line:#e7e3db;
+    --pass:#0e7c4a;
+    --pass-bg:#e7f4ec;
+    --accent:#2d5cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--paper);color:var(--ink);line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:56px 24px 72px}
+  header.meta{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:36px}
+  .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  h1{font-size:30px;letter-spacing:-.02em;font-weight:700;margin-top:4px}
+  .sid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--muted);text-align:right}
+  .sid div{white-space:nowrap}
+
+  .verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--pass);
+    border-radius:12px;padding:22px 24px;display:flex;align-items:center;gap:16px;margin-bottom:28px;
+    box-shadow:0 1px 2px rgba(28,27,25,.04)}
+  .vicon{width:40px;height:40px;border-radius:50%;background:var(--pass-bg);color:var(--pass);
+    display:flex;align-items:center;justify-content:center;flex:none}
+  .vicon svg{width:22px;height:22px}
+  .vtitle{font-size:18px;font-weight:700}
+  .vsub{font-size:13.5px;color:var(--muted);margin-top:2px}
+  .vstat{margin-left:auto;text-align:right;flex:none}
+  .pill{display:inline-block;background:var(--pass-bg);color:var(--pass);font-size:12px;font-weight:700;
+    padding:4px 10px;border-radius:999px;letter-spacing:.02em}
+  .pill.time{background:#eef0f4;color:#444}
+
+  h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:34px 0 14px}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;
+    display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s ease,border-color .15s ease}
+  .card:hover{border-color:#d8d2c7;box-shadow:0 4px 14px rgba(28,27,25,.07)}
+  .card .top{display:flex;align-items:center;gap:10px}
+  .ticon{width:34px;height:34px;border-radius:9px;background:#f2f0ea;display:flex;align-items:center;justify-content:center;flex:none}
+  .ticon svg{width:18px;height:18px;color:#444}
+  .card .tname{font-size:15px;font-weight:650;letter-spacing:-.01em}
+  .card .tdesc{font-size:13px;color:var(--muted);flex:1}
+  .card .taction{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--accent);text-decoration:none}
+  .card .taction:hover{text-decoration:underline}
+  .card .taction svg{width:14px;height:14px}
+  .tag{font-size:11px;font-weight:600;color:#6b675f;background:#f2f0ea;border-radius:6px;padding:2px 7px;margin-left:auto}
+
+  ol.timeline{list-style:none;counter-reset:step}
+  ol.timeline li{position:relative;padding:0 0 18px 44px;font-size:13.5px}
+  ol.timeline li:before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-1px;
+    width:26px;height:26px;border-radius:50%;background:#eef0f4;color:#444;font-weight:700;font-size:12px;
+    display:flex;align-items:center;justify-content:center}
+  ol.timeline li:after{content:"";position:absolute;left:12px;top:30px;bottom:2px;width:2px;background:var(--line)}
+  ol.timeline li:last-child:after{display:none}
+  .tline{font-weight:650}
+  .tmeta{color:var(--muted);margin-top:1px;font-size:12.5px}
+
+  .files{cursor:pointer}
+  footer{margin-top:40px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#f2f0ea;padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="meta">
+    <div>
+      <div class="eyebrow">Session Recap</div>
+      <h1>pitch-video · fresh UAT run</h1>
+    </div>
+    <div class="sid">
+      <div>implicit-session-8</div>
+      <div>/tmp/pitch-video</div>
+    </div>
+  </header>
+
+  <section class="verdict">
+    <div class="vicon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    </div>
+    <div>
+      <div class="vtitle">UAT passed — no errors</div>
+      <div class="vsub">Illustrated UAT report delivered; verified with a fresh <b>415s</b> run and Playwright trace.</div>
+    </div>
+    <div class="vstat">
+      <span class="pill">PASS</span>
+      <div style="margin-top:6px"><span class="pill time">415s run</span></div>
+    </div>
+  </section>
+
+  <h2>Deliverables</h2>
+  <div class="grid">
+    <a class="card files" href="file:///Users/liushiyuwin/.agents/skills/onepager/evals/files/implicit-rich/report.html">
+      <div class="top">
+        <div class="ticon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <span class="tname">UAT Report</span>
+        <span class="tag">HTML</span>
+      </div>
+      <div class="tdesc">Final illustrated report — the session’s main deliverable.</div>
+      <span class="taction">Open report
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+      </span>
+    </a>
+
+    <a class="card files" href="file:///Users/liushiyuwin/.agents/skills/onepager/evals/files/implicit-rich/qa.json">
+      <div class="top">
+        <div class="ticon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <span class="tname">QA Result</span>
+        <span class="tag">JSON</span>
+      </div>
+      <div class="tdesc"><code>{"passed":true,"errors":[]}</code> — clean verification, zero errors.</div>
+      <span class="taction">View result
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+      </span>
+    </a>
+
+    <a class="card files" href="file:///Users/liushiyuwin/.agents/skills/onepager/evals/files/implicit-rich/run.webm">
+      <div class="top">
+        <div class="ticon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
+        <span class="tname">Run Recording</span>
+        <span class="tag">415s</span>
+      </div>
+      <div class="tdesc">Fresh full run captured as video — evidence the UAT pass is real.</div>
+      <span class="taction">Play recording
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+      </span>
+    </a>
+
+    <a class="card files" href="file:///Users/liushiyuwin/.agents/skills/onepager/evals/files/implicit-rich/trace.zip">
+      <div class="top">
+        <div class="ticon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg></div>
+        <span class="tname">Playwright Trace</span>
+        <span class="tag">ZIP</span>
+      </div>
+      <div class="tdesc">Step-by-step browser trace of the run — for deep inspection.</div>
+      <span class="taction">Download trace
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <h2>What happened</h2>
+  <ol class="timeline">
+    <li><div class="tline">Created the illustrated UAT report</div><div class="tmeta">Wrote <code>report.html</code> — the final deliverable.</div></li>
+    <li><div class="tline">Ran QA verification</div><div class="tmeta">Wrote <code>qa.json</code> → <code>passed: true</code>, no errors.</div></li>
+    <li><div class="tline">Recorded a fresh run</div><div class="tmeta">Captured <code>run.webm</code> — a clean 415-second pass from scratch.</div></li>
+    <li><div class="tline">Saved the Playwright trace</div><div class="tmeta">Exported <code>trace.zip</code> for step-by-step review.</div></li>
+  </ol>
+
+  <footer>
+    <span>Recap generated from Pi session transcript.</span>
+    <span>cwd <code>/tmp/pitch-video</code> · session <code>implicit-session-8</code></span>
+  </footer>
+
+</div>
+</body>
+</html>

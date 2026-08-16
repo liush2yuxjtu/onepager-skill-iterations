@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Recap — implicit-session-10</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --card: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e5e5e2;
+    --accent: #0f6f5c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 40px 16px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  header { margin-bottom: 24px; }
+  .eyebrow { color: var(--muted); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+  h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .meta { color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .meta b { color: var(--ink); font-weight: 600; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  h2 { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .qa { display: grid; gap: 14px; }
+  .qa .q { font-weight: 600; }
+  .qa .a { color: #333; }
+  .qa .a .tag {
+    display: inline-block; background: #e7f2ee; color: var(--accent);
+    border-radius: 4px; padding: 1px 8px; font-size: 12px; margin-left: 6px;
+  }
+  .empty {
+    border: 1px dashed var(--line); border-radius: 8px; padding: 14px;
+    color: var(--muted); font-size: 13px; text-align: center;
+  }
+  code { background: #f0f0ee; border-radius: 4px; padding: 1px 5px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Pi Session Recap</div>
+    <h1>Parser failure — root cause</h1>
+    <div class="meta">
+      <span>Session <b>implicit-session-10</b></span>
+      <span>cwd <b>/tmp/no-artifacts</b></span>
+      <span>Artifacts <b>none</b></span>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>Session at a glance</h2>
+    <div class="qa">
+      <div class="q">Q — explain why the parser failed.</div>
+      <div class="a">Root cause was an invalid delimiter. <span class="tag">resolved</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Artifacts</h2>
+    <div class="empty">This session generated no files or external artifacts.</div>
+  </section>
+
+  <section class="card">
+    <h2>Key facts</h2>
+    <div class="qa">
+      <div class="a">
+        Failure cause: <code>invalid delimiter</code> encountered while parsing. No
+        corrective code change is recorded in this session — the issue was diagnosed, not modified.
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

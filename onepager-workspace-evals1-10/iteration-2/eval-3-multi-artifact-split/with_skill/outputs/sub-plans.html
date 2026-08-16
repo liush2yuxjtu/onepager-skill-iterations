@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>执行计划分析 · MySQL 性能诊断</title>
+<style>
+  :root{--ink:#1a2332;--mut:#6b7686;--acc:#0f6bff;--bg:#f6f7f9;--card:#fff;--line:#e3e7ee;--bad:#d93025;--warn:#e8a100;--good:#18864b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header{padding:18px 20px;background:#fff;border-bottom:1px solid var(--line)}
+  .wrap{max-width:1000px;margin:0 auto;padding:18px 20px 40px}
+  h1{font-size:22px;margin:0 0 4px}
+  .meta{color:var(--mut);font-size:13px}
+  .tldr{background:#eef4ff;border:1px solid #c9d9ff;border-left:4px solid var(--acc);border-radius:6px;padding:12px 14px;margin:16px 0;font-size:14px}
+  .tldr b{color:var(--acc)}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0 10px}
+  input[type=search]{flex:1;min-width:220px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff}
+  .stats{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 18px;font-size:13px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 14px}
+  .stat b{font-size:18px;display:block}
+  details{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:#fff;overflow:hidden}
+  summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:14px;list-style:none}
+  summary::before{content:"▸ ";color:var(--acc)}
+  details[open] summary::before{content:"▾ "}
+  summary .tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-left:8px;vertical-align:middle}
+  .t-all{background:#fde7e7;color:#b3261e}.t-range{background:#fdf1d8;color:#9a6b00}.t-ref{background:#e8f1ff;color:#0f4bb3}.t-eqref{background:#e6f4ec;color:#18864b}
+  .planbody{padding:0 14px 14px}
+  .verdict{margin:8px 0;padding:9px 12px;border-radius:6px;font-size:13px}
+  .v-bad{background:#fdf1f0;border-left:4px solid var(--bad)}
+  .v-ok{background:#eff8f2;border-left:4px solid var(--good)}
+  .qlabel{font-size:12px;color:var(--mut);margin:10px 0 4px}
+  pre{background:#141a26;color:#d6e2f0;padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:12px;margin:0}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0 8px}
+  th,td{padding:6px 8px;border:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:#f0f2f6;white-space:nowrap}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#333}
+  .foot{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:var(--mut);font-size:12px}
+  @media(max-width:720px){.wrap{padding:12px 10px 30px}table{font-size:11px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding-bottom:0">
+    <h1>执行计划分析（EXPLAIN）</h1>
+    <div class="meta">MySQL 8.0.36 · EXPLAIN 采样于 2026-08-08 02:00（load 平稳窗口）· <b>模拟数据</b></div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="tldr"><b>结论：</b>20 条 SQL 里 <b>13 条全表扫描（ALL）</b>，4 条走 range 但回表量大，仅 3 条走 ref 可接受。共性 = <b>type=ALL + Extra 含 Using filesort / Using temporary / Using join buffer</b>。最严重的是 q-17（深分页 1280 万行）与 q-13（NOT IN 双重全扫）。</div>
+
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="搜索 SQL ID / 表名 / 计划特征（ALL、filesort、temporary…）" aria-label="搜索">
+    <span id="cnt" style="color:var(--mut);font-size:12px">20 条</span>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div id="list"></div>
+
+  <div class="foot">
+    <p>来源：模拟生成（虚构数据，用于演示诊断流程）· 采集命令：<code>EXPLAIN ANALYZE SELECT …</code> 关键路径采样</p>
+    <p>文件：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-2/eval-3-multi-artifact-split/with_skill/outputs/sub-plans.html · 会话：eval-3-multi-artifact-split</p>
+  </div>
+</div>
+
+<script>
+const PLANS=[
+{id:"q-01",tbl:"orders",type:"range",tag:"range",verdict:"bad",desc:"status 走单列索引但 amount>5000 需回表过滤 820 万行，filtered 仅 0.01%，浪费大量回表。",rows:[["orders","range","idx_status","status='PENDING'","8,200,000","0.01","Using index condition; Using filesort"]]},
+{id:"q-02",tbl:"orders",type:"ALL",tag:"all",verdict:"bad",desc:"WHERE 两列均无索引，全表扫描 540 万行，且为 UPDATE 锁全表，阻塞写并发。",rows:[["orders","ALL","—","","5,400,000","0.20","Using where"]]},
+{id:"q-03",tbl:"order_items",type:"ref",tag:"ref",verdict:"bad",desc:"驱动表 orders 走主键，但 order_items.order_id 无索引，内层全扫 + Using join buffer，被驱动 610 万行。",rows:[["orders","range","PRIMARY","id>?","120,000","10","Using index condition"],["order_items","ALL","—","","6,100,000","0.02","Using where; Using join buffer (hash join)"]]},
+{id:"q-04",tbl:"users",type:"ALL",tag:"all",verdict:"bad",desc:"GROUP BY province 无索引，全表扫描 + Using temporary + filesort，1240 万行全部进临时表。",rows:[["users","ALL","—","","12,400,000","100","Using temporary; Using filesort"]]},
+{id:"q-05",tbl:"products",type:"ref",tag:"ref",verdict:"mid",desc:"category 走单列索引，但 created_at 排序需 filesort，limit 20 只排 98 万行中前 20，浪费。",rows:[["products","ref","idx_category","category=?","980,000","5","Using where; Using filesort"]]},
+{id:"q-06",tbl:"orders",type:"ALL",tag:"all",verdict:"bad",desc:"created_at 无索引，COUNT 全扫 690 万行。",rows:[["orders","ALL","—","","6,900,000","1","Using where"]]},
+{id:"q-07",tbl:"products",type:"ALL",tag:"all",verdict:"bad",desc:"LIKE '%nfc%' 前导通配符，索引失效，全表扫描 460 万行。",rows:[["products","ALL","—","","4,600,000","0.14","Using where"]]},
+{id:"q-08",tbl:"orders",type:"ALL",tag:"all",verdict:"bad",desc:"OR 两分支均为等值，但 MySQL 未选 index_merge，全表扫 730 万行。",rows:[["orders","ALL","—","","7,300,000","0.04","Using where"]]},
+{id:"q-09",tbl:"users",type:"ALL",tag:"all",verdict:"bad",desc:"DATE(created_at) 对索引列做函数运算，索引失效，全扫 880 万行。",rows:[["users","ALL","—","","8,800,000","0.05","Using where"]]},
+{id:"q-10",tbl:"orders",type:"ALL",tag:"all",verdict:"bad",desc:"order_no 为 VARCHAR，与数字比较触发隐式转换，索引失效，全扫 760 万行。",rows:[["orders","ALL","—","","7,600,000","0.0002","Using where"]]},
+{id:"q-11",tbl:"orders",type:"ref",tag:"ref",verdict:"bad",desc:"派生表物化：order_items 先全扫 + 临时表聚合 920 万行，再与 orders 哈希连接，物化成本高。",rows:[["orders","range","idx_created_at","created_at>?","1,100,000","10","Using where"],["<derived>","ALL","—","","9,200,000","100","Using temporary"]]},
+{id:"q-12",tbl:"order_items",type:"range",tag:"range",verdict:"mid",desc:"status 走索引但需回表取 sku 去重，未命中覆盖索引，Using temporary 去重。",rows:[["order_items","range","idx_status","status='OK'","5,100,000","1","Using where; Using temporary"]]},
+{id:"q-13",tbl:"orders",type:"ALL",tag:"all",verdict:"bad",desc:"NOT IN 双重全扫：orders 1240 万 + refunds 全扫；refund_status 条件无索引。",rows:[["orders","ALL","—","","12,400,000","0.5","Using where"],["refunds","ALL","—","","2,100,000","0.8","Using where"]]},
+{id:"q-14",tbl:"orders",type:"range",tag:"range",verdict:"mid",desc:"两个 range 各扫一次，UNION 引入临时表去重；应改 UNION ALL（channel 互斥）。",rows:[["orders","range","idx_channel","channel='TMALL'","1,800,000","100","Using where"],["orders","range","idx_channel","channel='JSD'","2,500,000","100","Using where"],["<union>","ALL","—","","—","—","Using temporary"]]},
+{id:"q-15",tbl:"order_items",type:"ALL",tag:"all",verdict:"bad",desc:"大 JOIN 聚合：orders 驱动 + order_items 全扫 1170 万行，GROUP BY 临时表，写入时段锁 agg_daily。",rows:[["orders","range","idx_created_at","created_at BETWEEN…","880,000","100","Using where"],["order_items","ALL","—","","11,700,000","0.1","Using where; Using join buffer"],["agg_daily","system","—","","1","—","Using temporary"]]},
+{id:"q-16",tbl:"inventory",type:"ALL",tag:"all",verdict:"bad",desc:"sku_code 无索引，UPDATE 全扫 310 万行并逐行加锁，锁粒度放大。",rows:[["inventory","ALL","—","","3,100,000","0.01","Using where"]]},
+{id:"q-17",tbl:"orders",type:"range",tag:"range",verdict:"bad",desc:"深分页：idx_status 定位后回表排序，LIMIT 800000,20 丢弃 1280 万行中前 80 万，代价最高。",rows:[["orders","range","idx_status","status='PAID'","12,800,000","1","Using index condition; Using filesort"]]},
+{id:"q-18",tbl:"orders",type:"ALL",tag:"all",verdict:"bad",desc:"amount BETWEEN 无索引，全扫 710 万行。",rows:[["orders","ALL","—","","7,100,000","0.01","Using where"]]},
+{id:"q-19",tbl:"order_items",type:"ALL",tag:"all",verdict:"bad",desc:"DATE(created) 函数分组，索引失效 + filesort + 临时表。",rows:[["order_items","ALL","—","","5,800,000","100","Using temporary; Using filesort"]]},
+{id:"q-20",tbl:"orders",type:"ALL",tag:"all",verdict:"bad",desc:"EXISTS 相关子查询：orders 全扫 1120 万行，每行再触发一次 order_items 索引探针，单条 SQL 内部循环 1120 万次。",rows:[["orders","ALL","—","","11,200,000","0.8","Using where"],["order_items","ref","idx_order_id","order_id=o.id","4","1","Using where"]]}
+];
+const TAG={all:'<span class="tag t-all">ALL</span>',range:'<span class="tag t-range">range</span>',ref:'<span class="tag t-ref">ref</span>',eqref:'<span class="tag t-eqref">eq_ref</span>'};
+const $q=document.getElementById("q"),$list=document.getElementById("list"),$cnt=document.getElementById("cnt"),$stats=document.getElementById("stats");
+function render(){
+  let kw=$q.value.trim().toLowerCase();
+  let rows=PLANS.filter(p=>!kw||(p.id+p.tbl+p.desc+p.rows.map(r=>r[2]+" "+r[4]+" "+r[5]).join(" ")).toLowerCase().includes(kw));
+  $cnt.textContent=rows.length+" 条";
+  $list.innerHTML=rows.map(p=>`
+    <details>
+      <summary>${p.id} · ${p.tbl} · 访问类型 ${TAG[p.tag]}<span style="float:right;color:var(--mut);font-weight:400;font-size:12px">${p.rows.length} 个访问路径</span></summary>
+      <div class="planbody">
+        <div class="verdict ${p.verdict==="bad"?"v-bad":"v-ok"}">${p.desc}</div>
+        <div class="qlabel">EXPLAIN 关键行（表 · type · 可用索引 · 扫描/估算行 · filtered · Extra）</div>
+        <table><thead><tr><th>表</th><th>type</th><th>索引</th><th>条件</th><th>估算行</th><th>filtered</th><th>Extra</th></tr></thead>
+        <tbody>${p.rows.map(r=>`<tr>${r.map(c=>`<td class="mono">${c}</td>`).join("")}</tr>`).join("")}</tbody></table>
+      </div>
+    </details>`).join("");
+}
+function stats(){
+  let all=PLANS.filter(p=>p.tag==="all").length,range=PLANS.filter(p=>p.tag==="range").length,ref=PLANS.filter(p=>p.tag==="ref").length;
+  $stats.innerHTML=`<div class="stat"><b style="color:var(--bad)">${all}</b>全表扫描 ALL</div><div class="stat"><b style="color:var(--warn)">${range}</b>range（回表大）</div><div class="stat"><b style="color:var(--acc)">${ref}</b>ref</div><div class="stat"><b>${PLANS.filter(p=>/filesort|temporary|join buffer/.test(p.desc)).length}</b>含 filesort/temporary</div>`;
+}
+$q.addEventListener("input",render);stats();render();
+</script>
+</body>
+</html>

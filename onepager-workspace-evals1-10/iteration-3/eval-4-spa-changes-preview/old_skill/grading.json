@@ -1,0 +1,60 @@
+{
+  "run_id": "eval-4-spa-changes-preview-old_skill",
+  "expectations": [
+    {
+      "text": "fixed_top_bar",
+      "passed": true,
+      "evidence": "fixed bar + verdict"
+    },
+    {
+      "text": "default_collapsed",
+      "passed": true,
+      "evidence": "compact row"
+    },
+    {
+      "text": "tag_per_change",
+      "passed": true,
+      "evidence": "4 tags"
+    },
+    {
+      "text": "badge_in_template",
+      "passed": true,
+      "evidence": "badges in templates"
+    },
+    {
+      "text": "subview_jump",
+      "passed": true,
+      "evidence": "view mapping"
+    },
+    {
+      "text": "poll_wait",
+      "passed": true,
+      "evidence": "poll"
+    },
+    {
+      "text": "no_hash_anchor",
+      "passed": true,
+      "evidence": "no hash anchor"
+    },
+    {
+      "text": "flash_locate",
+      "passed": true,
+      "evidence": "flash+located"
+    },
+    {
+      "text": "locate_clear",
+      "passed": true,
+      "evidence": "clear prev"
+    },
+    {
+      "text": "checklist_copy",
+      "passed": true,
+      "evidence": "copy md"
+    },
+    {
+      "text": "original_nav_works",
+      "passed": true,
+      "evidence": "nav intact"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML directly links current-report.html and current-qa.json.",
+      "passed": true,
+      "evidence": "linked/referenced: ['current-report.html', 'current-qa.json']",
+      "manual": false
+    },
+    {
+      "text": "The output does not link or copy old-failure.webm.",
+      "passed": true,
+      "evidence": "excluded but referenced/copied: []",
+      "manual": false
+    },
+    {
+      "text": "The artifact links are visible in the main page rather than present only inside collapsed details.",
+      "passed": true,
+      "evidence": "2 links outside details",
+      "manual": false
+    },
+    {
+      "text": "The footer includes /tmp/scoped-recap and implicit-session-9.",
+      "passed": true,
+      "evidence": "provenance found: ['/tmp/scoped-recap', 'implicit-session-9']",
+      "manual": false
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

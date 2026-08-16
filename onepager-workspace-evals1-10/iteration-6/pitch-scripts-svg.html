@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WinBrain OS · 4 张 Pitch 脚本卡（SVG）</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1a1d24;--ink2:#5a6170;--ink3:#8a91a0;--brand:#3b5bdb;--brand2:#7b2ff7;--line:#e3e7f0;--ok:#12a150;--warn:#d98a1f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:28px 18px 56px}
+header{background:linear-gradient(120deg,var(--brand),var(--brand2));border-radius:16px;padding:22px 24px;color:#fff;margin-bottom:16px}
+header h1{font-size:22px;font-weight:700;margin-bottom:6px}
+.tldr{font-size:14px;opacity:.95}
+.tldr b{font-size:15px}
+.meta{font-size:12px;opacity:.85;margin-top:8px;display:flex;gap:12px;flex-wrap:wrap}
+.searchbar{display:flex;gap:8px;margin-bottom:14px}
+.searchbar input{flex:1;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--card);outline:none}
+.searchbar input:focus{border-color:var(--brand)}
+.cases{display:flex;flex-direction:column;gap:14px}
+.case{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.num{font-size:11px;font-weight:700;color:var(--brand);letter-spacing:.5px}
+.dur{font-size:11px;color:var(--ink3);background:#f1f3f9;padding:3px 10px;border-radius:20px}
+.case h2{font-size:17px;font-weight:700;margin:2px 0 4px}
+.one{font-size:13px;color:var(--ink2);margin-bottom:10px}
+details{border:1px dashed var(--line);border-radius:12px;padding:4px 6px}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--brand);padding:10px 12px;user-select:none}
+details .inner{padding:4px 2px}
+details .inner svg{width:100%;height:auto;display:block;border-radius:10px}
+.act{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.check{font-size:13px;color:var(--ink2);cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px}
+.check input{width:16px;height:16px;accent-color:var(--brand)}
+.progress{flex:1;height:6px;min-width:80px;background:var(--line);border-radius:3px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--ok);width:0;transition:width .2s}
+.copy{padding:8px 14px;background:var(--brand);color:#fff;border:none;border-radius:9px;font-size:13px;cursor:pointer}
+.copy:active{opacity:.8}
+.count{font-size:13px;color:var(--ink2);margin:14px 0 6px}
+footer{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--ink3);line-height:1.7}
+footer code{background:#eef1f6;padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>🎬 WinBrain OS · 4 张 Pitch 脚本卡</h1>
+<div class="tldr"><b>结论:</b> 4 个 75–90s 竖屏视频脚本已设计成可直接录制的分镜卡：本体→专家→进化完整循环。点开即看 SVG 脚本，可勾选、可复制 Markdown。</div>
+<div class="meta"><span>📐 1200×1600 竖屏</span><span>🎙 含旁白 / 字幕 / 画面</span><span>⏱ 已核对 app 真实能力</span></div>
+</header>
+
+<div class="searchbar"><input type="text" id="q" placeholder="🔍 过滤脚本（输入 本体 / 专家 / 进化…）" aria-label="搜索脚本"></div>
+<div class="count">4 个脚本 · 已批准 <b id="approved">0</b>/4</div>
+<div class="cases" id="cases">
+
+<section class="case" data-tags="本体 数据 37文档 建本体 语义模型">
+  <div class="row">
+    <span class="num">CASE 1 · 本体 构建</span>
+    <span class="dur">90s · 6 镜头</span>
+  </div>
+  <h2>从 37 份字段文档，一键建「数据本体」</h2>
+  <p class="one">演示 ontology-builder：上传 37 份字段释义文档 → AI 提取 42 业务对象 → 扫描真实 DB → 发布本体</p>
+  <details>
+    <summary>展开完整分镜脚本（SVG 脚本卡）</summary>
+    <div class="inner"><svg width="1200" height="1600" viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="c1-hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#7b2ff7"/>
+    </linearGradient>
+    <linearGradient id="c1-btn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#6c5ce7"/>
+    </linearGradient>
+    <filter id="c1-card" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#101828" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1600" fill="#f4f6f9"/>
+
+  <!-- ===== Header ===== -->
+  <rect x="0" y="0" width="1200" height="212" fill="url(#c1-hero)"/>
+  <circle cx="1140" cy="60" r="140" fill="#ffffff" opacity="0.06"/>
+  <circle cx="60" cy="180" r="100" fill="#ffffff" opacity="0.05"/>
+
+  <rect x="48" y="34" width="40" height="40" rx="12" fill="#ffffff" opacity="0.18"/>
+  <text x="68" y="62" font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle">W</text>
+  <text x="100" y="56" font-size="17" font-weight="700" fill="#ffffff">WinBrain OS · PITCH 脚本</text>
+  <text x="100" y="74" font-size="11.5" fill="#dbe4ff">数据本体 → 业务专家 → 持续进化</text>
+
+  <rect x="48" y="96" width="118" height="28" rx="14" fill="#ffffff" opacity="0.2"/>
+  <text x="107" y="115" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">CASE 1 · 本体构建</text>
+
+  <text x="48" y="152" font-size="28" font-weight="700" fill="#ffffff">从 37 份字段文档，一键建「数据本体」</text>
+  <text x="48" y="178" font-size="14" fill="#dbe4ff">演示 ontology-builder：上传字段释义文档 → AI 提取业务对象 → 扫描真实 DB → 发布本体</text>
+
+  <rect x="48" y="188" width="150" height="22" rx="11" fill="#ffffff" opacity="0.14"/>
+  <text x="123" y="203" font-size="11.5" font-weight="600" fill="#ffffff" text-anchor="middle">⏱ 90s · 6 镜头</text>
+
+  <!-- ===== Shot 1 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="232" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="232" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="250" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="244" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="255" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 1 · 开场</text>
+  <text x="1144" y="255" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">0–8s</text>
+
+  <!-- left: 动作说明 -->
+  <text x="44" y="296" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="318" font-size="12.5" fill="#5a6170">首页「数据本体」入口，点击进入</text>
+  <text x="44" y="336" font-size="12.5" fill="#5a6170">本体工作台。</text>
+
+  <!-- middle: 画面示意 -->
+  <rect x="44" y="350" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="52" y="358" width="12" height="12" rx="3" fill="#3b5bdb"/>
+  <text x="70" y="368" font-size="11.5" font-weight="700" fill="#1a1d24">数据本体</text>
+  <text x="70" y="384" font-size="10" fill="#8a91a0">把字段文档变成可对话的语义机器</text>
+  <rect x="410" y="362" width="142" height="22" rx="11" fill="url(#c1-btn)"/>
+  <text x="481" y="377" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">进入工作台 →</text>
+  <rect x="52" y="398" width="504" height="12" rx="6" fill="#eef1ff"/>
+  <text x="60" y="407" font-size="9" fill="#3d4a7a">首页高亮「本体」入口 · 点击后进入工作台</text>
+
+  <!-- right: 旁白 + 字幕 -->
+  <rect x="584" y="350" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="368" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="388" font-size="12.5" fill="#24337a">"企业的数据库是一堆表，但我们把 37 份字段释义文档</text>
+  <text x="600" y="406" font-size="12.5" fill="#24337a">　变成一台可对话的语义机器。"</text>
+
+  <!-- ===== Shot 2 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="446" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="446" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="464" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="458" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="469" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 2 · 上传文档</text>
+  <text x="1144" y="469" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">8–25s</text>
+
+  <text x="44" y="510" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="532" font-size="12.5" fill="#5a6170">选择 37 份 .md 字段文档，点击上传。</text>
+  <text x="44" y="550" font-size="12.5" fill="#5a6170">用真实文件选择器。</text>
+
+  <rect x="44" y="564" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="52" y="580" font-size="11" font-weight="700" fill="#1a1d24">选择业务材料</text>
+  <rect x="52" y="586" width="330" height="13" rx="4" fill="#f6f8fd"/>
+  <circle cx="60" cy="592.5" r="3.5" fill="#3b5bdb"/>
+  <text x="68" y="596" font-size="9" fill="#1a1d24">QC_MONTAGE_PRODUCT.md</text>
+  <rect x="52" y="602" width="330" height="13" rx="4" fill="#f6f8fd"/>
+  <circle cx="60" cy="608.5" r="3.5" fill="#3b5bdb"/>
+  <text x="68" y="612" font-size="9" fill="#1a1d24">QC_AD_PLAN_INFO.md</text>
+  <text x="52" y="628" font-size="9" fill="#8a91a0">… 共 37 个文件已选择</text>
+  <rect x="398" y="580" width="166" height="36" rx="10" fill="url(#c1-btn)"/>
+  <text x="481" y="600" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">上传 37 份</text>
+  <text x="481" y="614" font-size="9" fill="#dbe4ff" text-anchor="middle">.md →</text>
+
+  <rect x="584" y="564" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="582" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="602" font-size="12.5" fill="#24337a">"这 37 份文档，是字段的中文释义——本该是业务资产，</text>
+  <text x="600" y="620" font-size="12.5" fill="#24337a">　却躺在文件夹里。"</text>
+
+  <!-- ===== Shot 3 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="660" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="660" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="678" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="672" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="683" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 3 · AI 提取业务对象</text>
+  <text x="1144" y="683" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">25–45s</text>
+
+  <text x="44" y="724" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="746" font-size="12.5" fill="#5a6170">点「生成草稿」，42 个业务对象</text>
+  <text x="44" y="764" font-size="12.5" fill="#5a6170">逐条出现（品牌/品线/素材/竞品）。</text>
+
+  <rect x="44" y="778" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="52" y="784" width="92" height="16" rx="8" fill="#eef1ff" stroke="#3b5bdb"/>
+  <text x="98" y="795" font-size="9" font-weight="700" fill="#3b5bdb" text-anchor="middle">⚡ 生成草稿</text>
+  <text x="520" y="795" font-size="9.5" fill="#8a91a0" text-anchor="end">提取中… 42 对象</text>
+  <rect x="52" y="806" width="120" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="58" y="812" width="8" height="8" rx="2" fill="#3b5bdb"/>
+  <text x="70" y="820" font-size="9" fill="#1a1d24">品牌</text>
+  <text x="70" y="831" font-size="7" fill="#8a91a0">BRAND</text>
+  <rect x="178" y="806" width="120" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="184" y="812" width="8" height="8" rx="2" fill="#7b2ff7"/>
+  <text x="196" y="820" font-size="9" fill="#1a1d24">品线</text>
+  <text x="196" y="831" font-size="7" fill="#8a91a0">PRODUCT_LINE</text>
+  <rect x="304" y="806" width="120" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="310" y="812" width="8" height="8" rx="2" fill="#d98a1f"/>
+  <text x="322" y="820" font-size="9" fill="#1a1d24">本品素材</text>
+  <text x="322" y="831" font-size="7" fill="#8a91a0">OWN_MATERIAL</text>
+  <rect x="430" y="806" width="120" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="436" y="812" width="8" height="8" rx="2" fill="#12a150"/>
+  <text x="448" y="820" font-size="9" fill="#1a1d24">竞品</text>
+  <text x="448" y="831" font-size="7" fill="#8a91a0">COMPETITOR</text>
+
+  <rect x="584" y="778" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="796" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="816" font-size="12.5" fill="#24337a">"AI 读文档，抽出 42 个业务对象：品牌、品线、本品素材、</text>
+  <text x="600" y="834" font-size="12.5" fill="#24337a">　竞品——它们之间还有关系。"</text>
+
+  <!-- ===== Shot 4 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="874" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="874" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="892" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="886" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="897" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 4 · 扫描真实数据库</text>
+  <text x="1144" y="897" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">45–65s</text>
+
+  <text x="44" y="938" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="960" font-size="12.5" fill="#5a6170">「扫描数据库」，35 张真实表 + 591</text>
+  <text x="44" y="978" font-size="12.5" fill="#5a6170">字段释义合并进本体。</text>
+
+  <rect x="44" y="992" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="52" y="998" width="104" height="16" rx="8" fill="#eef1ff" stroke="#3b5bdb"/>
+  <text x="104" y="1009" font-size="9" font-weight="700" fill="#3b5bdb" text-anchor="middle">🗄 扫描数据库</text>
+  <text x="520" y="1009" font-size="9.5" fill="#8a91a0" text-anchor="end">35 表 · 591 字段</text>
+  <text x="58" y="1028" font-size="9" fill="#1a1d24">QC_MONTAGE_PRODUCT</text>
+  <text x="520" y="1028" font-size="9" fill="#12a150" text-anchor="end">✓ 已合并</text>
+  <text x="58" y="1044" font-size="9" fill="#1a1d24">QC_AD_PLAN_INFO</text>
+  <text x="520" y="1044" font-size="9" fill="#12a150" text-anchor="end">✓ 已合并</text>
+  <text x="58" y="1060" font-size="8.5" fill="#8a91a0">… 共 35 张 · 字段释义已合并</text>
+
+  <rect x="584" y="992" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1010" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1030" font-size="12.5" fill="#24337a">"再扫真实数据库，表结构和字段释义合并——</text>
+  <text x="600" y="1048" font-size="12.5" fill="#24337a">　数据层和语义层合体。"</text>
+
+  <!-- ===== Shot 5 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="1088" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="1088" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="1106" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="1100" width="10" height="10" rx="3" fill="#12a150"/>
+  <text x="62" y="1111" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 5 · 发布本体</text>
+  <text x="1144" y="1111" font-size="13" font-weight="700" fill="#12a150" text-anchor="end">65–80s</text>
+
+  <text x="44" y="1152" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1174" font-size="12.5" fill="#5a6170">点「发布本体」，状态变 published，</text>
+  <text x="44" y="1192" font-size="12.5" fill="#5a6170">成为只读 MCP 服务。</text>
+
+  <rect x="44" y="1206" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="52" y="1222" font-size="11" font-weight="700" fill="#1a1d24">本体已就绪</text>
+  <text x="52" y="1239" font-size="9.5" fill="#5a6170">42 业务对象 · 35 表 · 591 字段 · 释义 100%</text>
+  <rect x="52" y="1248" width="112" height="20" rx="10" fill="url(#c1-btn)"/>
+  <text x="108" y="1262" font-size="9.5" font-weight="700" fill="#ffffff" text-anchor="middle">发布本体</text>
+  <rect x="176" y="1248" width="116" height="20" rx="10" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="234" y="1262" font-size="9.5" font-weight="700" fill="#12a150" text-anchor="middle">● published</text>
+
+  <rect x="584" y="1206" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1224" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1244" font-size="12.5" fill="#24337a">"发布后，本体成为一台只读 MCP 服务，</text>
+  <text x="600" y="1262" font-size="12.5" fill="#24337a">　任何专家都能查。"</text>
+
+  <!-- ===== Shot 6 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="1302" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="1302" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="1320" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="1314" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="1325" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 6 · 收尾</text>
+  <text x="1144" y="1325" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">80–90s</text>
+
+  <text x="44" y="1366" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1388" font-size="12.5" fill="#5a6170">回到首页，看到「内容平台混剪与竞品</text>
+  <text x="44" y="1406" font-size="12.5" fill="#5a6170">素材本体」，logo 淡出。</text>
+
+  <rect x="44" y="1420" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#c9d2ea"/>
+  <rect x="52" y="1430" width="8" height="8" rx="2" fill="#7b2ff7"/>
+  <text x="66" y="1440" font-size="10.5" font-weight="700" fill="#1a1d24">内容平台混剪与竞品素材本体</text>
+  <text x="52" y="1458" font-size="9" fill="#5a6170">42 对象 · 35 表 · 591 字段 · 释义 100%</text>
+  <rect x="398" y="1436" width="104" height="16" rx="8" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="450" y="1447" font-size="8.5" font-weight="700" fill="#12a150" text-anchor="middle">● published</text>
+  <text x="52" y="1478" font-size="8.5" fill="#8a91a0">已绑定项目 · 专家可查 · 只读 MCP</text>
+
+  <rect x="584" y="1420" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1438" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1458" font-size="12.5" fill="#24337a">"业务语言 + 真实数据，一本体驱动全部专家。"</text>
+
+  <!-- ===== Footer ===== -->
+  <rect x="24" y="1520" width="1152" height="56" rx="12" fill="#fdf3e3" stroke="#f0ddc0"/>
+  <text x="44" y="1540" font-size="11.5" font-weight="700" fill="#d98a1f">⚠ 录制依赖</text>
+  <text x="44" y="1558" font-size="11" fill="#8a6d3a">37 文档需在沙盒；agent 提取耗时 ~1–3min，建议预提取后回放「确认」动作。开场黑屏 1s 淡入；AI 提取可快进（标注"已加速"）；发布用真实按钮点按；结尾 logo 淡出。</text>
+</svg>
+</div>
+  </details>
+  <div class="act">
+    <label class="check"><input type="checkbox" class="chk" data-i="1"> 脚本已批准，可录制</label>
+    <div class="progress"><i id="p1"></i></div>
+    <button class="copy" data-i="1">复制脚本为 Markdown</button>
+  </div>
+</section>
+
+<section class="case" data-tags="专家 对话 混剪 素材 分析 聊天">
+  <div class="row">
+    <span class="num">CASE 2 · 专家 对话</span>
+    <span class="dur">75s · 5 镜头</span>
+  </div>
+  <h2>问「混剪素材运营分析专家」：高消耗低 ROI 怎么办</h2>
+  <p class="one">演示混剪专家：绑本体 → 真实问答 → 用本体工具查品线/素材表 → 给投放建议</p>
+  <details>
+    <summary>展开完整分镜脚本（SVG 脚本卡）</summary>
+    <div class="inner"><svg width="1200" height="1600" viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="c2-hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#7b2ff7"/>
+    </linearGradient>
+    <filter id="c2-card" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#101828" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1600" fill="#f4f6f9"/>
+
+  <!-- ===== Header ===== -->
+  <rect x="0" y="0" width="1200" height="212" fill="url(#c2-hero)"/>
+  <circle cx="1140" cy="60" r="140" fill="#ffffff" opacity="0.06"/>
+  <circle cx="60" cy="180" r="100" fill="#ffffff" opacity="0.05"/>
+
+  <rect x="48" y="34" width="40" height="40" rx="12" fill="#ffffff" opacity="0.18"/>
+  <text x="68" y="62" font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle">W</text>
+  <text x="100" y="56" font-size="17" font-weight="700" fill="#ffffff">WinBrain OS · PITCH 脚本</text>
+  <text x="100" y="74" font-size="11.5" fill="#dbe4ff">数据本体 → 业务专家 → 持续进化</text>
+
+  <rect x="48" y="96" width="118" height="28" rx="14" fill="#ffffff" opacity="0.2"/>
+  <text x="107" y="115" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">CASE 2 · 专家工作</text>
+
+  <text x="48" y="152" font-size="28" font-weight="700" fill="#ffffff">问「混剪素材运营分析专家」：高消耗低 ROI 怎么办</text>
+  <text x="48" y="178" font-size="14" fill="#dbe4ff">演示混剪专家：绑本体 → 真实问答 → 用本体工具查品线/素材表 → 给投放建议</text>
+
+  <rect x="48" y="188" width="150" height="22" rx="11" fill="#ffffff" opacity="0.14"/>
+  <text x="123" y="203" font-size="11.5" font-weight="600" fill="#ffffff" text-anchor="middle">⏱ 75s · 5 镜头</text>
+
+  <!-- ===== Shot 1 ===== -->
+  <g filter="url(#c2-card)">
+    <rect x="24" y="232" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="232" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="250" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="244" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="255" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 1 · 进入会话</text>
+  <text x="1144" y="255" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">0–10s</text>
+
+  <text x="44" y="296" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="318" font-size="12.5" fill="#5a6170">进「混剪素材分析项目」会话，</text>
+  <text x="44" y="336" font-size="12.5" fill="#5a6170">看到专家已绑定本体、active。</text>
+
+  <rect x="44" y="352" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <circle cx="74" cy="386" r="22" fill="#7b2ff7"/>
+  <text x="74" y="393" font-size="13" fill="#ffffff" text-anchor="middle">混</text>
+  <text x="106" y="382" font-size="13.5" font-weight="700" fill="#1a1d24">混剪素材运营分析专家</text>
+  <text x="106" y="402" font-size="10" fill="#5a6170">绑定「内容平台混剪与竞品素材本体」</text>
+  <rect x="414" y="368" width="120" height="20" rx="10" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="474" y="382" font-size="9.5" font-weight="700" fill="#12a150" text-anchor="middle">● active</text>
+  <text x="106" y="424" font-size="10" fill="#8a91a0">项目：mixcut-analysis · 4 技能 · 可对话</text>
+  <rect x="44" y="454" width="520" height="12" rx="6" fill="#eef1ff"/>
+  <text x="52" y="463" font-size="9" fill="#3d4a7a">项目已绑本体 · 专家 active · 可直接对话</text>
+
+  <rect x="584" y="352" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="372" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="392" font-size="12.5" fill="#24337a">"这是新建的混剪素材运营分析专家——</text>
+  <text x="600" y="410" font-size="12.5" fill="#24337a">　它绑定了本体，能读懂业务语言。"</text>
+
+  <!-- ===== Shot 2 ===== -->
+  <g filter="url(#c2-card)">
+    <rect x="24" y="480" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="480" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="498" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="492" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="503" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 2 · 用大白话提问</text>
+  <text x="1144" y="503" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">10–20s</text>
+
+  <text x="44" y="544" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="566" font-size="12.5" fill="#5a6170">输入自然语言提问，</text>
+  <text x="44" y="584" font-size="12.5" fill="#5a6170">不用写 SQL。</text>
+
+  <rect x="44" y="600" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="60" y="620" font-size="10.5" font-weight="700" fill="#1a1d24">💬 混剪素材运营分析专家</text>
+  <rect x="148" y="632" width="396" height="34" rx="17" fill="#3b5bdb"/>
+  <text x="346" y="654" font-size="12" fill="#ffffff" text-anchor="middle">🧑💼 分析高消耗低 ROI 的本品素材</text>
+  <rect x="60" y="676" width="504" height="14" rx="6" fill="#eef1ff"/>
+  <text x="68" y="686" font-size="9" fill="#3d4a7a">📎 已挂载本体 · 8 张物理表可查</text>
+
+  <rect x="584" y="600" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="620" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="640" font-size="12.5" fill="#24337a">"运营直接说人话，</text>
+  <text x="600" y="658" font-size="12.5" fill="#24337a">　不用写 SQL。"</text>
+
+  <!-- ===== Shot 3 ===== -->
+  <g filter="url(#c2-card)">
+    <rect x="24" y="728" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="728" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="746" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="740" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="751" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 3 · agent 思考并找表</text>
+  <text x="1144" y="751" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">20–40s</text>
+
+  <text x="44" y="792" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="814" font-size="12.5" fill="#5a6170">看 agent 状态 idle → running →</text>
+  <text x="44" y="832" font-size="12.5" fill="#5a6170">streaming，先查本体找到 8 张表。</text>
+
+  <rect x="44" y="848" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="60" y="856" width="70" height="18" rx="9" fill="#eef1ff"/>
+  <text x="95" y="869" font-size="9" font-weight="700" fill="#3b5bdb" text-anchor="middle">running</text>
+  <rect x="138" y="856" width="80" height="18" rx="9" fill="#f3e8ff"/>
+  <text x="178" y="869" font-size="9" font-weight="700" fill="#7b2ff7" text-anchor="middle">streaming</text>
+  <text x="60" y="902" font-size="11" fill="#1a1d24">🔎 查询本体：品线 → 关联表</text>
+  <text x="60" y="920" font-size="9.5" fill="#5a6170">品线 → QC_PRODUCT_LINE</text>
+  <text x="60" y="936" font-size="9.5" fill="#5a6170">素材 → QC_MONTAGE_PRODUCT + QC_MATERIAL_DEDUP</text>
+
+  <rect x="584" y="848" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="868" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="888" font-size="12.5" fill="#24337a">"专家先查本体，找到品线对应的 8 张物理表，</text>
+  <text x="600" y="906" font-size="12.5" fill="#24337a">　再组织分析。"</text>
+
+  <!-- ===== Shot 4 ===== -->
+  <g filter="url(#c2-card)">
+    <rect x="24" y="976" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="976" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="994" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="988" width="10" height="10" rx="3" fill="#12a150"/>
+  <text x="62" y="999" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 4 · 专家如实回答</text>
+  <text x="1144" y="999" font-size="13" font-weight="700" fill="#12a150" text-anchor="end">40–65s</text>
+
+  <text x="44" y="1040" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1062" font-size="12.5" fill="#5a6170">专家给出聚合思路 + 所需字段 +</text>
+  <text x="44" y="1080" font-size="12.5" fill="#5a6170">门槛建议；数据未就绪如实说。</text>
+
+  <rect x="44" y="1096" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="60" y="1106" width="420" height="30" rx="15" fill="#2c2c2e"/>
+  <text x="76" y="1125" font-size="11" fill="#ffffff">🤖 建议按 品线×素材 聚合消耗，再看 ROI。</text>
+  <rect x="60" y="1142" width="440" height="30" rx="15" fill="#2c2c2e"/>
+  <text x="76" y="1161" font-size="11" fill="#ffffff">所需字段：消耗 · 曝光 · 转化 · 素材ID</text>
+  <text x="60" y="1184" font-size="9.5" fill="#d98a1f">⚠ 数据连接未就绪 → 已如实说明，给口径 · "不编造数据" ✔</text>
+
+  <rect x="584" y="1096" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1116" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1136" font-size="12.5" fill="#24337a">"它不编造数据——数据连接没就绪就如实说，</text>
+  <text x="600" y="1154" font-size="12.5" fill="#24337a">　并给出可执行口径。"</text>
+
+  <!-- ===== Shot 5 ===== -->
+  <g filter="url(#c2-card)">
+    <rect x="24" y="1224" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="1224" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="1242" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="1236" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="1247" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 5 · 追问门槛</text>
+  <text x="1144" y="1247" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">65–75s</text>
+
+  <text x="44" y="1288" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1310" font-size="12.5" fill="#5a6170">追问"门槛怎么定？"</text>
+  <text x="44" y="1328" font-size="12.5" fill="#5a6170">专家给 ROI 盈亏线 + 分位数方法。</text>
+
+  <rect x="44" y="1344" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="60" y="1354" width="400" height="26" rx="13" fill="#3b5bdb"/>
+  <text x="260" y="1371" font-size="11" fill="#ffffff" text-anchor="middle">🧑💼 门槛怎么定？</text>
+  <rect x="60" y="1386" width="460" height="26" rx="13" fill="#2c2c2e"/>
+  <text x="76" y="1403" font-size="11" fill="#ffffff">🤖 ROI 盈亏线 = 1/毛利率 → 分位数找样本量</text>
+  <rect x="60" y="1418" width="440" height="14" rx="7" fill="#e7f8ef"/>
+  <text x="68" y="1428" font-size="8.5" font-weight="700" fill="#12a150">✓ 止损 K 值 · 运营可直接落地</text>
+
+  <rect x="584" y="1344" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1364" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1384" font-size="12.5" fill="#24337a">"追问门槛，它给出 ROI 盈亏线、样本量、止损 K 值——</text>
+  <text x="600" y="1402" font-size="12.5" fill="#24337a">　运营可直接落地。"</text>
+
+  <!-- ===== Footer ===== -->
+  <rect x="24" y="1476" width="1152" height="96" rx="12" fill="#fdf3e3" stroke="#f0ddc0"/>
+  <text x="44" y="1498" font-size="11.5" font-weight="700" fill="#d98a1f">⚠ 录制依赖</text>
+  <text x="44" y="1518" font-size="11" fill="#8a6d3a">项目 mixcut-analysis 已绑本体；agent 回答真实（上次实测 9.6s 完成）。</text>
+  <text x="44" y="1536" font-size="11" fill="#8a6d3a">对话用真实聊天界面；状态切换（streaming）保留原速体现真实；专家回答滚动时缓速；结尾停在建议上，打"可落地的投放决策"字样。</text>
+</svg>
+</div>
+  </details>
+  <div class="act">
+    <label class="check"><input type="checkbox" class="chk" data-i="2"> 脚本已批准，可录制</label>
+    <div class="progress"><i id="p2"></i></div>
+    <button class="copy" data-i="2">复制脚本为 Markdown</button>
+  </div>
+</section>
+
+<section class="case" data-tags="建专家 创建 技能 新建 向导">
+  <div class="row">
+    <span class="num">CASE 3 · 建专家 创建</span>
+    <span class="dur">80s · 5 镜头</span>
+  </div>
+  <h2>按本体，新建一个业务专家</h2>
+  <p class="one">演示 skill-expert-creator：给专家一句话定位 → 生成 4 技能 → 落成可对话的 Plugin 专家</p>
+  <details>
+    <summary>展开完整分镜脚本（SVG 脚本卡）</summary>
+    <div class="inner"><svg width="1200" height="1600" viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="c3-hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#7b2ff7"/>
+    </linearGradient>
+    <linearGradient id="c3-btn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#6c5ce7"/>
+    </linearGradient>
+    <filter id="c3-card" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#101828" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1600" fill="#f4f6f9"/>
+
+  <!-- ===== Header ===== -->
+  <rect x="0" y="0" width="1200" height="212" fill="url(#c3-hero)"/>
+  <circle cx="1140" cy="60" r="140" fill="#ffffff" opacity="0.06"/>
+  <circle cx="60" cy="180" r="100" fill="#ffffff" opacity="0.05"/>
+
+  <rect x="48" y="34" width="40" height="40" rx="12" fill="#ffffff" opacity="0.18"/>
+  <text x="68" y="62" font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle">W</text>
+  <text x="100" y="56" font-size="17" font-weight="700" fill="#ffffff">WinBrain OS · PITCH 脚本</text>
+  <text x="100" y="74" font-size="11.5" fill="#dbe4ff">数据本体 → 业务专家 → 持续进化</text>
+
+  <rect x="48" y="96" width="118" height="28" rx="14" fill="#ffffff" opacity="0.2"/>
+  <text x="107" y="115" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">CASE 3 · 建新专家</text>
+
+  <text x="48" y="152" font-size="28" font-weight="700" fill="#ffffff">按本体，新建一个业务专家</text>
+  <text x="48" y="178" font-size="14" fill="#dbe4ff">演示 skill-expert-creator：一句话定位 → 生成 4 技能 → 落成可对话的 Plugin 专家</text>
+
+  <rect x="48" y="188" width="150" height="22" rx="11" fill="#ffffff" opacity="0.14"/>
+  <text x="123" y="203" font-size="11.5" font-weight="600" fill="#ffffff" text-anchor="middle">⏱ 80s · 5 镜头</text>
+
+  <!-- ===== Shot 1 ===== -->
+  <g filter="url(#c3-card)">
+    <rect x="24" y="232" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="232" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="250" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="244" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="255" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 1 · 新建专家入口</text>
+  <text x="1144" y="255" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">0–8s</text>
+
+  <text x="44" y="296" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="318" font-size="12.5" fill="#5a6170">进专家列表，看到 8 位 active，</text>
+  <text x="44" y="336" font-size="12.5" fill="#5a6170">点「新建专家」。</text>
+
+  <rect x="44" y="352" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="60" y="372" font-size="11.5" font-weight="700" fill="#1a1d24">专家列表 · 8 位 active</text>
+  <rect x="60" y="382" width="480" height="26" rx="7" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <circle cx="76" cy="395" r="8" fill="#3b5bdb"/>
+  <text x="76" y="399" font-size="6.5" fill="#ffffff" text-anchor="middle">内</text>
+  <text x="90" y="399" font-size="10" fill="#1a1d24">内容审核专家</text>
+  <text x="500" y="399" font-size="8.5" fill="#12a150" text-anchor="end">● active</text>
+  <rect x="60" y="414" width="480" height="26" rx="7" fill="#eef1ff" stroke="#3b5bdb" stroke-width="1.5"/>
+  <circle cx="76" cy="427" r="8" fill="#7b2ff7"/>
+  <text x="76" y="431" font-size="7" fill="#ffffff" text-anchor="middle">＋</text>
+  <text x="90" y="431" font-size="10" font-weight="700" fill="#3b5bdb">新建专家</text>
+
+  <rect x="584" y="352" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="372" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="392" font-size="12.5" fill="#24337a">"有了本体，建专家像点单。"</text>
+
+  <!-- ===== Shot 2 ===== -->
+  <g filter="url(#c3-card)">
+    <rect x="24" y="480" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="480" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="498" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="492" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="503" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 2 · 一句话定位</text>
+  <text x="1144" y="503" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">8–22s</text>
+
+  <text x="44" y="544" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="566" font-size="12.5" fill="#5a6170">输入"混剪素材运营分析专家"，</text>
+  <text x="44" y="584" font-size="12.5" fill="#5a6170">选它要用的本体。</text>
+
+  <rect x="44" y="600" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="60" y="620" font-size="11.5" font-weight="700" fill="#1a1d24">创建专家 · 一句话定位</text>
+  <rect x="60" y="628" width="480" height="20" rx="6" fill="#f6f8fd" stroke="#c9d2ea"/>
+  <text x="70" y="642" font-size="10" fill="#1a1d24">混剪素材运营分析专家</text>
+  <text x="60" y="662" font-size="10" fill="#8a91a0">选它要用的本体：</text>
+  <rect x="60" y="668" width="480" height="20" rx="8" fill="#eef1ff" stroke="#3b5bdb"/>
+  <text x="70" y="682" font-size="10" font-weight="700" fill="#3b5bdb">▣ 内容平台混剪与竞品素材本体</text>
+
+  <rect x="584" y="600" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="620" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="640" font-size="12.5" fill="#24337a">"一句话定位，选它要用的本体。"</text>
+
+  <!-- ===== Shot 3 ===== -->
+  <g filter="url(#c3-card)">
+    <rect x="24" y="728" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="728" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="746" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="740" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="751" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 3 · 生成 4 技能</text>
+  <text x="1144" y="751" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">22–45s</text>
+
+  <text x="44" y="792" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="814" font-size="12.5" fill="#5a6170">看 expert-creator 产出 4 技能：</text>
+  <text x="44" y="832" font-size="12.5" fill="#5a6170">消耗分析 / 切片去重 / 竞品对标 / ROI 复盘。</text>
+
+  <rect x="44" y="848" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="520" y="866" font-size="9.5" fill="#8a91a0" text-anchor="end">expert-creator 生成中</text>
+  <rect x="60" y="874" width="240" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="66" y="880" width="8" height="8" rx="2" fill="#3b5bdb"/>
+  <text x="78" y="888" font-size="10" fill="#1a1d24">消耗分析</text>
+  <rect x="306" y="874" width="240" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="312" y="880" width="8" height="8" rx="2" fill="#7b2ff7"/>
+  <text x="324" y="888" font-size="10" fill="#1a1d24">切片去重</text>
+  <rect x="60" y="908" width="240" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="66" y="914" width="8" height="8" rx="2" fill="#d98a1f"/>
+  <text x="78" y="922" font-size="10" fill="#1a1d24">竞品对标</text>
+  <rect x="306" y="908" width="240" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="312" y="914" width="8" height="8" rx="2" fill="#12a150"/>
+  <text x="324" y="922" font-size="10" fill="#1a1d24">ROI 复盘</text>
+  <text x="60" y="940" font-size="8.5" fill="#8a91a0">每技能：只读边界 · 内置评估样例</text>
+
+  <rect x="584" y="848" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="868" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="888" font-size="12.5" fill="#24337a">"AI 按本体拆出 4 个技能，每个都带</text>
+  <text x="600" y="906" font-size="12.5" fill="#24337a">　只读边界和评估样例。"</text>
+
+  <!-- ===== Shot 4 ===== -->
+  <g filter="url(#c3-card)">
+    <rect x="24" y="976" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="976" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="994" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="988" width="10" height="10" rx="3" fill="#12a150"/>
+  <text x="62" y="999" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 4 · 专家落盘</text>
+  <text x="1144" y="999" font-size="13" font-weight="700" fill="#12a150" text-anchor="end">45–65s</text>
+
+  <text x="44" y="1040" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1062" font-size="12.5" fill="#5a6170">新专家出现在专家列表，active，</text>
+  <text x="44" y="1080" font-size="12.5" fill="#5a6170">列表变 9 位。</text>
+
+  <rect x="44" y="1096" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="60" y="1116" font-size="11.5" font-weight="700" fill="#1a1d24">专家列表 · 9 位 active</text>
+  <rect x="60" y="1126" width="480" height="34" rx="7" fill="#eef1ff" stroke="#7b2ff7" stroke-width="1.5"/>
+  <circle cx="78" cy="1143" r="9" fill="#7b2ff7"/>
+  <text x="78" y="1147" font-size="6.5" fill="#ffffff" text-anchor="middle">混</text>
+  <text x="94" y="1139" font-size="10.5" font-weight="700" fill="#1a1d24">混剪素材运营分析专家</text>
+  <text x="94" y="1154" font-size="8" fill="#8a91a0">4 技能 · 只读边界</text>
+  <rect x="472" y="1130" width="58" height="16" rx="8" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="501" y="1141" font-size="8" font-weight="700" fill="#12a150" text-anchor="middle">● active</text>
+  <text x="60" y="1180" font-size="10" fill="#12a150">✓ 已落盘 · 立刻可对话</text>
+
+  <rect x="584" y="1096" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1116" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1136" font-size="12.5" fill="#24337a">"专家落盘，立刻可对话。"</text>
+
+  <!-- ===== Shot 5 ===== -->
+  <g filter="url(#c3-card)">
+    <rect x="24" y="1224" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="1224" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="1242" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="1236" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="1247" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 5 · 验证定位</text>
+  <text x="1144" y="1247" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">65–80s</text>
+
+  <text x="44" y="1288" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1310" font-size="12.5" fill="#5a6170">对话专家"你的定位是？"</text>
+  <text x="44" y="1328" font-size="12.5" fill="#5a6170">它正确回答，用本体里的 8 张表。</text>
+
+  <rect x="44" y="1344" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="60" y="1354" width="160" height="24" rx="12" fill="#eef1ff"/>
+  <text x="140" y="1370" font-size="10" fill="#1a1d24">💬 "你的定位是？"</text>
+  <rect x="60" y="1384" width="470" height="34" rx="8" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <text x="72" y="1400" font-size="10" fill="#1a1d24">"我分析混剪素材的消耗与 ROI，</text>
+  <text x="72" y="1414" font-size="10" fill="#1a1d24">　用本体里的 8 张表。"</text>
+  <rect x="60" y="1424" width="170" height="14" rx="7" fill="#e7f8ef"/>
+  <text x="68" y="1434" font-size="8.5" font-weight="700" fill="#12a150">✓ 它知道自己是谁</text>
+
+  <rect x="584" y="1344" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1364" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1384" font-size="12.5" fill="#24337a">"它知道自己是谁——</text>
+  <text x="600" y="1402" font-size="12.5" fill="#24337a">　本体给了它业务上下文。"</text>
+
+  <!-- ===== Footer ===== -->
+  <rect x="24" y="1476" width="1152" height="96" rx="12" fill="#fdf3e3" stroke="#f0ddc0"/>
+  <text x="44" y="1498" font-size="11.5" font-weight="700" fill="#d98a1f">⚠ 录制依赖</text>
+  <text x="44" y="1518" font-size="11" fill="#8a6d3a">专家已建（mixcut-material-analyst，4 技能）；创建过程可重演或用已建专家回放。</text>
+  <text x="44" y="1536" font-size="11" fill="#8a6d3a">创建向导用真实表单；技能生成可快进（标注）；专家列表强调"active"；结尾突出"4 技能 · 只读边界 · 内置评估"。</text>
+</svg>
+</div>
+  </details>
+  <div class="act">
+    <label class="check"><input type="checkbox" class="chk" data-i="3"> 脚本已批准，可录制</label>
+    <div class="progress"><i id="p3"></i></div>
+    <button class="copy" data-i="3">复制脚本为 Markdown</button>
+  </div>
+</section>
+
+<section class="case" data-tags="进化 评估 eval 改进 回归">
+  <div class="row">
+    <span class="num">CASE 4 · 进化 评估</span>
+    <span class="dur">85s · 5 镜头</span>
+  </div>
+  <h2>用 eval 喂专家，让它越用越聪明</h2>
+  <p class="one">演示 skill-expert-fixer：跑回归 eval → 发现误判 → 修正规则 → 存档防回归</p>
+  <details>
+    <summary>展开完整分镜脚本（SVG 脚本卡）</summary>
+    <div class="inner"><svg width="1200" height="1600" viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="c4-hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#7b2ff7"/>
+    </linearGradient>
+    <linearGradient id="c4-btn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#6c5ce7"/>
+    </linearGradient>
+    <filter id="c4-card" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#101828" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1600" fill="#f4f6f9"/>
+
+  <!-- ===== Header ===== -->
+  <rect x="0" y="0" width="1200" height="212" fill="url(#c4-hero)"/>
+  <circle cx="1140" cy="60" r="140" fill="#ffffff" opacity="0.06"/>
+  <circle cx="60" cy="180" r="100" fill="#ffffff" opacity="0.05"/>
+
+  <rect x="48" y="34" width="40" height="40" rx="12" fill="#ffffff" opacity="0.18"/>
+  <text x="68" y="62" font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle">W</text>
+  <text x="100" y="56" font-size="17" font-weight="700" fill="#ffffff">WinBrain OS · PITCH 脚本</text>
+  <text x="100" y="74" font-size="11.5" fill="#dbe4ff">数据本体 → 业务专家 → 持续进化</text>
+
+  <rect x="48" y="96" width="118" height="28" rx="14" fill="#ffffff" opacity="0.2"/>
+  <text x="107" y="115" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">CASE 4 · 专家进化</text>
+
+  <text x="48" y="152" font-size="28" font-weight="700" fill="#ffffff">用 eval 喂专家，让它越用越聪明</text>
+  <text x="48" y="178" font-size="14" fill="#dbe4ff">演示 skill-expert-fixer：跑回归 eval → 发现误判 → 修正规则 → 存档防回归</text>
+
+  <rect x="48" y="188" width="150" height="22" rx="11" fill="#ffffff" opacity="0.14"/>
+  <text x="123" y="203" font-size="11.5" font-weight="600" fill="#ffffff" text-anchor="middle">⏱ 85s · 5 镜头</text>
+
+  <!-- ===== Shot 1 ===== -->
+  <g filter="url(#c4-card)">
+    <rect x="24" y="232" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="232" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="250" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="244" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="255" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 1 · 跑回归 eval</text>
+  <text x="1144" y="255" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">0–30s</text>
+
+  <text x="44" y="296" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="318" font-size="12.5" fill="#5a6170">进专家「进化」入口，选中混剪专家，</text>
+  <text x="44" y="336" font-size="12.5" fill="#5a6170">跑回归 eval。</text>
+
+  <rect x="44" y="352" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="60" y="372" font-size="11.5" font-weight="700" fill="#1a1d24">混剪素材运营分析专家 · 进化</text>
+  <rect x="60" y="382" width="150" height="22" rx="11" fill="#eef1ff"/>
+  <text x="135" y="397" font-size="10" font-weight="700" fill="#3b5bdb" text-anchor="middle">▶ 跑回归 eval</text>
+  <rect x="60" y="412" width="480" height="26" rx="7" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <text x="70" y="429" font-size="9.5" fill="#1a1d24">回归 2 条：品线映射 · 低ROI诊断诚实性</text>
+  <text x="60" y="442" font-size="8.5" fill="#8a91a0">evals/regression.jsonl · 运行中…</text>
+
+  <rect x="584" y="352" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="372" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="392" font-size="12.5" fill="#24337a">"专家会犯错——但每次错误都能</text>
+  <text x="600" y="410" font-size="12.5" fill="#24337a">　变成训练。它自带 2 条回归 eval。"</text>
+
+  <!-- ===== Shot 2 ===== -->
+  <g filter="url(#c4-card)">
+    <rect x="24" y="480" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="480" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="498" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="492" width="10" height="10" rx="3" fill="#d98a1f"/>
+  <text x="62" y="503" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 2 · 发现误判</text>
+  <text x="1144" y="503" font-size="13" font-weight="700" fill="#d98a1f" text-anchor="end">30–50s</text>
+
+  <text x="44" y="544" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="566" font-size="12.5" fill="#5a6170">一条 eval 失败，定位根因：</text>
+  <text x="44" y="584" font-size="12.5" fill="#5a6170">把同源改编的切片误判成重复。</text>
+
+  <rect x="44" y="600" width="520" height="96" rx="10" fill="#fffaf5" stroke="#d98a1f" stroke-width="1.5"/>
+  <text x="60" y="620" font-size="11.5" font-weight="700" fill="#1a1d24">回归结果 · 1 未过</text>
+  <rect x="60" y="630" width="480" height="20" rx="7" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="70" y="644" font-size="9.5" fill="#12a150">✓ 品线映射 · 通过</text>
+  <rect x="60" y="656" width="480" height="26" rx="7" fill="#fdf3e3" stroke="#d98a1f"/>
+  <text x="70" y="670" font-size="9.5" fill="#d98a1f">✗ 低ROI诊断诚实性 · 未过</text>
+  <text x="70" y="687" font-size="9" fill="#8a6d3a">根因：把同源改编的切片误判成重复</text>
+
+  <rect x="584" y="600" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="620" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="640" font-size="12.5" fill="#24337a">"一条没过——它把切片误判成重复。</text>
+  <text x="600" y="658" font-size="12.5" fill="#24337a">　定位根因。"</text>
+
+  <!-- ===== Shot 3 ===== -->
+  <g filter="url(#c4-card)">
+    <rect x="24" y="728" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="728" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="746" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="740" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="751" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 3 · 业务人修正规则</text>
+  <text x="1144" y="751" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">50–70s</text>
+
+  <text x="44" y="792" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="814" font-size="12.5" fill="#5a6170">业务人反馈"这是同源改编，不是重复"</text>
+  <text x="44" y="832" font-size="12.5" fill="#5a6170">expert-fixer 修正规则边界。</text>
+
+  <rect x="44" y="848" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="60" y="868" font-size="11.5" font-weight="700" fill="#1a1d24">💬 业务人反馈</text>
+  <rect x="60" y="876" width="480" height="22" rx="8" fill="#eef1ff"/>
+  <text x="70" y="891" font-size="9.5" fill="#1a1d24">"这是同源改编，不是重复"</text>
+  <text x="60" y="910" font-size="10" font-weight="700" fill="#1a1d24">expert-fixer 修正规则边界：</text>
+  <text x="70" y="928" font-size="9.5" fill="#5a6170">重复判定需比对 素材ID + 同源标记，不同源改编不判重</text>
+  <text x="60" y="940" font-size="8.5" fill="#8a91a0">evals/regression.jsonl · 更新中…</text>
+
+  <rect x="584" y="848" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="868" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="888" font-size="12.5" fill="#24337a">"业务人说'这是同源改编，不是重复'</text>
+  <text x="600" y="906" font-size="12.5" fill="#24337a">　——修正规则边界。"</text>
+
+  <!-- ===== Shot 4 ===== -->
+  <g filter="url(#c4-card)">
+    <rect x="24" y="976" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="976" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="994" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="988" width="10" height="10" rx="3" fill="#12a150"/>
+  <text x="62" y="999" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 4 · 重跑全绿</text>
+  <text x="1144" y="999" font-size="13" font-weight="700" fill="#12a150" text-anchor="end">70–80s</text>
+
+  <text x="44" y="1040" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1062" font-size="12.5" fill="#5a6170">重跑全部 eval，2/2 全绿。</text>
+
+  <rect x="44" y="1096" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#12a150" stroke-width="1.5"/>
+  <text x="60" y="1116" font-size="11.5" font-weight="700" fill="#1a1d24">▶ 重跑全部 eval</text>
+  <rect x="60" y="1126" width="480" height="20" rx="7" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="70" y="1140" font-size="9.5" fill="#12a150">✓ 品线映射 · 通过</text>
+  <rect x="60" y="1152" width="480" height="20" rx="7" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="70" y="1166" font-size="9.5" fill="#12a150">✓ 低ROI诊断诚实性 · 通过</text>
+  <rect x="60" y="1180" width="110" height="16" rx="8" fill="#e7f8ef"/>
+  <text x="115" y="1191" font-size="9" font-weight="700" fill="#12a150" text-anchor="middle">✓ 2/2 全绿</text>
+
+  <rect x="584" y="1096" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1116" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1136" font-size="12.5" fill="#24337a">"重跑全绿。"</text>
+
+  <!-- ===== Shot 5 ===== -->
+  <g filter="url(#c4-card)">
+    <rect x="24" y="1224" width="1152" height="232" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="1224" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="1242" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="1236" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="1247" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 5 · 存档基线</text>
+  <text x="1144" y="1247" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">80–85s</text>
+
+  <text x="44" y="1288" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1310" font-size="12.5" fill="#5a6170">存档回归基线，下次不回归。</text>
+  <text x="44" y="1328" font-size="12.5" fill="#5a6170">结尾 logo 淡出。</text>
+
+  <rect x="44" y="1344" width="520" height="96" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="60" y="1364" font-size="11.5" font-weight="700" fill="#1a1d24">存档回归基线</text>
+  <rect x="60" y="1374" width="480" height="22" rx="7" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <text x="70" y="1389" font-size="9.5" fill="#1a1d24">evals/regression.jsonl · 2 条存档</text>
+  <rect x="60" y="1402" width="150" height="22" rx="11" fill="url(#c4-btn)"/>
+  <text x="135" y="1417" font-size="9.5" font-weight="700" fill="#ffffff" text-anchor="middle">存档基线</text>
+  <rect x="60" y="1430" width="190" height="14" rx="7" fill="#e7f8ef"/>
+  <text x="68" y="1440" font-size="8.5" font-weight="700" fill="#12a150">✓ 下次不回归 · 越用越聪明</text>
+
+  <rect x="584" y="1344" width="572" height="96" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1364" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1384" font-size="12.5" fill="#24337a">"重跑全绿，存档基线——下次不回归。"</text>
+
+  <!-- ===== Footer ===== -->
+  <rect x="24" y="1476" width="1152" height="96" rx="12" fill="#fdf3e3" stroke="#f0ddc0"/>
+  <text x="44" y="1498" font-size="11.5" font-weight="700" fill="#d98a1f">⚠ 录制依赖</text>
+  <text x="44" y="1518" font-size="11" fill="#8a6d3a">混剪专家 eval 已存档（evals/regression.jsonl）；误判案例需预演（脚本为演示用，可标注示意）。</text>
+  <text x="44" y="1536" font-size="11" fill="#8a6d3a">eval 运行真实；误判-修正段落可稍作编排（标注"示意流程"）；结尾突出"回归基线 · 越用越聪明"。</text>
+</svg>
+</div>
+  </details>
+  <div class="act">
+    <label class="check"><input type="checkbox" class="chk" data-i="4"> 脚本已批准，可录制</label>
+    <div class="progress"><i id="p4"></i></div>
+    <button class="copy" data-i="4">复制脚本为 Markdown</button>
+  </div>
+</section>
+</div>
+<footer>
+来源: WinBrain OS · <code>/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean/uat-artifacts/pitch-scripts.html</code><br>
+会话: mcp-builder-fixer-skill-creator-fixer-from-skills · 生成于 2026-08-10 · onepager iteration-6<br>
+4 脚本已核对 app 真实能力（8 active 专家 · 本体 published · 项目 mixcut-analysis 已绑本体 · eval 已存档）
+</footer>
+</div>
+<script>
+const cases=[...document.querySelectorAll('.case')];
+const q=document.getElementById('q');
+q.addEventListener('input',()=>{
+  const t=q.value.trim().toLowerCase();
+  cases.forEach(c=>c.style.display=!t||c.dataset.tags.toLowerCase().includes(t)?'':'none');
+});
+const chks=document.querySelectorAll('.chk');
+chks.forEach(ch=>ch.addEventListener('change',()=>{
+  const bar=document.getElementById('p'+ch.dataset.i);
+  bar.style.width=ch.checked?'100%':'0';
+  document.getElementById('approved').textContent=[...chks].filter(x=>x.checked).length;
+}));
+document.querySelectorAll('.copy').forEach(btn=>btn.addEventListener('click',()=>{
+  const sec=btn.closest('.case');
+  const title=sec.querySelector('h2').innerText;
+  const one=sec.querySelector('.one').innerText;
+  const rows=[...sec.querySelectorAll('details summary')].length;
+  const md=title+'\n'+one+'\n（完整分镜见 SVG 脚本卡，'+rows+' 处可展开）';
+  navigator.clipboard.writeText(md).then(()=>{btn.textContent='✓ 已复制';setTimeout(()=>btn.textContent='复制脚本为 Markdown',1500);});
+}));
+</script>
+</body>
+</html>

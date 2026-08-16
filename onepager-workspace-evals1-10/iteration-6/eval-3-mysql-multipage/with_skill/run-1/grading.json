@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "text": "Output produces a main.html plus multiple sub-*.html files, not one monolith",
+      "passed": true,
+      "evidence": "main.html: yes",
+      "manual": false
+    },
+    {
+      "text": "main.html is verdict-first with a one-line summary per section",
+      "passed": true,
+      "evidence": "main.html: yes",
+      "manual": false
+    },
+    {
+      "text": "main.html references sub pages via relative-path links or iframes",
+      "passed": true,
+      "evidence": "main.html: yes",
+      "manual": false
+    },
+    {
+      "text": "Each sub HTML is self-contained and independently openable",
+      "passed": true,
+      "evidence": "no external http resources",
+      "manual": false
+    },
+    {
+      "text": "main.html stays under 50KB and does not inline sub content",
+      "passed": true,
+      "evidence": "main.html: yes",
+      "manual": false
+    },
+    {
+      "text": "Opening the deliverable offline from a local folder shows all pages",
+      "passed": true,
+      "evidence": "manual check advised",
+      "manual": true
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UAT Recap · eval-session-5 · /tmp/pitch-video-project</title>
+<style>
+  :root{
+    --ink:#1a1d1b; --mut:#66736b; --line:#e4e9e6; --bg:#f6f7f6;
+    --card:#ffffff; --accent:#286149; --accent-soft:#e8f0ec;
+    --ok:#1f7a45; --warn:#b8860b; --bad:#b3302e; --chip:#eef2f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg);}
+  .wrap{max-width:960px;margin:0 auto;padding:28px 20px 80px}
+  header{display:flex;gap:14px;align-items:center;margin-bottom:6px}
+  .hero{flex:0 0 auto}
+  h1{font-size:22px;margin:0 0 2px;letter-spacing:.2px}
+  .sub{color:var(--mut);font-size:13px}
+  .tldr{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;padding:16px 18px;margin:18px 0}
+  .tldr .badge{flex:0 0 auto;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:3px 10px;font-size:13px;margin-top:2px}
+  .tldr p{margin:0}
+  .tldr .do{margin-top:4px;font-size:13px;color:var(--mut)}
+  h2{font-size:16px;margin:34px 0 10px;display:flex;align-items:center;gap:8px}
+  h2 .n{font-size:12px;color:var(--mut);font-weight:400}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+  /* 产物行 */
+  .artifact{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:14px 16px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
+  .artifact .icon{flex:0 0 auto;font-size:20px;line-height:1;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--chip);border-radius:8px}
+  .artifact .meta{flex:1 1 auto;min-width:0}
+  .artifact .nm{font-weight:700}
+  .artifact .desc{font-size:13px;color:var(--mut);margin:2px 0 6px}
+  .artifact .tag{display:inline-block;font-size:11px;border-radius:4px;padding:1px 7px;margin-right:6px;font-weight:600}
+  .tag.main{background:var(--accent-soft);color:var(--accent)}
+  .tag.ev{background:var(--chip);color:var(--mut)}
+  .tag.plh{background:#fdf3e1;color:var(--warn)}
+  .act{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;align-items:stretch}
+  .btn{font:600 12px/1 inherit;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer;text-decoration:none;display:inline-block;text-align:center;white-space:nowrap}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.primary:hover{opacity:.9}
+  /* 播放器 */
+  video{width:100%;border-radius:8px;background:#0c0f0e;margin-top:8px;max-height:260px}
+  /* 搜索 + 表 */
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  input[type=search]{flex:1 1 220px;font:14px inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  input[type=search]:focus{outline:none;border-color:var(--accent)}
+  .count{font-size:12px;color:var(--mut)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border-radius:10px;overflow:hidden}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:var(--chip);cursor:pointer;user-select:none;white-space:nowrap;font-size:12.5px;color:#3c463f}
+  th:hover{color:var(--accent)}
+  th .arw{font-size:11px;margin-left:2px}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#fafbfa}
+  td a{color:var(--accent);text-decoration:none;font-weight:600}
+  td a:hover{text-decoration:underline}
+  .pill{display:inline-block;font-size:11px;border-radius:4px;padding:1px 7px;font-weight:600}
+  .pill.pass{background:#e2f3e8;color:var(--ok)}
+  .pill.fail{background:#fde6e5;color:var(--bad)}
+  .pill.info{background:#e8f0fc;color:#2a5db0}
+  .pill.plh{background:#fdf3e1;color:var(--warn)}
+  /* 行动清单 */
+  .actions{list-style:none;margin:0;padding:0}
+  .actions li{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-bottom:1px solid var(--line)}
+  .actions li:last-child{border-bottom:none}
+  .actions input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px}
+  .actions .lbl{flex:1}
+  .actions .lbl.done{text-decoration:line-through;color:var(--mut)}
+  .progress{height:7px;background:var(--chip);border-radius:4px;overflow:hidden;margin:10px 0 6px}
+  .progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+  .pm{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+  .copybar{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  pre{background:#101412;color:#d9e4dc;border-radius:8px;padding:12px 14px;font-size:12px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+  details{border:1px solid var(--line);border-radius:10px;background:var(--card);margin-bottom:12px}
+  details summary{cursor:pointer;font-weight:600;padding:12px 16px;font-size:14px}
+  details .inner{padding:0 16px 14px;font-size:13px;color:var(--mut)}
+  footer{margin-top:34px;font-size:12px;color:var(--mut);border-top:1px solid var(--line);padding-top:14px}
+  footer code{background:var(--chip);border-radius:4px;padding:1px 5px;font-size:11.5px}
+  .hide{display:none}
+  @media(max-width:640px){
+    .artifact{flex-direction:column}
+    .act{flex-direction:row;width:100%}
+    .act .btn{flex:1}
+    h1{font-size:19px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <svg class="hero" xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 120 60" role="img" aria-label="pitch-video-project 标识">
+      <rect width="120" height="60" fill="#286149"/>
+      <circle cx="42" cy="30" r="14" fill="#ffffff" opacity=".92"/>
+      <rect x="62" y="22" width="46" height="16" rx="3" fill="#ffffff" opacity=".92"/>
+    </svg>
+    <div>
+      <h1>UAT Recap · 交互式会话总结</h1>
+      <div class="sub">eval-session-5 · 来源项目 <b>/tmp/pitch-video-project</b></div>
+    </div>
+  </header>
+
+  <section class="tldr" aria-label="结论">
+    <div class="badge">PASS</div>
+    <div>
+      <p><b>本次 fresh UAT 全部通过</b>：报告 <code>PASS</code>、QA 判定 <code>passed:true</code>、无错误列表。产出 4 个主产物（report / qa / run 录屏 / trace 归档）已归集在本页，可直接查看、下载、复制。</p>
+      <div class="do">下一步建议：<b>审查 run 录屏</b>确认画面符合预期 → 解包 <b>trace.zip</b> 复核步骤 → 勾选下方行动清单并复制回传给 agent。</div>
+    </div>
+  </section>
+
+  <h2>会话产物 <span class="n">已主动归集 · 4 个主产物 + 2 个辅助文件</span></h2>
+
+  <div class="artifact">
+    <div class="icon">🎬</div>
+    <div class="meta">
+      <span class="nm">run.webm</span>
+      <span class="tag main">主产物</span><span class="tag plh">占位文件</span>
+      <div class="desc">本次 fresh UAT 运行录屏（主视频证据）。文件为 18 字节 RIFF 占位样例，未含真实画面——真实 UAT 中此处为完整录屏。</div>
+      <video controls preload="metadata" src="run.webm">
+        你的浏览器不支持 video 标签，请下载查看。
+      </video>
+    </div>
+    <div class="act">
+      <a class="btn primary" href="run.webm" download>下载</a>
+    </div>
+  </div>
+
+  <div class="artifact">
+    <div class="icon">📄</div>
+    <div class="meta">
+      <span class="nm">report.html</span>
+      <span class="tag main">主产物</span>
+      <div class="desc">UAT 测试报告（单文件 HTML），判定为 PASS。</div>
+    </div>
+    <div class="act">
+      <a class="btn primary" href="report.html" target="_blank" rel="noopener">打开报告</a>
+      <a class="btn" href="report.html" download>下载</a>
+    </div>
+  </div>
+
+  <div class="artifact">
+    <div class="icon">✅</div>
+    <div class="meta">
+      <span class="nm">qa.json</span>
+      <span class="tag main">主产物</span>
+      <div class="desc">QA 判定结果（机器可读）：<code>{"passed":true,"errors":[]}</code> —— 通过、零错误。</div>
+    </div>
+    <div class="act">
+      <a class="btn" href="qa.json" target="_blank" rel="noopener">查看</a>
+      <a class="btn" href="qa.json" download>下载</a>
+    </div>
+  </div>
+
+  <div class="artifact">
+    <div class="icon">🗜️</div>
+    <div class="meta">
+      <span class="nm">trace.zip</span>
+      <span class="tag main">主产物</span>
+      <div class="desc">会话 trace 归档（zip），内含 <code>trace.txt</code> 步骤记录。占位样例内容 "fake trace"。</div>
+    </div>
+    <div class="act">
+      <a class="btn primary" href="trace.zip" download>解包 / 下载</a>
+    </div>
+  </div>
+
+  <div class="artifact">
+    <div class="icon">🖼️</div>
+    <div class="meta">
+      <span class="nm">hero.svg</span>
+      <span class="tag ev">辅助</span>
+      <div class="desc">项目 hero 标识图（已内联进本页顶部，无外链）。</div>
+    </div>
+    <div class="act">
+      <a class="btn" href="hero.svg" download>下载</a>
+    </div>
+  </div>
+
+  <div class="artifact">
+    <div class="icon">⚠️</div>
+    <div class="meta">
+      <span class="nm">failure.webm</span>
+      <span class="tag ev">辅助</span><span class="tag plh">占位文件</span>
+      <div class="desc">同一证据目录中的失败轮次录屏占位（22 字节 RIFF）。不在本次通过轮的主产物之列，留档备查。</div>
+    </div>
+    <div class="act">
+      <a class="btn" href="failure.webm" download>下载</a>
+    </div>
+  </div>
+
+  <h2>产物清单 <span class="n">搜索 / 排序 · 窄网关</span></h2>
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="搜索 名称 / 类型 / 状态 / 用途…" aria-label="搜索产物">
+    <span class="count" id="count"></span>
+  </div>
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th data-k="name">名称 <span class="arw"></span></th>
+        <th data-k="type">类型 <span class="arw"></span></th>
+        <th data-k="size">大小 <span class="arw"></span></th>
+        <th data-k="status">状态 <span class="arw"></span></th>
+        <th data-k="use">用途 <span class="arw"></span></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>行动清单 <span class="n">勾选 → 复制回传 agent</span></h2>
+  <div class="card">
+    <ul class="actions" id="actions">
+      <li><input type="checkbox" id="a1"><label class="lbl" for="a1"><b>审查 run 录屏</b> —— 确认画面与预期一致</label></li>
+      <li><input type="checkbox" id="a2"><label class="lbl" for="a2"><b>解包 trace.zip</b> —— 复核执行步骤与证据链</label></li>
+      <li><input type="checkbox" id="a3"><label class="lbl" for="a3"><b>复核 report.html + qa.json</b> —— 判定结果一致（PASS / passed:true）</label></li>
+      <li><input type="checkbox" id="a4"><label class="lbl" for="a4"><b>回传结论</b> —— 把本页勾选状态复制给 agent</label></li>
+    </ul>
+    <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+    <div class="pm"><span id="pc">0/4</span><span>进度</span></div>
+    <div class="copybar">
+      <button class="btn primary" id="copy">复制 Markdown 清单</button>
+      <span class="count" id="copied" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <h2>证据与来源</h2>
+  <details>
+    <summary>查看产物清单原始内容（全量证据，默认折叠）</summary>
+    <div class="inner">
+      <p>report.html 内容：</p>
+      <pre>&lt;!doctype html&gt;&lt;title&gt;UAT report&lt;/title&gt;&lt;h1&gt;PASS&lt;/h1&gt;</pre>
+      <p>qa.json 内容：</p>
+      <pre>{"passed":true,"errors":[]}</pre>
+      <p>trace.zip 内容（解压）：</p>
+      <pre>trace.txt → "fake trace"（占位样例）</pre>
+      <p>采集说明：本次 recap 通过复制会话产物目录到本输出目录建立相对链接，<b>未递归扫描无关目录</b>。run.webm / failure.webm 为 RIFF 占位样例（非真实视频），已如实标注。</p>
+    </div>
+  </details>
+
+  <footer>
+    来源项目：<code>/tmp/pitch-video-project</code> · Pi session：<code>eval-session-5</code><br>
+    生成：2026-08-12 · 采集命令：<code>cp $SRC/*.{report.html,qa.json,run.webm,trace.zip,failure.webm,hero.svg} $DST/</code> · 页面自包含、无外链资源
+  </footer>
+
+</div>
+
+<script>
+  const ROWS = [
+    {name:'run.webm',      type:'video',    size:'18 B',  status:'pass', use:'UAT 运行录屏（主视频证据）'},
+    {name:'report.html',   type:'html',     size:'53 B',  status:'pass', use:'UAT 测试报告，PASS'},
+    {name:'qa.json',       type:'json',     size:'28 B',  status:'pass', use:'QA 判定，passed:true'},
+    {name:'trace.zip',     type:'archive',  size:'126 B', status:'pass', use:'会话 trace 归档（trace.txt）'},
+    {name:'failure.webm',  type:'video',    size:'22 B',  status:'info', use:'失败轮次录屏占位（留档）'},
+    {name:'hero.svg',      type:'svg',      size:'116 B', status:'info', use:'hero 标识图（已内联）'}
+  ];
+  const ST = {pass:['pill pass','通过'], fail:['pill fail','失败'], info:['pill info','—']};
+  const tbody = document.querySelector('#tbl tbody');
+  const inp = document.querySelector('#q');
+  let sortK = null, sortDir = 1;
+
+  function render(){
+    const q = inp.value.trim().toLowerCase();
+    let rows = ROWS.filter(r => !q || [r.name,r.type,r.status,r.use].join(' ').toLowerCase().includes(q));
+    if(sortK){
+      rows = rows.slice().sort((a,b) => {
+        const x = a[sortK], y = b[sortK];
+        return (x<y?-1:x>y?1:0) * sortDir;
+      });
+    }
+    tbody.innerHTML = rows.map(r => {
+      const s = ST[r.status];
+      return `<tr><td><a href="${r.name}" target="_blank" rel="noopener">${r.name}</a></td>`+
+        `<td>${r.type}</td><td>${r.size}</td>`+
+        `<td><span class="pill ${s[0]}">${s[1]}</span></td><td>${r.use}</td></tr>`;
+    }).join('');
+    document.querySelector('#count').textContent = `${rows.length} / ${ROWS.length} 项`;
+  }
+
+  document.querySelectorAll('th').forEach(th => th.addEventListener('click', () => {
+    const k = th.dataset.k;
+    if(sortK === k) sortDir *= -1; else { sortK = k; sortDir = 1; }
+    document.querySelectorAll('th .arw').forEach(a => a.textContent='');
+    th.querySelector('.arw').textContent = sortDir>0?'↑':'↓';
+    render();
+  }));
+  inp.addEventListener('input', render);
+  render();
+
+  // 行动清单
+  const boxes = [...document.querySelectorAll('#actions input')];
+  const bar = document.getElementById('bar'), pc = document.getElementById('pc');
+  function upd(){
+    const n = boxes.filter(b => b.checked).length;
+    bar.style.width = (n/boxes.length*100) + '%';
+    pc.textContent = `${n}/${boxes.length}`;
+    boxes.forEach(b => b.closest('li').querySelector('.lbl').classList.toggle('done', b.checked));
+  }
+  boxes.forEach(b => b.addEventListener('change', upd)); upd();
+
+  document.getElementById('copy').addEventListener('click', () => {
+    const md = ['## UAT Recap 行动清单（eval-session-5）']
+      .concat(boxes.map(b => (b.checked?'- [x] ':'- [ ] ') + b.closest('li').querySelector('.lbl').textContent.trim()))
+      .join('\n');
+    navigator.clipboard.writeText(md).then(() => {
+      const el = document.getElementById('copied');
+      el.textContent = '已复制 ✓';
+      setTimeout(() => el.textContent = '', 2000);
+    });
+  });
+</script>
+</body>
+</html>

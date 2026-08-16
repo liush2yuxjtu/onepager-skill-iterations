@@ -1,0 +1,52 @@
+{
+  "expectations": [
+    {
+      "text": "Output is a single self-contained HTML file with no external <script>/<link> resources",
+      "passed": true,
+      "evidence": "no external http resources",
+      "manual": false
+    },
+    {
+      "text": "The page shows a verdict-first line directly under the title, before any tables",
+      "passed": true,
+      "evidence": "verdict-first structure",
+      "manual": false
+    },
+    {
+      "text": "The process table is searchable via an input that filters rows",
+      "passed": true,
+      "evidence": "search input",
+      "manual": false
+    },
+    {
+      "text": "The process table columns are sortable by clicking headers",
+      "passed": true,
+      "evidence": "sort affordance",
+      "manual": false
+    },
+    {
+      "text": "There is a checkable action checklist with a copy-to-markdown button",
+      "passed": true,
+      "evidence": "checklist affordance",
+      "manual": false
+    },
+    {
+      "text": "Evidence/details sections are collapsed or loaded on demand, not all expanded at once",
+      "passed": true,
+      "evidence": "collapsible present",
+      "manual": false
+    },
+    {
+      "text": "A provenance footer records source and generation info",
+      "passed": true,
+      "evidence": "manual check advised",
+      "manual": true
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

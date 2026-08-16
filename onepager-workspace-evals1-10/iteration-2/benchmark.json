@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "skill_name": "onepager",
+    "skill_path": "/Users/liushiyuwin/.agents/skills/onepager",
+    "executor_model": "opencode-go/deepseek-v4-flash",
+    "analyzer_model": "opencode-go/deepseek-v4-flash",
+    "timestamp": "2026-08-09T23:30:00Z",
+    "evals_run": [3],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 3,
+      "eval_name": "multi-artifact-split",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "split_main_exists: 存在 main.html 主入口", "passed": true, "evidence": "main=main.html"},
+        {"text": "sub_files_exist: 至少 3 个独立 sub-*.html", "passed": true, "evidence": "sub-top20/sub-plans/sub-index/sub-trends"},
+        {"text": "main_verdict_first: main 标题下 5 秒内出现结论", "passed": true, "evidence": "class=tldr 结论"},
+        {"text": "main_summaries: main 中每个 sub 有一行摘要 + 链接", "passed": true, "evidence": "4 个 href=sub-*.html"},
+        {"text": "main_lean: main.html < 50KB", "passed": true, "evidence": "9741B vs 单文件 46KB"},
+        {"text": "sub_self_contained: 每个 sub 含完整 <html> 结构", "passed": true, "evidence": "4 subs"},
+        {"text": "relative_paths: main→sub 用相对路径", "passed": true, "evidence": "href=sub-*.html"},
+        {"text": "sub_interactive: 至少一个 sub 有交互组件", "passed": true, "evidence": "search/checkbox/clipboard/sort"},
+        {"text": "no_cdn: 所有 HTML 无外链脚本资源", "passed": true, "evidence": "无外链"},
+        {"text": "provenance_footer: main 与 sub 有来源标注", "passed": true, "evidence": "页脚标注"}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "multi-artifact-split",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.1,
+        "passed": 1,
+        "failed": 9,
+        "total": 10,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "split_main_exists: 存在 main.html 主入口", "passed": false, "evidence": "单文件 mysql-slow-query-diagnostic.html 46KB"},
+        {"text": "sub_files_exist: 至少 3 个独立 sub-*.html", "passed": false, "evidence": "无 sub"},
+        {"text": "main_verdict_first: main 标题下 5 秒内出现结论", "passed": false, "evidence": "无 main"},
+        {"text": "main_summaries: main 中每个 sub 有一行摘要 + 链接", "passed": false, "evidence": "无 sub"},
+        {"text": "main_lean: main.html < 50KB", "passed": false, "evidence": "单文件 46080B 全部内联"},
+        {"text": "sub_self_contained: 每个 sub 含完整 <html> 结构", "passed": false, "evidence": "无 sub"},
+        {"text": "relative_paths: main→sub 用相对路径", "passed": false, "evidence": "无 sub"},
+        {"text": "sub_interactive: 至少一个 sub 有交互组件", "passed": false, "evidence": "交互在单文件里"},
+        {"text": "no_cdn: 所有 HTML 无外链脚本资源", "passed": true, "evidence": "无外链"},
+        {"text": "provenance_footer: main 与 sub 有来源标注", "passed": false, "evidence": "无 sub"}
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0},
+      "time_seconds": {"mean": 0.0, "stddev": 0.0},
+      "tokens": {"mean": 0.0, "stddev": 0.0}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.1, "stddev": 0.0},
+      "time_seconds": {"mean": 0.0, "stddev": 0.0},
+      "tokens": {"mean": 0.0, "stddev": 0.0}
+    },
+    "delta": {
+      "pass_rate": "+0.90",
+      "time_seconds": "+0.0s",
+      "tokens": "+0"
+    }
+  },
+  "notes": [
+    "with_skill 执行 main+subs 拆分：main 9.7KB + 4 个独立 sub（Top20/执行计划/索引建议/趋势），10/10 断言通过",
+    "without_skill 产出单文件 46KB 全部内联：无 main/sub 结构，仅 no_cdn 通过",
+    "省 token 量化：main 只需 9.7KB 供每次迭代读写，sub 按需加载；单文件 46KB 每次迭代全量重读",
+    "with_skill 的 sub 均自包含可独立打开，main 用相对路径链接，离线可用"
+  ]
+}

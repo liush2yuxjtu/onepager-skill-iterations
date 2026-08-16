@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MySQL 慢查询性能诊断报告 · 总览</title>
+<style>
+  :root{--ink:#1a2332;--mut:#6b7686;--acc:#0f6bff;--bg:#f6f7f9;--card:#fff;--line:#e3e7ee;--bad:#d93025;--warn:#e8a100;--good:#18864b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header{padding:18px 20px;background:#fff;border-bottom:1px solid var(--line)}
+  .wrap{max-width:960px;margin:0 auto;padding:18px 20px 40px}
+  h1{font-size:22px;margin:0 0 4px}
+  .meta{color:var(--mut);font-size:13px}
+  .tldr{background:#eef4ff;border:1px solid #c9d9ff;border-left:4px solid var(--acc);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:15px}
+  .tldr b{color:var(--acc)}
+  .snap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+  .snap .s{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .snap .s b{font-size:20px;display:block}
+  .snap .s span{font-size:11px;color:var(--mut)}
+  @media(max-width:700px){.snap{grid-template-columns:repeat(2,1fr)}}
+  h2{font-size:16px;margin:24px 0 8px}
+  .sub{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0}
+  .sub .ic{font-size:20px;flex:0 0 30px;text-align:center}
+  .sub .tx{flex:1}
+  .sub .tx b{font-size:14px}
+  .sub .tx p{margin:2px 0 0;font-size:12px;color:var(--mut)}
+  .sub a{flex:0 0 auto;text-decoration:none;background:var(--acc);color:#fff;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;white-space:nowrap}
+  .sub a:hover{background:#0a56cc}
+  .check{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px}
+  .prog{margin:8px 0 12px;font-size:13px}
+  .bar{height:8px;background:#e9edf3;border-radius:5px;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:var(--good);width:0%;transition:width .25s}
+  .item{display:flex;align-items:flex-start;gap:10px;padding:9px 4px;border-bottom:1px dashed var(--line);font-size:13px}
+  .item:last-child{border-bottom:none}
+  .item input{margin-top:3px;accent-color:var(--good);cursor:pointer}
+  .item .prio{flex:0 0 38px;font-size:11px;font-weight:700;border-radius:5px;text-align:center;padding:2px 0}
+  .p0{background:#fde7e7;color:#b3261e}.p1{background:#fdf1d8;color:#9a6b00}.p2{background:#e8f1ff;color:#0f4bb3}.p3{background:#eee;color:#555}
+  .item .gain{color:var(--good);font-size:12px;white-space:nowrap}
+  .item .ctx{flex:1}
+  .item .ctx small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
+  .done .ctx b{text-decoration:line-through;color:var(--mut)}
+  button{cursor:pointer;border:1px solid var(--acc);background:#fff;color:var(--acc);border-radius:7px;padding:6px 12px;font-size:13px;font-weight:600}
+  button:hover{background:var(--acc);color:#fff}
+  .btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .foot{margin-top:30px;padding-top:12px;border-top:1px solid var(--line);color:var(--mut);font-size:12px}
+  code{background:#eef0f4;padding:1px 5px;border-radius:4px;font-size:11px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding-bottom:0">
+    <h1>MySQL 慢查询性能诊断报告 · 总览</h1>
+    <div class="meta">MySQL 8.0.36 · 主库 qc-prod-db-01 · 采集窗口 2026-08-02 ~ 2026-08-08 · <b>模拟数据（虚构，用于演示）</b></div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="tldr"><b>结论：</b>慢查询总量 <b>2,317 次 / 周</b>，Top 20 占全库慢查询总耗时 <b>82%（91.3 库时）</b>。根因高度集中：<b>深分页、相关子查询、NOT IN、INSERT…SELECT、派生表</b> 前 5 名贡献 61%。无需换机器，按 <a href="#actions" style="color:var(--acc)">10 项行动清单</a> 执行索引与改写后，预估总耗时 <b>↓87%</b>。唯一尖峰（08-05 02:00）为计划性批量任务，非持续回归。</div>
+
+  <div class="snap">
+    <div class="s"><b>2,317</b><span>慢查询次数 / 周</span></div>
+    <div class="s"><b>91.3h</b><span>Top 20 总耗时（库时）</span></div>
+    <div class="s"><b>13 / 20</b><span>全表扫描 SQL</span></div>
+    <div class="s"><b>82%</b><span>Top20 占慢查询总耗时</span></div>
+  </div>
+
+  <h2>报告分区 · 按需下钻</h2>
+  <div class="sub"><div class="ic">🔍</div><div class="tx"><b>Top 20 慢 SQL 明细</b><p>91.3 库时集中于 5 条 SQL；每行可搜索 / 排序 / 展开完整 SQL 文本</p></div><a href="sub-top20.html">打开 →</a></div>
+  <div class="sub"><div class="ic">⚙️</div><div class="tx"><b>执行计划分析（EXPLAIN）</b><p>12/20 全表扫描（ALL），5 条 range 回表量大；附每条访问路径与 Extra 特征</p></div><a href="sub-plans.html">打开 →</a></div>
+  <div class="sub"><div class="ic">🧩</div><div class="tx"><b>索引建议</b><p>11 复合 + 2 单列、删 2 冗余、3 条 SQL 改写；附 DDL、预估收益、可一键复制</p></div><a href="sub-index.html">打开 →</a></div>
+  <div class="sub"><div class="ic">📈</div><div class="tx"><b>周趋势图表</b><p>工作日 405 次/日 vs 周末 145；双轴趋势 + Top5 柱状 + 热力图，全 SVG 离线渲染</p></div><a href="sub-trends.html">打开 →</a></div>
+
+  <h2 id="actions">DBA 行动清单</h2>
+  <div class="check">
+    <div class="prog">已完成 <b id="doneCnt">0</b> / <b id="totalCnt">10</b> 项（预估收益集中在 P0）<div class="bar"><i id="bar"></i></div></div>
+    <div id="items"></div>
+    <div class="btns">
+      <button id="copyMd">复制已完成为 Markdown</button>
+      <button id="reset">重置进度</button>
+    </div>
+  </div>
+
+  <div class="foot">
+    <p>来源：模拟生成（虚构数据，用于演示诊断流程）· 采集命令：<code>SHOW GLOBAL STATUS LIKE 'Slow_queries'</code>、<code>performance_schema.events_statements_summary_by_digest</code>、<code>slow_log</code>、<code>EXPLAIN ANALYZE</code></p>
+    <p>文件：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-2/eval-3-multi-artifact-split/with_skill/outputs/main.html · 会话：eval-3-multi-artifact-split</p>
+  </div>
+</div>
+
+<script>
+const ACT=[
+{id:"a1",prio:"P0",t:"上线 idx_status_id 覆盖索引，应用改为游标分页",gain:"省 ~12.6h/周",ctx:"q-17 深分页 · 见 sub-plans.html / sub-index.html"},
+{id:"a2",prio:"P0",t:"q-20 相关子查询改写为 JOIN 半连接 + idx_order_id_delivered",gain:"省 ~11.4h/周",ctx:"EXISTS 每行探测 · 见 sub-plans.html"},
+{id:"a3",prio:"P0",t:"q-13 NOT IN 改写为 NOT EXISTS / LEFT JOIN + refunds 索引",gain:"省 ~10.5h/周",ctx:"双重全扫 · 见 sub-plans.html"},
+{id:"a4",prio:"P0",t:"q-15 INSERT…SELECT 拆批执行 + order_items 补 idx_order_id",gain:"省 ~12.2h/周",ctx:"避开业务高峰 · 见 sub-index.html"},
+{id:"a5",prio:"P1",t:"q-11 派生表改为索引关联 + idx_order_id_status",gain:"省 ~9.0h/周",ctx:"物化成本高 · 见 sub-plans.html"},
+{id:"a6",prio:"P1",t:"order_items 补 idx_order_id（q-03 等 4 条同根因）",gain:"省 ~2.8h/周",ctx:"JOIN 被驱动表无索引"},
+{id:"a7",prio:"P1",t:"q-07 前导 LIKE 走 FULLTEXT 或引入搜索中间件（立项）",gain:"省 ~3.8h/周",ctx:"索引无法解决，需方案评审"},
+{id:"a8",prio:"P2",t:"通用索引批次：q-01/q-02/q-04/q-05/q-06/q-09/q-10/q-16 共 8 项",gain:"省 ~22h/周合计",ctx:"按 sub-index.html 的 DDL 分批上线"},
+{id:"a9",prio:"P2",t:"清理 2 个冗余索引 + sys.schema_unused_indexes 巡检",gain:"降低写放大",ctx:"确认无其他查询依赖后删除"},
+{id:"a10",prio:"P3",t:"慢日志阈值 1s→500ms，接入监控告警 + 周报自动化",gain:"提前发现回归",ctx:"08-05 尖峰纳入批处理白名单"}
+];
+const PRIO={P0:"p0",P1:"p1",P2:"p2",P3:"p3"};
+const KEY="onepager-dba-actions";
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){}
+function render(){
+  const items=document.getElementById("items");
+  items.innerHTML=ACT.map(a=>{
+    const done=!!state[a.id];
+    return `<div class="item ${done?'done':''}" data-id="${a.id}">
+      <input type="checkbox" ${done?'checked':''} aria-label="${a.t}">
+      <span class="prio ${PRIO[a.prio]}">${a.prio}</span>
+      <div class="ctx"><b>${a.t}</b><small>${a.ctx}</small></div>
+      <span class="gain">${a.gain}</span>
+    </div>`;
+  }).join("");
+  const n=ACT.filter(a=>state[a.id]).length;
+  document.getElementById("doneCnt").textContent=n;
+  document.getElementById("totalCnt").textContent=ACT.length;
+  document.getElementById("bar").style.width=(n/ACT.length*100)+"%";
+}
+document.getElementById("items").addEventListener("change",e=>{
+  if(e.target.matches("input[type=checkbox]")){
+    const id=e.target.closest(".item").dataset.id;
+    state[id]=e.target.checked;localStorage.setItem(KEY,JSON.stringify(state));render();
+  }
+});
+document.getElementById("copyMd").addEventListener("click",()=>{
+  const done=ACT.filter(a=>state[a.id]);
+  const lines=["## MySQL 慢查询优化 · DBA 行动清单（已完成）",""]
+    .concat(done.map(a=>`- [x] **[${a.prio}]** ${a.t}（${a.gain}）`))
+    .concat(["","来源：模拟数据 · 报告：main.html · 会话：eval-3-multi-artifact-split"]);
+  navigator.clipboard.writeText(lines.join("\n")).then(()=>{
+    const b=document.getElementById("copyMd");b.textContent="已复制 ✓";setTimeout(()=>b.textContent="复制已完成为 Markdown",1200);
+  });
+});
+document.getElementById("reset").addEventListener("click",()=>{state={};localStorage.setItem(KEY,"{}");render();});
+render();
+</script>
+</body>
+</html>

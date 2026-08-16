@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "svg_inline: hero SVG 内联（<svg> 或 data:），无 <img src=*.svg> 外链",
+      "passed": true,
+      "evidence": "ok"
+    },
+    {
+      "text": "no_external_assets: 无外链资源（src=/href= 非 data:）",
+      "passed": true,
+      "evidence": "ok"
+    },
+    {
+      "text": "onepager_core: 结论前置+搜索框+勾选清单+复制按钮+details 折叠",
+      "passed": true,
+      "evidence": "ok"
+    },
+    {
+      "text": "self_contained: 无 CDN/外链脚本",
+      "passed": true,
+      "evidence": "ok"
+    },
+    {
+      "text": "footer_provenance: 页脚来源标注",
+      "passed": true,
+      "evidence": "ok"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

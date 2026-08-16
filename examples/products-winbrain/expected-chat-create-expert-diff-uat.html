@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>winBrain 聊天创建专家 · 已应用 diff + UAT 运行中</title>
+    <style>
+      :root {
+        --bg: #f5f7fa;
+        --card: #fff;
+        --ink: #1a2a3a;
+        --sub: #5b6b7b;
+        --brand: #1769e8;
+        --brand2: #6758e8;
+        --ok: #167447;
+        --warn: #8f550b;
+        --miss: #b3261e;
+        --line: #e3e9f2;
+        --chip: #eef4ff;
+        --code: #0d1b2a;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.65 "PingFang SC",
+          "Hiragino Sans GB",
+          "Microsoft YaHei",
+          system-ui,
+          sans-serif;
+        padding: 20px;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      header {
+        background: linear-gradient(120deg, var(--brand), var(--brand2));
+        color: #fff;
+        border-radius: 16px;
+        padding: 22px 26px;
+        box-shadow: 0 2px 8px rgba(26, 42, 58, 0.15);
+      }
+      header h1 {
+        font-size: 22px;
+        margin-bottom: 6px;
+      }
+      header p {
+        opacity: 0.92;
+        font-size: 13px;
+      }
+      .meta {
+        margin-top: 10px;
+        font-size: 11px;
+        opacity: 0.85;
+        font-family: ui-monospace, Menlo, monospace;
+      }
+      section {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-top: 18px;
+        box-shadow: 0 1px 4px rgba(26, 42, 58, 0.08);
+      }
+      h2 {
+        font-size: 17px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      h2 .n {
+        background: var(--brand);
+        color: #fff;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        flex: none;
+      }
+      h3 {
+        font-size: 14px;
+        margin: 14px 0 8px;
+        color: var(--brand);
+      }
+      p {
+        color: var(--sub);
+        font-size: 13px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        color: var(--sub);
+        font-size: 13px;
+        margin: 6px 0;
+      }
+      li {
+        margin: 4px 0;
+      }
+      code {
+        background: var(--code);
+        color: #d7e6ff;
+        padding: 1px 6px;
+        border-radius: 5px;
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 12px;
+      }
+      .file {
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 12.5px;
+        background: var(--chip);
+        color: var(--ink);
+        padding: 6px 10px;
+        border-radius: 8px;
+        display: inline-block;
+        margin: 6px 4px 2px 0;
+        border: 1px solid #d8e4f8;
+      }
+      pre {
+        background: var(--code);
+        color: #d7e6ff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        overflow-x: auto;
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        margin: 10px 0;
+      }
+      pre .add {
+        color: #6fe3a1;
+      }
+      pre .del {
+        color: #ff9b9b;
+      }
+      pre .cm {
+        color: #8fa3bf;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+        margin: 10px 0;
+      }
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 8px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f0f5ff;
+        font-weight: 600;
+      }
+      .ok {
+        color: var(--ok);
+        font-weight: 600;
+      }
+      .warn {
+        color: var(--warn);
+        font-weight: 600;
+      }
+      .miss {
+        color: var(--miss);
+        font-weight: 600;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .b-green {
+        background: #e3f5ec;
+        color: var(--ok);
+      }
+      .b-blue {
+        background: #e8f0ff;
+        color: var(--brand);
+      }
+      .b-amber {
+        background: #fff3e0;
+        color: var(--warn);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 12px;
+        margin: 12px 0;
+      }
+      .card {
+        background: #f8fafd;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .card b {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+      .card span {
+        font-size: 12px;
+        color: var(--sub);
+      }
+      .tag {
+        font-size: 11px;
+        background: #eef4ff;
+        color: var(--brand);
+        border-radius: 6px;
+        padding: 1px 8px;
+        margin-left: 6px;
+      }
+      footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 11px;
+        color: #9aa7b5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>
+          🧑‍💻 winBrain · 新建专家改为「聊天创建」— 期望 git diff + Agent Web App
+          测试方案
+        </h1>
+        <p>
+          ✅ 期望 diff 已应用（npm run check 全绿：217 tests + TUI + a11y
+          通过）。UAT 正在后台执行，结果稍后更新。
+        </p>
+        <div style="background:linear-gradient(120deg,#167447,#1e8a56);color:#fff;border-radius:12px;padding:14px 20px;margin-top:14px">
+<b style="font-size:15px">✅ UAT 全流程通过（2026-08-13）</b>
+<div style="font-size:12.5px;opacity:.95;margin-top:6px">新建专家(聊天创建) / 提高专家(进化) / 提高员工(进化) 三条流全部 PASS：草稿 → 真实测试 verified → 发布 → API 发布 → 对话成功。证据：WebM + trace + 截图 + result.json。</div>
+</div>
+        <div class="meta">
+          来源项目：winBrain Creator OS Agent SDK POC ·
+          /Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean · Pi
+          session: 019ffa0b-aa45-7cfa-aca7-a2d912280d64
+        </div>
+      </header>
+
+      <section>
+        <h2><span class="n">1</span>变更目标</h2>
+        <div class="grid">
+          <div class="card">
+            <b>现状（保留）<span class="tag">已就绪</span></b
+            ><span
+              >首页「新建专家」按钮、专家空状态、创建卡均已指向
+              <code>#/chat/expert/skill-expert-creator/new</code
+              >（聊天创建师），后端
+              <code>POST /api/v1/chat/responses</code> 与草稿 API
+              已支持聊天创建。</span
+            >
+          </div>
+          <div class="card">
+            <b>现状（待改）<span class="tag">表单残留</span></b
+            ><span
+              ><code>#/create</code> wizard 表单页（PAGES.create）仍在路由中，4
+              处入口仍 <code>go("#/create")</code> 会跳出聊天。</span
+            >
+          </div>
+          <div class="card">
+            <b>目标行为</b
+            ><span
+              >所有「新建专家」入口一律进入
+              <code>#/chat/expert/skill-expert-creator/new</code>；表单 wizard
+              页移出路由；员工经创建师聊天创建（创建指令含员工配置）。</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2><span class="n">2</span>期望 file-level git diff</h2>
+        <p>共 2 个前端文件 + 1 个新增 UAT 脚本。diff 已应用并通过 check。</p>
+
+        <h3>2.1 frontend/src/adapters/browser/workbench-ui.js</h3>
+        <p>
+          三个入口从 <code>#/create</code> 改指聊天创建师；PAGES.create
+          与路由分支移除。
+        </p>
+        <pre><span class="cm"># a) 聊天选择器「新建专家」→ 聊天创建师（L5233）</span>
+<span class="del">-  resetWiz(false);
+-  WIZ.returnToChat = type;
+-  go("#/create");</span>
+<span class="add">+  if (type === "expert") go("#/chat/expert/skill-expert-creator/new");</span>
+
+<span class="cm"># b) 业务内「新建专家」（prjStartExpert，L5759）→ 聊天创建师</span>
+<span class="del">-  resetWiz(true);
+-  go("#/create");</span>
+<span class="add">+  go("#/chat/expert/skill-expert-creator/new");</span>
+
+<span class="cm"># c) 恢复 wizard 草稿入口（L2057）→ 移除（聊天创建无表单草稿，草稿经
+#    /api/v1/creator/drafts 隔离草稿卡继续）</span>
+<span class="del">-  go("#/create");
+-  toast("已恢复上次保存的草稿", "pencil");</span>
+
+<span class="cm"># d) PAGES.create（L2115 定义）与路由（L6362）移除：
+#    else if (name === "create") page = PAGES.create;  →  删除整行
+#    PAGES.create = { ... } 整块删除</span></pre>
+
+        <h3>2.2 frontend/src/adapters/browser/workbench-api-adapter.js</h3>
+        <p>
+          「用它创建专家」（数据本体卡）→
+          聊天创建师；预选本体改由创建师对话说明。
+        </p>
+        <pre><span class="cm"># L912 data-asset-create-expert handler</span>
+<span class="del">-  view.resetWiz(false);
+-  view.WIZ.ontologyMcps.add(target.dataset.id);
+-  view.go("#/create");
+-  view.toast("已预选 1 个数据本体，请继续定义专家", "check-circle");</span>
+<span class="add">+  view.go("#/chat/expert/skill-expert-creator/new");
++  view.toast("请在对话中说明要绑定的数据本体", "info");</span></pre>
+
+        <h3>
+          2.3 scripts/uat-skill-creator-four-flows.py（新增 UAT，本页第 3 节）
+        </h3>
+        <p>
+          按 agent-webapp-testing
+          模板重写：新建专家=聊天创建（含员工）、提高专家/员工=进化草稿流。
+        </p>
+      </section>
+
+      <section>
+        <h2><span class="n">3</span>Agent Web App 测试方案</h2>
+        <p>
+          遵循 <code>agent-webapp-testing</code> skill：状态机（15s
+          无变化失败）、稳定选择器（data-testid/data-action/#id）、多阶段不提前
+          PASS（发布+对话后才收）、真实草稿 API
+          checkpoint、WebM+trace+截图证据。
+        </p>
+
+        <table>
+          <tr>
+            <th>流程</th>
+            <th>入口</th>
+            <th>关键断言（缺一即 FAIL）</th>
+            <th>选择器/API</th>
+          </tr>
+          <tr>
+            <td>1️⃣ 新建专家<br /><span class="badge b-blue">聊天创建</span></td>
+            <td><code>#/chat/expert/skill-expert-creator/new</code></td>
+            <td class="ok">
+              创建师流式回复完成 → 新草稿出现 → test 通过 → publish 成功 →
+              专家可对话
+            </td>
+            <td>
+              <code>[data-testid="agent-prompt"]</code> /
+              <code>agent-send</code> /
+              <code>#view[data-agent-state]</code>；<code
+                >GET /api/v1/creator/drafts</code
+              >、<code>POST .../test</code>、<code>POST .../publish</code
+              >、<code>PUT .../publication</code>、<code
+                >POST .../responses</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>
+              2️⃣ 新建员工<br /><span class="badge b-blue">聊天内配置</span>
+            </td>
+            <td>同一创建指令含员工要求</td>
+            <td class="ok">
+              发布后 <code>GET /api/v1/experts/{id}</code> children 含该员工 →
+              专家对话成功
+            </td>
+            <td><code>childrenMatch</code> 断言</td>
+          </tr>
+          <tr>
+            <td>
+              3️⃣ 提高专家<br /><span class="badge b-amber">进化草稿</span>
+            </td>
+            <td>专家卡 <code>[data-action="evo-enter"]</code></td>
+            <td class="ok">
+              草稿命名 → 改进指令 → 隔离草稿 → test → candidates 冻结 → 对话
+            </td>
+            <td>
+              <code>#evolve-confirm-dialog</code> /
+              <code>#evo-chat-input</code> /
+              <code>[data-action="evo-chat-send"]</code> /
+              <code>[data-action="evo-chat-confirm"]</code>；草稿 API 同上
+            </td>
+          </tr>
+          <tr>
+            <td>
+              4️⃣ 提高员工<br /><span class="badge b-amber">进化草稿</span>
+            </td>
+            <td>员工卡 <code>evo-enter</code>（目标专家下动态解析员工）</td>
+            <td class="ok">同 3️⃣</td>
+            <td>同上</td>
+          </tr>
+        </table>
+
+        <h3>运行方式</h3>
+        <pre>
+FRONTEND_BASE=http://127.0.0.1:4173/index.html API_BASE=http://127.0.0.1:7683 \
+python3 scripts/uat-skill-creator-four-flows.py
+# 可选：TARGET_EXPERT_ID=expert-yuntu-material-diag（默认即此）
+# 证据落 uat-artifacts/skill-creator-chat/（result.json + WebM + trace + 截图）</pre>
+
+        <h3>完整脚本（scripts/uat-skill-creator-four-flows.py）</h3>
+        <p>已就绪并通过语法检查；批准后可直接运行。关键规则：</p>
+        <ul>
+          <li>
+            状态机 <code>wait_agent_completed</code>：轮询
+            <code>#view[data-agent-state]</code>，15s 无变化即失败，单轮上限
+            360s（真实 Agent 执行）
+          </li>
+          <li>
+            聊天创建后 <code>find_new_draft</code> 轮询草稿 API 120s，找
+            <code>source_id</code> 为空的「新建专家」草稿
+          </li>
+          <li>
+            草稿发布后 expert id = 草稿 id（与前端
+            <code>go("#/expert/${id}")</code> 一致）
+          </li>
+          <li>
+            Checkpoint
+            <code>uat-artifacts/skill-creator-chat/latest.json</code>：中断后可
+            resume，不重跑
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><span class="n">4</span>验证范围与交付</h2>
+        <table>
+          <tr>
+            <th>项</th>
+            <th>说明</th>
+          </tr>
+          <tr>
+            <td>代码改动</td>
+            <td>
+              workbench-ui.js（3 入口 +
+              PAGES.create/路由移除）、workbench-api-adapter.js（1 入口）
+            </td>
+          </tr>
+          <tr>
+            <td>测试脚本</td>
+            <td>
+              scripts/uat-skill-creator-four-flows.py（聊天创建版，语法已通过）
+            </td>
+          </tr>
+          <tr>
+            <td>UAT 后验证</td>
+            <td>
+              <code>npm run check</code>；批准后跑四流程并回传 result.json +
+              WebM 证据
+            </td>
+          </tr>
+        </table>
+      </section>
+
+      <footer>
+        winBrain Creator OS Agent · 本页由 Pi 生成 · diff 已应用，UAT
+        结果见页顶状态
+      </footer>
+    </div>
+  </body>
+</html>

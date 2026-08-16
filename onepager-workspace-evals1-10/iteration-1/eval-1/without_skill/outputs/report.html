@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mac 发热诊断 · 交互报告</title>
+<style>
+:root{
+  --bg:#0f141b;--panel:#16202b;--panel2:#1c2836;--border:#2a3848;
+  --text:#e9f0f7;--muted:#97a6b8;--dim:#64748b;
+  --cool:#4fd1c5;--amber:#f5a623;--hot:#ff6b5e;--good:#3fb950;--blue:#5aa2ff;
+  --mono:ui-monospace,Menlo,Consolas,"SF Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;padding:32px 16px 56px;
+  background-image:radial-gradient(900px 300px at 50% -80px,rgba(245,166,35,.07),transparent)}
+.wrap{max-width:900px;margin:0 auto}
+
+/* ── 结论横幅 ── */
+.banner{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 18px;border-radius:14px;
+  background:linear-gradient(135deg,#18222e,#161c26);border:1px solid var(--border);border-left:4px solid var(--amber);margin-bottom:18px}
+.banner .vtag{flex:none;font-size:11px;font-weight:700;letter-spacing:.08em;color:#0f141b;background:var(--amber);padding:3px 10px;border-radius:99px}
+.banner p{flex:1;min-width:240px;font-size:14px;color:var(--muted)}
+.banner p b{color:var(--text)}
+.banner .temp{flex:none;text-align:center;padding:6px 14px;border:1px solid rgba(79,209,197,.35);border-radius:10px;background:rgba(79,209,197,.08)}
+.banner .temp .n{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--cool)}
+.banner .temp .l{font-size:10px;color:var(--dim);letter-spacing:.06em}
+
+/* ── KPI 卡片 ── */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:13px 15px}
+.kpi .k{font-size:11px;color:var(--dim);letter-spacing:.06em;margin-bottom:5px}
+.kpi .v{font-family:var(--mono);font-size:19px;font-weight:800}
+.kpi .v small{font-size:11px;color:var(--dim);font-weight:500}
+.kpi .s{font-size:11.5px;color:var(--muted);margin-top:4px}
+.kpi.heat .v{color:var(--hot)}
+.kpi.mem .v{color:var(--blue)}
+.kpi.ok .v{color:var(--cool)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:6px;vertical-align:1px}
+
+/* ── Top 3 热源 ── */
+h2{font-size:12.5px;color:var(--dim);letter-spacing:.1em;margin:0 0 10px;font-weight:700}
+.top3{display:grid;gap:8px;margin-bottom:22px}
+.trow{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 13px}
+.trow .pct{font-family:var(--mono);font-size:16px;font-weight:800;min-width:56px;text-align:right}
+.trow .pct.hot{color:var(--hot)} .trow .pct.warm{color:var(--amber)}
+.trow .info{flex:1;min-width:0}
+.trow .info .n{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .info .meta{font-size:11px;color:var(--dim);font-family:var(--mono)}
+.trow .track{flex:none;width:110px;height:6px;background:#222d3b;border-radius:99px;overflow:hidden}
+.trow .track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--amber),var(--hot))}
+.trow .tag{font-size:10px;padding:1px 8px;border-radius:99px;font-weight:600;flex:none}
+.trow .tag.sys{background:rgba(90,162,255,.12);color:var(--blue);border:1px solid rgba(90,162,255,.35)}
+.trow .tag.self{background:rgba(255,107,94,.12);color:var(--hot);border:1px solid rgba(255,107,94,.4)}
+.trow .tag.app{background:rgba(245,166,35,.12);color:var(--amber);border:1px solid rgba(245,166,35,.35)}
+
+/* ── details 全量证据 ── */
+details{border:1px solid var(--border);border-radius:12px;background:var(--panel);margin-bottom:22px;overflow:hidden}
+details>summary{cursor:pointer;padding:13px 16px;font-size:13px;font-weight:600;color:var(--muted);list-style:none;display:flex;align-items:center;gap:10px;user-select:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"▸";color:var(--amber);transition:transform .2s}
+details[open]>summary::before{transform:rotate(90deg)}
+details>summary small{color:var(--dim);font-weight:400}
+details[open]>summary{border-bottom:1px solid var(--border);background:var(--panel2)}
+.evidence{padding:12px 16px 16px}
+.search{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:10px;font-family:var(--sans)}
+.search:focus{outline:none;border-color:var(--amber)}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid #212c39;white-space:nowrap}
+th{color:var(--dim);font-weight:600;font-size:11px;cursor:pointer;user-select:none}
+th:hover{color:var(--text)}
+th .arrow{color:transparent;font-size:10px;margin-left:2px}
+th.sorted .arrow{color:var(--amber)}
+td.mono{font-family:var(--mono)}
+.minibar{display:inline-block;width:52px;height:4px;background:#222d3b;border-radius:99px;overflow:hidden;vertical-align:middle;margin-left:6px}
+.minibar i{display:block;height:100%;background:var(--amber);border-radius:99px}
+.minibar.mem i{background:var(--blue)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.cnt{font-size:11px;color:var(--dim);margin-top:8px}
+
+/* ── 双栏：清单 / 快照 ── */
+.lower{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:15px 16px}
+.card h2{margin-bottom:12px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--border);border-radius:9px;margin-bottom:7px;cursor:pointer;background:var(--panel2)}
+.check:hover{border-color:#38506b}
+.check input{appearance:none;width:17px;height:17px;border:2px solid var(--dim);border-radius:5px;flex:none;margin-top:2px;cursor:pointer}
+.check input:checked{background:var(--good);border-color:var(--good)}
+.check input:checked::after{content:"✓";display:block;color:#0f141b;font-size:11px;font-weight:800;text-align:center;line-height:13px}
+.check .ct{flex:1;font-size:12.5px}
+.check .ct small{display:block;color:var(--dim);font-size:11px;margin-top:2px}
+.check.done{border-color:var(--good);opacity:.65}
+.check.done .ct{text-decoration:line-through;color:var(--dim)}
+.progbar{height:6px;background:#222d3b;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.progbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cool),var(--good));border-radius:99px;transition:width .3s}
+.progtext{font-size:11.5px;color:var(--muted);margin-bottom:10px}
+.copybtn{width:100%;background:none;border:1px dashed #3a4c61;color:var(--muted);border-radius:8px;padding:8px;font-size:12.5px;cursor:pointer;font-family:var(--sans);transition:.15s}
+.copybtn:hover{color:var(--amber);border-color:var(--amber)}
+.snap table{font-size:12px}
+.snap th{font-size:10.5px}
+.up{color:var(--hot);font-weight:600} .down{color:var(--good);font-weight:600}
+.snap .note{font-size:11px;color:var(--dim);margin-top:8px}
+
+footer{margin-top:26px;font-size:11px;color:var(--dim);font-family:var(--mono);line-height:1.9;border-top:1px solid var(--border);padding-top:12px}
+@media(max-width:760px){
+  .kpis{grid-template-columns:1fr}
+  .lower{grid-template-columns:1fr}
+  .trow .track{display:none}
+}
+@media(prefers-color-scheme:light){
+  :root{--bg:#f3f6f9;--panel:#fff;--panel2:#eef2f6;--border:#d5dde5;--text:#1d2733;--muted:#51606f;--dim:#8b98a6}
+  .banner{background:linear-gradient(135deg,#fdf3e0,#f6f8fa)}
+  tr:hover td{background:rgba(0,0,0,.02)}
+  .check input:checked::after{color:#fff}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="banner">
+    <span class="vtag">结论</span>
+    <p>散热健康、<b>无热警告</b>；发热主因 = <b>opencode 多会话约占 71% CPU</b>，叠加内存打满（压缩器 6.8G）。风扇声大是散热在正常工作。</p>
+    <div class="temp"><div class="n">正常</div><div class="l">CPU 温度区间</div></div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi heat">
+      <div class="k">头号热源 · CPU</div>
+      <div class="v">71.4%<small> opencode 会话合计</small></div>
+      <div class="s"><span class="dot" style="background:var(--hot)"></span>会话 A 38% + B 30% + C 6%</div>
+    </div>
+    <div class="kpi mem">
+      <div class="k">内存压力</div>
+      <div class="v">15/16G<small> 已用</small></div>
+      <div class="s"><span class="dot" style="background:var(--blue)"></span>压缩器 6.8G · 换页 16 万次</div>
+    </div>
+    <div class="kpi ok">
+      <div class="k">健康判定</div>
+      <div class="v">无热警告</div>
+      <div class="s"><span class="dot" style="background:var(--cool)"></span>60–90°C 均属正常区间</div>
+    </div>
+  </div>
+
+  <h2>热源 Top 3 · 谁在烧 CPU</h2>
+  <div class="top3" id="top3"></div>
+
+  <details>
+    <summary>全量进程证据 <small id="total">— 点击展开 20 行</small></summary>
+    <div class="evidence">
+      <input class="search" id="psearch" placeholder="搜索进程名… 例：opencode / trustd / chrome">
+      <div class="table-scroll">
+        <table id="ptable">
+          <thead>
+            <tr>
+              <th data-k="name">进程<span class="arrow">↓</span></th>
+              <th data-k="cpu">CPU%<span class="arrow">↓</span></th>
+              <th data-k="mem">内存%<span class="arrow">↓</span></th>
+              <th data-k="pid">PID<span class="arrow">↓</span></th>
+              <th data-k="type">类型<span class="arrow">↓</span></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="cnt" id="pcnt">共 20 条 · 点击表头排序 · 输入即过滤</div>
+    </div>
+  </details>
+
+  <div class="lower">
+    <div class="card">
+      <h2>行动清单 · 勾选 / 复制</h2>
+      <div id="checklist"></div>
+      <div class="progbar"><i id="prog"></i></div>
+      <div class="progtext" id="ptext">0 / 5 已完成</div>
+      <button class="copybtn" id="copybtn">复制行动清单（Markdown）</button>
+    </div>
+    <div class="card snap">
+      <h2>两次快照对比 · 15:41 → 15:45</h2>
+      <table>
+        <thead><tr><th>进程</th><th>15:41</th><th>15:45</th><th>趋势</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">opencode 会话A</td><td>53.5%</td><td>38.3%</td><td class="down">↓ 头号热源</td></tr>
+          <tr><td class="mono">trustd</td><td>23.9%</td><td>29.4%</td><td class="up">↑ 持续空转</td></tr>
+          <tr><td class="mono">ecosystemd</td><td>15%</td><td>29.9%</td><td class="up">↑ 持续空转</td></tr>
+          <tr><td class="mono">WindowServer</td><td>38.2%</td><td>5.7%</td><td class="down">↓ 瞬时</td></tr>
+          <tr><td class="mono">Load Avg</td><td>6.96</td><td>7.51</td><td class="up">↑ 高位</td></tr>
+        </tbody>
+      </table>
+      <div class="note">4 分钟内 Load Avg 从 6.96 → 7.51，说明高负载持续，并非瞬时。</div>
+    </div>
+  </div>
+
+  <footer>
+    <div>来源项目：macOS 发热诊断 · /Users/liushiyuwin/mac-heat-diagnosis.html</div>
+    <div>Pi Session ID：N/A（opencode 会话生成）· 生成：2026-08-08 · 评测：without_skill / eval-1</div>
+    <div>数据取自真实诊断（进程 CPU%/内存/PID/热源分析/行动建议/快照对比），未做修改。</div>
+  </footer>
+</div>
+
+<script>
+const data=[
+ {name:"opencode · 会话 A（当前）",cpu:38.3,mem:5.1,pid:32270,type:"self"},
+ {name:"opencode · 会话 B",cpu:30.2,mem:4.1,pid:81011,type:"self"},
+ {name:"opencode · 会话 C",cpu:6.3,mem:2.2,pid:23412,type:"self"},
+ {name:"opencode · 会话 D",cpu:1.9,mem:0.1,pid:34075,type:"self"},
+ {name:"kmutil（瞬时）",cpu:36.4,mem:0.1,pid:12770,type:"sys"},
+ {name:"ecosystemd",cpu:29.9,mem:0.1,pid:401,type:"sys"},
+ {name:"trustd",cpu:29.4,mem:0.1,pid:179,type:"sys"},
+ {name:"ecosystemanalyticsd",cpu:28.6,mem:0.1,pid:368,type:"sys"},
+ {name:"bash",cpu:19.4,mem:0.0,pid:97152,type:"sys"},
+ {name:"sysmond",cpu:10.6,mem:0.0,pid:407,type:"sys"},
+ {name:"diagnosticd",cpu:8.5,mem:0.0,pid:3910,type:"sys"},
+ {name:"WindowServer",cpu:5.7,mem:0.4,pid:171,type:"sys"},
+ {name:"ChatGPT.app",cpu:4.9,mem:0.7,pid:3365,type:"app"},
+ {name:"syspolicyd",cpu:3.4,mem:0.1,pid:279,type:"sys"},
+ {name:"Chrome 渲染进程",cpu:3.0,mem:1.9,pid:586,type:"app"},
+ {name:"coreaudiod",cpu:2.6,mem:0.2,pid:184,type:"sys"},
+ {name:"claude · Claude Code",cpu:2.2,mem:2.2,pid:36684,type:"app"},
+ {name:"herdr",cpu:2.1,mem:0.1,pid:4811,type:"app"},
+ {name:"Typeless 渲染进程",cpu:2.0,mem:0.4,pid:2553,type:"app"},
+ {name:"launchd",cpu:2.0,mem:0.1,pid:1,type:"sys"}
+];
+const actions=[
+ {t:"退出多余的 opencode / claude 会话（先确认当前工作会话）",s:"CPU 腰斩，内存压缩器下降"},
+ {t:"关闭 Chrome 多余标签页或重启 Mac",s:"清空压缩器 6.8G，停止换页"},
+ {t:"系统设置 → 通知：关掉刷屏 App 的权限",s:"针对 trustd / ecosystemd 持续空转"},
+ {t:"外接屏刷新率调回 60Hz",s:"针对 WindowServer 图形负载"},
+ {t:"（可选）装 iStat Menus 观察温度曲线",s:"确认 60–90°C 正常区间"}
+];
+const tagTxt={self:"AI 客户端",sys:"系统",app:"App"};
+const tagCls={self:"self",sys:"sys",app:"app"};
+
+document.getElementById('total').textContent='— 点击展开 '+data.length+' 行';
+
+const top3=document.getElementById('top3');
+[...data].sort((a,b)=>b.cpu-a.cpu).slice(0,3).forEach(d=>{
+  const el=document.createElement('div');
+  el.className='trow';
+  el.innerHTML=`<div class="pct ${d.cpu>30?'hot':'warm'}">${d.cpu.toFixed(1)}%</div>
+    <div class="info"><div class="n">${d.name}</div><div class="meta">PID ${d.pid} · 内存 ${d.mem.toFixed(1)}%</div></div>
+    <span class="tag ${tagCls[d.type]}">${tagTxt[d.type]}</span>
+    <div class="track"><i style="width:${Math.min(d.cpu*2,100)}%"></i></div>`;
+  top3.appendChild(el);
+});
+
+const tbody=document.querySelector('#ptable tbody');
+let sortKey='cpu',sortDir=-1;
+function render(){
+  const q=document.getElementById('psearch').value.toLowerCase();
+  const rows=data.filter(d=>d.name.toLowerCase().includes(q))
+    .sort((a,b)=>(a[sortKey]-b[sortKey])*sortDir);
+  tbody.innerHTML=rows.map(d=>`<tr>
+    <td class="mono" style="max-width:220px;overflow:hidden;text-overflow:ellipsis">${d.name}</td>
+    <td class="mono">${d.cpu.toFixed(1)}<span class="minibar"><i style="width:${Math.min(d.cpu*2.2,100)}%"></i></span></td>
+    <td class="mono">${d.mem.toFixed(1)}<span class="minibar mem"><i style="width:${Math.min(d.mem*10,100)}%"></i></span></td>
+    <td class="mono">${d.pid}</td>
+    <td><span class="tag ${tagCls[d.type]}">${tagTxt[d.type]}</span></td>
+  </tr>`).join('');
+  document.getElementById('pcnt').textContent='匹配 '+rows.length+' / '+data.length+' 条 · 点击表头排序 · 输入即过滤';
+  document.querySelectorAll('#ptable th').forEach(th=>th.classList.remove('sorted'));
+  const th=document.querySelector(`#ptable th[data-k="${sortKey}"]`);
+  if(th){th.classList.add('sorted');th.querySelector('.arrow').textContent=sortDir<0?'↓':'↑';}
+}
+document.querySelectorAll('#ptable th').forEach(th=>th.addEventListener('click',()=>{
+  const k=th.dataset.k;
+  if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=-1;}
+  render();
+}));
+document.getElementById('psearch').addEventListener('input',render);
+render();
+
+const list=document.getElementById('checklist');
+const checks=actions.map(a=>{
+  const lb=document.createElement('label');
+  lb.className='check';
+  lb.innerHTML=`<input type="checkbox"><div class="ct">${a.t}<small>${a.s}</small></div>`;
+  lb.querySelector('input').addEventListener('change',()=>{
+    lb.classList.toggle('done',lb.querySelector('input').checked);
+    update();
+  });
+  list.appendChild(lb);
+  return lb;
+});
+function update(){
+  const n=checks.filter(x=>x.querySelector('input').checked).length;
+  document.getElementById('prog').style.width=(n/checks.length*100)+'%';
+  document.getElementById('ptext').textContent=n+' / '+checks.length+' 已完成';
+}
+document.getElementById('copybtn').addEventListener('click',()=>{
+  const lines=checks.map(x=>'- ['+(x.querySelector('input').checked?'x':' ')+'] '+x.querySelector('.ct').childNodes[0].textContent.trim());
+  navigator.clipboard.writeText('# 行动清单（Mac 降温）\n\n'+lines.join('\n')).then(()=>{
+    const b=document.getElementById('copybtn');
+    b.textContent='已复制 ✓';
+    setTimeout(()=>b.textContent='复制行动清单（Markdown）',1500);
+  });
+});
+</script>
+</body>
+</html>

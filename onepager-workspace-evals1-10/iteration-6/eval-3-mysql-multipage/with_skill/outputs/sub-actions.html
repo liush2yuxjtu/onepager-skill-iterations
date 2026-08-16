@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DBA 行动清单</title>
+<style>
+  :root{--bg:#0f1420;--card:#171e2e;--card2:#1d2637;--ink:#e7ecf3;--mut:#93a1b5;--line:#2a3550;
+    --accent:#4da3ff;--ok:#2fd07c;--warn:#ffb454;--bad:#ff5c6c;--mono:ui-monospace,Menlo,monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:24px 18px 60px}
+  a.back{color:var(--accent);font-size:12.5px;text-decoration:none}
+  h1{font-size:22px;margin:10px 0 4px}
+  .sub{color:var(--mut);font-size:12.5px;margin-bottom:16px}
+  .verdict{background:linear-gradient(135deg,#1b2436,#14203a);border:1px solid #2e4a75;border-left:4px solid var(--bad);border-radius:10px;padding:12px 16px;margin:12px 0 18px;font-size:13.5px}
+  .verdict b{color:var(--bad)}
+  .progwrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .prog-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px}
+  .prog-top b{font-size:20px;color:var(--ok)}
+  .bar{height:10px;border-radius:999px;background:var(--card2);overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),var(--accent));transition:width .3s;border-radius:999px}
+  .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .btn{font-size:12.5px;padding:8px 14px;border-radius:10px;cursor:pointer;border:1px solid var(--accent);color:var(--accent);background:transparent}
+  .btn.primary{background:var(--accent);color:#0b1626;font-weight:600}
+  .btn:hover{filter:brightness(1.1)}
+  .task{display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .task.done{opacity:.55}
+  .task.done .tt{text-decoration:line-through;color:var(--mut)}
+  .cb{margin-top:3px;width:18px;height:18px;flex:0 0 18px;accent-color:var(--ok);cursor:pointer}
+  .task .tt{font-weight:600;font-size:13.5px}
+  .task .de{font-size:12px;color:var(--mut);margin-top:2px}
+  .pri{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;flex:0 0 auto}
+  .pri.P1{background:rgba(255,92,108,.15);color:var(--bad)}
+  .pri.P2{background:rgba(255,180,84,.15);color:var(--warn)}
+  .pri.P3{background:rgba(77,163,255,.15);color:var(--accent)}
+  .task .q{font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--card2);padding:1px 6px;border-radius:5px}
+  .foot{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--mut)}
+  .foot code{font-family:var(--mono);background:var(--card2);padding:1px 6px;border-radius:5px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ok);color:#062;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="main.html">← 返回结论页</a>
+  <h1>DBA 行动清单</h1>
+  <div class="sub">14 项任务 · 勾选记录进度 · 一键复制 Markdown 回传工单 · 模拟数据</div>
+
+  <div class="verdict">本周 14 项任务中 <b>4 项 P1（高优）</b>：Q01 复合索引、order_items 索引、深分页改造、Q11 隐式转换。P1 完成后即覆盖约 <b>48%</b> 慢查询耗时。</div>
+
+  <div class="progwrap">
+    <div class="prog-top"><span>完成进度</span><b id="pct">0 / 14</b></div>
+    <div class="bar"><i id="fill"></i></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn primary" onclick="copyMD()">复制 Markdown（已勾选）</button>
+    <button class="btn" onclick="copyMD(true)">复制全部</button>
+    <button class="btn" onclick="reset()">重置</button>
+  </div>
+  <div id="list"></div>
+
+  <div class="foot">来源：<code>onepager</code> · <code>sub-actions.html</code> · 行动项由诊断结论生成（模拟数据）。勾选状态存本页，刷新不持久。</div>
+  <div class="toast" id="toast">已复制 Markdown</div>
+</div>
+
+<script>
+const TASKS=[
+ {id:"A1",pri:"P1",q:"Q01/Q04",t:"建 orders(status, created_at, id) 复合索引",de:"覆盖订单列表与深分页，规避 filesort；低峰窗口或 pt-osc。",ddl:"ALTER TABLE orders ADD INDEX idx_orders_status_ctime (status, created_at, id);"},
+ {id:"A2",pri:"P1",q:"Q01/Q05/Q16/Q18",t:"建 order_items(order_id) 索引",de:"最高单点，同时救 4 条查询；低峰可直建。",ddl:"ALTER TABLE order_items ADD INDEX idx_oi_order_id (order_id);"},
+ {id:"A3",pri:"P1",q:"Q04",t:"改造深分页为游标分页",de:"OFFSET 1000000 → WHERE id<?；需应用层配合，历史页改缓存。",ddl:"— 应用层改造（keyset pagination）"},
+ {id:"A4",pri:"P1",q:"Q11",t:"修复 order_no 隐式类型转换",de:"应用层统一传字符串；同时核对 ORM 绑定参数类型。",ddl:"— 应用层修复"},
+ {id:"A5",pri:"P2",q:"Q02",t:"建 order_archive(created_at, status) 并分批 UPDATE",de:"归档任务加 LIMIT 分批，缓解长锁。",ddl:"ALTER TABLE order_archive ADD INDEX idx_oa_ctime_status (created_at, status);"},
+ {id:"A6",pri:"P2",q:"Q03",t:"商品名搜索评估全文索引/ES",de:"LIKE 前导通配无法根治；先评估方案与存储成本。",ddl:"ALTER TABLE products ADD FULLTEXT INDEX idx_ft_name (name);"},
+ {id:"A7",pri:"P2",q:"Q08",t:"event_log 计数改计数表/分区",de:"32 亿行 COUNT 全扫；建 (level,created_at) 需 pt-osc 且空间。",ddl:"— 架构级优化"},
+ {id:"A8",pri:"P2",q:"Q14",t:"库存 UPDATE 改单条原子 SQL + 乐观锁",de:"合并 SELECT...FOR UPDATE 与 UPDATE；热点 SKU 拆行或预扣减。",ddl:"UPDATE inventory SET stock=stock-? WHERE sku=? AND stock>=?;"},
+ {id:"A9",pri:"P2",q:"Q06",t:"改写 OR 条件为 IN + 复合索引",de:"修复括号优先级歧义并恢复索引命中。",ddl:"改写 WHERE status IN ('PENDING','FAILED') AND created_at>?"},
+ {id:"A10",pri:"P3",q:"Q05/Q13",t:"子查询改 JOIN + GROUP BY",de:"消除逐行相关子查询；配合 A2 索引。",ddl:"— SQL 改写"},
+ {id:"A11",pri:"P3",q:"Q07/Q20",t:"分析库覆盖索引/物化视图",de:"消 1.85G 临时表；fact_orders 大表走 pt-osc。",ddl:"ALTER TABLE fact_orders ADD INDEX idx_fact_day_cust (day, cust_id);"},
+ {id:"A12",pri:"P3",q:"Q10",t:"修复 DATE() 包裹索引列写法",de:"改为 created_at 范围比较即命中索引。",ddl:"— SQL 改写"},
+ {id:"A13",pri:"P3",q:"Q17",t:"sku 大 IN 列表改临时表 JOIN",de:"数百项 IN + filesort → 临时表 JOIN，降 240M 扫描。",ddl:"— SQL 改写"},
+ {id:"A14",pri:"P3",q:"Q15/Q16",t:"复核 UNION/驱动顺序并加索引",de:"UNION ALL（语义允许）+ order_items/order_detail 索引。",ddl:"— 复核与索引（见 A2）"}
+];
+let state=JSON.parse(localStorage.getItem("eval3-actions")||"{}");
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.opacity=1;setTimeout(()=>t.style.opacity=0,1400);}
+function render(){
+  document.getElementById("list").innerHTML=TASKS.map(x=>`
+    <div class="task ${state[x.id]?'done':''}">
+      <input class="cb" type="checkbox" ${state[x.id]?'checked':''} onchange="toggle('${x.id}')">
+      <div style="flex:1;min-width:0">
+        <div class="tt">${esc(x.t)}</div>
+        <div class="de">${esc(x.de)} <span class="q">${x.q}</span></div>
+      </div>
+      <span class="pri ${x.pri}">${x.pri}</span>
+    </div>`).join("");
+  const done=Object.values(state).filter(Boolean).length;
+  document.getElementById("pct").textContent=done+" / "+TASKS.length;
+  document.getElementById("fill").style.width=(done/TASKS.length*100)+"%";
+  localStorage.setItem("eval3-actions",JSON.stringify(state));
+}
+function toggle(id){state[id]=!state[id];render();}
+function reset(){state={};render();}
+function copyMD(all){
+  const md=["## DBA 行动清单（onepager · "+new Date().toISOString().slice(0,10)+"）",""]
+    .concat(TASKS.filter(x=>all||state[x.id]).map(x=>`- [${state[x.id]?'x':' '}] **${x.pri}** ${x.t}（${x.q}）\n  - ${x.ddl}`)).join("\n");
+  navigator.clipboard.writeText(md).then(()=>toast(all?"已复制全部 "+TASKS.length+" 项":"已复制 "+Object.values(state).filter(Boolean).length+" 项"));
+}
+render();
+</script>
+</body>
+</html>

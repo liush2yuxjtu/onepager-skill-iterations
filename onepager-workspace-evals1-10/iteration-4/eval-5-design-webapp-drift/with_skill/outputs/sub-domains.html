@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>逐域动作矩阵 · 设计稿 vs WebApp</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1a202c;--mut:#6b7280;--line:#e5e7eb;--full:#059669;--full-bg:#ecfdf5;--partial:#d97706;--partial-bg:#fffbeb;--gap:#dc2626;--gap-bg:#fef2f2;--overflow:#4f46e5;--overflow-bg:#eef2ff;--accent:#2563eb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:var(--mut);font-size:13px}
+.navlink{display:inline-block;text-decoration:none;color:#fff;background:var(--accent);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;margin:8px 6px 0 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
+.b-full{background:var(--full-bg);color:var(--full)}.b-partial{background:var(--partial-bg);color:var(--partial)}
+.b-gap{background:var(--gap-bg);color:var(--gap)}.b-overflow{background:var(--overflow-bg);color:var(--overflow)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+input[type=search]{flex:1;min-width:160px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;outline:none}
+.fbtn{padding:6px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:12px;cursor:pointer}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:12px;color:var(--mut);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--accent)}
+tr.hidden{display:none}
+.yes{color:var(--full);font-weight:700}.no{color:#cbd5e1}
+.copybtn{font-size:12px;padding:5px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+.foot{color:var(--mut);font-size:11px;margin-top:18px;line-height:1.7;word-break:break-all}
+.foot code{background:#eef1f5;border-radius:4px;padding:1px 5px}
+.prog{height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden;margin:6px 0}
+.prog .fill{height:100%;background:var(--full);transition:width .3s}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--mut);margin-bottom:8px}
+.legend .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>逐域动作矩阵 · 设计稿 vs WebApp</h1>
+<div class="sub">全部 23 个交互动作（去重）的逐条对齐 · 数据来自 <code>data-action</code> 稳定标识</div>
+<a class="navlink" href="main.html">← 返回主报告</a>
+<a class="navlink" href="sub-snapshots.html">截图并排对比 →</a>
+
+<div class="card">
+  <h2 style="margin:0 0 8px">动作对齐表 <span class="sub">搜索 / 排序 / 状态过滤</span></h2>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--full)"></span>full 意图全落地</span>
+    <span><span class="dot" style="background:var(--partial)"></span>partial 部分落地</span>
+    <span><span class="dot" style="background:var(--gap)"></span>gap 设计有·实现无</span>
+    <span><span class="dot" style="background:var(--overflow)"></span>overflow 实现有·设计未规划</span>
+  </div>
+  <div class="tools">
+    <input type="search" id="q" placeholder="搜索动作 / data-action / 域…">
+    <button class="fbtn on" data-f="all">全部 23</button>
+    <button class="fbtn" data-f="full">full 12</button>
+    <button class="fbtn" data-f="partial">partial</button>
+    <button class="fbtn" data-f="gap">gap 3</button>
+    <button class="fbtn" data-f="overflow">overflow 8</button>
+  </div>
+  <table id="tbl">
+    <thead><tr>
+      <th data-s="dom">域</th>
+      <th data-s="name">动作</th>
+      <th data-s="da">data-action</th>
+      <th data-s="des">设计稿</th>
+      <th data-s="imp">WebApp</th>
+      <th data-s="state">Fidelity</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2 style="margin:0 0 8px">导出判定 <span class="tag">勾选需回写项 → 复制 Markdown</span></h2>
+  <div class="prog"><div class="fill" id="progfill" style="width:0%"></div></div>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:8px">已勾选 <span id="ckn">0</span> 项 · <button class="copybtn" onclick="copyRows()">复制勾选动作 →</button></div>
+  <table id="sel"><tbody></tbody></table>
+</div>
+
+<div class="foot">
+  <b>来源项目</b>：onepager-workspace/iteration-4/eval-5-design-webapp-drift（skill: onepager）<br>
+  <b>绝对路径</b>：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-4/eval-5-design-webapp-drift/with_skill/outputs/sub-domains.html<br>
+  <b>生成者</b>：opencode（deepseek-v4-flash）· 2026-08-10 · 对抗验证：chat 实现 7 动作 &gt; 设计 5，但 5 个意图动作全落地 → full 非 partial
+</div>
+</div>
+
+<script>
+const ACTS=[
+  {dom:"对话",name:"发送消息",da:"chat-send",des:1,imp:1,state:"full"},
+  {dom:"对话",name:"上传附件",da:"chat-attach",des:1,imp:1,state:"full"},
+  {dom:"对话",name:"表情",da:"chat-emoji",des:1,imp:1,state:"full"},
+  {dom:"对话",name:"历史记录",da:"chat-history",des:1,imp:1,state:"full"},
+  {dom:"对话",name:"转人工",da:"chat-transfer",des:1,imp:1,state:"full"},
+  {dom:"对话",name:"AI 建议回复",da:"chat-ai-suggest",des:0,imp:1,state:"overflow"},
+  {dom:"对话",name:"语音转文字",da:"chat-voice",des:0,imp:1,state:"overflow"},
+  {dom:"工单",name:"新建工单",da:"ticket-create",des:1,imp:1,state:"full"},
+  {dom:"工单",name:"指派",da:"ticket-assign",des:1,imp:1,state:"full"},
+  {dom:"工单",name:"改优先级",da:"ticket-priority",des:1,imp:1,state:"full"},
+  {dom:"工单",name:"关闭",da:"ticket-close",des:1,imp:1,state:"full"},
+  {dom:"工单",name:"合并工单",da:"ticket-merge",des:0,imp:1,state:"overflow"},
+  {dom:"报表",name:"日报",da:"report-daily",des:1,imp:1,state:"full"},
+  {dom:"报表",name:"周报",da:"report-weekly",des:1,imp:1,state:"full"},
+  {dom:"报表",name:"导出",da:"report-export",des:1,imp:1,state:"full"},
+  {dom:"设置",name:"个人资料",da:"settings-profile",des:1,imp:0,state:"gap"},
+  {dom:"设置",name:"SLA 配置",da:"settings-sla",des:1,imp:0,state:"gap"},
+  {dom:"设置",name:"排班",da:"settings-roster",des:1,imp:0,state:"gap"},
+  {dom:"知识库",name:"新建知识",da:"kb-create",des:0,imp:1,state:"overflow"},
+  {dom:"知识库",name:"搜索",da:"kb-search",des:0,imp:1,state:"overflow"},
+  {dom:"知识库",name:"打标签",da:"kb-tag",des:0,imp:1,state:"overflow"},
+  {dom:"智能分析",name:"情绪分析",da:"ana-sentiment",des:0,imp:1,state:"overflow"},
+  {dom:"智能分析",name:"主题聚类",da:"ana-topic",des:0,imp:1,state:"overflow"},
+];
+const SL={full:["full","b-full"],partial:["partial","b-partial"],gap:["gap","b-gap"],overflow:["overflow","b-overflow"]};
+let q="",f="all",sortK="dom",sortD=1,sel=new Set();
+function rowHTML(a,cb){
+  const[s,cls]=SL[a.state];
+  return `<tr data-dom="${a.dom}" data-name="${a.name}" data-da="${a.da}" data-des="${a.des}" data-imp="${a.imp}" data-state="${a.state}">
+    ${cb?`<td><input type="checkbox" data-da="${a.da}" ${sel.has(a.da)?"checked":""}></td>`:""}
+    <td>${a.dom}</td><td>${a.name}</td><td><code>${a.da}</code></td>
+    <td class="${a.des?"yes":"no"}">${a.des?"有":"—"}</td>
+    <td class="${a.imp?"yes":"no"}">${a.imp?"有":"—"}</td>
+    <td><span class="badge ${cls}">${s}</span></td></tr>`;
+}
+function render(){
+  document.querySelector("#tbl tbody").innerHTML=ACTS.map(a=>rowHTML(a,false)).join("");
+  const tb=document.querySelector("#tbl tbody");
+  [...tb.rows].forEach(r=>{r.addEventListener("click",()=>{const da=r.dataset.da;if(sel.has(da))sel.delete(da);else sel.add(da);renderSel();});});
+}
+function renderSel(){
+  const rows=ACTS.filter(a=>sel.has(a.da));
+  document.querySelector("#sel tbody").innerHTML=rows.map(a=>rowHTML(a,true)).join("");
+  document.querySelector("#ckn").textContent=rows.length;
+  document.getElementById("progfill").style.width=(rows.length/ACTS.length*100)+"%";
+  document.querySelectorAll("#sel input").forEach(i=>i.addEventListener("change",()=>{const da=i.dataset.da;if(i.checked)sel.add(da);else sel.delete(da);renderSel();}));
+}
+function apply(){
+  const rows=[...document.querySelectorAll("#tbl tbody tr")];
+  rows.forEach(r=>{
+    const ok=(q===""||r.dataset.dom.includes(q)||r.dataset.name.includes(q)||r.dataset.da.includes(q))&&(f==="all"||r.dataset.state===f);
+    r.classList.toggle("hidden",!ok);
+  });
+  const vis=[...rows].filter(r=>!r.classList.contains("hidden"));
+  vis.sort((a,b)=>{
+    const va=a.dataset[sortK],vb=b.dataset[sortK];
+    const na=isNaN(va)?va:Number(va),nb=isNaN(vb)?vb:Number(vb);
+    return (na<nb?-1:na>nb?1:0)*sortD;
+  });
+  const tb=document.querySelector("#tbl tbody");vis.forEach(r=>tb.appendChild(r));
+}
+document.querySelector("#q").addEventListener("input",e=>{q=e.target.value.trim().toLowerCase();apply();});
+document.querySelectorAll(".fbtn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".fbtn").forEach(x=>x.classList.remove("on"));b.classList.add("on");f=b.dataset.f;apply();
+}));
+document.querySelectorAll("th[data-s]").forEach(th=>th.addEventListener("click",()=>{
+  const k=th.dataset.s;if(sortK===k)sortD*=-1;else{sortK=k;sortD=1;}
+  document.querySelectorAll("th[data-s]").forEach(x=>{x.textContent=x.textContent.replace(/\s*[↑↓]$/,"");});
+  th.textContent+=sortD<0?" ↓":" ↑";
+  apply();
+}));
+function copyRows(){
+  const rows=ACTS.filter(a=>sel.has(a.da));
+  if(!rows.length){alert("请先勾选动作");return;}
+  const lines=rows.map(a=>`- [ ] ${a.dom}·${a.name} (\`${a.da}\`) → ${SL[a.state][0]}`);
+  navigator.clipboard.writeText(lines.join("\n")).then(()=>alert("已复制勾选动作清单"));
+}
+render();apply();renderSel();
+</script>
+</body>
+</html>

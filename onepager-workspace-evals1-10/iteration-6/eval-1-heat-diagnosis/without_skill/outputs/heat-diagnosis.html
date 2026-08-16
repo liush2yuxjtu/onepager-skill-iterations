@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mac 发热诊断</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171b22; --card2:#1c2129; --line:#2a3140;
+    --txt:#e6e9ef; --muted:#9aa4b2; --hot:#ff6b5e; --warm:#ffb454;
+    --ok:#4ade80; --agent:#ff6b5e; --sys:#5ea2ff; --app:#c792ea;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--txt);line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  header h1{font-size:22px;margin:8px 0 4px}
+  .meta{color:var(--muted);font-size:13px;margin:0 0 20px}
+
+  .verdict{display:flex;gap:16px;align-items:flex-start;background:linear-gradient(135deg,#3a1518,#1c2129);
+    border:1px solid #5a2a2e;border-radius:12px;padding:18px 20px;margin-bottom:16px}
+  .verdict .icon{font-size:30px;line-height:1}
+  .verdict h2{margin:0 0 6px;font-size:17px;color:var(--hot)}
+  .verdict p{margin:0;font-size:14px;color:#cfd6e0}
+  .verdict b{color:#fff}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+  .stat .num{font-size:22px;font-weight:700}
+  .stat .label{font-size:12px;color:var(--muted)}
+  .stat.hot .num{color:var(--hot)} .stat.ok .num{color:var(--ok)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+  .card h2{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px}
+  .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;color:#0f1115}
+  .badge.agent{background:var(--agent)} .badge.sys{background:var(--sys)} .badge.app{background:var(--app)}
+
+  input#search{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--line);
+    background:var(--card2);color:var(--txt);font-size:14px;margin-bottom:10px}
+  input#search:focus{outline:none;border-color:var(--warm)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:7px 8px;text-align:left;border-bottom:1px solid #222935}
+  th{cursor:pointer;color:var(--muted);font-weight:600;user-select:none;white-space:nowrap}
+  th:hover{color:var(--txt)} th .arrow{color:var(--warm)}
+  td.pid{color:var(--muted);font-family:ui-monospace,Menlo,monospace;font-size:12px}
+  td.cpu,td.mem{font-variant-numeric:tabular-nums}
+  tr td:first-child{display:flex;align-items:center;gap:8px}
+  .bar{height:6px;border-radius:3px;background:#2a3140;flex:1;min-width:40px}
+  .bar i{display:block;height:100%;border-radius:3px}
+  tr.hotrow{background:#2a1a1c}
+  .muted{color:var(--muted);font-size:12px;margin:10px 0 0}
+
+  .actions ul{list-style:none;padding:0;margin:0 0 12px}
+  .actions li{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:14px}
+  .actions li:hover{background:var(--card2)}
+  .actions li.done{text-decoration:line-through;color:var(--muted)}
+  .actions label{display:flex;gap:10px;align-items:baseline;cursor:pointer}
+  .actions input{accent-color:var(--hot);transform:translateY(1px)}
+  .actions small{display:block;color:var(--muted);font-size:12px;margin-left:22px}
+  button{background:var(--card2);color:var(--txt);border:1px solid var(--line);border-radius:8px;
+    padding:8px 14px;font-size:13px;cursor:pointer}
+  button:hover{border-color:var(--warm)}
+  button#copyMd{background:var(--warm);color:#1a1206;border-color:var(--warm);font-weight:600}
+  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2f3540;color:#fff;
+    padding:10px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none}
+  #toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🔥 Mac 发热诊断报告</h1>
+    <p class="meta">Apple M5 · 16GB · 已连续运行 2 天 14 小时 · 采样 2026-08-12 11:30</p>
+  </header>
+
+  <section class="verdict">
+    <div class="icon">🔥</div>
+    <div>
+      <h2>发热主因：AI Agent 集群在满负荷跑</h2>
+      <p>claude / claudex / herdr / pi 共 <b>13</b> 个进程叠加占用 <b>90%</b> 的 CPU —— 多路编码 agent 并发是风扇狂转的直接原因。内存压力正常（<b>50%</b> 空闲），当前也无系统热警告，说明是持续高负载而非硬件故障。</p>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat hot"><div class="num">90%</div><div class="label">Agent 进程 CPU</div></div>
+    <div class="stat hot"><div class="num">13</div><div class="label">Agent 进程数</div></div>
+    <div class="stat ok"><div class="num">50%</div><div class="label">内存空闲</div></div>
+    <div class="stat"><div class="num">3.1</div><div class="label">负载均值</div></div>
+  </section>
+
+  <section class="card">
+    <h2>最占资源的进程 <span class="badge agent">agent</span> <span class="badge sys">系统</span> <span class="badge app">应用</span></h2>
+    <input id="search" type="search" placeholder="搜索进程名…" autocomplete="off">
+    <table>
+      <thead>
+        <tr>
+          <th data-key="name">进程</th>
+          <th data-key="cpu" style="width:110px">CPU %</th>
+          <th data-key="mem" style="width:80px">内存 %</th>
+          <th data-key="pid" style="width:70px">PID</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <p id="count" class="muted"></p>
+  </section>
+
+  <section class="card actions">
+    <h2>行动清单</h2>
+    <button id="copyMd">✓ 复制勾选项为 Markdown</button>
+    <ul id="actions">
+      <li data-act="清理闲置的 claude 会话，多路 agent 是 90% CPU 的来源"><label><input type="checkbox">清理闲置的 claude 会话
+        <small>4 个 claude 进程同时存活，逐个退出不用的会话可释放近一半 CPU</small></label></li>
+      <li data-act="退出 claudex 的 cli-proxy-api 常驻代理（若不常用）"><label><input type="checkbox">退出 claudex 的 cli-proxy-api 常驻代理
+        <small>占 9.7% CPU，纯代理无任务时是纯消耗</small></label></li>
+      <li data-act="降低 herdr / pi 的并发任务数"><label><input type="checkbox">降低 herdr / pi 的并发任务数
+        <small>合计约 21% CPU，属可控的并发设置</small></label></li>
+      <li data-act="退出不用的常驻应用：Clash Verge、WorkBuddy、Typeless、企业微信"><label><input type="checkbox">退出不用的常驻应用
+        <small>Clash Verge、WorkBuddy、Typeless、企业微信 均为 Electron，叠加抬高基线负载</small></label></li>
+      <li data-act="用 Activity Monitor 观察 5 分钟，确认是否有卡死/失控进程"><label><input type="checkbox">观察 5 分钟确认无失控进程
+        <small>确认单个进程不是异常飙高，避免误杀正在跑的任务</small></label></li>
+      <li data-act="保持通风，清理散热口灰尘；持续高温再查硬件"><label><input type="checkbox">保持通风、清理散热口
+        <small>软件侧解决后仍烫再考虑硬件因素</small></label></li>
+    </ul>
+  </section>
+</div>
+<div id="toast"></div>
+
+<script>
+const CAT={agent:"agent",sys:"系统",app:"应用"};
+// 原始数据：进程快照
+const RAW=[
+  {pid:97270,name:"claude",cpu:31.3,mem:2.7,cat:"agent"},
+  {pid:3378,name:"herdr",cpu:14.6,mem:0.2,cat:"agent"},
+  {pid:171,name:"WindowServer",cpu:11.9,mem:0.4,cat:"sys"},
+  {pid:80506,name:"cli-proxy-api (claudex)",cpu:9.7,mem:0.8,cat:"agent"},
+  {pid:10250,name:"claude (agent-sdk)",cpu:9.2,mem:2.2,cat:"agent"},
+  {pid:1833,name:"Clash Verge (mihomo)",cpu:8.0,mem:0.6,cat:"app"},
+  {pid:27405,name:"pi",cpu:6.8,mem:1.4,cat:"agent"},
+  {pid:619,name:"Activity Monitor",cpu:5.2,mem:0.2,cat:"app"},
+  {pid:309,name:"无线网卡驱动 (Wi-Fi)",cpu:4.4,mem:0.2,cat:"sys"},
+  {pid:548,name:"Terminal",cpu:4.4,mem:0.7,cat:"app"},
+  {pid:28387,name:"claude",cpu:4.1,mem:2.6,cat:"agent"},
+  {pid:179,name:"trustd",cpu:3.7,mem:0.1,cat:"sys"},
+  {pid:66418,name:"WorkBuddy (Renderer)",cpu:3.7,mem:1.3,cat:"app"},
+  {pid:60007,name:"claude",cpu:3.6,mem:2.2,cat:"agent"}
+];
+let sortKey="cpu", sortDesc=true, query="";
+const tbody=document.getElementById("tbody");
+const hot=60; // 超过此 CPU 视为热点
+
+function barColor(cpu){return cpu>=hot?"var(--hot)":cpu>=15?"var(--warm)":"var(--ok)"}
+
+function render(){
+  const q=query.trim().toLowerCase();
+  let rows=RAW.filter(r=>!q||r.name.toLowerCase().includes(q));
+  rows.sort((a,b)=>{const x=a[sortKey],y=b[sortKey];
+    return (typeof x==="string"?x.localeCompare(y):x-y)*(sortDesc?-1:1);});
+  tbody.innerHTML=rows.map(r=>`<tr class="${r.cpu>=hot?"hotrow":""}">
+    <td><span class="badge ${r.cat}">${CAT[r.cat]}</span>${r.name}<span class="bar"><i style="width:${Math.min(r.cpu/40*100,100)}%;background:${barColor(r.cpu)}"></i></span></td>
+    <td class="cpu"><b>${r.cpu.toFixed(1)}</b></td>
+    <td class="mem">${r.mem.toFixed(1)}</td>
+    <td class="pid">${r.pid}</td></tr>`).join("");
+  document.getElementById("count").textContent=
+    q?`匹配 ${rows.length} / ${RAW.length} 个进程`:`Top ${rows.length} 个进程（点击列头排序，默认按 CPU 降序）`;
+}
+
+document.querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{
+  const k=th.dataset.key;
+  if(sortKey===k){sortDesc=!sortDesc}else{sortKey=k;sortDesc=(k!=="name")}
+  document.querySelectorAll(".arrow").forEach(a=>a.remove());
+  th.insertAdjacentHTML("beforeend",` <span class="arrow">${sortDesc?"▼":"▲"}</span>`);
+  render();
+}));
+document.getElementById("search").addEventListener("input",e=>{query=e.target.value;render()});
+
+// 行动清单
+const actList=document.getElementById("actions");
+actList.querySelectorAll("li").forEach(li=>{
+  li.addEventListener("click",e=>{if(e.target.tagName!=="INPUT"){
+    const cb=li.querySelector("input");cb.checked=!cb.checked;li.classList.toggle("done",cb.checked)}});
+  li.querySelector("input").addEventListener("change",()=>li.classList.toggle("done",li.querySelector("input").checked));
+});
+
+document.getElementById("copyMd").addEventListener("click",async()=>{
+  const chosen=[...actList.children].filter(li=>li.querySelector("input").checked);
+  const md=["## Mac 发热处理行动清单"]
+    .concat(chosen.map(li=>`- [x] ${li.dataset.act}`))
+    .concat(chosen.length?"":"- (未勾选任何项)");
+  await navigator.clipboard.writeText(md.join("\n"));
+  toast(chosen.length?`已复制 ${chosen.length} 项 Markdown`:"未勾选任何项");
+});
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800)}
+
+render();
+</script>
+</body>
+</html>

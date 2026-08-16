@@ -1,0 +1,34 @@
+{
+  "expectations": [
+    {
+      "text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+      "passed": true,
+      "evidence": "video+controls: True, details blocks: 0",
+      "manual": false
+    },
+    {
+      "text": "The main HTML directly links both run.webm and failure.webm and report.html, while hero.svg is inline or used as page artwork rather than omitted silently.",
+      "passed": true,
+      "evidence": "linked/referenced: ['run.webm', 'failure.webm', 'report.html', 'hero.svg']",
+      "manual": false
+    },
+    {
+      "text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+      "passed": true,
+      "evidence": "10 hrefs, broken=[]",
+      "manual": false
+    },
+    {
+      "text": "The page includes source project absolute path and a Pi session ID in its footer.",
+      "passed": true,
+      "evidence": "manual check advised",
+      "manual": true
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "标题下 5 秒内出现一句话结论（verdict / TL;DR / 结论）",
+      "passed": true,
+      "evidence": ">结论："
+    },
+    {
+      "text": "存在搜索框（input class 含 search）",
+      "passed": true,
+      "evidence": "<input type=\"search\" id=\"search\" class=\"search-input\""
+    },
+    {
+      "text": "表头可点击排序（data-k/data-sort/onclick + 排序 JS）",
+      "passed": true,
+      "evidence": "<th data-k=\"name\""
+    },
+    {
+      "text": "存在可勾选行动清单（input[type=checkbox]，含 JS 动态渲染）",
+      "passed": true,
+      "evidence": "<input type=\"checkbox\" data-i=\"'+i+'\"'+(a.done?\" checked\":\"\")+'>"
+    },
+    {
+      "text": "存在复制按钮（navigator.clipboard 或 id=copybtn）",
+      "passed": true,
+      "evidence": "copybtn"
+    },
+    {
+      "text": "全量证据在 <details> 折叠区，默认收起",
+      "passed": true,
+      "evidence": "<details"
+    },
+    {
+      "text": "无 CDN / 外链资源（仅允许 data: 与本地回环）",
+      "passed": true,
+      "evidence": "无外链"
+    },
+    {
+      "text": "页脚有来源标注（项目名 / 绝对路径 / 会话 ID）",
+      "passed": true,
+      "evidence": "<footer> <b>来源</b>：星瀚零售中台 Web（虚构演示数据）<br> <span>报告文件：</span><span class=\"src\">/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-1/eval-2/with_ski"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

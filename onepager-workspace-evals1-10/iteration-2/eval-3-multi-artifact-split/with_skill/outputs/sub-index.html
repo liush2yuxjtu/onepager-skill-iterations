@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>索引建议 · MySQL 性能诊断</title>
+<style>
+  :root{--ink:#1a2332;--mut:#6b7686;--acc:#0f6bff;--bg:#f6f7f9;--card:#fff;--line:#e3e7ee;--bad:#d93025;--warn:#e8a100;--good:#18864b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header{padding:18px 20px;background:#fff;border-bottom:1px solid var(--line)}
+  .wrap{max-width:1000px;margin:0 auto;padding:18px 20px 40px}
+  h1{font-size:22px;margin:0 0 4px}
+  .meta{color:var(--mut);font-size:13px}
+  .tldr{background:#eef4ff;border:1px solid #c9d9ff;border-left:4px solid var(--acc);border-radius:6px;padding:12px 14px;margin:16px 0;font-size:14px}
+  .tldr b{color:var(--acc)}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0 10px}
+  input[type=search]{flex:1;min-width:220px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff}
+  .notice{background:#fff8e6;border:1px solid #f0dfae;border-radius:8px;padding:10px 14px;font-size:13px;margin:10px 0 18px}
+  details{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:#fff;overflow:hidden}
+  summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:14px;list-style:none}
+  summary::before{content:"▸ ";color:var(--acc)}
+  details[open] summary::before{content:"▾ "}
+  .gain{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:8px}
+  .g-big{background:#e6f4ec;color:#18864b}.g-mid{background:#fdf1d8;color:#9a6b00}
+  .body{padding:0 14px 14px}
+  pre{background:#141a26;color:#d6e2f0;padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:12px;margin:6px 0 8px}
+  .row2{display:flex;gap:12px;flex-wrap:wrap}
+  .field{flex:1;min-width:220px}
+  .field b{font-size:12px;color:var(--mut);display:block}
+  .field span{font-size:13px}
+  button{cursor:pointer;border:1px solid var(--acc);background:#fff;color:var(--acc);border-radius:6px;padding:4px 10px;font-size:12px}
+  button:hover{background:var(--acc);color:#fff}
+  .foot{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:var(--mut);font-size:12px}
+  .gap{height:8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding-bottom:0">
+    <h1>索引建议</h1>
+    <div class="meta">针对 Top 20 慢 SQL 的 18 条索引建议 · 依赖 sub-plans.html 的执行计划结论 · <b>模拟数据</b></div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="tldr"><b>结论：</b>建议新增 <b>18 个索引（8 复合 + 10 单列）</b>并改写 <b>4 条 SQL</b>（q-07 全文检索 / q-10 修正类型 / q-14 UNION→UNION ALL / q-17 游标分页），另规划删除 2 个冗余索引。整体预估：Top 20 总耗时 <b>91.3 库时 → 约 12 库时（↓87%）</b>，回表量下降 90%+。</div>
+
+  <div class="notice">⚠ 上线前置：所有 DDL 均需先在预发执行，观察 <code>information_schema.innodb_metrics</code> 与慢日志 24h 无回归后再上生产；复合索引列顺序 = 等值列在前、排序/范围列在后。删除冗余索引需确认无其他查询依赖（可用 <code>sys.schema_unused_indexes</code> 复核）。</div>
+
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="搜索 SQL ID / 表名 / 索引名…" aria-label="搜索">
+    <button id="copyAll">复制全部 DDL</button>
+    <span id="cnt" style="color:var(--mut);font-size:12px">20 条</span>
+  </div>
+  <div id="list"></div>
+
+  <div class="foot">
+    <p>来源：模拟生成（虚构数据，用于演示诊断流程）· DDL 语法与 MySQL 8.0 对齐</p>
+    <p>文件：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-2/eval-3-multi-artifact-split/with_skill/outputs/sub-index.html · 会话：eval-3-multi-artifact-split</p>
+  </div>
+</div>
+
+<script>
+const IDX=[
+{id:"q-01",tbl:"orders",name:"idx_status_amount",ddl:"ALTER TABLE orders ADD INDEX idx_status_amount (status, amount);",gain:"big",expect:"4.2s → 90ms（扫描 820 万 → 约 2 万）",why:"等值 status 在前、范围 amount 在后，覆盖查询条件，避免 820 万行回表过滤。"},
+{id:"q-02",tbl:"orders",name:"idx_status_created",ddl:"ALTER TABLE orders ADD INDEX idx_status_created (status, created_at);",gain:"big",expect:"3.6s → 120ms（540 万 → 约 1.5 万行），UPDATE 锁范围同步缩小",why:"批量 UPDATE 条件两列建成复合索引，避免锁全表；建议拆分小批次执行。"},
+{id:"q-03",tbl:"order_items",name:"idx_order_id",ddl:"ALTER TABLE order_items ADD INDEX idx_order_id (order_id);",gain:"big",expect:"2.8s → 40ms，消除 hash join",why:"被驱动表 join 列必须建索引；唯一键冲突则直接建 UNIQUE KEY。"},
+{id:"q-04",tbl:"users",name:"idx_province",ddl:"ALTER TABLE users ADD INDEX idx_province (province);",gain:"mid",expect:"1.9s → 300ms，去掉临时表+filesort",why:"GROUP BY 列建索引后可为紧凑索引扫描，覆盖 31 个分组。"},
+{id:"q-05",tbl:"products",name:"idx_category_created",ddl:"ALTER TABLE products ADD INDEX idx_category_created (category, created_at);",gain:"mid",expect:"1.5s → 35ms，去掉 filesort",why:"排序列并入复合索引，LIMIT 20 只在索引上完成前 20 条。"},
+{id:"q-06",tbl:"orders",name:"idx_created_at",ddl:"ALTER TABLE orders ADD INDEX idx_created_at (created_at);",gain:"mid",expect:"980ms → 60ms",why:"COUNT 区间走索引，秒级覆盖扫描。"},
+{id:"q-07",tbl:"products",name:"(无)",ddl:"-- 无法用索引解决，建议改写：FULLTEXT 索引 + MATCH…AGAINST 全文检索；或引入 ES/搜索中间件",gain:"mid",expect:"3.2s → 200ms（全文索引）",why:"前导通配符 LIKE 注定扫全表，索引救不了；等长关键词检索用 FULLTEXT 替代。"},
+{id:"q-08",tbl:"orders",name:"idx_buyer_uid / idx_express_no",ddl:"ALTER TABLE orders ADD INDEX idx_buyer_uid (buyer_uid), ADD INDEX idx_express_no (express_no);",gain:"mid",expect:"2.1s → 150ms（触发 index_merge 或改写 UNION ALL）",why:"OR 两分支各自建索引，MySQL 可选 index_merge；等值可改 UNION ALL 更稳。"},
+{id:"q-09",tbl:"users",name:"idx_created_at",ddl:"ALTER TABLE users ADD INDEX idx_created_at (created_at);",gain:"mid",expect:"1.7s → 80ms",why:"函数包裹索引列失效，索引建好 + 改写为 created_at >= ? AND created_at < ? 区间，双保险。"},
+{id:"q-10",tbl:"orders",name:"(无)",ddl:"-- 无需索引：改写为 order_no = '20260801000123'（引号），恢复走现有 idx_order_no",gain:"mid",expect:"2.4s → 2ms（命中已有索引）",why:"隐式类型转换导致索引失效，修正类型即可，无需加索引。"},
+{id:"q-11",tbl:"order_items",name:"idx_order_id_status",ddl:"ALTER TABLE order_items ADD INDEX idx_order_id_status (order_id, status);",gain:"big",expect:"3.9s → 90ms",why:"派生表物化成本高，改成索引覆盖的关联；或改写为子查询后再 JOIN。"},
+{id:"q-12",tbl:"order_items",name:"idx_status_sku",ddl:"ALTER TABLE order_items ADD INDEX idx_status_sku (status, sku);",gain:"mid",expect:"1.4s → 120ms（覆盖索引，免回表）",why:"DISTINCT 走覆盖索引直接在索引去重，去掉临时表。"},
+{id:"q-13",tbl:"orders",name:"idx_refund_status",ddl:"ALTER TABLE orders ADD INDEX idx_status (status); ALTER TABLE refunds ADD INDEX idx_refund_status (refund_status, order_id);",gain:"big",expect:"4.3s → 150ms",why:"核心是改写 NOT IN → NOT EXISTS / LEFT JOIN…WHERE t IS NULL，配合索引把双重全扫压掉。"},
+{id:"q-14",tbl:"orders",name:"(无)",ddl:"-- 无 DDL：改写 UNION → UNION ALL（channel 互斥无重复）",gain:"lo",expect:"2.6s → 900ms，去掉临时表",why:"逻辑上两个分支不可能重复，UNION 的去重纯属浪费。"},
+{id:"q-15",tbl:"order_items",name:"idx_order_id",ddl:"ALTER TABLE order_items ADD INDEX idx_order_id (order_id);",gain:"mid",expect:"5.5s → 1.2s（配合分批 + 关闭主从复制延迟敏感场景）",why:"JOIN 列索引消除 join buffer；INSERT…SELECT 建议拆批并避开业务高峰。"},
+{id:"q-16",tbl:"inventory",name:"idx_sku_code",ddl:"ALTER TABLE inventory ADD INDEX idx_sku_code (sku_code);",gain:"big",expect:"1.8s → 1ms，锁从全表收敛到单行",why:"UPDATE 高频且秒级，skucode 无索引是严重风险；上线后建议小步灰度。"},
+{id:"q-17",tbl:"orders",name:"idx_status_id",ddl:"ALTER TABLE orders ADD INDEX idx_status_id (status, id);",gain:"big",expect:"6.2s → 30ms",why:"深分页治本靠覆盖索引 + 游标（WHERE id > 上页最后 id LIMIT 20）；idx_status_id 是第一步。"},
+{id:"q-18",tbl:"orders",name:"idx_amount",ddl:"ALTER TABLE orders ADD INDEX idx_amount (amount);",gain:"mid",expect:"2.0s → 120ms",why:"范围查询列建索引，710 万 → 约 3 万行。"},
+{id:"q-19",tbl:"order_items",name:"(无)",ddl:"-- 建议加生成列：ALTER TABLE order_items ADD COLUMN created_date DATE AS (DATE(created)) STORED, ADD INDEX idx_created_date (created_date);",gain:"mid",expect:"1.6s → 100ms",why:"DATE() 函数分组无法走索引，用生成列把函数结果物化出来再建索引。"},
+{id:"q-20",tbl:"order_items",name:"idx_order_id_delivered",ddl:"ALTER TABLE order_items ADD INDEX idx_order_id_delivered (order_id, delivered);",gain:"big",expect:"4.9s → 80ms",why:"相关子查询每行探针靠索引，改成复合索引后探测降到单行；最优解是改写为 JOIN 半连接。"}
+];
+const GAIN={big:'<span class="gain g-big">收益大</span>',mid:'<span class="gain g-mid">收益中</span>',lo:'<span class="gain" style="background:#eee;color:#555">收益低</span>'};
+const $q=document.getElementById("q"),$list=document.getElementById("list"),$cnt=document.getElementById("cnt");
+function render(){
+  let kw=$q.value.trim().toLowerCase();
+  let rows=IDX.filter(i=>!kw||(i.id+i.tbl+i.name+i.ddl+i.why+i.expect).toLowerCase().includes(kw));
+  $cnt.textContent=rows.length+" 条";
+  $list.innerHTML=rows.map(i=>`
+    <details>
+      <summary>${i.id} · ${i.tbl} · 建议索引：${i.name} ${GAIN[i.gain]}<button style="float:right" onclick="event.preventDefault();copyDdl(this,'${i.id}')">复制 DDL</button></summary>
+      <div class="body">
+        <div class="row2">
+          <div class="field"><b>DDL</b><pre>${i.ddl}</pre></div>
+        </div>
+        <div class="field" style="margin-top:6px"><b>预期效果</b><span>${i.expect}</span></div>
+        <div class="field" style="margin-top:6px"><b>原理 / 注意</b><span>${i.why}</span></div>
+      </div>
+    </details>`).join("");
+}
+function copyDdl(btn,id){
+  let i=IDX.find(x=>x.id===id);
+  navigator.clipboard.writeText(i.ddl).then(()=>{btn.textContent="已复制 ✓";setTimeout(()=>btn.textContent="复制 DDL",1200)});
+}
+document.getElementById("copyAll").addEventListener("click",()=>{
+  let txt=IDX.map(i=>i.ddl.replace(/^--/,"--")).join("\n");
+  navigator.clipboard.writeText(txt).then(()=>{let b=document.getElementById("copyAll");b.textContent="已复制全部 ✓";setTimeout(()=>b.textContent="复制全部 DDL",1200)});
+});
+$q.addEventListener("input",render);render();
+</script>
+</body>
+</html>

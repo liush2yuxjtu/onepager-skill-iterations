@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>周趋势图表</title>
+<style>
+  :root{--bg:#0f1420;--card:#171e2e;--card2:#1d2637;--ink:#e7ecf3;--mut:#93a1b5;--line:#2a3550;
+    --accent:#4da3ff;--ok:#2fd07c;--warn:#ffb454;--bad:#ff5c6c;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:24px 18px 60px}
+  a.back{color:var(--accent);font-size:12.5px;text-decoration:none}
+  h1{font-size:22px;margin:10px 0 4px}
+  .sub{color:var(--mut);font-size:12.5px;margin-bottom:16px}
+  .verdict{background:linear-gradient(135deg,#1b2436,#14203a);border:1px solid #2e4a75;border-left:4px solid var(--accent);border-radius:10px;padding:12px 16px;margin:12px 0 18px;font-size:13.5px}
+  .verdict b{color:var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  .card h2{font-size:14px;margin:0 0 12px}
+  .card .hint{font-size:11.5px;color:var(--mut);margin:-8px 0 10px}
+  svg{width:100%;height:auto;display:block}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:11.5px;color:var(--mut)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+  .foot{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--mut)}
+  .foot code{font-family:ui-monospace,Menlo,monospace;background:var(--card2);padding:1px 6px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="main.html">← 返回结论页</a>
+  <h1>周趋势图表</h1>
+  <div class="sub">2026-08-05 ~ 08-11 · 内联 SVG，无外链 · 模拟数据</div>
+
+  <div class="verdict">慢查询次数呈<b>工作日高、周末低</b>：周一（22,900）与周五（21,800）为双峰，周末回落约 40%。平均耗时周五最差（1.31s）。根因<b>44% 为索引缺失</b>，与行动清单高优项一致。</div>
+
+  <div class="card">
+    <h2>每日慢查询次数与平均耗时</h2>
+    <div class="hint">柱 = 次数（万） · 线 = 平均耗时（s），双峰：周五、周一</div>
+    <div id="chart1"></div>
+  </div>
+
+  <div class="card">
+    <h2>根因分布</h2>
+    <div class="hint">索引缺失占 44%——先治索引是最高杠杆</div>
+    <div id="chart2"></div>
+  </div>
+
+  <div class="card">
+    <h2>按库分布</h2>
+    <div class="hint">order_service 独占 58%，是主战场</div>
+    <div id="chart3"></div>
+  </div>
+
+  <div class="foot">来源：<code>onepager</code> · <code>sub-trends.html</code> · 采集示意：<code>pt-query-digest --report</code>（模拟数据）。图表为内联 SVG。</div>
+</div>
+
+<script>
+const DAYS=[
+ {d:"08-05",w:"三",n:18400,a:1.12},
+ {d:"08-06",w:"四",n:16200,a:1.04},
+ {d:"08-07",w:"五",n:21800,a:1.31},
+ {d:"08-08",w:"六",n:15900,a:0.98},
+ {d:"08-09",w:"日",n:13600,a:0.92},
+ {d:"08-10",w:"一",n:22900,a:1.18},
+ {d:"08-11",w:"二",n:17900,a:1.09}];
+const W=760,H=300,P={l:50,r:16,t:20,b:34};
+const CAUSES=[["缺失索引",44,"#ff5c6c"],["filesort/临时表",18,"#ffb454"],["深分页",12,"#4da3ff"],["JOIN 顺序",11,"#2fd07c"],["锁竞争",8,"#b48cff"],["其他",7,"#93a1b5"]];
+const DBS=[["order_service",58,"#4da3ff"],["analytics",15,"#ffb454"],["product_service",12,"#2fd07c"],["inventory_service",8,"#ff5c6c"],["log_service",7,"#b48cff"]];
+
+function svg(id,inner){
+  const s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+inner+'</svg>';
+  document.getElementById(id).innerHTML=s;
+}
+function yAxis(max){
+  let g="";for(let i=0;i<=4;i++){const v=Math.round(max*i/4);const y=P.t+H-P.b-(H-P.t-P.b)*i/4;
+    g+=`<line x1="${P.l}" y1="${y}" x2="${W-P.r}" y2="${y}" stroke="#2a3550" stroke-width="1"/>
+        <text x="${P.l-8}" y="${y+4}" text-anchor="end" font-size="11" fill="#93a1b5">${v}</text>`;}
+  return g;
+}
+// Chart 1: dual-axis bar + line
+{
+  const maxN=24000,maxA=1.5,plotW=W-P.l-P.r,plotH=H-P.t-P.b;
+  const bw=plotW/DAYS.length;
+  const nY=v=>P.t+plotH-(v/maxN)*plotH;
+  const aY=v=>P.t+plotH-(v/maxA)*plotH;
+  let bars=DAYS.map((x,i)=>{
+    const bx=P.l+bw*i+bw*0.15,w=bw*0.7;
+    const peak=(x.n>20000);
+    return `<rect x="${bx}" y="${nY(x.n)}" width="${w}" height="${P.t+plotH-nY(x.n)}" rx="3"
+      fill="${peak?'#ffb454':'#4da3ff'}" opacity="0.85"><title>${x.d}: ${x.n} 次</title></rect>
+      <text x="${bx+w/2}" y="${H-10}" text-anchor="middle" font-size="11" fill="#93a1b5">${x.d}</text>
+      <text x="${bx+w/2}" y="${nY(x.n)-6}" text-anchor="middle" font-size="10" fill="${peak?'#ffb454':'#4da3ff'}">${(x.n/1000).toFixed(1)}w</text>`;
+  }).join("");
+  let line=DAYS.map((x,i)=>P.l+bw*i+bw/2).map((cx,i)=>{
+    const cy=aY(DAYS[i].a);
+    return `<circle cx="${cx}" cy="${cy}" r="4" fill="#2fd07c"><title>${DAYS[i].d} 平均 ${DAYS[i].a}s</title></circle>`;
+  }).join("");
+  let path=DAYS.map((x,i)=>`${i?'L':'M'}${P.l+bw*i+bw/2},${aY(x.a)}`).join(" ");
+  svg("chart1", yAxis(maxN)+bars+
+    `<path d="${path}" fill="none" stroke="#2fd07c" stroke-width="2.5"/>`+line+
+    `<text x="${P.l}" y="16" font-size="11" fill="#93a1b5">慢查询次数(柱)</text>
+     <text x="${P.l+120}" y="16" font-size="11" fill="#2fd07c">平均耗时 s(线)</text>`);
+}
+// Chart 2 + 3: donut
+function donut(id,data,cx,cy,r){
+  let cur=0,g="";const R=r,IR=r*0.62;
+  data.forEach(d=>{
+    const a0=cur*Math.PI*2/100,a1=(cur+d[1])*Math.PI*2/100;
+    const large=a1-a0>Math.PI?1:0;
+    const x0=cx+R*Math.cos(a0-Math.PI/2),y0=cy+R*Math.sin(a0-Math.PI/2);
+    const x1=cx+R*Math.cos(a1-Math.PI/2),y1=cy+R*Math.sin(a1-Math.PI/2);
+    const ix0=cx+IR*Math.cos(a1-Math.PI/2),iy0=cy+IR*Math.sin(a1-Math.PI/2);
+    const ix1=cx+IR*Math.cos(a0-Math.PI/2),iy1=cy+IR*Math.sin(a0-Math.PI/2);
+    const mid=a0+(a1-a0)/2;
+    const lx=cx+(R+16)*Math.cos(mid-Math.PI/2),ly=cy+(R+16)*Math.sin(mid-Math.PI/2);
+    g+=`<path d="M${x0},${y0} A${R},${R} 0 ${large} 1 ${x1},${y1} L${ix0},${iy0} A${IR},${IR} 0 ${large} 0 ${ix1},${iy1} Z" fill="${d[2]}"><title>${d[0]} ${d[1]}%</title></path>
+      <text x="${lx}" y="${ly}" text-anchor="middle" font-size="11" fill="#e7ecf3">${d[1]}%</text>`;
+    cur+=d[1];
+  });
+  g+=`<text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="20" fill="#e7ecf3">${data[0][1]}%</text>`;
+  svg(id,g);
+}
+donut("chart2",CAUSES,160,150,105);
+donut("chart3",DBS,160,150,105);
+// legends
+document.getElementById("chart2").insertAdjacentHTML("afterend",
+ '<div class="legend">'+CAUSES.map(c=>`<span><i style="background:${c[2]}"></i>${c[0]}</span>`).join("")+'</div>');
+document.getElementById("chart3").insertAdjacentHTML("afterend",
+ '<div class="legend">'+DBS.map(c=>`<span><i style="background:${c[2]}"></i>${c[0]}</span>`).join("")+'</div>');
+</script>
+</body>
+</html>

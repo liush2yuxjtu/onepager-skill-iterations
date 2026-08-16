@@ -1,0 +1,13 @@
+{
+  "eval_id": 3,
+  "eval_name": "mysql-multipage",
+  "prompt": "帮我做一份 MySQL 慢查询性能诊断报告（虚构数据即可）。数据量很大：Top 20 慢 SQL 明细、每条的执行计划分析、索引建议、周趋势图表、还有一份给 DBA 的行动清单。内容太多一个页面装不下，我想先看总结论，然后按需点开每个部分的详细内容。请生成完整的 HTML 交付物。",
+  "assertions": [
+    "Output produces a main.html plus multiple sub-*.html files, not one monolith",
+    "main.html is verdict-first with a one-line summary per section",
+    "main.html references sub pages via relative-path links or iframes",
+    "Each sub HTML is self-contained and independently openable",
+    "main.html stays under 50KB and does not inline sub content",
+    "Opening the deliverable offline from a local folder shows all pages"
+  ]
+}

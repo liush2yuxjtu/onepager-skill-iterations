@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>动作矩阵 · 设计稿 V1 vs WebApp V2</title>
+<style>
+  :root{--ink:#111;--mut:#666;--line:#ddd;--full:#16a34a;--part:#d97706;--gap:#dc2626;--ovf:#2563eb;--bg:#fafafa}
+  *{box-sizing:border-box}
+  body{font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);margin:0;padding:24px}
+  a.back{display:inline-block;margin-bottom:14px;color:var(--ovf);text-decoration:none;font-size:13px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:13px;margin:0 0 14px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .bar input{flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:13px}
+  .bar .cnt{font-size:12px;color:var(--mut)}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .chip{padding:3px 10px;border:1px solid var(--line);border-radius:99px;font-size:12px;cursor:pointer;background:#fff;color:var(--ink)}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+  th{background:#f3f3f3;cursor:pointer;user-select:none;white-space:nowrap;position:sticky;top:0}
+  th .ar{opacity:.5;font-size:10px}
+  th.sorted .ar{opacity:1}
+  tr:hover td{background:#f6faff}
+  td.act{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#444}
+  .st{font-size:11px;font-weight:600;border-radius:99px;padding:1px 8px;color:#fff;white-space:nowrap}
+  .st.full{background:var(--full)}.st.part{background:var(--part)}.st.gap{background:var(--gap)}.st.ovf{background:var(--ovf)}
+  .src{font-size:11px;color:var(--mut)}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:10px 0}
+  .dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:-1px}
+  .sum{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:13px}
+  .sum b{font-size:20px}
+  .sum .s{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 14px}
+  .sum .s.full{border-left:4px solid var(--full)}
+  .sum .s.gap{border-left:4px solid var(--gap)}
+  .sum .s.ovf{border-left:4px solid var(--ovf)}
+  footer{margin-top:20px;font-size:11px;color:var(--mut);border-top:1px solid var(--line);padding-top:10px;line-height:1.7}
+  code{background:#eee;border-radius:4px;padding:0 4px;font-size:11px}
+</style>
+</head>
+<body>
+<a class="back" href="main.html">← 返回主报告 main.html</a>
+<h1>动作矩阵 · 设计稿 V1 vs WebApp V2</h1>
+<p class="sub">全部 23 条交互动作（15 条设计意图 + 8 条实现独有）逐条对照。搜索 / 点表头排序 / 点徽章筛选，均为窄网关。</p>
+
+<div class="sum">
+  <div class="s full"><b id="nFull">0</b><br>全落地</div>
+  <div class="s"><b id="nPart">0</b><br>部分落地</div>
+  <div class="s gap"><b id="nGap">0</b><br>缺口</div>
+  <div class="s ovf"><b id="nOvf">0</b><br>溢出</div>
+</div>
+
+<div class="bar">
+  <input id="q" placeholder="搜索动作 / 标签（如 ai-suggest、设置、导出）…">
+  <span class="cnt" id="cnt">23 / 23 行</span>
+</div>
+<div class="filters" id="chips">
+  <span class="chip" data-f="full">全落地</span>
+  <span class="chip" data-f="gap">缺口</span>
+  <span class="chip" data-f="ovf">溢出</span>
+  <span class="chip" data-f="part">部分</span>
+</div>
+
+<table id="tbl">
+  <thead><tr>
+    <th data-k="domain">域 <span class="ar">▲</span></th>
+    <th data-k="action">动作 ID <span class="ar">▲</span></th>
+    <th data-k="design">设计稿标签</th>
+    <th data-k="impl">实现标签</th>
+    <th data-k="fid">Fidelity <span class="ar">▲</span></th>
+    <th data-k="note">备注</th>
+  </tr></thead>
+  <tbody id="tb"></tbody>
+</table>
+
+<div class="legend">
+  <span><span class="dot" style="background:var(--full)"></span>全落地：两侧一致</span>
+  <span><span class="dot" style="background:var(--part)"></span>部分：语义降级</span>
+  <span><span class="dot" style="background:var(--gap)"></span>缺口：仅设计有</span>
+  <span><span class="dot" style="background:var(--ovf)"></span>溢出：仅实现有（工程超越）</span>
+</div>
+
+<script>
+const ROWS = [
+  {domain:"对话", action:"chat-send", design:"发送消息", impl:"发送", fid:"full", note:"实现自标「同设计」"},
+  {domain:"对话", action:"chat-attach", design:"上传附件", impl:"附件", fid:"full", note:""},
+  {domain:"对话", action:"chat-emoji", design:"表情", impl:"表情", fid:"full", note:""},
+  {domain:"对话", action:"chat-history", design:"历史记录", impl:"历史", fid:"full", note:""},
+  {domain:"对话", action:"chat-transfer", design:"转人工", impl:"转人工", fid:"full", note:""},
+  {domain:"对话", action:"chat-ai-suggest", design:"—", impl:"AI 建议回复", fid:"ovf", note:"设计未规划 · 新增徽章"},
+  {domain:"对话", action:"chat-voice", design:"—", impl:"语音转文字", fid:"ovf", note:"设计未规划 · 新增徽章"},
+  {domain:"工单", action:"ticket-create", design:"新建工单", impl:"新建", fid:"full", note:""},
+  {domain:"工单", action:"ticket-assign", design:"指派", impl:"指派", fid:"full", note:""},
+  {domain:"工单", action:"ticket-priority", design:"改优先级", impl:"优先级", fid:"full", note:""},
+  {domain:"工单", action:"ticket-close", design:"关闭", impl:"关闭", fid:"full", note:""},
+  {domain:"工单", action:"ticket-merge", design:"—", impl:"合并工单", fid:"ovf", note:"设计未规划 · 新增徽章"},
+  {domain:"报表", action:"report-daily", design:"日报", impl:"日报", fid:"full", note:""},
+  {domain:"报表", action:"report-weekly", design:"周报", impl:"周报", fid:"full", note:""},
+  {domain:"报表", action:"report-export", design:"导出", impl:"导出", fid:"full", note:""},
+  {domain:"设置", action:"settings-profile", design:"个人资料", impl:"—", fid:"gap", note:"设置页整体未交付"},
+  {domain:"设置", action:"settings-sla", design:"SLA 配置", impl:"—", fid:"gap", note:"设置页整体未交付"},
+  {domain:"设置", action:"settings-roster", design:"排班", impl:"—", fid:"gap", note:"设置页整体未交付"},
+  {domain:"知识库", action:"kb-create", design:"—", impl:"新建知识", fid:"ovf", note:"实现新增域 · 设计未规划"},
+  {domain:"知识库", action:"kb-search", design:"—", impl:"搜索", fid:"ovf", note:"实现新增域 · 设计未规划"},
+  {domain:"知识库", action:"kb-tag", design:"—", impl:"打标签", fid:"ovf", note:"实现新增域 · 设计未规划"},
+  {domain:"智能分析", action:"ana-sentiment", design:"—", impl:"情绪分析", fid:"ovf", note:"实现新增域 · 设计未规划"},
+  {domain:"智能分析", action:"ana-topic", design:"—", impl:"主题聚类", fid:"ovf", note:"实现新增域 · 设计未规划"},
+];
+const FNAME = {full:"全落地", part:"部分落地", gap:"缺口", ovf:"溢出"};
+let fOn = new Set();
+
+function refresh(){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  let rows = ROWS.filter(r=>{
+    if(fOn.size && !fOn.has(r.fid)) return false;
+    if(!q) return true;
+    return (r.domain+r.action+r.design+r.impl+r.note).toLowerCase().includes(q);
+  });
+  document.getElementById("cnt").textContent = rows.length+" / "+ROWS.length+" 行";
+  const tb = document.getElementById("tb");
+  tb.innerHTML = rows.map(r=>`<tr>
+    <td>${r.domain}</td>
+    <td class="act">${r.action}</td>
+    <td class="src">${r.design}</td>
+    <td class="src">${r.impl}</td>
+    <td><span class="st ${r.fid}">${FNAME[r.fid]}</span></td>
+    <td class="src">${r.note}</td>
+  </tr>`).join("");
+  document.getElementById("nFull").textContent = rows.filter(r=>r.fid==="full").length;
+  document.getElementById("nPart").textContent = rows.filter(r=>r.fid==="part").length;
+  document.getElementById("nGap").textContent = rows.filter(r=>r.fid==="gap").length;
+  document.getElementById("nOvf").textContent = rows.filter(r=>r.fid==="ovf").length;
+}
+
+let sortK = null, sortD = 1;
+document.querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{
+  const k = th.dataset.k;
+  if(sortK===k) sortD*=-1; else {sortK=k; sortD=1;}
+  ROWS.sort((a,b)=>String(a[k]).localeCompare(String(b[k]))*sortD);
+  document.querySelectorAll("th").forEach(x=>x.classList.remove("sorted"));
+  th.classList.add("sorted");
+  refresh();
+}));
+document.getElementById("q").addEventListener("input", refresh);
+document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{
+  const f=c.dataset.f;
+  fOn.has(f)?fOn.delete(f):fOn.add(f);
+  c.classList.toggle("on", fOn.has(f));
+  refresh();
+}));
+(function(){
+  let h = location.hash.replace("#","");
+  try { h = decodeURIComponent(h); } catch(e) {}
+  if(h) { document.getElementById("q").value = h; }
+  refresh();
+})();
+</script>
+
+<footer>
+  数据来源：逐条人工标注自 <code>design-v1.html</code>（15 动作）与 <code>webapp-v2.html</code>（20 动作），绝对路径 <code>/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-4/eval-5-design-webapp-drift/inputs/</code> ·
+  采集时间：2026-08-10 · 生成器：onepager skill · eval-5-design-webapp-drift · 会话旧 skill（old_skill）
+</footer>
+</body>
+</html>

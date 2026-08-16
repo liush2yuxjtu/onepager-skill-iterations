@@ -1,0 +1,15 @@
+{
+  "eval_id": 2,
+  "eval_name": "bloated-acceptance-report-slimming",
+  "prompt": "我上个月做的项目验收报告 HTML 太臃肿了，一个页面有 6 个大 tab、每 tab 都是几十行表格，评审说看不动。帮我把这份报告重做成一个精炼的交互式单页：结论放最上面，细节折叠起来，但搜索、筛选、可点击的条目、勾选清单这些交互一个都不能丢。没有真实数据可虚构（如某 Web 项目验收：模块清单、Bug 统计、测试结果）。",
+  "assertions": [
+    "verdict_first: 标题下 5 秒内出现一句话结论（verdict / TL;DR）",
+    "search_input: 存在搜索框 input.search",
+    "sortable_header: 表头可点击排序（th 点击监听或 data-sort）",
+    "checklist_checkbox: 存在可勾选的行动清单（input[type=checkbox]）",
+    "copy_button: 存在复制按钮（navigator.clipboard 或 #copybtn）",
+    "evidence_collapsed: 全量证据在 <details> 或折叠区，默认不可见",
+    "no_cdn: 无 CDN / 外链脚本资源",
+    "provenance_footer: 页脚有来源标注（项目名 / 路径 / 会话 ID）"
+  ]
+}

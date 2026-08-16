@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MySQL 慢查询诊断报告 · onepager</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#161c2b; --panel2:#1d2540; --line:#26304d;
+    --fg:#e8edf7; --dim:#8b97b5; --dim2:#5c6678;
+    --accent:#4f8cff; --accent2:#22c1a3;
+    --p0:#ff5d6c; --p1:#ffb454; --p2:#5ad1ff;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{background:var(--bg); color:var(--fg); font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; padding:0 16px 60px}
+  .wrap{max-width:980px; margin:0 auto}
+
+  /* header */
+  header{padding:34px 0 20px}
+  .kicker{font-family:var(--mono); font-size:12px; color:var(--accent2); letter-spacing:.14em; text-transform:uppercase; margin-bottom:8px}
+  h1{font-size:26px; font-weight:750; letter-spacing:-.01em}
+  .meta-line{color:var(--dim); font-size:12px; font-family:var(--mono); margin-top:6px}
+
+  /* verdict */
+  .verdict{margin:18px 0 8px; padding:16px 18px; border-radius:12px; border:1px solid var(--line);
+    background:linear-gradient(135deg, rgba(79,140,255,.14), rgba(34,193,163,.10));
+    font-size:15px; line-height:1.7}
+  .verdict b{color:var(--accent2)}
+  .verdict .tl{color:var(--dim); font-size:12px; font-family:var(--mono); display:block; margin-bottom:4px; letter-spacing:.08em}
+
+  /* kpis */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 0 6px}
+  .kpi{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px}
+  .kpi .n{font-size:22px; font-weight:750; font-variant-numeric:tabular-nums}
+  .kpi .n small{font-size:12px; font-weight:500; color:var(--dim); margin-left:2px}
+  .kpi .l{font-size:12px; color:var(--dim); margin-top:2px}
+  .up{color:var(--p0)} .ok{color:var(--accent2)}
+
+  /* hot list */
+  .hot{display:grid; grid-template-columns:minmax(0,1fr); gap:8px; margin:14px 0}
+  .hot-row{display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--panel);
+    border:1px solid var(--line); border-radius:10px; font-size:13px}
+  .hot-row:hover{border-color:var(--accent)}
+  .badge{flex:none; font-family:var(--mono); font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px}
+  .b-P0{background:rgba(255,93,108,.16); color:var(--p0); border:1px solid rgba(255,93,108,.4)}
+  .b-P1{background:rgba(255,180,84,.14); color:var(--p1); border:1px solid rgba(255,180,84,.35)}
+  .b-P2{background:rgba(90,209,255,.12); color:var(--p2); border:1px solid rgba(90,209,255,.3)}
+  .hot-row .nm{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .hot-row .k{flex:none; font-family:var(--mono); color:var(--dim); font-size:12px}
+  .hot-row .k b{color:var(--fg)}
+  .focus-link{flex:none; color:var(--accent); font-family:var(--mono); font-size:12px; text-decoration:none; border:1px solid var(--line); padding:3px 10px; border-radius:7px}
+  .focus-link:hover{border-color:var(--accent); background:rgba(79,140,255,.1)}
+  .focus-link.na{color:var(--dim2); cursor:default}
+  .focus-link.na:hover{border-color:var(--line); background:none}
+
+  /* section gates */
+  details.gate{background:var(--panel); border:1px solid var(--line); border-radius:12px; margin:12px 0; overflow:hidden}
+  details.gate>summary{list-style:none; cursor:pointer; padding:14px 16px; display:flex; align-items:center; gap:12px; user-select:none}
+  details.gate>summary::-webkit-details-marker{display:none}
+  details.gate>summary:hover{background:var(--panel2)}
+  .gate .chev{transition:transform .18s; color:var(--dim); font-size:12px}
+  details[open]>.gate-head .chev, details.gate[open]>summary .chev{transform:rotate(90deg)}
+  .gate-title{flex:1; font-size:15px; font-weight:700}
+  .gate-title .sub{display:block; font-size:12px; font-weight:400; color:var(--dim); margin-top:1px}
+  .gate-stat{flex:none; font-family:var(--mono); font-size:12px; color:var(--dim); text-align:right}
+  .gate-stat b{color:var(--accent2); font-size:14px}
+  .gate-body{padding:4px 16px 16px; border-top:1px solid var(--line)}
+
+  /* toolbar */
+  .toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:12px 0 10px}
+  .toolbar input[type=search]{flex:1; min-width:200px; background:var(--panel2); border:1px solid var(--line); color:var(--fg);
+    border-radius:9px; padding:8px 12px; font-size:13px; outline:none}
+  .toolbar input[type=search]:focus{border-color:var(--accent)}
+  .chips{display:flex; gap:6px}
+  .chip{cursor:pointer; font-family:var(--mono); font-size:12px; padding:5px 12px; border-radius:999px; border:1px solid var(--line); color:var(--dim); background:var(--panel2)}
+  .chip.active{background:var(--accent); border-color:var(--accent); color:#fff}
+  .count-note{font-size:12px; color:var(--dim); font-family:var(--mono)}
+
+  /* table */
+  .tbl-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:10px}
+  table{width:100%; border-collapse:collapse; font-size:12.5px; min-width:820px}
+  thead th{background:var(--panel2); color:var(--dim); font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+    padding:9px 10px; text-align:left; white-space:nowrap; cursor:pointer; user-select:none; font-family:var(--mono)}
+  thead th:hover{color:var(--fg)}
+  thead th .arrow{color:var(--accent); font-size:10px; margin-left:3px}
+  tbody td{padding:9px 10px; border-top:1px solid var(--line); vertical-align:top; font-variant-numeric:tabular-nums}
+  tbody tr:nth-child(even){background:rgba(255,255,255,.015)}
+  tbody tr:hover{background:rgba(79,140,255,.07)}
+  .sql-cell{font-family:var(--mono); font-size:11.5px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:340px}
+  .tbl-name{color:var(--accent2); font-family:var(--mono); font-size:11.5px; white-space:nowrap}
+  .num{font-family:var(--mono)}
+  .all{color:var(--p0); font-family:var(--mono)}
+  .rows-bar{display:inline-block; min-width:34px}
+
+  /* exec plan cards */
+  .plan-card{border:1px solid var(--line); border-radius:10px; margin:10px 0; overflow:hidden; background:var(--panel2)}
+  .plan-card>summary{list-style:none; cursor:pointer; padding:11px 14px; display:flex; align-items:center; gap:10px; font-size:13px}
+  .plan-card>summary::-webkit-details-marker{display:none}
+  .plan-card>summary:hover{background:rgba(255,255,255,.03)}
+  .plan-card .sc{font-family:var(--mono); color:var(--dim); font-size:11px}
+  .plan-body{padding:10px 14px 14px; border-top:1px solid var(--line)}
+  .plan-body table{min-width:600px; font-size:11.5px}
+  .diag-line{font-size:12.5px; margin:10px 0 4px}
+  .diag-line b{color:var(--p1)}
+  .sugg{background:rgba(34,193,163,.08); border:1px dashed rgba(34,193,163,.4); border-radius:8px; padding:8px 12px;
+    font-family:var(--mono); font-size:11.5px; color:var(--accent2); margin-top:8px; word-break:break-all}
+
+  /* index suggestions */
+  .idx-row{display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--line); font-size:12.5px}
+  .idx-row:last-child{border-bottom:none}
+  .idx-num{flex:none; font-family:var(--mono); color:var(--dim2); width:22px; text-align:right}
+  .idx-meta{flex:1; min-width:0}
+  .idx-ddl{font-family:var(--mono); font-size:11.5px; color:var(--accent2); word-break:break-all; margin-top:3px}
+  .idx-impact{font-size:12px; color:var(--dim); margin-top:3px}
+  .btn{flex:none; cursor:pointer; font-family:var(--mono); font-size:11px; color:var(--accent); background:none; border:1px solid var(--line);
+    padding:3px 10px; border-radius:7px}
+  .btn:hover{border-color:var(--accent); background:rgba(79,140,255,.1)}
+  .btn:active{transform:translateY(1px)}
+
+  /* trend charts */
+  .chart-grid{display:grid; gap:14px; margin-top:10px}
+  @media(min-width:860px){.chart-grid{grid-template-columns:1fr 1fr}}
+  .chart{background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:14px}
+  .chart h4{font-size:13px; margin-bottom:10px; color:var(--fg)}
+  .chart h4 span{color:var(--dim); font-weight:400; font-size:11.5px; margin-left:6px}
+  .legend{font-size:11px; color:var(--dim); display:flex; gap:14px; margin-top:8px}
+  .legend i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px}
+  .hbar-row{display:flex; align-items:center; gap:10px; margin:7px 0; font-size:12px}
+  .hbar-lbl{flex:none; width:70px; color:var(--dim); text-align:right; font-family:var(--mono)}
+  .hbar-track{flex:1; height:16px; background:rgba(255,255,255,.04); border-radius:5px; overflow:hidden}
+  .hbar-fill{height:100%; border-radius:5px; background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .hbar-pct{flex:none; width:42px; font-family:var(--mono); color:var(--fg)}
+
+  /* checklist */
+  .check-item{display:flex; gap:12px; align-items:flex-start; padding:10px 4px; border-bottom:1px solid var(--line); font-size:13px}
+  .check-item:last-child{border-bottom:none}
+  .check-item input{flex:none; margin-top:3px; width:16px; height:16px; accent-color:var(--accent2); cursor:pointer}
+  .check-body{flex:1; min-width:0}
+  .check-tags{display:flex; gap:6px; margin-top:4px; flex-wrap:wrap}
+  .tag{font-size:11px; font-family:var(--mono); padding:1px 8px; border-radius:999px; border:1px solid var(--line); color:var(--dim)}
+  .tag.owner{color:var(--accent)}
+  .tag.impact{color:var(--accent2)}
+  .tag.effort{color:var(--p1)}
+  .check-item.done .check-body{opacity:.55; text-decoration:line-through}
+  .prog-wrap{display:flex; align-items:center; gap:12px; margin:10px 0}
+  .prog{flex:1; height:10px; background:rgba(255,255,255,.05); border-radius:999px; overflow:hidden}
+  .prog-fill{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .25s}
+  .prog-txt{flex:none; font-family:var(--mono); font-size:12px; color:var(--dim)}
+  .prog-txt b{color:var(--accent2)}
+  .md-box{width:100%; min-height:90px; background:var(--panel2); border:1px solid var(--line); color:var(--fg);
+    border-radius:9px; padding:10px; font-family:var(--mono); font-size:11.5px; resize:vertical; margin-top:10px}
+
+  /* footer */
+  footer{margin-top:34px; border-top:1px solid var(--line); padding-top:16px; color:var(--dim2); font-size:12px; font-family:var(--mono); line-height:1.9}
+  footer b{color:var(--dim)}
+  .note{border:1px solid var(--line); background:rgba(255,180,84,.06); border-radius:8px; padding:8px 12px; font-size:12px; color:var(--dim); margin:10px 0}
+  @media(max-width:640px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    h1{font-size:21px}
+    .hot-row .k{display:none}
+    .verdict{font-size:14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">MySQL Performance Diagnosis · onepager</div>
+  <h1>MySQL 慢查询性能诊断报告</h1>
+  <div class="meta-line">实例 db-prod-01 (8.0.36) · 采样窗口 2026-08-03 ~ 2026-08-09 · 数据为虚构演示数据</div>
+</header>
+
+<div class="verdict">
+  <span class="tl">TL;DR · 5 秒结论</span>
+  本周慢查询总量 <b>2,672 次</b>，P95 延迟 <b>2.9s</b>，其中 <b>top 5 慢 SQL 吃掉 61% 的总耗时</b>。根因不是"SQL 写法复杂"，而是
+  <b>4 张表缺复合索引</b>（orders / coupons / order_items / inventory）+ 1 处 N+1 联查 + 1 个全表 LIKE。
+  周末（周六 512 次、周日 486 次）出现持续抬升，为<b>促销活动流量</b>而非瞬时尖峰。
+  已给出 12 项 DBA 行动清单，其中 5 项 P0 属"加索引即可，预计耗时 -85% 以上"。
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="n">2,672</div><div class="l">本周慢查询总量 <small>(&gt;1s)</small></div></div>
+  <div class="kpi"><div class="n up">+41%</div><div class="l">环比上周 <small>1,890 → 2,672</small></div></div>
+  <div class="kpi"><div class="n">853<span style="font-size:12px">ms</span></div><div class="l">平均执行时长</div></div>
+  <div class="kpi"><div class="n">6,310<span style="font-size:12px">s</span></div><div class="l">本周累计 SQL 耗时</div></div>
+</div>
+
+<h2 style="font-size:15px; margin:18px 0 4px">热源 TOP 5 · 每项一扇门</h2>
+<div class="hot">
+  <div class="hot-row">
+    <span class="badge b-P0">P0</span>
+    <span class="nm">#1 每日对账拉单 · orders 全表扫描 + filesort</span>
+    <span class="k">avg <b>1240ms</b> · 1120 次/周 · <b>1390s</b></span>
+    <a class="focus-link na" title="本环境无 pane 管理器，聚焦不可用" href="#">聚焦 →</a>
+  </div>
+  <div class="hot-row">
+    <span class="badge b-P0">P0</span>
+    <span class="nm">#2 用户订单历史 N+1 联查 · order_items 全表扫描</span>
+    <span class="k">avg <b>960ms</b> · 3450 次/周 · <b>3312s</b></span>
+    <a class="focus-link na" title="本环境无 pane 管理器，聚焦不可用" href="#">聚焦 →</a>
+  </div>
+  <div class="hot-row">
+    <span class="badge b-P0">P0</span>
+    <span class="nm">#6 批量发货 UPDATE · status+updated_at 无索引</span>
+    <span class="k">avg <b>3400ms</b> · 24 次/周 · <b>82s</b></span>
+    <a class="focus-link na" title="本环境无 pane 管理器，聚焦不可用" href="#">聚焦 →</a>
+  </div>
+  <div class="hot-row">
+    <span class="badge b-P0">P0</span>
+    <span class="nm">#13 优惠券核销 UPDATE · coupons 全表扫描</span>
+    <span class="k">avg <b>2100ms</b> · 320 次/周 · <b>672s</b></span>
+    <a class="focus-link na" title="本环境无 pane 管理器，聚焦不可用" href="#">聚焦 →</a>
+  </div>
+  <div class="hot-row">
+    <span class="badge b-P0">P0</span>
+    <span class="nm">#17 库存扣减 UPDATE · sku_code 无唯一索引 + 行锁争用</span>
+    <span class="k">avg <b>420ms</b> · 15000 次/周 · <b>6300s</b></span>
+    <a class="focus-link na" title="本环境无 pane 管理器，聚焦不可用" href="#">聚焦 →</a>
+  </div>
+</div>
+
+<div style="display:flex; gap:10px; margin:16px 0 0">
+  <button class="btn" id="btn-expand-all" style="padding:7px 14px">展开全部章节</button>
+  <button class="btn" id="btn-collapse-all" style="padding:7px 14px">折叠全部</button>
+</div>
+
+<!-- ═══════════ SECTION 1 · TOP 20 明细 ═══════════ -->
+<details class="gate" id="sec-top20">
+  <summary>
+    <span class="chev">▸</span>
+    <span class="gate-title">Top 20 慢 SQL 明细
+      <span class="sub">可搜索 · 可排序 · 可按优先级过滤 · 点击表头切换升降序</span>
+    </span>
+    <span class="gate-stat"><b>20</b> 条 · 累计 <b>31,420s</b></span>
+  </summary>
+  <div class="gate-body">
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="搜索 SQL / 表名 / 诊断关键词…">
+      <div class="chips" id="chips">
+        <span class="chip active" data-p="ALL">全部</span>
+        <span class="chip" data-p="P0">P0</span>
+        <span class="chip" data-p="P1">P1</span>
+        <span class="chip" data-p="P2">P2</span>
+      </div>
+      <span class="count-note" id="count-note">显示 20 / 20 条</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-k="id">#</th>
+            <th data-k="title" style="cursor:default">SQL 指纹</th>
+            <th data-k="tbl">表</th>
+            <th data-k="avg_ms">avg(ms)</th>
+            <th data-k="max_ms">max(ms)</th>
+            <th data-k="calls">次数/周</th>
+            <th data-k="total_s">耗时(s)</th>
+            <th data-k="type">扫描</th>
+            <th data-k="rows_scanned">rows</th>
+            <th data-k="prio" style="cursor:default">级别</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="note">全量 20 条默认不铺开——用搜索/过滤按需取行。每条的 <b>执行计划分析</b> 与 <b>索引建议</b> 见下方对应章节，行号互相一致。</div>
+  </div>
+</details>
+
+<!-- ═══════════ SECTION 2 · 执行计划分析 ═══════════ -->
+<details class="gate" id="sec-plan">
+  <summary>
+    <span class="chev">▸</span>
+    <span class="gate-title">执行计划分析
+      <span class="sub">EXPLAIN 摘要 + 瓶颈判断 · 每行一卡，默认折叠</span>
+    </span>
+    <span class="gate-stat">共 <b>20</b> 个计划 · <b>9</b> 个全表扫描(ALL)</span>
+  </summary>
+  <div class="gate-body" id="plans"></div>
+</details>
+
+<!-- ═══════════ SECTION 3 · 索引建议 ═══════════ -->
+<details class="gate" id="sec-index">
+  <summary>
+    <span class="chev">▸</span>
+    <span class="gate-title">索引建议
+      <span class="sub">按表分组 · 可直接复制 DDL · 附预估收益与 DDL 风险</span>
+    </span>
+    <span class="gate-stat"><b>8</b> 条 DDL · 预计削减 <b>58%</b> 慢查询</span>
+  </summary>
+  <div class="gate-body" id="index-advice"></div>
+</details>
+
+<!-- ═══════════ SECTION 4 · 周趋势 ═══════════ -->
+<details class="gate" id="sec-trend">
+  <summary>
+    <span class="chev">▸</span>
+    <span class="gate-title">周趋势
+      <span class="sub">7 日慢查询量 · 平均延迟 · 按表分布（内联 SVG，无外链）</span>
+    </span>
+    <span class="gate-stat">周六峰值 <b>512</b> 次 · 周日 <b>486</b> 次</span>
+  </summary>
+  <div class="gate-body">
+    <div class="chart-grid">
+      <div class="chart">
+        <h4>7 日慢查询量与平均延迟<span>2026-08-03 ~ 08-09</span></h4>
+        <svg viewBox="0 0 760 320" width="100%" role="img" aria-label="7 日慢查询柱状图与平均延迟折线">
+          <!-- gridlines -->
+          <g stroke="#26304d" stroke-width="1">
+            <line x1="40" y1="280" x2="740" y2="280"/>
+            <line x1="40" y1="213" x2="740" y2="213" stroke-dasharray="3 4"/>
+            <line x1="40" y1="146" x2="740" y2="146" stroke-dasharray="3 4"/>
+            <line x1="40" y1="80"  x2="740" y2="80"  stroke-dasharray="3 4"/>
+            <line x1="40" y1="20"  x2="740" y2="20"  stroke-dasharray="3 4"/>
+          </g>
+          <!-- y labels -->
+          <g fill="#5c6678" font-size="11" font-family="ui-monospace,Menlo,monospace">
+            <text x="32" y="283" text-anchor="end">0</text>
+            <text x="32" y="149" text-anchor="end">256</text>
+            <text x="32" y="23"  text-anchor="end">512</text>
+          </g>
+          <!-- bars -->
+          <g>
+            <rect x="58"  y="121.5" width="64" height="158.5" rx="4" fill="#4f8cff" opacity=".9"/>
+            <rect x="158" y="133.2" width="64" height="146.8" rx="4" fill="#4f8cff" opacity=".9"/>
+            <rect x="258" y="105.2" width="64" height="174.8" rx="4" fill="#4f8cff" opacity=".9"/>
+            <rect x="358" y="127.1" width="64" height="152.9" rx="4" fill="#4f8cff" opacity=".9"/>
+            <rect x="458" y="62.6"  width="64" height="217.4" rx="4" fill="#ff5d6c" opacity=".9"/>
+            <rect x="558" y="20"    width="64" height="260"   rx="4" fill="#ff5d6c" opacity=".9"/>
+            <rect x="658" y="33.1"  width="64" height="246.9" rx="4" fill="#ff5d6c" opacity=".9"/>
+          </g>
+          <!-- latency line (secondary axis) -->
+          <g fill="none" stroke="#22c1a3" stroke-width="2.5">
+            <polyline points="90,103.2 190,108.4 290,92.8 390,100.6 490,61.6 590,33 690,43.4"/>
+          </g>
+          <g>
+            <circle cx="90" cy="103.2" r="4" fill="#0f1420" stroke="#22c1a3" stroke-width="2"/>
+            <circle cx="190" cy="108.4" r="4" fill="#0f1420" stroke="#22c1a3" stroke-width="2"/>
+            <circle cx="290" cy="92.8" r="4" fill="#0f1420" stroke="#22c1a3" stroke-width="2"/>
+            <circle cx="390" cy="100.6" r="4" fill="#0f1420" stroke="#22c1a3" stroke-width="2"/>
+            <circle cx="490" cy="61.6" r="4" fill="#0f1420" stroke="#22c1a3" stroke-width="2"/>
+            <circle cx="590" cy="33" r="4" fill="#0f1420" stroke="#22c1a3" stroke-width="2"/>
+            <circle cx="690" cy="43.4" r="4" fill="#0f1420" stroke="#22c1a3" stroke-width="2"/>
+          </g>
+          <!-- x labels -->
+          <g fill="#8b97b5" font-size="12" text-anchor="middle">
+            <text x="90" y="300">周一</text>
+            <text x="190" y="300">周二</text>
+            <text x="290" y="300">周三</text>
+            <text x="390" y="300">周四</text>
+            <text x="490" y="300">周五</text>
+            <text x="590" y="300">周六</text>
+            <text x="690" y="300">周日</text>
+          </g>
+          <g fill="#8b97b5" font-size="11" font-family="ui-monospace,Menlo,monospace">
+            <text x="90" y="113" text-anchor="middle" fill="#22c1a3">680</text>
+            <text x="190" y="118" text-anchor="middle" fill="#22c1a3">660</text>
+            <text x="290" y="103" text-anchor="middle" fill="#22c1a3">720</text>
+            <text x="390" y="111" text-anchor="middle" fill="#22c1a3">690</text>
+            <text x="490" y="72" text-anchor="middle" fill="#22c1a3">840</text>
+            <text x="590" y="43" text-anchor="middle" fill="#22c1a3">950</text>
+            <text x="690" y="53" text-anchor="middle" fill="#22c1a3">910</text>
+          </g>
+        </svg>
+        <div class="legend"><span><i style="background:#4f8cff"></i>慢查询次数（左轴）</span><span><i style="background:#ff5d6c"></i>促销日（周五~周日）</span><span><i style="background:#22c1a3"></i>平均延迟 ms（右轴）</span></div>
+      </div>
+      <div class="chart">
+        <h4>慢查询按表分布<span>本周合计</span></h4>
+        <div id="tbl-bars"></div>
+      </div>
+    </div>
+  </div>
+</details>
+
+<!-- ═══════════ SECTION 5 · DBA 行动清单 ═══════════ -->
+<details class="gate" id="sec-actions">
+  <summary>
+    <span class="chev">▸</span>
+    <span class="gate-title">DBA 行动清单
+      <span class="sub">勾选跟踪 · 进度自动统计 · 可一键复制为 Markdown 反馈</span>
+    </span>
+    <span class="gate-stat"><b id="done-n">0</b>/12 已完成</span>
+  </summary>
+  <div class="gate-body">
+    <div class="prog-wrap">
+      <div class="prog"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="prog-txt" id="prog-txt">0%</div>
+    </div>
+    <div id="actions"></div>
+    <div style="display:flex; gap:10px; margin:12px 0 4px; flex-wrap:wrap">
+      <button class="btn" id="btn-copy">复制为 Markdown</button>
+      <button class="btn" id="btn-reset">重置勾选</button>
+    </div>
+    <textarea class="md-box" id="md-out" placeholder="点击「复制为 Markdown」后，把决策状态贴回 agent 即可闭环。" readonly></textarea>
+  </div>
+</details>
+
+<footer>
+  <b>来源：</b>onepager 技能（窄门哲学）· SKILL.md 路径 /Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-2/skill-snapshot/SKILL.md<br>
+  <b>产物：</b>本文件为单文件自包含 HTML（无 CDN / 无外链 / 离线可开）<br>
+  <b>采集方式：</b>虚构演示数据（Eval 用例）· 采样窗口 2026-08-03 ~ 2026-08-09 · 生成时间 2026-08-09T23:20+08:00<br>
+  <b>聚焦服务：</b>本环境无 pane 管理器，窗口聚焦链接不可用（标注 "—"）；无后台服务需停止。<br>
+  <b>数据生命周期：</b>演示用假数据，仅用于评估 onepager 交付形态，不代表任何真实生产实例。
+</footer>
+
+</div>
+
+<script>
+/* ═══════ 数据（虚构演示） ═══════ */
+const SQLS = [
+ {id:1, title:"每日对账拉单 · status+created_at 过滤排序", tbl:"orders",
+  sql:"SELECT * FROM orders WHERE status='PAID' AND created_at>=? AND created_at<? ORDER BY created_at DESC LIMIT 20",
+  avg_ms:1240, max_ms:3100, calls:1120, type:"ALL", rows_scanned:2400000, rows_sent:20, prio:"P0",
+  plan:[["orders","ALL",null,null,2400000,"8%","Using where; Using filesort"]],
+  diag:"缺 (status, created_at) 复合索引 → 全表扫 240 万行再 filesort。大促期间该查询是每日对账程序主链路。",
+  idx:"ALTER TABLE orders ADD INDEX idx_status_created (status, created_at);"},
+ {id:2, title:"用户订单历史 N+1 · order_items 逐条回表", tbl:"order_items",
+  sql:"SELECT oi.* FROM order_items oi JOIN orders o ON oi.order_id=o.id WHERE o.user_id=? ORDER BY oi.created_at DESC",
+  avg_ms:960, max_ms:2400, calls:3450, type:"ALL", rows_scanned:4300000, rows_sent:25, prio:"P0",
+  plan:[["orders","eq_ref","PRIMARY","PRIMARY",1,"100%",""],["order_items","ALL",null,null,4300000,"12%","Using where; Using filesort"]],
+  diag:"order_items 无 (order_id, created_at) 索引，JOIN 内层全表扫 430 万行；应用层 N+1 放大，调用次数 3450/周。",
+  idx:"ALTER TABLE order_items ADD INDEX idx_order_created (order_id, created_at); -- 并改应用层为批量 JOIN"},
+ {id:3, title:"大促战报聚合 · GROUP BY user_id + SUM", tbl:"orders",
+  sql:"SELECT user_id, COUNT(*), SUM(amount) FROM orders WHERE created_at>=? AND created_at<? GROUP BY user_id ORDER BY SUM(amount) DESC LIMIT 50",
+  avg_ms:2100, max_ms:4800, calls:98, type:"ALL", rows_scanned:2400000, rows_sent:50, prio:"P1",
+  plan:[["orders","ALL",null,null,2400000,"100%","Using where; Using temporary; Using filesort"]],
+  diag:"瞬时聚合 240 万行 + 临时表 + filesort；实时算不合适，应改为预聚合汇总表（T+1）。",
+  idx:"不建索引可解（写法问题）；建议建 sales_daily_summary 汇总表，战报查询读汇总表。"},
+ {id:4, title:"热销榜 · 三表聚合", tbl:"orders",
+  sql:"SELECT p.id,p.name,SUM(oi.quantity) FROM order_items oi JOIN products p ON oi.product_id=p.id JOIN orders o ON oi.order_id=o.id WHERE o.created_at>=? AND o.created_at<? GROUP BY p.id ORDER BY 3 DESC LIMIT 20",
+  avg_ms:1850, max_ms:4200, calls:210, type:"ALL", rows_scanned:4300000, rows_sent:20, prio:"P1",
+  plan:[["orders","ALL",null,null,2400000,"100%","Using where"],["order_items","ALL",null,null,4300000,"25%","Using where; Using temporary; Using filesort"],["products","eq_ref","PRIMARY","PRIMARY",1,"100%",""]],
+  diag:"orders 无时间索引导致 240 万 + 430 万双重全扫；同类聚合建议走汇总表。",
+  idx:"ALTER TABLE orders ADD INDEX idx_created (created_at); -- 根治仍建议汇总表"},
+ {id:5, title:"用户订单列表 · status IN 多值", tbl:"orders",
+  sql:"SELECT * FROM orders WHERE user_id=? AND status IN ('PAID','REFUNDED')",
+  avg_ms:520, max_ms:1300, calls:8900, type:"ALL", rows_scanned:2400000, rows_sent:18, prio:"P1",
+  plan:[["orders","ALL",null,null,2400000,"30%","Using where"]],
+  diag:"无 (user_id, status) 索引，高频接口（8900 次/周）每次都全表扫，是调用量最大的慢查询。",
+  idx:"ALTER TABLE orders ADD INDEX idx_user_status (user_id, status);"},
+ {id:6, title:"批量发货 UPDATE · 全表定位待发货", tbl:"orders",
+  sql:"UPDATE orders SET status='SHIPPED' WHERE status='PAID' AND updated_at < ?",
+  avg_ms:3400, max_ms:8600, calls:24, type:"ALL", rows_scanned:2400000, rows_sent:0, prio:"P0",
+  plan:[["orders","ALL",null,null,2400000,"15%","Using where"]],
+  diag:"无索引全表扫描 + 一次性大事务，锁行时间被拉长；24 次但单次峰值 8.6s，极易拖垮复制延迟。",
+  idx:"ALTER TABLE orders ADD INDEX idx_status_updated (status, updated_at); -- 并改为分批 LIMIT 提交"},
+ {id:7, title:"报表 COUNT · 每日订单数", tbl:"orders",
+  sql:"SELECT COUNT(*) FROM orders WHERE status='PAID' AND created_at BETWEEN ? AND ?",
+  avg_ms:740, max_ms:1900, calls:610, type:"ALL", rows_scanned:2400000, rows_sent:1, prio:"P2",
+  plan:[["orders","ALL",null,null,2400000,"8%","Using where"]],
+  diag:"覆盖索引可让 COUNT 走索引扫描而不回表，同时服务#1。",
+  idx:"ALTER TABLE orders ADD INDEX idx_status_created (status, created_at);"},
+ {id:8, title:"可用优惠券列表 · 多条件", tbl:"coupons",
+  sql:"SELECT * FROM coupons WHERE user_id=? AND status='UNUSED' AND expires_at>NOW()",
+  avg_ms:260, max_ms:900, calls:12000, type:"ALL", rows_scanned:980000, rows_sent:12, prio:"P1",
+  plan:[["coupons","ALL",null,null,980000,"20%","Using where"]],
+  diag:"调用量 1.2 万/周，全表扫 98 万行；复合索引可同时命中等值+范围。",
+  idx:"ALTER TABLE coupons ADD INDEX idx_user_status_expire (user_id, status, expires_at);"},
+ {id:9, title:"销量阈值统计 · HAVING SUM>100", tbl:"order_items",
+  sql:"SELECT oi.product_id, SUM(oi.quantity) s FROM order_items oi GROUP BY oi.product_id HAVING s>100",
+  avg_ms:980, max_ms:2300, calls:300, type:"ALL", rows_scanned:4300000, rows_sent:300, prio:"P2",
+  plan:[["order_items","ALL",null,null,4300000,"100%","Using temporary; Using filesort"]],
+  diag:"对 430 万行做 GROUP BY + HAVING，临时表内存紧张；低频（300 次）建议移到大促后批量脚本。",
+  idx:"覆盖索引 idx_product_qty (product_id, quantity) 可转 index scan，缓解临时表。"},
+ {id:10, title:"物流单关联查询", tbl:"logistics",
+  sql:"SELECT l.* FROM logistics l JOIN orders o ON l.order_id=o.id WHERE o.created_at>=?",
+  avg_ms:640, max_ms:1700, calls:5200, type:"ALL", rows_scanned:1200000, rows_sent:15, prio:"P1",
+  plan:[["logistics","ALL",null,null,1200000,"18%","Using where"],["orders","eq_ref","PRIMARY","PRIMARY",1,"100%",""]],
+  diag:"logistics 无 order_id 索引，JOIN 内层全表扫 120 万行；5200 次/周的高频查询。",
+  idx:"ALTER TABLE logistics ADD INDEX idx_order_id (order_id);"},
+ {id:11, title:"退款重算聚合 · payments", tbl:"payments",
+  sql:"SELECT order_id, SUM(amount) FROM payments WHERE type='REFUND' AND created_at>=? GROUP BY order_id",
+  avg_ms:1500, max_ms:3600, calls:45, type:"ALL", rows_scanned:760000, rows_sent:40, prio:"P2",
+  plan:[["payments","ALL",null,null,760000,"25%","Using where; Using temporary; Using filesort"]],
+  diag:"低频重算任务，加 (type, created_at) 索引缩小范围即可，无需过度优化。",
+  idx:"ALTER TABLE payments ADD INDEX idx_type_created (type, created_at);"},
+ {id:12, title:"用户近 30 天消费汇总", tbl:"orders",
+  sql:"SELECT user_id, SUM(amount) FROM orders WHERE user_id=? AND created_at>=DATE_SUB(NOW(), INTERVAL 30 DAY)",
+  avg_ms:780, max_ms:2000, calls:2600, type:"ALL", rows_scanned:2400000, rows_sent:1, prio:"P1",
+  plan:[["orders","ALL",null,null,2400000,"25%","Using where"]],
+  diag:"虽有 user_id 单列索引但无 created_at 参与，仍全表；改复合覆盖索引。",
+  idx:"ALTER TABLE orders ADD INDEX idx_user_created (user_id, created_at);"},
+ {id:13, title:"优惠券核销 UPDATE", tbl:"coupons",
+  sql:"UPDATE coupons SET status='USED' WHERE user_id=? AND status='UNUSED' AND expires_at>NOW()",
+  avg_ms:2100, max_ms:5200, calls:320, type:"ALL", rows_scanned:980000, rows_sent:0, prio:"P0",
+  plan:[["coupons","ALL",null,null,980000,"18%","Using where"]],
+  diag:"与#8 同表同条件，无索引 UPDATE 全表扫 + 锁范围大，核销高峰期容易死锁。",
+  idx:"ALTER TABLE coupons ADD INDEX idx_user_status_expire (user_id, status, expires_at);"},
+ {id:14, title:"未支付订单清理", tbl:"orders",
+  sql:"SELECT * FROM orders WHERE status='PENDING' AND created_at < ? ORDER BY created_at LIMIT 1000",
+  avg_ms:860, max_ms:2100, calls:700, type:"ALL", rows_scanned:2400000, rows_sent:1000, prio:"P2",
+  plan:[["orders","ALL",null,null,2400000,"5%","Using where; Using filesort"]],
+  diag:"低频清理任务，加 (status, created_at) 索引即可，不紧急。",
+  idx:"ALTER TABLE orders ADD INDEX idx_status_created (status, created_at);"},
+ {id:15, title:"每日订单数趋势 · 按天聚合", tbl:"orders",
+  sql:"SELECT DATE(created_at) d, COUNT(*) FROM orders WHERE created_at BETWEEN ? AND ? GROUP BY d",
+  avg_ms:1300, max_ms:3000, calls:56, type:"ALL", rows_scanned:2400000, rows_sent:7, prio:"P2",
+  plan:[["orders","ALL",null,null,2400000,"100%","Using where; Using temporary; Using filesort"]],
+  diag:"报表聚合，无索引全表 + 临时表；低频，合并到汇总表方案统一解决。",
+  idx:"ALTER TABLE orders ADD INDEX idx_created (created_at);"},
+ {id:16, title:"热销分类聚合", tbl:"products",
+  sql:"SELECT c.id, SUM(oi.quantity) FROM order_items oi JOIN products p ON oi.product_id=p.id JOIN categories c ON p.category_id=c.id WHERE oi.created_at>=? GROUP BY c.id ORDER BY 2 DESC",
+  avg_ms:1700, max_ms:3900, calls:40, type:"ALL", rows_scanned:4300000, rows_sent:20, prio:"P1",
+  plan:[["products","ALL",null,null,320000,"100%","Using temporary; Using filesort"],["order_items","ALL",null,null,4300000,"15%","Using where"]],
+  diag:"聚合路径全表扫 + 双重临时表；建议改汇总表，不靠索引硬扛。",
+  idx:"ALTER TABLE order_items ADD INDEX idx_created (created_at); -- 根治走汇总表"},
+ {id:17, title:"库存扣减 UPDATE · 高频热点行", tbl:"inventory",
+  sql:"UPDATE inventory SET stock=stock-? WHERE sku_code=? AND stock>=?",
+  avg_ms:420, max_ms:2100, calls:15000, type:"ALL", rows_scanned:880000, rows_sent:0, prio:"P0",
+  plan:[["inventory","ALL",null,null,880000,"1%","Using where"]],
+  diag:"sku_code 无唯一索引，每次全表扫 88 万行找行再上锁；单条不慢但 1.5 万次/周累计 6300s，锁等待是主因。",
+  idx:"ALTER TABLE inventory ADD UNIQUE KEY uk_sku_code (sku_code); -- 应用层加乐观锁重试"},
+ {id:18, title:"用户最近浏览·订单关联", tbl:"order_items",
+  sql:"SELECT oi.* FROM order_items oi JOIN orders o ON oi.order_id=o.id WHERE o.user_id=? ORDER BY oi.created_at DESC LIMIT 50",
+  avg_ms:580, max_ms:1500, calls:4000, type:"ALL", rows_scanned:4300000, rows_sent:50, prio:"P1",
+  plan:[["orders","eq_ref","PRIMARY","PRIMARY",1,"100%",""],["order_items","ALL",null,null,4300000,"22%","Using where; Using filesort"]],
+  diag:"与#2 同类，order_items 无 (order_id, created_at) 索引导致内层全表扫。",
+  idx:"ALTER TABLE order_items ADD INDEX idx_order_created (order_id, created_at);"},
+ {id:19, title:"跨表报表 · payments+orders 双全扫", tbl:"payments",
+  sql:"SELECT o.id, o.amount, p.status FROM orders o JOIN payments p ON o.id=p.order_id WHERE o.created_at>=?",
+  avg_ms:2300, max_ms:6100, calls:60, type:"ALL", rows_scanned:2400000, rows_sent:0, prio:"P2",
+  plan:[["payments","ALL",null,null,760000,"100%","Using where"],["orders","ALL",null,null,2400000,"10%","Using where"]],
+  diag:"payments 无 order_id 索引且 orders 无时间索引，双全扫；低频（60 次）但单次 6.1s 峰值。",
+  idx:"ALTER TABLE payments ADD INDEX idx_order_id (order_id); ALTER TABLE orders ADD INDEX idx_created (created_at);"},
+ {id:20, title:"订单备注模糊搜索 · LIKE", tbl:"orders",
+  sql:"SELECT * FROM orders WHERE note LIKE '%促销订单%' AND created_at>=?",
+  avg_ms:3800, max_ms:9200, calls:500, type:"ALL", rows_scanned:2400000, rows_sent:8, prio:"P1",
+  plan:[["orders","ALL",null,null,2400000,"3%","Using where"]],
+  diag:"前导通配 LIKE 无法用索引，全表扫 240 万行 + 每条 3.8s；业务上应改 ES / FULLTEXT 检索。",
+  idx:"不适用 B-tree 索引；改 FULLTEXT(note) 或迁移 ES（推荐）。"}
+];
+
+const ACTIONS = [
+ {c:"P0", t:"为 orders 表加复合索引 (status, created_at)，消除对账/报表全表扫描（预计 -90% 耗时）", owner:"DBA-A", effort:"低", impact:"高"},
+ {c:"P0", t:"为 orders 加 (user_id, status) 索引并治理 #2/#18 的 N+1 联查（改批量 JOIN）", owner:"应用组", effort:"中", impact:"高"},
+ {c:"P0", t:"批量发货 UPDATE 加 (status, updated_at) 索引，并改分批 LIMIT 提交避免长事务", owner:"应用组+DBA", effort:"中", impact:"高"},
+ {c:"P0", t:"coupons 补 (user_id, status, expires_at) 覆盖索引，修复核销 UPDATE 全表扫与死锁", owner:"DBA-A", effort:"低", impact:"高"},
+ {c:"P0", t:"inventory 为 sku_code 加唯一索引，应用层补乐观锁重试，缓解热点行锁等待", owner:"应用组", effort:"低", impact:"高"},
+ {c:"P1", t:"大促战报/热销榜聚合改为预聚合汇总表（T+1），不再即时 GROUP BY 全表", owner:"数据组", effort:"高", impact:"高"},
+ {c:"P1", t:"备注 LIKE '%…%' 改为 FULLTEXT / 迁移 ES，禁止生产 SQL 前导通配全表扫描", owner:"应用组", effort:"中", impact:"中"},
+ {c:"P1", t:"order_items 补 (order_id, created_at) 索引（服务 #2/#18）", owner:"DBA-B", effort:"低", impact:"中"},
+ {c:"P1", t:"核对 slow_query_log 收集口径：long_query_time=1s、记录未用索引的查询", owner:"DBA", effort:"低", impact:"中"},
+ {c:"P2", t:"历史订单（>12 个月）归档至归档库，缩小 orders 基表行数", owner:"数据组", effort:"高", impact:"中"},
+ {c:"P2", t:"评估 innodb_buffer_pool_size 64G→80G，复查 tmp_table_size/max_heap_table_size 避免临时表落盘", owner:"DBA", effort:"低", impact:"中"},
+ {c:"P2", t:"建立慢查询周报机制：P95>2s 或慢查询>2k/周 触发告警", owner:"DBA", effort:"低", impact:"中"}
+];
+
+const PLANS = SQLS; // 1:1 复用
+
+/* ═══════ 渲染：Top 20 表 ═══════ */
+const tbody = document.getElementById("tbody");
+const fmt = n => Number(n).toLocaleString("en-US");
+const rowsBar = (scanned, sent) => {
+  const r = sent>0 ? Math.min(scanned/sent, 500) : 9999;
+  let color = "#22c1a3";
+  if (r>50) color = "#ffb454";
+  if (r>200) color = "#ff5d6c";
+  return `<span class="num" style="color:${color}" title="scanned/sent ≈ ${r.toFixed(0)}:1">${fmt(scanned)}</span>`;
+};
+
+let sortKey = "total_s", sortDir = -1, prioFilter = "ALL", query = "";
+
+function render(){
+  const q = query.toLowerCase();
+  const rows = SQLS
+    .filter(s => prioFilter==="ALL" || s.prio===prioFilter)
+    .filter(s => !q || [s.title, s.sql, s.tbl, s.diag, s.prio].join(" ").toLowerCase().includes(q))
+    .slice()
+    .sort((a,b)=>{
+      const av = a[sortKey], bv = b[sortKey];
+      if (typeof av==="string") return sortDir * String(av).localeCompare(String(bv));
+      return sortDir * (av - bv);
+    });
+  tbody.innerHTML = rows.map(s => `
+    <tr>
+      <td class="num" style="color:var(--dim2)">${s.id}</td>
+      <td class="sql-cell" title="${s.sql.replace(/"/g,"&quot;")}">${s.sql}</td>
+      <td class="tbl-name">${s.tbl}</td>
+      <td class="num">${fmt(s.avg_ms)}</td>
+      <td class="num">${fmt(s.max_ms)}</td>
+      <td class="num">${fmt(s.calls)}</td>
+      <td class="num"><b>${fmt(Math.round(s.avg_ms*s.calls/1000))}</b></td>
+      <td class="${s.type==='ALL'?'all':'num'}">${s.type}</td>
+      <td>${rowsBar(s.rows_scanned, s.rows_sent)}</td>
+      <td><span class="badge b-${s.prio}">${s.prio}</span></td>
+    </tr>`).join("");
+  document.getElementById("count-note").textContent = `显示 ${rows.length} / ${SQLS.length} 条`;
+}
+
+/* 排序表头 */
+document.querySelectorAll("thead th[data-k]").forEach(th=>{
+  th.addEventListener("click", ()=>{
+    const k = th.dataset.k;
+    if (sortKey===k) sortDir *= -1; else { sortKey=k; sortDir = (typeof SQLS[0][k]==="string") ? 1 : -1; }
+    document.querySelectorAll("thead th .arrow").forEach(a=>a.remove());
+    const arrow = document.createElement("span");
+    arrow.className = "arrow";
+    arrow.textContent = sortDir>0 ? "↑" : "↓";
+    th.appendChild(arrow);
+    render();
+  });
+});
+
+/* 搜索 + 优先级过滤 */
+document.getElementById("q").addEventListener("input", e=>{ query=e.target.value; render(); });
+document.getElementById("chips").addEventListener("click", e=>{
+  const chip = e.target.closest(".chip"); if(!chip) return;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+  chip.classList.add("active");
+  prioFilter = chip.dataset.p; render();
+});
+
+/* ═══════ 渲染：执行计划卡片 ═══════ */
+document.getElementById("plans").innerHTML = PLANS.map(s => {
+  const planRows = s.plan.map((p,i)=>`
+    <tr>
+      <td>${i===0?1:2}</td>
+      <td style="font-family:var(--mono)">${p[0]}</td>
+      <td class="${p[1]==='ALL'?'all':''}">${p[1]}</td>
+      <td style="font-family:var(--mono)">${p[2]||"—"}</td>
+      <td style="font-family:var(--mono)">${p[3]||"—"}</td>
+      <td class="num">${fmt(p[4])}</td>
+      <td class="num">${p[5]}</td>
+      <td style="font-family:var(--mono); font-size:10.5px; color:var(--dim)">${p[6]||"—"}</td>
+    </tr>`).join("");
+  return `
+  <details class="plan-card">
+    <summary>
+      <span class="badge b-${s.prio}">${s.prio}</span>
+      <span style="flex:1">#${s.id} · ${s.title}</span>
+      <span class="sc">${s.type} · ${fmt(s.rows_scanned)} rows · avg ${s.avg_ms}ms</span>
+    </summary>
+    <div class="plan-body">
+      <div style="font-family:var(--mono); font-size:11px; color:var(--dim); word-break:break-all; background:rgba(0,0,0,.2); padding:8px 10px; border-radius:8px">${s.sql}</div>
+      <table>
+        <thead><tr><th>id</th><th>table</th><th>type</th><th>possible_keys</th><th>key</th><th>rows</th><th>filtered</th><th>Extra</th></tr></thead>
+        <tbody>${planRows}</tbody>
+      </table>
+      <div class="diag-line">瓶颈诊断：<b>${s.diag}</b></div>
+      <div class="sugg">${s.idx}</div>
+    </div>
+  </details>`;
+}).join("");
+
+/* ═══════ 渲染：索引建议（按表去重合并） ═══════ */
+const advice = [];
+const seen = new Set();
+SQLS.forEach(s=>{ if(!seen.has(s.idx)){ seen.add(s.idx); advice.push(s); } });
+const impactOf = s => {
+  if (/inventory/.test(s.idx)) return "全表扫 88 万行 → 唯一索引直接命中；1.5 万次/周 × 420ms → ~µs";
+  if (/coupons/.test(s.idx)) return "98 万行全表扫 → 覆盖索引命中；#8/#13 合计 ~12,300 次/周";
+  if (/order_items/.test(s.idx)) return "430 万行内层全表扫 → 索引 JOIN；#2/#18 合计 ~7,450 次/周";
+  if (/idx_status_created/.test(s.idx)) return "240 万行 → 索引范围扫；服务 #1/#7/#14";
+  if (/idx_user_status/.test(s.idx)) return "240 万行 → 索引命中；8,900 次/周";
+  if (/idx_user_created/.test(s.idx)) return "240 万行 → 覆盖索引；2,600 次/周";
+  if (/idx_status_updated/.test(s.idx)) return "240 万行 → 索引定位；#6 UPDATE 长事务消除";
+  return "缩小扫描范围，预计 -80% 耗时";
+};
+document.getElementById("index-advice").innerHTML = advice.map((s,i)=>`
+  <div class="idx-row">
+    <span class="idx-num">${String(i+1).padStart(2,"0")}</span>
+    <div class="idx-meta">
+      <div>${s.tbl} · 覆盖慢查询 #${SQLS.filter(x=>x.idx===s.idx).map(x=>x.id).join("、")}</div>
+      <div class="idx-ddl">${s.idx}</div>
+      <div class="idx-impact">预估收益：${impactOf(s)} · DDL 风险：${/UNIQUE/.test(s.idx)?"需先校验重复，建议在线 DDL":"低，pt-online-schema-change 可零停机"}</div>
+    </div>
+    <button class="btn" onclick="copyText(this,'${s.idx.replace(/"/g,"&quot;").replace(/'/g,"&#39;")}')">复制</button>
+  </div>`).join("");
+
+function copyText(btn, text){
+  const tmp = document.createElement("textarea");
+  tmp.value = text; document.body.appendChild(tmp); tmp.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  tmp.remove();
+  const old = btn.textContent; btn.textContent = "已复制 ✓";
+  setTimeout(()=>btn.textContent=old, 1200);
+}
+
+/* ═══════ 渲染：周趋势 · 表分布 ═══════ */
+const share = [["orders",42],["order_items",18],["coupons",12],["payments",10],["logistics",8],["products",5],["users",5]];
+document.getElementById("tbl-bars").innerHTML = share.map(([t,p])=>`
+  <div class="hbar-row">
+    <span class="hbar-lbl">${t}</span>
+    <div class="hbar-track"><div class="hbar-fill" style="width:${p*2.2}%"></div></div>
+    <span class="hbar-pct">${p}%</span>
+  </div>`).join("");
+
+/* ═══════ 渲染：行动清单 + 进度 + 复制 ═══════ */
+let state = Array(ACTIONS.length).fill(false);
+function renderActions(){
+  document.getElementById("actions").innerHTML = ACTIONS.map((a,i)=>`
+    <div class="check-item ${state[i]?'done':''}">
+      <input type="checkbox" data-i="${i}" ${state[i]?'checked':''}>
+      <div class="check-body">
+        <div>${a.t}</div>
+        <div class="check-tags">
+          <span class="tag b-${a.c}">${a.c}</span>
+          <span class="tag owner">${a.owner}</span>
+          <span class="tag effort">effort ${a.effort}</span>
+          <span class="tag impact">impact ${a.impact}</span>
+        </div>
+      </div>
+    </div>`).join("");
+  document.querySelectorAll(".check-item input").forEach(cb=>{
+    cb.addEventListener("change", e=>{
+      state[+e.target.dataset.i] = e.target.checked;
+      e.target.closest(".check-item").classList.toggle("done", e.target.checked);
+      updateProgress(); updateMD();
+    });
+  });
+  updateProgress(); updateMD();
+}
+function updateProgress(){
+  const done = state.filter(Boolean).length;
+  const pct = Math.round(done/ACTIONS.length*100);
+  document.getElementById("done-n").textContent = done;
+  document.getElementById("prog-fill").style.width = pct+"%";
+  document.getElementById("prog-txt").textContent = `${pct}% (${done}/${ACTIONS.length})`;
+}
+function updateMD(){
+  const md = ACTIONS.map((a,i)=>`- [${state[i]?'x':' '}] (${a.c}) ${a.t} — ${a.owner} · impact ${a.impact}`).join("\n");
+  document.getElementById("md-out").value = md;
+}
+document.getElementById("btn-copy").addEventListener("click", ()=>{
+  const ta = document.getElementById("md-out");
+  ta.select(); try{ document.execCommand("copy"); }catch(e){}
+  const b = document.getElementById("btn-copy");
+  const old = b.textContent; b.textContent = "已复制 ✓"; setTimeout(()=>b.textContent=old,1200);
+});
+document.getElementById("btn-reset").addEventListener("click", ()=>{
+  state = state.map(()=>false); renderActions();
+});
+document.getElementById("btn-expand-all").addEventListener("click", ()=>{
+  document.querySelectorAll("details.gate").forEach(d=>d.open=true);
+});
+document.getElementById("btn-collapse-all").addEventListener("click", ()=>{
+  document.querySelectorAll("details.gate").forEach(d=>d.open=false);
+});
+
+renderActions();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<svg width="1200" height="1600" viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="c1-hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#7b2ff7"/>
+    </linearGradient>
+    <linearGradient id="c1-btn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3b5bdb"/>
+      <stop offset="1" stop-color="#6c5ce7"/>
+    </linearGradient>
+    <filter id="c1-card" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#101828" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1600" fill="#f4f6f9"/>
+
+  <!-- ===== Header ===== -->
+  <rect x="0" y="0" width="1200" height="212" fill="url(#c1-hero)"/>
+  <circle cx="1140" cy="60" r="140" fill="#ffffff" opacity="0.06"/>
+  <circle cx="60" cy="180" r="100" fill="#ffffff" opacity="0.05"/>
+
+  <rect x="48" y="34" width="40" height="40" rx="12" fill="#ffffff" opacity="0.18"/>
+  <text x="68" y="62" font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle">W</text>
+  <text x="100" y="56" font-size="17" font-weight="700" fill="#ffffff">WinBrain OS · PITCH 脚本</text>
+  <text x="100" y="74" font-size="11.5" fill="#dbe4ff">数据本体 → 业务专家 → 持续进化</text>
+
+  <rect x="48" y="96" width="118" height="28" rx="14" fill="#ffffff" opacity="0.2"/>
+  <text x="107" y="115" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">CASE 1 · 本体构建</text>
+
+  <text x="48" y="152" font-size="28" font-weight="700" fill="#ffffff">从 37 份字段文档，一键建「数据本体」</text>
+  <text x="48" y="178" font-size="14" fill="#dbe4ff">演示 ontology-builder：上传字段释义文档 → AI 提取业务对象 → 扫描真实 DB → 发布本体</text>
+
+  <rect x="48" y="188" width="150" height="22" rx="11" fill="#ffffff" opacity="0.14"/>
+  <text x="123" y="203" font-size="11.5" font-weight="600" fill="#ffffff" text-anchor="middle">⏱ 90s · 6 镜头</text>
+
+  <!-- ===== Shot 1 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="232" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="232" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="250" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="244" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="255" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 1 · 开场</text>
+  <text x="1144" y="255" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">0–8s</text>
+
+  <!-- left: 动作说明 -->
+  <text x="44" y="296" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="318" font-size="12.5" fill="#5a6170">首页「数据本体」入口，点击进入</text>
+  <text x="44" y="336" font-size="12.5" fill="#5a6170">本体工作台。</text>
+
+  <!-- middle: 画面示意 -->
+  <rect x="44" y="350" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="52" y="358" width="12" height="12" rx="3" fill="#3b5bdb"/>
+  <text x="70" y="368" font-size="11.5" font-weight="700" fill="#1a1d24">数据本体</text>
+  <text x="70" y="384" font-size="10" fill="#8a91a0">把字段文档变成可对话的语义机器</text>
+  <rect x="410" y="362" width="142" height="22" rx="11" fill="url(#c1-btn)"/>
+  <text x="481" y="377" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">进入工作台 →</text>
+  <rect x="52" y="398" width="504" height="12" rx="6" fill="#eef1ff"/>
+  <text x="60" y="407" font-size="9" fill="#3d4a7a">首页高亮「本体」入口 · 点击后进入工作台</text>
+
+  <!-- right: 旁白 + 字幕 -->
+  <rect x="584" y="350" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="368" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="388" font-size="12.5" fill="#24337a">"企业的数据库是一堆表，但我们把 37 份字段释义文档</text>
+  <text x="600" y="406" font-size="12.5" fill="#24337a">　变成一台可对话的语义机器。"</text>
+
+  <!-- ===== Shot 2 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="446" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="446" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="464" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="458" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="469" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 2 · 上传文档</text>
+  <text x="1144" y="469" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">8–25s</text>
+
+  <text x="44" y="510" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="532" font-size="12.5" fill="#5a6170">选择 37 份 .md 字段文档，点击上传。</text>
+  <text x="44" y="550" font-size="12.5" fill="#5a6170">用真实文件选择器。</text>
+
+  <rect x="44" y="564" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="52" y="580" font-size="11" font-weight="700" fill="#1a1d24">选择业务材料</text>
+  <rect x="52" y="586" width="330" height="13" rx="4" fill="#f6f8fd"/>
+  <circle cx="60" cy="592.5" r="3.5" fill="#3b5bdb"/>
+  <text x="68" y="596" font-size="9" fill="#1a1d24">QC_MONTAGE_PRODUCT.md</text>
+  <rect x="52" y="602" width="330" height="13" rx="4" fill="#f6f8fd"/>
+  <circle cx="60" cy="608.5" r="3.5" fill="#3b5bdb"/>
+  <text x="68" y="612" font-size="9" fill="#1a1d24">QC_AD_PLAN_INFO.md</text>
+  <text x="52" y="628" font-size="9" fill="#8a91a0">… 共 37 个文件已选择</text>
+  <rect x="398" y="580" width="166" height="36" rx="10" fill="url(#c1-btn)"/>
+  <text x="481" y="600" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">上传 37 份</text>
+  <text x="481" y="614" font-size="9" fill="#dbe4ff" text-anchor="middle">.md →</text>
+
+  <rect x="584" y="564" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="582" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="602" font-size="12.5" fill="#24337a">"这 37 份文档，是字段的中文释义——本该是业务资产，</text>
+  <text x="600" y="620" font-size="12.5" fill="#24337a">　却躺在文件夹里。"</text>
+
+  <!-- ===== Shot 3 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="660" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="660" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="678" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="672" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="683" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 3 · AI 提取业务对象</text>
+  <text x="1144" y="683" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">25–45s</text>
+
+  <text x="44" y="724" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="746" font-size="12.5" fill="#5a6170">点「生成草稿」，42 个业务对象</text>
+  <text x="44" y="764" font-size="12.5" fill="#5a6170">逐条出现（品牌/品线/素材/竞品）。</text>
+
+  <rect x="44" y="778" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="52" y="784" width="92" height="16" rx="8" fill="#eef1ff" stroke="#3b5bdb"/>
+  <text x="98" y="795" font-size="9" font-weight="700" fill="#3b5bdb" text-anchor="middle">⚡ 生成草稿</text>
+  <text x="520" y="795" font-size="9.5" fill="#8a91a0" text-anchor="end">提取中… 42 对象</text>
+  <rect x="52" y="806" width="120" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="58" y="812" width="8" height="8" rx="2" fill="#3b5bdb"/>
+  <text x="70" y="820" font-size="9" fill="#1a1d24">品牌</text>
+  <text x="70" y="831" font-size="7" fill="#8a91a0">BRAND</text>
+  <rect x="178" y="806" width="120" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="184" y="812" width="8" height="8" rx="2" fill="#7b2ff7"/>
+  <text x="196" y="820" font-size="9" fill="#1a1d24">品线</text>
+  <text x="196" y="831" font-size="7" fill="#8a91a0">PRODUCT_LINE</text>
+  <rect x="304" y="806" width="120" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="310" y="812" width="8" height="8" rx="2" fill="#d98a1f"/>
+  <text x="322" y="820" font-size="9" fill="#1a1d24">本品素材</text>
+  <text x="322" y="831" font-size="7" fill="#8a91a0">OWN_MATERIAL</text>
+  <rect x="430" y="806" width="120" height="28" rx="6" fill="#f6f8fd" stroke="#e3e7f0"/>
+  <rect x="436" y="812" width="8" height="8" rx="2" fill="#12a150"/>
+  <text x="448" y="820" font-size="9" fill="#1a1d24">竞品</text>
+  <text x="448" y="831" font-size="7" fill="#8a91a0">COMPETITOR</text>
+
+  <rect x="584" y="778" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="796" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="816" font-size="12.5" fill="#24337a">"AI 读文档，抽出 42 个业务对象：品牌、品线、本品素材、</text>
+  <text x="600" y="834" font-size="12.5" fill="#24337a">　竞品——它们之间还有关系。"</text>
+
+  <!-- ===== Shot 4 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="874" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="874" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="892" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="886" width="10" height="10" rx="3" fill="#3b5bdb"/>
+  <text x="62" y="897" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 4 · 扫描真实数据库</text>
+  <text x="1144" y="897" font-size="13" font-weight="700" fill="#3b5bdb" text-anchor="end">45–65s</text>
+
+  <text x="44" y="938" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="960" font-size="12.5" fill="#5a6170">「扫描数据库」，35 张真实表 + 591</text>
+  <text x="44" y="978" font-size="12.5" fill="#5a6170">字段释义合并进本体。</text>
+
+  <rect x="44" y="992" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <rect x="52" y="998" width="104" height="16" rx="8" fill="#eef1ff" stroke="#3b5bdb"/>
+  <text x="104" y="1009" font-size="9" font-weight="700" fill="#3b5bdb" text-anchor="middle">🗄 扫描数据库</text>
+  <text x="520" y="1009" font-size="9.5" fill="#8a91a0" text-anchor="end">35 表 · 591 字段</text>
+  <text x="58" y="1028" font-size="9" fill="#1a1d24">QC_MONTAGE_PRODUCT</text>
+  <text x="520" y="1028" font-size="9" fill="#12a150" text-anchor="end">✓ 已合并</text>
+  <text x="58" y="1044" font-size="9" fill="#1a1d24">QC_AD_PLAN_INFO</text>
+  <text x="520" y="1044" font-size="9" fill="#12a150" text-anchor="end">✓ 已合并</text>
+  <text x="58" y="1060" font-size="8.5" fill="#8a91a0">… 共 35 张 · 字段释义已合并</text>
+
+  <rect x="584" y="992" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1010" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1030" font-size="12.5" fill="#24337a">"再扫真实数据库，表结构和字段释义合并——</text>
+  <text x="600" y="1048" font-size="12.5" fill="#24337a">　数据层和语义层合体。"</text>
+
+  <!-- ===== Shot 5 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="1088" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="1088" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="1106" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="1100" width="10" height="10" rx="3" fill="#12a150"/>
+  <text x="62" y="1111" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 5 · 发布本体</text>
+  <text x="1144" y="1111" font-size="13" font-weight="700" fill="#12a150" text-anchor="end">65–80s</text>
+
+  <text x="44" y="1152" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1174" font-size="12.5" fill="#5a6170">点「发布本体」，状态变 published，</text>
+  <text x="44" y="1192" font-size="12.5" fill="#5a6170">成为只读 MCP 服务。</text>
+
+  <rect x="44" y="1206" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#e3e7f0"/>
+  <text x="52" y="1222" font-size="11" font-weight="700" fill="#1a1d24">本体已就绪</text>
+  <text x="52" y="1239" font-size="9.5" fill="#5a6170">42 业务对象 · 35 表 · 591 字段 · 释义 100%</text>
+  <rect x="52" y="1248" width="112" height="20" rx="10" fill="url(#c1-btn)"/>
+  <text x="108" y="1262" font-size="9.5" font-weight="700" fill="#ffffff" text-anchor="middle">发布本体</text>
+  <rect x="176" y="1248" width="116" height="20" rx="10" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="234" y="1262" font-size="9.5" font-weight="700" fill="#12a150" text-anchor="middle">● published</text>
+
+  <rect x="584" y="1206" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1224" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1244" font-size="12.5" fill="#24337a">"发布后，本体成为一台只读 MCP 服务，</text>
+  <text x="600" y="1262" font-size="12.5" fill="#24337a">　任何专家都能查。"</text>
+
+  <!-- ===== Shot 6 ===== -->
+  <g filter="url(#c1-card)">
+    <rect x="24" y="1302" width="1152" height="200" rx="16" fill="#ffffff" stroke="#e3e7f0"/>
+  </g>
+  <rect x="24" y="1302" width="1152" height="34" rx="16" fill="#f1f3f9"/>
+  <rect x="24" y="1320" width="1152" height="16" fill="#f1f3f9"/>
+  <rect x="44" y="1314" width="10" height="10" rx="3" fill="#7b2ff7"/>
+  <text x="62" y="1325" font-size="14.5" font-weight="700" fill="#1a1d24">镜头 6 · 收尾</text>
+  <text x="1144" y="1325" font-size="13" font-weight="700" fill="#7b2ff7" text-anchor="end">80–90s</text>
+
+  <text x="44" y="1366" font-size="14" font-weight="700" fill="#1a1d24">画面 / 动作</text>
+  <text x="44" y="1388" font-size="12.5" fill="#5a6170">回到首页，看到「内容平台混剪与竞品</text>
+  <text x="44" y="1406" font-size="12.5" fill="#5a6170">素材本体」，logo 淡出。</text>
+
+  <rect x="44" y="1420" width="520" height="66" rx="10" fill="#fbfcfe" stroke="#c9d2ea"/>
+  <rect x="52" y="1430" width="8" height="8" rx="2" fill="#7b2ff7"/>
+  <text x="66" y="1440" font-size="10.5" font-weight="700" fill="#1a1d24">内容平台混剪与竞品素材本体</text>
+  <text x="52" y="1458" font-size="9" fill="#5a6170">42 对象 · 35 表 · 591 字段 · 释义 100%</text>
+  <rect x="398" y="1436" width="104" height="16" rx="8" fill="#e7f8ef" stroke="#12a150"/>
+  <text x="450" y="1447" font-size="8.5" font-weight="700" fill="#12a150" text-anchor="middle">● published</text>
+  <text x="52" y="1478" font-size="8.5" fill="#8a91a0">已绑定项目 · 专家可查 · 只读 MCP</text>
+
+  <rect x="584" y="1420" width="572" height="66" rx="10" fill="#f6f8ff" stroke="#e3e7f0"/>
+  <text x="600" y="1438" font-size="12" font-weight="700" fill="#3b5bdb">🎙 旁白</text>
+  <text x="600" y="1458" font-size="12.5" fill="#24337a">"业务语言 + 真实数据，一本体驱动全部专家。"</text>
+
+  <!-- ===== Footer ===== -->
+  <rect x="24" y="1520" width="1152" height="56" rx="12" fill="#fdf3e3" stroke="#f0ddc0"/>
+  <text x="44" y="1540" font-size="11.5" font-weight="700" fill="#d98a1f">⚠ 录制依赖</text>
+  <text x="44" y="1558" font-size="11" fill="#8a6d3a">37 文档需在沙盒；agent 提取耗时 ~1–3min，建议预提取后回放「确认」动作。开场黑屏 1s 淡入；AI 提取可快进（标注"已加速"）；发布用真实按钮点按；结尾 logo 淡出。</text>
+</svg>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>云销 ERP 二期 · 项目验收报告（精炼版）</title>
+<style>
+  :root{
+    --bg:#f4f6f8; --card:#ffffff; --ink:#1a2230; --muted:#6b7686;
+    --line:#e2e8f0; --accent:#2563eb; --ok:#15803d; --warn:#b45309;
+    --fail:#b91c1c; --chip:#eef2ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 60px}
+  header h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px}
+  .verdict{display:flex;gap:12px;align-items:flex-start;margin:14px 0 18px;
+    background:linear-gradient(90deg,#f0fdf4,#fff);border:1px solid #bbf7d0;
+    border-left:5px solid var(--ok);border-radius:10px;padding:12px 14px}
+  .verdict b{color:var(--ok);font-size:15px}
+  .verdict p{margin:2px 0 0;font-size:14px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:10px;margin:16px 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .kpi .n{font-size:22px;font-weight:700}
+  .kpi .l{font-size:12px;color:var(--muted)}
+  .n.ok{color:var(--ok)} .n.warn{color:var(--warn)} .n.fail{color:var(--fail)}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 8px}
+  input[type=search]{flex:1;min-width:220px;padding:8px 12px;border:1px solid var(--line);
+    border-radius:8px;font-size:14px}
+  .count{font-size:12px;color:var(--muted)}
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    margin-bottom:12px;overflow:hidden}
+  details>summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:15px;
+    list-style:none;display:flex;justify-content:space-between;align-items:center}
+  details>summary::-webkit-details-marker{display:none}
+  summary .badge{font-size:12px;font-weight:500;color:var(--accent);
+    background:var(--chip);padding:2px 10px;border-radius:999px}
+  details[open]>summary .badge::after{content:" ▴"}
+  details:not([open])>summary .badge::after{content:" ▾"}
+  .dbody{padding:0 14px 14px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
+  th{cursor:pointer;user-select:none;white-space:nowrap;background:#f8fafc}
+  th:hover{color:var(--accent)}
+  th .arrow{font-size:10px;color:var(--accent)}
+  tr.clickable{cursor:pointer}
+  tr.clickable:hover{background:#f0f6ff}
+  tr.sel{background:#eef4ff}
+  .tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px}
+  .tag.pass{background:#dcfce7;color:var(--ok)}
+  .tag.open{background:#fee2e2;color:var(--fail)}
+  .tag.warn{background:#fef3c7;color:var(--warn)}
+  .tag.done{background:#e0e7ff;color:#3730a3}
+  .detail-pane{display:none;margin-top:10px;background:#f8fafc;border:1px dashed var(--line);
+    border-radius:8px;padding:10px 12px;font-size:13px}
+  .detail-pane.show{display:block}
+  ul.tasks{list-style:none;padding:0;margin:0}
+  ul.tasks li{padding:6px 2px;border-bottom:1px dashed var(--line);
+    display:flex;gap:8px;align-items:flex-start}
+  ul.tasks li.done .t{text-decoration:line-through;color:var(--muted)}
+  .copyrow{display:flex;justify-content:flex-end;margin:4px 0 10px}
+  button{font-size:13px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);
+    background:#fff;cursor:pointer}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .empty{color:var(--muted);text-align:center;padding:16px;font-size:13px}
+  footer{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--muted)}
+  .conclusion{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;margin-bottom:12px}
+  .conclusion h2{margin:0 0 6px;font-size:15px}
+  .conclusion ol{margin:0;padding-left:20px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>云销 ERP 二期 · 项目验收报告</h1>
+    <div class="sub">验收对象：云销 ERP（订单·库存·财务）｜ 验收日期：2026-07-30 ｜ 验收人：评审委员会</div>
+  </header>
+
+  <div class="verdict">
+    <b>验收结论：通过</b>
+    <p>全部 12 个模块按合同交付，21 个 P0/P1 缺陷全部关闭，测试通过率 98.4%，剩余 2 个低危缺陷同意上线后一周内修复，评审会一致同意通过验收。</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n ok">12/12</div><div class="l">模块交付</div></div>
+    <div class="kpi"><div class="n ok">98.4%</div><div class="l">自动化测试通过率</div></div>
+    <div class="kpi"><div class="n ok">21</div><div class="l">P0/P1 缺陷关闭</div></div>
+    <div class="kpi"><div class="n warn">2</div><div class="l">遗留低危缺陷</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="search" id="search" class="search" placeholder="搜索模块、缺陷、测试用例…（支持编号/名称/状态）">
+    <span class="count" id="count"></span>
+  </div>
+
+  <section class="conclusion">
+    <h2>评审结论要点 <button onclick="copyText()" id="copybtn">复制结论</button></h2>
+    <ol>
+      <li>核心链路（下单→支付→出库→对账）端到端测试全部通过，数据一致性校验无异常。</li>
+      <li>高峰期 1000 并发压测稳定，平均响应 320ms，满足 SLA（500ms）。</li>
+      <li>2 个遗留低危缺陷（见下方 Bug 清单）不阻塞上线，需在一周内修复并复验。</li>
+    </ol>
+  </section>
+
+  <details open>
+    <summary>模块清单 <span class="badge" id="modBadge">12 个模块</span></summary>
+    <div class="dbody">
+      <div class="copyrow"><button onclick="copyTable('modTable')">复制模块清单</button></div>
+      <table id="modTable">
+        <thead><tr>
+          <th data-key="id">编号</th>
+          <th data-key="name">模块 <span class="arrow"></span></th>
+          <th data-key="status">验收状态 <span class="arrow"></span></th>
+          <th data-key="owner">负责人</th>
+        </tr></thead>
+        <tbody id="modTbody"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>Bug 统计 <span class="badge" id="bugBadge">共 23 个</span></summary>
+    <div class="dbody">
+      <div class="copyrow"><button onclick="copyTable('bugTable')">复制缺陷清单</button></div>
+      <table id="bugTable">
+        <thead><tr>
+          <th data-key="id">编号</th>
+          <th data-key="title">标题 <span class="arrow"></span></th>
+          <th data-key="sev">级别 <span class="arrow"></span></th>
+          <th data-key="status">状态 <span class="arrow"></span></th>
+          <th data-key="module">所属模块</th>
+        </tr></thead>
+        <tbody id="bugTbody"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>测试结果 <span class="badge" id="testBadge">1286 用例</span></summary>
+    <div class="dbody">
+      <div class="copyrow"><button onclick="copyTable('testTable')">复制测试结果</button></div>
+      <table id="testTable">
+        <thead><tr>
+          <th data-key="id">编号</th>
+          <th data-key="name">用例集 <span class="arrow"></span></th>
+          <th data-key="total">用例数</th>
+          <th data-key="pass">通过 <span class="arrow"></span></th>
+          <th data-key="rate">通过率</th>
+        </tr></thead>
+        <tbody id="testTbody"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>行动清单 <span class="badge">上线前事项</span></summary>
+    <div class="dbody">
+      <div class="copyrow"><button onclick="copyTasks()">复制待办</button></div>
+      <ul class="tasks" id="taskList"></ul>
+    </div>
+  </details>
+
+  <footer>
+    来源项目：onepager 评测工作区（子代理评测 / without_skill 分支）<br>
+    产物路径：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-1/eval-2/without_skill/outputs/acceptance-report.html<br>
+    数据说明：本页为评测用虚构数据，不代表真实项目。｜ Pi session：评测会话（无真实 ID）
+  </footer>
+</div>
+
+<script>
+const modules = [
+  {id:"M01", name:"订单中心",   status:"通过", owner:"张伟"},
+  {id:"M02", name:"商品管理",   status:"通过", owner:"张伟"},
+  {id:"M03", name:"库存管理",   status:"通过", owner:"李娜"},
+  {id:"M04", name:"采购管理",   status:"通过", owner:"李娜"},
+  {id:"M05", name:"财务结算",   status:"通过", owner:"王强"},
+  {id:"M06", name:"对账中心",   status:"通过", owner:"王强"},
+  {id:"M07", name:"客户管理",   status:"通过", owner:"赵敏"},
+  {id:"M08", name:"报表中心",   status:"通过", owner:"赵敏"},
+  {id:"M09", name:"权限管理",   status:"通过", owner:"刘洋"},
+  {id:"M10", name:"消息中心",   status:"通过", owner:"刘洋"},
+  {id:"M11", name:"数据迁移",   status:"通过", owner:"陈静"},
+  {id:"M12", name:"接口网关",   status:"通过", owner:"陈静"},
+];
+const bugs = [
+  {id:"B-001", title:"并发下单时库存扣减偶发超卖", sev:"P0", status:"已关闭", module:"库存管理"},
+  {id:"B-002", title:"对账单金额精度丢失（分→元）", sev:"P0", status:"已关闭", module:"对账中心"},
+  {id:"B-003", title:"支付回调重复处理导致重复出库", sev:"P1", status:"已关闭", module:"订单中心"},
+  {id:"B-004", title:"报表导出 Excel 中文乱码", sev:"P1", status:"已关闭", module:"报表中心"},
+  {id:"B-005", title:"权限变更后 session 未即时失效", sev:"P1", status:"已关闭", module:"权限管理"},
+  {id:"B-006", title:"批量导入 5 万行商品卡死", sev:"P1", status:"已关闭", module:"商品管理"},
+  {id:"B-007", title:"财务凭证冲销后余额不平", sev:"P1", status:"已关闭", module:"财务结算"},
+  {id:"B-008", title:"接口网关限流阈值配置不生效", sev:"P1", status:"已关闭", module:"接口网关"},
+  {id:"B-009", title:"消息推送积压无重试机制", sev:"P1", status:"已关闭", module:"消息中心"},
+  {id:"B-010", title:"采购单审批流卡在中间节点", sev:"P1", status:"已关闭", module:"采购管理"},
+  {id:"B-011", title:"库存盘点差异报表负数显示错误", sev:"P1", status:"已关闭", module:"库存管理"},
+  {id:"B-012", title:"客户标签批量打标重复", sev:"P1", status:"已关闭", module:"客户管理"},
+  {id:"B-013", title:"数据迁移脚本重复执行丢主键", sev:"P1", status:"已关闭", module:"数据迁移"},
+  {id:"B-014", title:"历史订单翻页超 100 页变慢", sev:"P1", status:"已关闭", module:"订单中心"},
+  {id:"B-015", title:"导出权限与页面权限不一致", sev:"P1", status:"已关闭", module:"权限管理"},
+  {id:"B-016", title:"库存移动平均价计算偏差", sev:"P1", status:"已关闭", module:"库存管理"},
+  {id:"B-017", title:"对账不平仅提示不定位", sev:"P1", status:"已关闭", module:"对账中心"},
+  {id:"B-018", title:"报表定时任务偶发重复执行", sev:"P1", status:"已关闭", module:"报表中心"},
+  {id:"B-019", title:"消息模板变量未渲染", sev:"P1", status:"已关闭", module:"消息中心"},
+  {id:"B-020", title:"合同导入 PDF 解析乱码", sev:"P2", status:"已关闭", module:"数据迁移"},
+  {id:"B-021", title:"商品详情页加载首屏偏慢", sev:"P2", status:"已关闭", module:"商品管理"},
+  {id:"B-022", title:"低库存预警邮件偶发延迟", sev:"P3", status:"遗留", module:"消息中心"},
+  {id:"B-023", title:"报表图表在 1366px 宽度下溢出", sev:"P3", status:"遗留", module:"报表中心"},
+];
+const tests = [
+  {id:"T-01", name:"订单全链路", total:320, pass:318, rate:99.4},
+  {id:"T-02", name:"库存并发",   total:210, pass:209, rate:99.5},
+  {id:"T-03", name:"财务对账",   total:260, pass:257, rate:98.8},
+  {id:"T-04", name:"接口网关",   total:180, pass:179, rate:99.4},
+  {id:"T-05", name:"报表与导出", total:150, pass:146, rate:97.3},
+  {id:"T-06", name:"权限与安全", total:110, pass:110, rate:100.0},
+  {id:"T-07", name:"兼容性回归", total:56,  pass:55,  rate:98.2},
+];
+const tasks = [
+  {text:"B-022 低库存预警邮件延迟：修复并复验后关闭", done:false},
+  {text:"B-023 报表图表宽度溢出：修复并复验后关闭", done:false},
+  {text:"上线前完成生产环境压测复核（1000 并发）", done:false},
+  {text:"向运维移交接口网关限流/降级配置文档", done:true},
+  {text:"数据迁移脚本补充幂等性说明并归档", done:true},
+];
+
+const $ = s => document.querySelector(s);
+const tbody = id => document.querySelector(id);
+
+function tag(status){
+  if(status==="通过"||status==="已关闭"||status===100||status===100.0) return '<span class="tag done">'+status+'</span>';
+  if(status==="遗留"||status==="P3") return '<span class="tag warn">'+status+'</span>';
+  return '<span class="tag pass">'+status+'</span>';
+}
+
+let modState={key:null,dir:1}, bugState={key:null,dir:1}, testState={key:null,dir:1};
+
+function renderMods(){
+  const rows = modules.map(m=>
+    '<tr class="clickable" data-id="'+m.id+'" data-name="'+m.name+'">'+
+    '<td>'+m.id+'</td><td>'+m.name+'</td><td>'+tag(m.status)+'</td><td>'+m.owner+'</td></tr>');
+  $('#modTbody').innerHTML = rows.join('');
+  $('#modBadge').textContent = modules.length+' 个模块';
+  bindClickRows('#modTbody', '模块');
+}
+function renderBugs(list){
+  const rows = list.map(b=>
+    '<tr class="clickable" data-id="'+b.id+'" data-name="'+b.title+'">'+
+    '<td>'+b.id+'</td><td>'+b.title+'</td><td>'+tag(b.sev)+'</td><td>'+tag(b.status)+'</td><td>'+b.module+'</td></tr>');
+  $('#bugTbody').innerHTML = rows.join('');
+  $('#bugBadge').textContent = list.length+' / 23 个';
+  bindClickRows('#bugTbody', '缺陷');
+}
+function renderTests(list){
+  const rows = list.map(t=>
+    '<tr><td>'+t.id+'</td><td>'+t.name+'</td><td>'+t.total+'</td><td>'+t.pass+'</td>'+
+    '<td class="'+(t.rate>=99?'ok':t.rate>=97.5?'warn':'fail')+'">'+t.rate.toFixed(1)+'%</td></tr>');
+  $('#testTbody').innerHTML = rows.join('');
+  $('#testBadge').textContent = list.length+' 个用例集';
+}
+function renderTasks(list){
+  const shown = list.filter(t => t.text.toLowerCase().includes(currentQuery));
+  $('#taskList').innerHTML = shown.map((t,i)=>
+    '<li class="'+(t.done?'done':'')+'"><label><input type="checkbox" '+(t.done?'checked':'')+
+    ' onchange="toggleTask('+i+',this)"> <span class="t">'+t.text+'</span></label></li>').join('');
+}
+function bindClickRows(sel, kind){
+  document.querySelectorAll(sel+' tr.clickable').forEach(tr=>{
+    tr.onclick = ()=>{
+      document.querySelectorAll(sel+' tr').forEach(r=>r.classList.remove('sel'));
+      tr.classList.add('sel');
+      const prev = tr.nextElementSibling;
+      if(prev && prev.classList.contains('detail-pane')){
+        prev.remove(); return;
+      }
+      const pane = document.createElement('div');
+      pane.className = 'detail-pane show';
+      pane.innerHTML = '<b>'+kind+'详情：'+tr.dataset.name+'（'+tr.dataset.id+'）</b>'+
+        '<p>验收说明：'+kind+' "'+tr.dataset.name+'" 的完整文档与附件见验收档案目录 '+
+        (kind==='模块'?'archive/modules/':'archive/bugs/')+tr.dataset.id+'/ 。</p>';
+      tr.after(pane);
+    };
+  });
+}
+
+function sortRows(rows, key, dir){
+  return rows.slice().sort((a,b)=>{
+    const va=a[key], vb=b[key];
+    const na=parseFloat(va), nb=parseFloat(vb);
+    if(!isNaN(na)&&!isNaN(nb)) return (na-nb)*dir;
+    return String(va).localeCompare(String(vb),'zh')*dir;
+  });
+}
+function bindSort(tableId, arr, setState, render){
+  document.querySelectorAll('#'+tableId+' th[data-key]').forEach(th=>{
+    th.onclick = ()=>{
+      const key = th.dataset.key;
+      const st = (key===setState.key) ? -setState.dir : 1;
+      setState.key = key; setState.dir = st;
+      const sorted = sortRows(arr, key, st);
+      if(render===renderMods){ arr.splice(0,arr.length,...sorted); renderMods(); }
+      else render(sorted);
+      document.querySelectorAll('#'+tableId+' th .arrow').forEach(a=>a.textContent='');
+      th.querySelector('.arrow').textContent = st===1?'▲':'▼';
+    };
+  });
+}
+
+let currentQuery='';
+const search = $('#search');
+search.addEventListener('input', ()=>{
+  currentQuery = search.value.trim().toLowerCase();
+  const inBugs = bugs.filter(b=> (b.id+b.title+b.sev+b.status+b.module).toLowerCase().includes(currentQuery));
+  renderBugs(inBugs);
+  const inTests = tests.filter(t=> (t.id+t.name).toLowerCase().includes(currentQuery));
+  renderTests(inTests);
+  const inMods = modules.filter(m=> (m.id+m.name+m.status+m.owner).toLowerCase().includes(currentQuery));
+  $('#modTbody').innerHTML = inMods.map(m=>
+    '<tr class="clickable" data-id="'+m.id+'" data-name="'+m.name+'">'+
+    '<td>'+m.id+'</td><td>'+m.name+'</td><td>'+tag(m.status)+'</td><td>'+m.owner+'</td></tr>').join('');
+  $('#modBadge').textContent = inMods.length+' / 12 个模块';
+  bindClickRows('#modTbody','模块');
+  renderTasks(tasks);
+  $('#count').textContent = '匹配：模块 '+inMods.length+'，缺陷 '+inBugs.length+'，用例集 '+inTests.length;
+  if(!currentQuery) $('#count').textContent='';
+});
+
+function toggleTask(i, cb){ tasks[i].done = cb.checked; }
+
+function copyText(){
+  const txt = '验收结论：通过。12/12 模块交付，测试通过率 98.4%，P0/P1 缺陷 21 个全部关闭，遗留 2 个低危缺陷一周内修复。评审会一致同意通过验收。';
+  (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject())
+    .then(()=>flip($('#copybtn'),'已复制 ✓'))
+    .catch(()=>{ const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); flip($('#copybtn'),'已复制 ✓'); });
+}
+function copyTable(id){
+  const t = document.getElementById(id);
+  const txt = [...t.rows].map(r=>[...r.cells].map(c=>c.innerText).join('\t')).join('\n');
+  (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject())
+    .then(()=>toast('表格已复制'))
+    .catch(()=>toast('复制失败，请手动选择复制'));
+}
+function copyTasks(){
+  const txt = tasks.map(t=>'[ ] '+(t.done?'[x] ':'')+t.text).join('\n');
+  (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject())
+    .then(()=>toast('待办已复制'))
+    .catch(()=>toast('复制失败，请手动选择复制'));
+}
+let toastEl=null;
+function toast(msg){
+  if(!toastEl){ toastEl=document.createElement('div');
+    toastEl.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;z-index:99';
+    document.body.appendChild(toastEl); }
+  toastEl.textContent=msg; setTimeout(()=>toastEl.textContent='',1800);
+}
+function flip(btn, txt){ const old=btn.textContent; btn.textContent=txt; setTimeout(()=>btn.textContent=old,1500); }
+
+renderMods();
+renderBugs(bugs);
+renderTests(tests);
+renderTasks(tasks);
+bindSort('modTable', modules, modState, renderMods);
+bindSort('bugTable', bugs, bugState, renderBugs);
+bindSort('testTable', tests, testState, renderTests);
+</script>
+</body>
+</html>

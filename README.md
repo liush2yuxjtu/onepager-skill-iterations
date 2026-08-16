@@ -46,6 +46,25 @@ onepager-skill-iterations/
 
 ---
 
+## 迭代历史速览（两种追踪并存）
+
+- **`onepager-workspace/`**（.pi 重编号）＝ evals 5-15：iter-1/2/3（会话归集 / 隐式 recap / SVG）
+- **`onepager-workspace-evals1-10/`**（原始 skill-creator 工作区）＝ evals 1-10：iter-1~6 + `anti-patterns` + `description-optimization`（触发率优化，best_test 8/8 = 100%）
+
+## 交付物（pitch + sub-artifacts）
+
+- `pitch.html` — 主页「三个火种·一套循环」：结论 + **5 个 sub-artifact** 链接
+- `iter-1.html` / `iter-2.html` / `iter-3.html` — 迭代 sub-artifact（evals 5-15，内嵌原生 eval-review.html）
+- `trigger-opt.html` — 触发率优化 sub-artifact（6 条真实查询 → best_test 8/8）
+- `evals-1-10.html` — 原始 evals 1-10 原生评测视图
+- `examples/products-winbrain/` — winbrain 项目的 14 个 onepager 真实产物（自包含 HTML）
+- 画廊 `index.html`、自证页 `examples/showcase.html`
+
+> 注意：`eval-review.html` 的 viewer 对 HTML 产物用 `iframe src=/files/<run_id>/<name>`（依赖 generate_review.py 的 HTTP 服务）。静态部署时 `/files/` 会 404 导致子产物不渲染——本仓库已把这些路径改写为真实相对路径（见各 `eval-review.html`）。
+
+---
+---
+
 ## 迭代如何改进 onepager（核心）
 
 > 方法：每个 iteration 围绕一组**真实缺陷驱动**的评测用例（evals）跑 `with_skill` vs `without_skill`（或新 vs 旧）对照，通过率、耗时、token 三项量化判定是否值得收编进 SKILL.md。每轮被验证有效的做法，沉淀为一条**法则**。

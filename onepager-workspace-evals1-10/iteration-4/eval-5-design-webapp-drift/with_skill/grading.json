@@ -1,0 +1,55 @@
+{
+  "run_id": "eval-5-design-webapp-drift-with_skill",
+  "expectations": [
+    {
+      "text": "verdict_first",
+      "passed": true,
+      "evidence": "verdict in head"
+    },
+    {
+      "text": "not_selector_count",
+      "passed": true,
+      "evidence": "semantic framing"
+    },
+    {
+      "text": "fidelity_4states",
+      "passed": true,
+      "evidence": "4 states"
+    },
+    {
+      "text": "per_domain",
+      "passed": true,
+      "evidence": "domains"
+    },
+    {
+      "text": "venn_or_drift_viz",
+      "passed": true,
+      "evidence": "venn viz"
+    },
+    {
+      "text": "snapshot_compare",
+      "passed": true,
+      "evidence": "snapshots exist"
+    },
+    {
+      "text": "snapshot_in_sub",
+      "passed": true,
+      "evidence": "main=15742B, 无真实内联图（base64 仅采集命令标注）"
+    },
+    {
+      "text": "main_links_sub",
+      "passed": true,
+      "evidence": "links to subs"
+    },
+    {
+      "text": "interact",
+      "passed": true,
+      "evidence": "interactions"
+    },
+    {
+      "text": "honest",
+      "passed": true,
+      "evidence": "provenance+verdict"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>索引建议</title>
+<style>
+  :root{--bg:#0f1420;--card:#171e2e;--card2:#1d2637;--ink:#e7ecf3;--mut:#93a1b5;--line:#2a3550;
+    --accent:#4da3ff;--ok:#2fd07c;--warn:#ffb454;--bad:#ff5c6c;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1000px;margin:0 auto;padding:24px 18px 60px}
+  a.back{color:var(--accent);font-size:12.5px;text-decoration:none}
+  h1{font-size:22px;margin:10px 0 4px}
+  .sub{color:var(--mut);font-size:12.5px;margin-bottom:16px}
+  .verdict{background:linear-gradient(135deg,#1b2436,#14203a);border:1px solid #2e4a75;border-left:4px solid var(--ok);border-radius:10px;padding:12px 16px;margin:12px 0 18px;font-size:13.5px}
+  .verdict b{color:var(--ok)}
+  .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+  .btn{font-size:12.5px;padding:8px 14px;border-radius:10px;cursor:pointer;border:1px solid var(--accent);color:var(--accent);background:transparent}
+  .btn.primary{background:var(--accent);color:#0b1626;font-weight:600}
+  .btn:hover{filter:brightness(1.1)}
+  .idx{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  .idx h3{font-size:14px;margin:0 0 2px}
+  .idx h3 .code{font-family:var(--mono);color:var(--accent)}
+  .tags{margin:6px 0 10px}
+  .tagp{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--card2);color:var(--mut);margin-right:6px}
+  .tagp.pri{background:rgba(255,92,108,.15);color:var(--bad)}
+  .ddl{font-family:var(--mono);font-size:12px;background:#101626;border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:8px 0}
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+  .meta .m{font-size:11.5px;color:var(--mut)}
+  .meta .m b{display:block;color:var(--ink);font-size:13px}
+  .meta .m b.g{color:var(--ok)} .meta .m b.w{color:var(--warn)}
+  .dr{font-size:12.5px}
+  .dr b{color:var(--accent)}
+  .foot{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--mut)}
+  .foot code{font-family:var(--mono);background:var(--card2);padding:1px 6px;border-radius:5px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ok);color:#062;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="main.html">← 返回结论页</a>
+  <h1>索引建议</h1>
+  <div class="sub">7 个建议索引 · 预估累计降幅 62% · 模拟数据</div>
+
+  <div class="verdict">先做 <b>idx_orders_status_ctime</b> 和 <b>idx_oi_order_id</b>（合并覆盖 Top 20 里 6 条），预计砍掉 <b>约 62%</b> 慢查询。DDL 已可复制；<b>建索引有锁风险</b>，优先凌晨低峰窗口或使用 <code>pt-online-schema-change</code>。</div>
+
+  <div class="toolbar">
+    <button class="btn primary" onclick="copyAll()">复制全部 DDL</button>
+    <button class="btn" onclick="copyMD()">复制 Markdown 清单</button>
+  </div>
+  <div id="list"></div>
+
+  <div class="foot">来源：<code>onepager</code> · <code>sub-index.html</code> · 建议基于 EXPLAIN 缺索引证据（模拟数据）。</div>
+  <div class="toast" id="toast">已复制到剪贴板</div>
+</div>
+
+<script>
+const IDX=[
+ {name:"idx_orders_status_ctime",table:"orders",cols:"status, created_at, id",
+  ddl:"ALTER TABLE orders ADD INDEX idx_orders_status_ctime (status, created_at, id);",
+  cover:"Q01 · Q04 · Q06",impact:"约 38%",risk:"中",win:"低峰 03:00-05:00 或 pt-osc",
+  dr:"覆盖订单列表主查询：等值 status + 范围 created_at + 覆盖 id，规避 filesort 与深分页回表。"},
+ {name:"idx_oi_order_id",table:"order_items",cols:"order_id",
+  ddl:"ALTER TABLE order_items ADD INDEX idx_oi_order_id (order_id);",
+  cover:"Q01 · Q05 · Q16 · Q18",impact:"约 25%",risk:"低",win:"任意低峰",
+  dr:"order_items 反查缺索引是全报告最大单点，同时救 Q05 相关子查询与 Q16/Q18 JOIN 探测。"},
+ {name:"idx_oa_ctime_status",table:"order_archive",cols:"created_at, status",
+  ddl:"ALTER TABLE order_archive ADD INDEX idx_oa_ctime_status (created_at, status);",
+  cover:"Q02",impact:"约 15%",risk:"低",win:"批量任务前",
+  dr:"批量归档 UPDATE 由全表 range 变索引范围扫描，缓解 212M 回表与长锁。"},
+ {name:"idx_od_order_id",table:"order_detail",cols:"order_id",
+  ddl:"ALTER TABLE order_detail ADD INDEX idx_od_order_id (order_id);",
+  cover:"Q18",impact:"约 12%",risk:"低",win:"任意低峰",
+  dr:"明细表关联反查，消除 534M 探测。"},
+ {name:"idx_ft_name",table:"products",cols:"FULLTEXT(name)",
+  ddl:"ALTER TABLE products ADD FULLTEXT INDEX idx_ft_name (name);",
+  cover:"Q03",impact:"约 10%",risk:"中",win:"评估方案后再动",
+  dr:"LIKE '%kw%' 前导通配无法用 B-Tree；全文索引或引入 ES。DDL 体量中等，先评估。"},
+ {name:"idx_eventlog_level_ctime",table:"event_log",cols:"level, created_at",
+  ddl:"ALTER TABLE event_log ADD INDEX idx_eventlog_level_ctime (level, created_at);",
+  cover:"Q08",impact:"约 8%",risk:"高",win:"需要 pt-osc",
+  dr:"32 亿行大表，建索引需 pt-online-schema-change 且预留空间，优先级放后。"},
+ {name:"idx_fact_day_cust",table:"fact_orders",cols:"day, cust_id",
+  ddl:"ALTER TABLE fact_orders ADD INDEX idx_fact_day_cust (day, cust_id);",
+  cover:"Q07 · Q20",impact:"约 9%",risk:"高",win:"需要 pt-osc",
+  dr:"分析库聚合慢，覆盖索引消临时表；与 event_log 同属大表高成本项。"}
+];
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.opacity=1;setTimeout(()=>t.style.opacity=0,1400);}
+document.getElementById("list").innerHTML=IDX.map((x,i)=>`
+  <div class="idx">
+    <h3><span class="code">${x.name}</span> <span style="color:var(--mut);font-weight:400">· ${x.table}(${x.cols})</span></h3>
+    <div class="tags"><span class="tagp pri">覆盖：${x.cover}</span><span class="tagp">DDL 可复制</span></div>
+    <div class="ddl">${esc(x.ddl)}</div>
+    <div class="meta">
+      <div class="m">预期降幅<b class="g">${x.impact}</b></div>
+      <div class="m">锁风险<b class="w">${x.risk}</b></div>
+      <div class="m">建议窗口<b>${x.win}</b></div>
+    </div>
+    <div class="dr"><b>说明</b>：${x.dr}</div>
+    <div style="margin-top:10px"><button class="btn" onclick="copyIdx(${i})">复制该 DDL</button></div>
+  </div>`).join("");
+function copyIdx(i){navigator.clipboard.writeText(IDX[i].ddl).then(()=>toast("已复制 "+IDX[i].name));}
+function copyAll(){
+  const all=IDX.map(x=>x.ddl).join("\n");
+  navigator.clipboard.writeText(all).then(()=>toast("已复制全部 "+IDX.length+" 条 DDL"));
+}
+function copyMD(){
+  const md=["## 索引建议（onepager）",""].concat(IDX.map(x=>`- [ ] ${x.name} — ${x.table}(${x.cols}) · 覆盖 ${x.cover} · 预估 ${x.impact}`)).join("\n");
+  navigator.clipboard.writeText(md).then(()=>toast("已复制 Markdown 清单"));
+}
+</script>
+</body>
+</html>

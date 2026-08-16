@@ -1,0 +1,296 @@
+{
+  "metadata": {
+    "skill_name": "onepager",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-08-08T09:15:24Z",
+    "evals_run": [
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\u6807\u9898\u4e0b 5 \u79d2\u5185\u51fa\u73b0\u4e00\u53e5\u8bdd\u7ed3\u8bba\uff08verdict / TL;DR / \u7ed3\u8bba\uff09",
+          "passed": true,
+          "evidence": "class=\"verdict"
+        },
+        {
+          "text": "\u5b58\u5728\u641c\u7d22\u6846\uff08input class \u542b search\uff09",
+          "passed": true,
+          "evidence": "<input class=\"search\" id=\"psearch\""
+        },
+        {
+          "text": "\u8868\u5934\u53ef\u70b9\u51fb\u6392\u5e8f\uff08data-k/data-sort/onclick + \u6392\u5e8f JS\uff09",
+          "passed": true,
+          "evidence": "<th data-k=\"name\""
+        },
+        {
+          "text": "\u5b58\u5728\u53ef\u52fe\u9009\u884c\u52a8\u6e05\u5355\uff08input[type=checkbox]\uff0c\u542b JS \u52a8\u6001\u6e32\u67d3\uff09",
+          "passed": true,
+          "evidence": "<input type=\"checkbox\">"
+        },
+        {
+          "text": "\u5b58\u5728\u590d\u5236\u6309\u94ae\uff08navigator.clipboard \u6216 id=copybtn\uff09",
+          "passed": true,
+          "evidence": "copybtn"
+        },
+        {
+          "text": "\u5168\u91cf\u8bc1\u636e\u5728 <details> \u6298\u53e0\u533a\uff0c\u9ed8\u8ba4\u6536\u8d77",
+          "passed": true,
+          "evidence": "<details"
+        },
+        {
+          "text": "\u65e0 CDN / \u5916\u94fe\u8d44\u6e90\uff08\u4ec5\u5141\u8bb8 data: \u4e0e\u672c\u5730\u56de\u73af\uff09",
+          "passed": true,
+          "evidence": "\u65e0\u5916\u94fe"
+        },
+        {
+          "text": "\u9875\u811a\u6709\u6765\u6e90\u6807\u6ce8\uff08\u9879\u76ee\u540d / \u7edd\u5bf9\u8def\u5f84 / \u4f1a\u8bdd ID\uff09",
+          "passed": true,
+          "evidence": "<footer> <div>\u6765\u6e90\u9879\u76ee\uff1amacOS \u53d1\u70ed\u8bca\u65ad \u00b7 /Users/liushiyuwin/mac-heat-diagnosis.html</div> <div>\u751f\u6210\uff1a2026-08-08 \u00b7 Pi Session ID\uff1aN/A\uff08opencode \u4f1a\u8bdd\u751f\u6210\uff0c\u73af\u5883\u672a\u66b4\u9732 session ID\uff09</div> <d"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\u6807\u9898\u4e0b 5 \u79d2\u5185\u51fa\u73b0\u4e00\u53e5\u8bdd\u7ed3\u8bba\uff08verdict / TL;DR / \u7ed3\u8bba\uff09",
+          "passed": true,
+          "evidence": ">\u7ed3\u8bba\uff1a"
+        },
+        {
+          "text": "\u5b58\u5728\u641c\u7d22\u6846\uff08input class \u542b search\uff09",
+          "passed": true,
+          "evidence": "<input type=\"search\" id=\"search\" class=\"search-input\""
+        },
+        {
+          "text": "\u8868\u5934\u53ef\u70b9\u51fb\u6392\u5e8f\uff08data-k/data-sort/onclick + \u6392\u5e8f JS\uff09",
+          "passed": true,
+          "evidence": "<th data-k=\"name\""
+        },
+        {
+          "text": "\u5b58\u5728\u53ef\u52fe\u9009\u884c\u52a8\u6e05\u5355\uff08input[type=checkbox]\uff0c\u542b JS \u52a8\u6001\u6e32\u67d3\uff09",
+          "passed": true,
+          "evidence": "<input type=\"checkbox\" data-i=\"'+i+'\"'+(a.done?\" checked\":\"\")+'>"
+        },
+        {
+          "text": "\u5b58\u5728\u590d\u5236\u6309\u94ae\uff08navigator.clipboard \u6216 id=copybtn\uff09",
+          "passed": true,
+          "evidence": "copybtn"
+        },
+        {
+          "text": "\u5168\u91cf\u8bc1\u636e\u5728 <details> \u6298\u53e0\u533a\uff0c\u9ed8\u8ba4\u6536\u8d77",
+          "passed": true,
+          "evidence": "<details"
+        },
+        {
+          "text": "\u65e0 CDN / \u5916\u94fe\u8d44\u6e90\uff08\u4ec5\u5141\u8bb8 data: \u4e0e\u672c\u5730\u56de\u73af\uff09",
+          "passed": true,
+          "evidence": "\u65e0\u5916\u94fe"
+        },
+        {
+          "text": "\u9875\u811a\u6709\u6765\u6e90\u6807\u6ce8\uff08\u9879\u76ee\u540d / \u7edd\u5bf9\u8def\u5f84 / \u4f1a\u8bdd ID\uff09",
+          "passed": true,
+          "evidence": "<footer> <b>\u6765\u6e90</b>\uff1a\u661f\u701a\u96f6\u552e\u4e2d\u53f0 Web\uff08\u865a\u6784\u6f14\u793a\u6570\u636e\uff09<br> <span>\u62a5\u544a\u6587\u4ef6\uff1a</span><span class=\"src\">/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-1/eval-2/with_ski"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\u6807\u9898\u4e0b 5 \u79d2\u5185\u51fa\u73b0\u4e00\u53e5\u8bdd\u7ed3\u8bba\uff08verdict / TL;DR / \u7ed3\u8bba\uff09",
+          "passed": true,
+          "evidence": "\u672a\u627e\u5230\u5339\u914d"
+        },
+        {
+          "text": "\u5b58\u5728\u641c\u7d22\u6846\uff08input class \u542b search\uff09",
+          "passed": true,
+          "evidence": "<input class=\"search\" id=\"psearch\""
+        },
+        {
+          "text": "\u8868\u5934\u53ef\u70b9\u51fb\u6392\u5e8f\uff08data-k/data-sort/onclick + \u6392\u5e8f JS\uff09",
+          "passed": true,
+          "evidence": "<th data-k=\"name\""
+        },
+        {
+          "text": "\u5b58\u5728\u53ef\u52fe\u9009\u884c\u52a8\u6e05\u5355\uff08input[type=checkbox]\uff0c\u542b JS \u52a8\u6001\u6e32\u67d3\uff09",
+          "passed": true,
+          "evidence": "<input type=\"checkbox\">"
+        },
+        {
+          "text": "\u5b58\u5728\u590d\u5236\u6309\u94ae\uff08navigator.clipboard \u6216 id=copybtn\uff09",
+          "passed": true,
+          "evidence": "copybtn"
+        },
+        {
+          "text": "\u5168\u91cf\u8bc1\u636e\u5728 <details> \u6298\u53e0\u533a\uff0c\u9ed8\u8ba4\u6536\u8d77",
+          "passed": true,
+          "evidence": "<details"
+        },
+        {
+          "text": "\u65e0 CDN / \u5916\u94fe\u8d44\u6e90\uff08\u4ec5\u5141\u8bb8 data: \u4e0e\u672c\u5730\u56de\u73af\uff09",
+          "passed": true,
+          "evidence": "\u65e0\u5916\u94fe"
+        },
+        {
+          "text": "\u9875\u811a\u6709\u6765\u6e90\u6807\u6ce8\uff08\u9879\u76ee\u540d / \u7edd\u5bf9\u8def\u5f84 / \u4f1a\u8bdd ID\uff09",
+          "passed": true,
+          "evidence": "<footer> <div>\u6765\u6e90\u9879\u76ee\uff1amacOS \u53d1\u70ed\u8bca\u65ad \u00b7 /Users/liushiyuwin/mac-heat-diagnosis.html</div> <div>Pi Session ID\uff1aN/A\uff08opencode \u4f1a\u8bdd\u751f\u6210\uff09\u00b7 \u751f\u6210\uff1a2026-08-08 \u00b7 \u8bc4\u6d4b\uff1awithout_skill / eval-"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\u6807\u9898\u4e0b 5 \u79d2\u5185\u51fa\u73b0\u4e00\u53e5\u8bdd\u7ed3\u8bba\uff08verdict / TL;DR / \u7ed3\u8bba\uff09",
+          "passed": true,
+          "evidence": "class=\"verdict"
+        },
+        {
+          "text": "\u5b58\u5728\u641c\u7d22\u6846\uff08input class \u542b search\uff09",
+          "passed": true,
+          "evidence": "<input type=\"search\" id=\"search\" class=\"search\""
+        },
+        {
+          "text": "\u8868\u5934\u53ef\u70b9\u51fb\u6392\u5e8f\uff08data-k/data-sort/onclick + \u6392\u5e8f JS\uff09",
+          "passed": true,
+          "evidence": "<th data-key=\"id\""
+        },
+        {
+          "text": "\u5b58\u5728\u53ef\u52fe\u9009\u884c\u52a8\u6e05\u5355\uff08input[type=checkbox]\uff0c\u542b JS \u52a8\u6001\u6e32\u67d3\uff09",
+          "passed": true,
+          "evidence": "<input type=\"checkbox\" '+(t.done?'checked':'')+ ' onchange=\"toggleTask('+i+',this)\">"
+        },
+        {
+          "text": "\u5b58\u5728\u590d\u5236\u6309\u94ae\uff08navigator.clipboard \u6216 id=copybtn\uff09",
+          "passed": true,
+          "evidence": "copybtn"
+        },
+        {
+          "text": "\u5168\u91cf\u8bc1\u636e\u5728 <details> \u6298\u53e0\u533a\uff0c\u9ed8\u8ba4\u6536\u8d77",
+          "passed": true,
+          "evidence": "<details"
+        },
+        {
+          "text": "\u65e0 CDN / \u5916\u94fe\u8d44\u6e90\uff08\u4ec5\u5141\u8bb8 data: \u4e0e\u672c\u5730\u56de\u73af\uff09",
+          "passed": true,
+          "evidence": "\u65e0\u5916\u94fe"
+        },
+        {
+          "text": "\u9875\u811a\u6709\u6765\u6e90\u6807\u6ce8\uff08\u9879\u76ee\u540d / \u7edd\u5bf9\u8def\u5f84 / \u4f1a\u8bdd ID\uff09",
+          "passed": true,
+          "evidence": "<footer> \u6765\u6e90\u9879\u76ee\uff1aonepager \u8bc4\u6d4b\u5de5\u4f5c\u533a\uff08\u5b50\u4ee3\u7406\u8bc4\u6d4b / without_skill \u5206\u652f\uff09<br> \u4ea7\u7269\u8def\u5f84\uff1a/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-1/eval-2/without_skill/output"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": []
+}

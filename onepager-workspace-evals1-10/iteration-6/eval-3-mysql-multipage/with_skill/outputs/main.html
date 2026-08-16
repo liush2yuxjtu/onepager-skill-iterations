@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MySQL 慢查询诊断报告 · 结论页</title>
+<style>
+  :root{--bg:#0f1420;--card:#171e2e;--card2:#1d2637;--ink:#e7ecf3;--mut:#93a1b5;--line:#2a3550;
+    --accent:#4da3ff;--ok:#2fd07c;--warn:#ffb454;--bad:#ff5c6c;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:28px 20px 60px}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.08em;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:14px}
+  h1{font-size:26px;margin:0 0 6px}
+  .sub{color:var(--mut);font-size:13px;margin-bottom:22px}
+  .verdict{background:linear-gradient(135deg,#1b2436,#14203a);border:1px solid #2e4a75;border-left:4px solid var(--warn);border-radius:12px;padding:16px 18px;margin:18px 0}
+  .verdict .vlabel{font-size:11px;letter-spacing:.1em;color:var(--warn);text-transform:uppercase;margin-bottom:6px}
+  .verdict p{margin:0;font-size:15px;line-height:1.7}
+  .verdict .hl{color:var(--warn);font-weight:600}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0 26px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .kpi b{font-size:22px;display:block;line-height:1.2}
+  .kpi span{font-size:11px;color:var(--mut)}
+  h2{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:28px 0 12px}
+  .gate{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;text-decoration:none;color:var(--ink);transition:border-color .15s}
+  .gate:hover{border-color:var(--accent)}
+  .gate .num{flex:0 0 34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;background:var(--card2)}
+  .gate .body{flex:1;min-width:0}
+  .gate .t{font-weight:600;font-size:15px}
+  .gate .s{font-size:12.5px;color:var(--mut);margin-top:2px}
+  .gate .act{flex:0 0 auto;font-size:12px;color:var(--accent);border:1px solid #2e4a75;padding:5px 12px;border-radius:999px;white-space:nowrap}
+  .num.hi{color:var(--bad)} .num.mid{color:var(--warn)} .num.lo{color:var(--ok)}
+  .foot{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;font-size:12px;color:var(--mut)}
+  .foot code{font-family:var(--mono);font-size:11.5px;background:var(--card2);padding:1px 6px;border-radius:5px}
+  .note{font-size:12px;color:var(--mut);background:var(--card);border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="tag">MySQL 慢查询诊断 · 2026-08-05 ~ 08-11</span>
+  <h1>MySQL 慢查询性能诊断报告</h1>
+  <div class="sub">实例 db-core-03 · MySQL 8.0.34 · 只读诊断（模拟数据，仅作演示）</div>
+
+  <div class="verdict">
+    <div class="vlabel">结论 TL;DR</div>
+    <p>本周慢查询<b class="hl">约 12.7 万次、累计 1404s</b>，主因是<b class="hl">索引缺失（44%）</b>：Top 20 里 6 条全表扫描、4 条文件排序。头号 Q04（订单深分页 OFFSET 1000000）单条最高 15.2s。优先级：先修 4 个高优索引（预计砍掉 62% 慢查询），再治深分页与锁竞争。</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><b>126,700</b><span>本周慢查询次数</span></div>
+    <div class="kpi"><b>1,404s</b><span>累计耗时</span></div>
+    <div class="kpi"><b>6 / 4</b><span>全表扫描 / 文件排序</span></div>
+    <div class="kpi"><b>62%</b><span>索引修复预期降幅</span></div>
+  </div>
+
+  <h2>按需下钻 · 每个部分一扇窄门</h2>
+
+  <a class="gate" href="sub-top20.html">
+    <div class="num hi">20</div>
+    <div class="body">
+      <div class="t">Top 20 慢 SQL 明细</div>
+      <div class="s">全量清单，可搜索、可排序；头号 Q04 深分页单条最高 15.2s。</div>
+    </div>
+    <span class="act">搜索/排序 →</span>
+  </a>
+
+  <a class="gate" href="sub-plans.html">
+    <div class="num mid">7</div>
+    <div class="body">
+      <div class="t">执行计划分析</div>
+      <div class="s">逐条 EXPLAIN 解读：6 条 ALL 全表扫描、3 条 Using filesort，附风险与修复方向。</div>
+    </div>
+    <span class="act">逐条分析 →</span>
+  </a>
+
+  <a class="gate" href="sub-index.html">
+    <div class="num lo">7</div>
+    <div class="body">
+      <div class="t">索引建议</div>
+      <div class="s">7 个建议索引 + 可复制的 DDL，预估收益 62%，标注锁表风险与最佳执行窗口。</div>
+    </div>
+    <span class="act">复制 DDL →</span>
+  </a>
+
+  <a class="gate" href="sub-trends.html">
+    <div class="num mid">2</div>
+    <div class="body">
+      <div class="t">周趋势图表</div>
+      <div class="s">日粒度趋势 + 根因分布 + 按库分布；周五、周一两个峰值明显。</div>
+    </div>
+    <span class="act">看图 →</span>
+  </a>
+
+  <a class="gate" href="sub-actions.html">
+    <div class="num hi">4</div>
+    <div class="body">
+      <div class="t">DBA 行动清单</div>
+      <div class="s">14 项可勾选任务，4 项高优先级；勾选后一键复制 Markdown 回传工单。</div>
+    </div>
+    <span class="act">勾选/复制 →</span>
+  </a>
+
+  <div class="note">本次数据为<b>虚构示例</b>，用于演示报告形态；真实采集时请在此页脚替换为实际命令与时间戳。</div>
+
+  <div class="foot">
+    来源项目：<code>onepager</code> · 生成者：Claude (eval-3-mysql-multipage) · 目录：<code>/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-6/eval-3-mysql-multipage/with_skill/outputs</code><br>
+    采集命令（示意）：<code>mysqldumpslow -s at -t 20 slow.log</code> · <code>pt-query-digest slow.log</code> · 数据窗口：2026-08-05 ~ 2026-08-11（模拟）
+  </div>
+</div>
+</body>
+</html>

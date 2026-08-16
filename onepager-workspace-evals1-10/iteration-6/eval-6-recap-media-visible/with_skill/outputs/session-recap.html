@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>调试会话总结 · eval-session-6</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --line:#262b36; --txt:#e8eaed; --dim:#9aa3b2;
+    --acc:#4f8cff; --acc-soft:rgba(79,140,255,.12); --ok:#2ecc8f; --warn:#e6a23c; --bad:#e26d5a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;padding:26px 18px 44px}
+  /* 页头：hero SVG 内联 + 元信息 */
+  header{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .hero{flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+  .meta{color:var(--dim);font-size:12.5px;letter-spacing:.02em}
+  .meta b{color:var(--txt);font-weight:600}
+  h1{font-size:22px;margin:10px 0 4px}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:20px}
+  /* 结论前置 */
+  .verdict{background:linear-gradient(135deg,var(--acc-soft),transparent 70%);
+    border:1px solid var(--line);border-left:3px solid var(--ok);
+    border-radius:10px;padding:14px 16px;margin-bottom:18px}
+  .verdict .tag{display:inline-block;background:var(--ok);color:#06281a;font-size:11.5px;
+    font-weight:700;padding:2px 8px;border-radius:20px;margin-right:8px;vertical-align:1px}
+  .verdict p{margin:8px 0 0;font-size:15px}
+  .btn{border:1px solid var(--line);background:var(--card);color:var(--txt);
+    padding:4px 12px;border-radius:8px;font-size:12.5px;cursor:pointer;transition:.15s;font-family:inherit}
+  .btn:hover{border-color:var(--acc);color:var(--acc)}
+  .btn.sm{padding:2px 9px;font-size:12px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:16px;margin-bottom:16px}
+  section h2{font-size:14px;margin:0 0 12px;color:var(--txt)}
+  section h2 .n{color:var(--dim);font-weight:500;margin-right:6px}
+  /* 关键产物直达 */
+  .quick{display:flex;gap:8px;flex-wrap:wrap}
+  .quick a{text-decoration:none;white-space:nowrap}
+  /* 视频卡片 */
+  .video-card{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:6px}
+  .video-card .frame{background:#000;padding:10px}
+  .video-card video{display:block;width:100%;max-height:340px;border-radius:6px;background:#000}
+  .video-card .cap{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);flex-wrap:wrap}
+  .video-card .cap b{color:var(--txt);font-weight:600}
+  .video-card.ok{border-color:rgba(46,204,143,.45)}
+  .video-card.bad{border-color:rgba(226,109,90,.45)}
+  .video-card .role{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+  .video-card.ok .role{background:rgba(46,204,143,.15);color:var(--ok)}
+  .video-card.bad .role{background:rgba(226,109,90,.15);color:var(--bad)}
+  /* 产物清单表 */
+  .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+  .search{flex:1;min-width:180px;background:#1b1f27;border:1px solid var(--line);color:var(--txt);
+    border-radius:8px;padding:7px 12px;font-size:13px;font-family:inherit}
+  .search:focus{outline:none;border-color:var(--acc)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-top:1px dashed var(--line);vertical-align:middle}
+  thead th{color:var(--dim);font-weight:600;font-size:12px;cursor:pointer;user-select:none;white-space:nowrap}
+  thead th:hover{color:var(--acc)}
+  thead th .arrow{font-size:10px;color:var(--acc)}
+  td.name{font-weight:600}
+  td .tag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10.5px;font-weight:600}
+  .tag.main{background:var(--acc-soft);color:var(--acc)}
+  .tag.ev{background:rgba(230,162,60,.14);color:var(--warn)}
+  .tag.art{background:rgba(154,163,178,.14);color:var(--dim)}
+  .row-hidden{display:none}
+  tr.empty-row td{color:var(--dim);text-align:center;padding:16px}
+  /* 行动闭环 */
+  .act-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:1px dashed var(--line)}
+  .act-item:first-of-type{border-top:none}
+  .act-item input{margin-top:4px;accent-color:var(--acc)}
+  .act-item label{flex:1;cursor:pointer}
+  .act-item label.done{text-decoration:line-through;color:var(--dim)}
+  .prog-wrap{margin-top:12px}
+  .prog-bar{height:6px;background:#232936;border-radius:4px;overflow:hidden;margin-top:6px}
+  .prog-fill{height:100%;width:0;background:var(--ok);transition:width .2s}
+  .prog-txt{color:var(--dim);font-size:12.5px}
+  details{border:1px solid var(--line);border-radius:10px;background:var(--card);margin-bottom:16px}
+  summary{cursor:pointer;padding:12px 16px;font-size:13.5px;color:var(--dim)}
+  details pre{white-space:pre-wrap;margin:0;padding:0 16px 16px;font-size:12.5px;
+    color:var(--dim);border-top:1px dashed var(--line);line-height:1.7}
+  footer{color:var(--dim);font-size:12px;line-height:1.8;margin-top:26px;
+    border-top:1px solid var(--line);padding-top:14px}
+  footer code{background:#1b1f27;padding:1px 6px;border-radius:4px;font-size:11.5px;color:var(--txt)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 页头：hero SVG 内联（法则 11：不得 <img src="hero.svg"> 外链） -->
+  <header>
+    <div class="hero">
+      <svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" viewBox="0 0 120 60" role="img" aria-label="调试会话徽标"><rect width="120" height="60" fill="#286149"/></svg>
+    </div>
+    <div class="meta">
+      Pi session · <b>eval-session-6</b> · 来源项目 <b>/tmp/debug-session</b><br>
+      本次调试会话结束于 <b>成功闭环</b>
+    </div>
+  </header>
+  <h1>调试会话总结 · eval-session-6</h1>
+  <div class="sub">一次从「失败复现」到「最终通过」的调试闭环。主视频与全部会话产物直接列在下方，无需翻证据区。</div>
+
+  <!-- 结论前置 -->
+  <div class="verdict">
+    <span class="tag">TL;DR</span>
+    <button class="btn sm" onclick="copyTxt()">复制结论</button>
+    <p>调试<b>成功闭环</b>：最终 UAT 报告 <b>report.html = PASS</b>，质检 <b>qa.json passed:true</b>。成功录像 <b>run.webm</b> 可直接播放；失败复现录像 <b>failure.webm</b> 与调试轨迹 <b>trace.zip</b> 留档作回归证据。</p>
+  </div>
+
+  <!-- 关键产物直达：静态真实链接，正文一眼可见 -->
+  <section>
+    <h2><span class="n">00</span>关键产物直达</h2>
+    <div class="quick">
+      <a class="btn" href="run.webm">成功录像 run.webm</a>
+      <a class="btn" href="failure.webm">失败证据 failure.webm</a>
+      <a class="btn" href="report.html">UAT 报告 report.html</a>
+      <a class="btn" href="qa.json">质检 qa.json</a>
+      <a class="btn" href="trace.zip">调试轨迹 trace.zip</a>
+    </div>
+  </section>
+
+  <!-- 01 最终成功录像：主视频，正文可见播放器 -->
+  <section>
+    <h2><span class="n">01</span>最终成功录像（run.webm）</h2>
+    <div class="video-card ok">
+      <div class="frame">
+        <video controls preload="metadata" src="run.webm" aria-label="最终成功录像 run.webm">
+          你的浏览器不支持 video 标签，请下载 run.webm 后本地播放。
+        </video>
+      </div>
+      <div class="cap">
+        <span><b>run.webm</b> · 修复后全流程演示</span>
+        <span><span class="role">主产物 · 通过</span></span>
+        <span><a class="btn sm" href="run.webm" download>下载</a> <button class="btn sm" onclick="copyTxt('run.webm — 最终成功录像（下载链接：run.webm）')">复制入口</button></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 失败复现证据：副视频同样正文可见 -->
+  <section>
+    <h2><span class="n">02</span>失败复现证据（failure.webm）</h2>
+    <div class="video-card bad">
+      <div class="frame">
+        <video controls preload="metadata" src="failure.webm" aria-label="失败复现证据 failure.webm">
+          你的浏览器不支持 video 标签，请下载 failure.webm 后本地播放。
+        </video>
+      </div>
+      <div class="cap">
+        <span><b>failure.webm</b> · 修复前失败录像，作回归对照</span>
+        <span><span class="role">证据 · 修复前</span></span>
+        <span><a class="btn sm" href="failure.webm" download>下载</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 会话产物清单：全量入口 + 搜索/排序/复制 -->
+  <section>
+    <h2><span class="n">03</span>会话产物清单</h2>
+    <div class="toolbar">
+      <input class="search" id="q" type="search" placeholder="搜索名称 / 类型 / 角色 / 用途…" oninput="filterRows()" aria-label="搜索会话产物">
+      <button class="btn sm" onclick="copyAll()">复制全部路径</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy('name')">名称<span class="arrow" id="ar-name"></span></th>
+          <th onclick="sortBy('type')">类型<span class="arrow" id="ar-type"></span></th>
+          <th onclick="sortBy('role')">角色<span class="arrow" id="ar-role"></span></th>
+          <th>用途</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <p class="prog-txt" style="margin-top:8px">输入即过滤（窄网关）：只回显匹配行，不搬运全量。</p>
+  </section>
+
+  <!-- 04 行动闭环 -->
+  <section>
+    <h2><span class="n">04</span>行动清单</h2>
+    <div class="act-item">
+      <input type="checkbox" id="a1" onchange="refresh()">
+      <label for="a1" id="l1">观看 run.webm，确认修复效果与 PASS 结论一致</label>
+    </div>
+    <div class="act-item">
+      <input type="checkbox" id="a2" onchange="refresh()">
+      <label for="a2" id="l2">复核 report.html / qa.json：PASS 结论 + 空错误清单</label>
+    </div>
+    <div class="act-item">
+      <input type="checkbox" id="a3" onchange="refresh()">
+      <label for="a3" id="l3">将 failure.webm + trace.zip 归档为回归证据（关联 eval-session-6）</label>
+    </div>
+    <div class="act-item">
+      <input type="checkbox" id="a4" onchange="refresh()">
+      <label for="a4" id="l4">把成功录像入口同步给相关方并记录到调试工单</label>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-txt"><span id="count">0/4</span> 已完成</div>
+      <div class="prog-bar"><div class="prog-fill" id="fill"></div></div>
+      <div style="margin-top:8px"><button class="btn sm" onclick="copyMD()">复制行动清单 (Markdown)</button></div>
+    </div>
+  </section>
+
+  <!-- 全量证据收窄门 -->
+  <details>
+    <summary>▸ 原始会话证据与产物来源（展开查看）</summary>
+    <pre>会话范围：/tmp/debug-session（eval-session-6）
+调试流程：失败复现（failure.webm）→ 修复 → 最终验证（run.webm）
+产物来源（输入目录 /Users/liushiyuwin/.agents/skills/onepager/evals/files/session-artifacts/）：
+  · run.webm      最终成功录像（主产物）
+  · failure.webm  修复前失败复现录像（证据）
+  · report.html   UAT 最终报告：PASS
+  · qa.json       质检结果：{"passed":true,"errors":[]}
+  · trace.zip     全量调试轨迹（证据）
+  · hero.svg      页面素材（已内联为页头徽标，无外链资源）
+采集说明：本页由 onepager skill 生成，单文件自包含、离线可开；媒体为相对路径引用，同目录可携带。</pre>
+  </details>
+
+  <footer>
+    来源项目：<code>/tmp/debug-session</code><br>
+    会话 ID：<code>eval-session-6</code> · 输入目录 <code>/Users/liushiyuwin/.agents/skills/onepager/evals/files/session-artifacts/</code><br>
+    本页由 onepager skill 生成 · 单文件自包含 · hero.svg 已内联，页面无外链资源
+  </footer>
+</div>
+
+<script>
+  /* 产物 manifest：只含输入目录里真实存在的 6 个文件，禁止编造链接 */
+  const ITEMS = [
+    {name:"run.webm",    type:"视频",  role:"主产物", tag:"main", use:"最终成功录像，可播放",        link:"run.webm"},
+    {name:"failure.webm",type:"视频",  role:"证据",   tag:"ev",   use:"修复前失败复现录像",           link:"failure.webm"},
+    {name:"report.html", type:"HTML",  role:"主产物", tag:"main", use:"UAT 最终报告：PASS",           link:"report.html"},
+    {name:"qa.json",     type:"JSON",  role:"证据",   tag:"ev",   use:"质检结果 passed:true，errors 为空", link:"qa.json"},
+    {name:"trace.zip",   type:"ZIP",   role:"证据",   tag:"ev",   use:"全量调试轨迹",                  link:"trace.zip"},
+    {name:"hero.svg",    type:"SVG",   role:"素材",   tag:"art",  use:"页面素材，已内联为页头徽标",    link:"hero.svg"}
+  ];
+  let rows = [];
+  function render(list){
+    const tb = document.getElementById("tbody");
+    tb.innerHTML = list.map((it,i)=>`<tr data-i="${i}" data-name="${it.name}" data-type="${it.type}" data-role="${it.role}">
+      <td class="name">${it.name}</td>
+      <td>${it.type}</td>
+      <td><span class="tag ${it.tag}">${it.role}</span></td>
+      <td>${it.use}</td>
+      <td><a class="btn sm" href="${it.link}">打开</a> <button class="btn sm" onclick="copyTxt('${it.name}（${it.use}）：${it.link}')">复制</button></td>
+    </tr>`).join("");
+    rows = Array.from(tb.querySelectorAll("tr"));
+  }
+  function filterRows(){
+    const q = document.getElementById("q").value.trim().toLowerCase();
+    let shown = 0;
+    rows.forEach(r=>{
+      const hit = !q || (r.dataset.name+" "+r.dataset.type+" "+r.dataset.role).toLowerCase().includes(q);
+      r.classList.toggle("row-hidden", !hit);
+      if(hit) shown++;
+    });
+    let er = document.getElementById("emptyRow");
+    if(shown===0 && !er){
+      er = document.createElement("tr"); er.id="emptyRow"; er.className="empty-row";
+      er.innerHTML = '<td colspan="5">无匹配产物</td>';
+      document.getElementById("tbody").appendChild(er);
+    } else if(er){ er.remove(); }
+  }
+  let sortKey=null, asc=true;
+  function sortBy(key){
+    if(sortKey===key) asc=!asc; else {sortKey=key; asc=true;}
+    ["name","type","role"].forEach(k=>{
+      const ar=document.getElementById("ar-"+k); ar.textContent = k===key ? (asc?" ↑":" ↓") : "";
+    });
+    const tb=document.getElementById("tbody");
+    const arr=rows.slice().sort((a,b)=>{
+      const av=a.dataset[key], bv=b.dataset[key];
+      return asc ? av.localeCompare(bv,"zh") : bv.localeCompare(av,"zh");
+    });
+    arr.forEach(r=>tb.appendChild(r));
+    rows = Array.from(tb.querySelectorAll("tr"));
+  }
+  const MD_ACT = "## 调试会话行动清单 · eval-session-6\n"+
+    "- [ ] 观看 run.webm，确认修复效果与 PASS 结论一致\n"+
+    "- [ ] 复核 report.html / qa.json：PASS 结论 + 空错误清单\n"+
+    "- [ ] 将 failure.webm + trace.zip 归档为回归证据（关联 eval-session-6）\n"+
+    "- [ ] 把成功录像入口同步给相关方并记录到调试工单";
+  function copyTxt(t){ copy(t || "调试成功闭环：report.html = PASS，qa.json passed:true；成功录像 run.webm，失败证据 failure.webm 与 trace.zip 留档。"); }
+  function copyAll(){ copy(ITEMS.map(it=>it.link).join("\n")); }
+  function copyMD(){ copy(MD_ACT); }
+  function copy(s){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(s).then(()=>{}).catch(()=>fallback(s));
+    } else fallback(s);
+  }
+  function fallback(s){
+    const ta=document.createElement("textarea"); ta.value=s; document.body.appendChild(ta);
+    ta.select(); try{document.execCommand("copy");}catch(e){} ta.remove();
+  }
+  function refresh(){
+    const ids=["a1","a2","a3","a4"]; let n=0;
+    ids.forEach(i=>{ const c=document.getElementById(i);
+      document.getElementById("l"+i.slice(1)).classList.toggle("done", c.checked);
+      if(c.checked) n++; });
+    document.getElementById("count").textContent = n+"/4";
+    document.getElementById("fill").style.width = (n/4*100)+"%";
+  }
+  render(ITEMS);
+</script>
+</body>
+</html>

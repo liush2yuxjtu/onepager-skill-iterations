@@ -1,0 +1,34 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.",
+      "passed": true,
+      "evidence": "linked/referenced: ['report.html', 'qa.json', 'run.webm', 'trace.zip']",
+      "manual": false
+    },
+    {
+      "text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+      "passed": true,
+      "evidence": "video+controls: True, details blocks: 3",
+      "manual": false
+    },
+    {
+      "text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+      "passed": true,
+      "evidence": "4 hrefs, broken=[]",
+      "manual": false
+    },
+    {
+      "text": "The page includes source project absolute path and a Pi session ID in its footer.",
+      "passed": true,
+      "evidence": "manual check advised",
+      "manual": true
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

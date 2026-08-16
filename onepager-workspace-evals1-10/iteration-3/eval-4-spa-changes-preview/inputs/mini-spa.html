@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini SPA 原型 · 演示用</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:14px/1.6 -apple-system,sans-serif;background:#f6f7f9;color:#1a2332}
+  .app{display:flex;min-height:100vh}
+  .side{width:220px;background:#1a2332;color:#fff;padding:16px;position:fixed;top:0;bottom:0;left:0}
+  .side .brand{font-weight:700;margin-bottom:20px}
+  .side button{display:block;width:100%;text-align:left;background:none;border:none;color:#cbd5e1;padding:10px;margin:4px 0;border-radius:6px;cursor:pointer;font-size:14px}
+  .side button.on{background:#2a3a55;color:#fff}
+  .side button:hover{background:#2a3a55}
+  .main{margin-left:220px;padding:24px;flex:1}
+  .view{display:none}
+  .view.on{display:block}
+  h1{font-size:18px;margin-bottom:12px}
+  .card{background:#fff;border:1px solid #e3e8ef;border-radius:10px;padding:16px;margin-bottom:12px;max-width:560px}
+  .card h3{font-size:15px;margin-bottom:6px}
+  .card p{color:#6b7686;font-size:13px}
+  .tag{display:inline-block;background:#eef2ff;color:#2563eb;border-radius:99px;padding:2px 8px;font-size:11px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">MiniWin OS</div>
+    <button data-nav="chat" class="on">AI 对话</button>
+    <button data-nav="experts">专家团</button>
+    <button data-nav="projects">项目组</button>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+  const EXPERTS = [
+    {id:'supply-chief', name:'供应链经营总控', category:'供应链', version:'v3.2', desc:'统一理解经营目标，调用专项员工形成综合判断。'},
+    {id:'shortage', name:'缺料诊断员', category:'供应链', version:'v1.3', desc:'定位缺料根因并给出替代方案。'}
+  ];
+  const PROJECTS = [
+    {id:'q3-delivery', name:'Q3 重点客户交付保障', status:'进行中', progress:68, goal:'降低重点客户延期风险。'},
+    {id:'store-growth', name:'华东门店会员增长', status:'规划中', progress:34, goal:'找到可复制的门店增长动作。'}
+  ];
+
+  // hash 路由
+  function currentNav(){ return (location.hash||'#/chat').split('/')[1] || 'chat'; }
+
+  function expertCard(e){
+    return `<article class="card" data-expert-id="${e.id}">
+      <h3>${e.name}</h3><p>${e.category} · ${e.version}</p><p>${e.desc}</p>
+      <span class="tag">专家</span>
+    </article>`;
+  }
+  function projectCard(p){
+    return `<article class="card" data-project-id="${p.id}">
+      <h3>${p.name}</h3><p>${p.status} · ${p.progress}%</p><p>${p.goal}</p>
+      <span class="tag">项目</span>
+    </article>`;
+  }
+
+  function render(){
+    const nav = currentNav();
+    document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('on', b.dataset.nav===nav));
+    const main = document.getElementById('main');
+    if (nav === 'experts') {
+      main.innerHTML = `<h1>专家团</h1>` + EXPERTS.map(expertCard).join('');
+    } else if (nav === 'projects') {
+      main.innerHTML = `<h1>项目组</h1>` + PROJECTS.map(projectCard).join('');
+    } else {
+      main.innerHTML = `<h1>AI 对话</h1><p>选择工作对象，开始第一次对话。</p>`;
+    }
+  }
+
+  document.querySelectorAll('[data-nav]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      location.hash = '#/' + btn.dataset.nav;
+    });
+  });
+  window.addEventListener('hashchange', render);
+  render();
+</script>
+</body>
+</html>

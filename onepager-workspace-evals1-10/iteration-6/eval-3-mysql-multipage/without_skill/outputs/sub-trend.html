@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>周趋势分析</title>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="back" href="main.html">← 返回总结论</a>
+    <h1>周趋势分析</h1>
+    <p>采样周期 2026-08-05 ~ 2026-08-11 · 图表为慢查询日志按天/按时段聚合。</p>
+  </div>
+</header>
+
+<main>
+  <div class="chart-wrap">
+    <h3>每日慢查询数量</h3>
+    <div class="sub">周末（08-08 / 08-09）为业务大促峰值，慢查询量是工作日的 1.3~1.7 倍。</div>
+    <div class="bars">
+      <div class="bar"><b>6,200</b><i style="height:92px"></i><span>08-05</span></div>
+      <div class="bar"><b>7,100</b><i style="height:106px"></i><span>08-06</span></div>
+      <div class="bar"><b>5,500</b><i style="height:82px"></i><span>08-07</span></div>
+      <div class="bar"><b>8,900</b><i style="height:133px" class="alt"></i><span>08-08</span></div>
+      <div class="bar"><b>9,400</b><i style="height:140px" class="alt"></i><span>08-09</span></div>
+      <div class="bar"><b>6,100</b><i style="height:91px"></i><span>08-10</span></div>
+      <div class="bar"><b>5,091</b><i style="height:76px"></i><span>08-11</span></div>
+    </div>
+    <div class="legend">周累计 48,291 条，日均 6,899 条 · 峰值 08-09 为 9,400 条。</div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>每日平均耗时（秒）</h3>
+    <div class="sub">峰值日平均耗时同时升高（3.4s），说明高峰期是「数量 + 单条耗时」双重放大。</div>
+    <svg viewBox="0 0 700 170" role="img" aria-label="每日平均耗时折线图">
+      <line x1="40" y1="140" x2="680" y2="140" stroke="#e5e7eb" stroke-width="1"/>
+      <line x1="40" y1="95" x2="680" y2="95" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4 4"/>
+      <line x1="40" y1="50" x2="680" y2="50" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4 4"/>
+      <text x="44" y="136" font-size="11" fill="#9ca3af">2.0s</text>
+      <text x="44" y="91" font-size="11" fill="#9ca3af">3.0s</text>
+      <text x="44" y="46" font-size="11" fill="#9ca3af">4.0s</text>
+      <polygon points="60,113 160,100 260,122 360,91 460,77 560,109 660,127 660,140 60,140" fill="#2563eb" opacity="0.08"/>
+      <polyline points="60,113 160,100 260,122 360,91 460,77 560,109 660,127" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round"/>
+      <g fill="#2563eb">
+        <circle cx="60" cy="113" r="3.5"/><circle cx="160" cy="100" r="3.5"/><circle cx="260" cy="122" r="3.5"/>
+        <circle cx="360" cy="91" r="3.5"/><circle cx="460" cy="77" r="3.5"/><circle cx="560" cy="109" r="3.5"/>
+        <circle cx="660" cy="127" r="3.5"/>
+      </g>
+      <g font-size="11" fill="#4b5563" text-anchor="middle">
+        <text x="60" y="150">08-05</text><text x="160" y="150">08-06</text><text x="260" y="150">08-07</text>
+        <text x="360" y="150">08-08</text><text x="460" y="150">08-09</text><text x="560" y="150">08-10</text>
+        <text x="660" y="150">08-11</text>
+      </g>
+      <g font-size="11" fill="#2563eb" text-anchor="middle">
+        <text x="60" y="106">2.6</text><text x="160" y="93">2.9</text><text x="260" y="115">2.4</text>
+        <text x="360" y="84">3.1</text><text x="460" y="70">3.4</text><text x="560" y="102">2.7</text>
+        <text x="660" y="120">2.3</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>小时维度分布</h3>
+    <div class="sub">14:00–18:00 为业务高峰，慢查询量达到凌晨低谷的约 15 倍；索引与深分页优化应优先覆盖此窗口。</div>
+    <div class="bars" style="height:160px">
+      <div class="bar"><i style="height:8px"></i><span>0</span></div>
+      <div class="bar"><i style="height:5px"></i><span>1</span></div>
+      <div class="bar"><i style="height:4px"></i><span>2</span></div>
+      <div class="bar"><i style="height:4px"></i><span>3</span></div>
+      <div class="bar"><i style="height:5px"></i><span>4</span></div>
+      <div class="bar"><i style="height:9px"></i><span>5</span></div>
+      <div class="bar"><i style="height:14px"></i><span>6</span></div>
+      <div class="bar"><i style="height:22px"></i><span>7</span></div>
+      <div class="bar"><i style="height:35px"></i><span>8</span></div>
+      <div class="bar"><i style="height:52px"></i><span>9</span></div>
+      <div class="bar"><i style="height:78px"></i><span>10</span></div>
+      <div class="bar"><i style="height:95px"></i><span>11</span></div>
+      <div class="bar"><i style="height:110px"></i><span>12</span></div>
+      <div class="bar"><i style="height:132px" class="alt"></i><span>13</span></div>
+      <div class="bar"><i style="height:168px" class="alt"></i><span>14</span></div>
+      <div class="bar"><i style="height:211px" class="alt"></i><span>15</span></div>
+      <div class="bar"><i style="height:188px" class="alt"></i><span>16</span></div>
+      <div class="bar"><i style="height:156px" class="alt"></i><span>17</span></div>
+      <div class="bar"><i style="height:121px"></i><span>18</span></div>
+      <div class="bar"><i style="height:88px"></i><span>19</span></div>
+      <div class="bar"><i style="height:64px"></i><span>20</span></div>
+      <div class="bar"><i style="height:42px"></i><span>21</span></div>
+      <div class="bar"><i style="height:26px"></i><span>22</span></div>
+      <div class="bar"><i style="height:14px"></i><span>23</span></div>
+    </div>
+    <div class="legend">峰值 15:00（约 2,300 条/时）· 低谷 03:00（约 150 条/时）。</div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Top 5 慢 SQL 周耗时占比</h3>
+    <div class="sub">Top 5 合计占 Top 20 总耗时的 47%（≈ 40,000s / 周），是优先治理对象。</div>
+    <table>
+      <thead><tr><th>排名</th><th>主表</th><th>周总耗时</th><th>占比</th><th>累计</th></tr></thead>
+      <tbody>
+        <tr><td class="num">#1</td><td>order_info 深分页</td><td class="num">15,400s</td><td>18.7%</td><td>18.7%</td></tr>
+        <tr><td class="num">#2</td><td>user_account 高频更新</td><td class="num">8,900s</td><td>10.8%</td><td>29.5%</td></tr>
+        <tr><td class="num">#3</td><td>order_detail JOIN</td><td class="num">6,300s</td><td>7.6%</td><td>37.1%</td></tr>
+        <tr><td class="num">#4</td><td>product_sku 全表扫描</td><td class="num">5,200s</td><td>6.3%</td><td>43.4%</td></tr>
+        <tr><td class="num">#5</td><td>operation_log 大表扫描</td><td class="num">4,200s</td><td>5.1%</td><td>48.5%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    趋势结论：慢查询呈「大促脉冲 + 日间高峰」双峰结构，治理后建议在 08-15 大促窗口复测，对比本页四项指标。
+  </div>
+</main>
+
+<footer>MySQL 慢查询性能诊断报告 · 周趋势分析 · 数据为虚构演示数据</footer>
+</body>
+</html>

@@ -1,0 +1,202 @@
+{
+  "metadata": {
+    "skill_name": "onepager",
+    "skill_path": "/Users/liushiyuwin/.agents/skills/onepager",
+    "executor_model": "opencode-go/deepseek-v4-flash",
+    "analyzer_model": "opencode-go/deepseek-v4-flash",
+    "timestamp": "2026-08-10T01:10:00Z",
+    "evals_run": [
+      4
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 4,
+      "eval_name": "spa-changes-preview",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": null,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "fixed_top_bar",
+          "passed": true,
+          "evidence": "fixed bar + verdict"
+        },
+        {
+          "text": "default_collapsed",
+          "passed": true,
+          "evidence": "compact row"
+        },
+        {
+          "text": "tag_per_change",
+          "passed": true,
+          "evidence": "4 tags"
+        },
+        {
+          "text": "badge_in_template",
+          "passed": true,
+          "evidence": "badges in templates"
+        },
+        {
+          "text": "subview_jump",
+          "passed": true,
+          "evidence": "view mapping"
+        },
+        {
+          "text": "poll_wait",
+          "passed": true,
+          "evidence": "poll"
+        },
+        {
+          "text": "no_hash_anchor",
+          "passed": true,
+          "evidence": "no hash anchor"
+        },
+        {
+          "text": "flash_locate",
+          "passed": true,
+          "evidence": "flash+located"
+        },
+        {
+          "text": "locate_clear",
+          "passed": true,
+          "evidence": "clear prev"
+        },
+        {
+          "text": "checklist_copy",
+          "passed": true,
+          "evidence": "copy md"
+        },
+        {
+          "text": "original_nav_works",
+          "passed": true,
+          "evidence": "nav intact"
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "spa-changes-preview",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": null,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "fixed_top_bar",
+          "passed": true,
+          "evidence": "fixed bar + verdict"
+        },
+        {
+          "text": "default_collapsed",
+          "passed": true,
+          "evidence": "compact row"
+        },
+        {
+          "text": "tag_per_change",
+          "passed": true,
+          "evidence": "4 tags"
+        },
+        {
+          "text": "badge_in_template",
+          "passed": true,
+          "evidence": "badges in templates"
+        },
+        {
+          "text": "subview_jump",
+          "passed": true,
+          "evidence": "view mapping"
+        },
+        {
+          "text": "poll_wait",
+          "passed": true,
+          "evidence": "poll"
+        },
+        {
+          "text": "no_hash_anchor",
+          "passed": true,
+          "evidence": "no hash anchor"
+        },
+        {
+          "text": "flash_locate",
+          "passed": true,
+          "evidence": "flash+located"
+        },
+        {
+          "text": "locate_clear",
+          "passed": true,
+          "evidence": "clear prev"
+        },
+        {
+          "text": "checklist_copy",
+          "passed": true,
+          "evidence": "copy md"
+        },
+        {
+          "text": "original_nav_works",
+          "passed": true,
+          "evidence": "nav intact"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0
+      },
+      "time_seconds": {
+        "mean": 0,
+        "stddev": 0
+      },
+      "tokens": {
+        "mean": 0,
+        "stddev": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0
+      },
+      "time_seconds": {
+        "mean": 0,
+        "stddev": 0
+      },
+      "tokens": {
+        "mean": 0,
+        "stddev": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "+0.0s",
+      "tokens": "+0"
+    }
+  },
+  "notes": [
+    "两版均完整实现改动预览（11 条断言全过），运行时验证 chg-1/3/4 跳转定位、视图切换、零 console error",
+    "with_skill 注入块 9.9KB（syncPad 防遮挡/定位清除/CHG_VIEW 视图映射/150ms 轮询），old_skill 10.3KB",
+    "新法则 8 价值：把改动预览固化为显式法则+反模式（hash 路由劫持/子视图轮询/折叠窄条/模板内注入），保证该场景稳定做对",
+    "后续可加 eval-5 对比更复杂 SPA（>5 处改动 + 深层路由）放大差异"
+  ]
+}

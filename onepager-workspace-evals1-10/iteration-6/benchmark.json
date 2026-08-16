@@ -1,0 +1,1020 @@
+{
+  "metadata": {
+    "skill_name": "onepager",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-08-12T04:14:13Z",
+    "evals_run": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output is a single self-contained HTML file with no external <script>/<link> resources",
+          "passed": true,
+          "evidence": "no external http resources",
+          "manual": false
+        },
+        {
+          "text": "The page shows a verdict-first line directly under the title, before any tables",
+          "passed": true,
+          "evidence": "verdict-first structure",
+          "manual": false
+        },
+        {
+          "text": "The process table is searchable via an input that filters rows",
+          "passed": true,
+          "evidence": "search input",
+          "manual": false
+        },
+        {
+          "text": "The process table columns are sortable by clicking headers",
+          "passed": true,
+          "evidence": "sort affordance",
+          "manual": false
+        },
+        {
+          "text": "There is a checkable action checklist with a copy-to-markdown button",
+          "passed": true,
+          "evidence": "checklist affordance",
+          "manual": false
+        },
+        {
+          "text": "Evidence/details sections are collapsed or loaded on demand, not all expanded at once",
+          "passed": true,
+          "evidence": "collapsible present",
+          "manual": false
+        },
+        {
+          "text": "A provenance footer records source and generation info",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 10,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML explicitly states that this session produced no independent sub-artifacts.",
+          "passed": true,
+          "evidence": "empty-artifact statement",
+          "manual": false
+        },
+        {
+          "text": "The main HTML contains no artifact download or placeholder links.",
+          "passed": true,
+          "evidence": "0 hrefs, broken=[]",
+          "manual": false
+        },
+        {
+          "text": "The footer includes /tmp/no-artifacts and implicit-session-10.",
+          "passed": true,
+          "evidence": "provenance found: ['/tmp/no-artifacts', 'implicit-session-10']",
+          "manual": false
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output is a single self-contained HTML file",
+          "passed": true,
+          "evidence": "no external http resources",
+          "manual": false
+        },
+        {
+          "text": "The first visible content is a one-line verdict, not a table",
+          "passed": true,
+          "evidence": "verdict-first structure",
+          "manual": false
+        },
+        {
+          "text": "Bulk detail content sits behind collapsible sections or on-demand filters",
+          "passed": true,
+          "evidence": "collapsible present",
+          "manual": false
+        },
+        {
+          "text": "Search, sort, clickable rows, checklist, and copy affordances all still function",
+          "passed": true,
+          "evidence": "checklist affordance",
+          "manual": false
+        },
+        {
+          "text": "No section renders its full data table expanded on page load",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output produces a main.html plus multiple sub-*.html files, not one monolith",
+          "passed": true,
+          "evidence": "main.html: yes",
+          "manual": false
+        },
+        {
+          "text": "main.html is verdict-first with a one-line summary per section",
+          "passed": true,
+          "evidence": "main.html: yes",
+          "manual": false
+        },
+        {
+          "text": "main.html references sub pages via relative-path links or iframes",
+          "passed": true,
+          "evidence": "main.html: yes",
+          "manual": false
+        },
+        {
+          "text": "Each sub HTML is self-contained and independently openable",
+          "passed": true,
+          "evidence": "no external http resources",
+          "manual": false
+        },
+        {
+          "text": "main.html stays under 50KB and does not inline sub content",
+          "passed": true,
+          "evidence": "main.html: yes",
+          "manual": false
+        },
+        {
+          "text": "Opening the deliverable offline from a local folder shows all pages",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The SPA has a fixed changes bar, default collapsed to one slim row under 40px tall",
+          "passed": true,
+          "evidence": "changes bar signal",
+          "manual": false
+        },
+        {
+          "text": "Collapsed bar shows 'N \u5904\u6539\u52a8' verdict plus one clickable tag per change",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        },
+        {
+          "text": "Expanded bar shows per-change rows with summary + jump link + checkbox + copy-markdown",
+          "passed": true,
+          "evidence": "copy-md affordance",
+          "manual": false
+        },
+        {
+          "text": "Each change is marked with an id=chg-N badge injected in the render template, surviving view switching",
+          "passed": true,
+          "evidence": "chg tags: ['chg-1', 'chg-2', 'chg-3', 'chg-4']",
+          "manual": false
+        },
+        {
+          "text": "Jumping to a change in another sub-view clicks the nav and waits for render before locating",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        },
+        {
+          "text": "Locating uses flash animation + persistent outline, not hash anchors or scrollIntoView alone",
+          "passed": true,
+          "evidence": "locate feedback",
+          "manual": false
+        },
+        {
+          "text": "Switching target clears the previous locate highlight",
+          "passed": true,
+          "evidence": "clear-prev logic",
+          "manual": false
+        },
+        {
+          "text": "Original nav switching still works with zero console errors",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.",
+          "passed": true,
+          "evidence": "linked/referenced: ['report.html', 'qa.json', 'run.webm', 'trace.zip']",
+          "manual": false
+        },
+        {
+          "text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+          "passed": true,
+          "evidence": "video+controls: True, details blocks: 3",
+          "manual": false
+        },
+        {
+          "text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+          "passed": true,
+          "evidence": "4 hrefs, broken=[]",
+          "manual": false
+        },
+        {
+          "text": "The page includes source project absolute path and a Pi session ID in its footer.",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+          "passed": true,
+          "evidence": "video+controls: True, details blocks: 1",
+          "manual": false
+        },
+        {
+          "text": "The main HTML directly links both run.webm and failure.webm and report.html, while hero.svg is inline or used as page artwork rather than omitted silently.",
+          "passed": true,
+          "evidence": "linked/referenced: ['run.webm', 'failure.webm', 'report.html', 'hero.svg']",
+          "manual": false
+        },
+        {
+          "text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+          "passed": true,
+          "evidence": "8 hrefs, broken=[]",
+          "manual": false
+        },
+        {
+          "text": "The page includes source project absolute path and a Pi session ID in its footer.",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 7,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML directly links qa.json.",
+          "passed": true,
+          "evidence": "linked/referenced: ['qa.json']",
+          "manual": false
+        },
+        {
+          "text": "The main HTML does not link or copy failure.webm because the prompt says it belongs to an old session.",
+          "passed": true,
+          "evidence": "excluded but referenced/copied: []",
+          "manual": false
+        },
+        {
+          "text": "The page does not invent any artifact URL or placeholder link.",
+          "passed": true,
+          "evidence": "1 hrefs, broken=[]",
+          "manual": false
+        },
+        {
+          "text": "The footer includes /tmp/scoped-handoff and eval-session-7.",
+          "passed": true,
+          "evidence": "provenance found: ['/tmp/scoped-handoff', 'eval-session-7']",
+          "manual": false
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 8,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML directly links report.html, qa.json, run.webm, and trace.zip using portable relative paths.",
+          "passed": true,
+          "evidence": "linked/referenced: ['report.html', 'qa.json', 'run.webm', 'trace.zip']",
+          "manual": false
+        },
+        {
+          "text": "run.webm is rendered in a controls-enabled video player outside any details element.",
+          "passed": true,
+          "evidence": "video+controls: True, details blocks: 1",
+          "manual": false
+        },
+        {
+          "text": "The artifact links are visible in the main page rather than present only inside collapsed details.",
+          "passed": true,
+          "evidence": "9 links outside details",
+          "manual": false
+        },
+        {
+          "text": "The footer includes /tmp/pitch-video and implicit-session-8.",
+          "passed": true,
+          "evidence": "provenance found: ['/tmp/pitch-video', 'implicit-session-8']",
+          "manual": false
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 9,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML directly links current-report.html and current-qa.json.",
+          "passed": true,
+          "evidence": "linked/referenced: ['current-report.html', 'current-qa.json']",
+          "manual": false
+        },
+        {
+          "text": "The output does not link or copy old-failure.webm.",
+          "passed": true,
+          "evidence": "excluded but referenced/copied: []",
+          "manual": false
+        },
+        {
+          "text": "The artifact links are visible in the main page rather than present only inside collapsed details.",
+          "passed": true,
+          "evidence": "2 links outside details",
+          "manual": false
+        },
+        {
+          "text": "The footer includes /tmp/scoped-recap and implicit-session-9.",
+          "passed": true,
+          "evidence": "provenance found: ['/tmp/scoped-recap', 'implicit-session-9']",
+          "manual": false
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output is a single self-contained HTML file with no external <script>/<link> resources",
+          "passed": true,
+          "evidence": "no external http resources",
+          "manual": false
+        },
+        {
+          "text": "The page shows a verdict-first line directly under the title, before any tables",
+          "passed": true,
+          "evidence": "verdict-first structure",
+          "manual": false
+        },
+        {
+          "text": "The process table is searchable via an input that filters rows",
+          "passed": true,
+          "evidence": "search input",
+          "manual": false
+        },
+        {
+          "text": "The process table columns are sortable by clicking headers",
+          "passed": true,
+          "evidence": "sort affordance",
+          "manual": false
+        },
+        {
+          "text": "There is a checkable action checklist with a copy-to-markdown button",
+          "passed": true,
+          "evidence": "checklist affordance",
+          "manual": false
+        },
+        {
+          "text": "Evidence/details sections are collapsed or loaded on demand, not all expanded at once",
+          "passed": true,
+          "evidence": "collapsible present",
+          "manual": false
+        },
+        {
+          "text": "A provenance footer records source and generation info",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 10,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.67,
+        "passed": 2,
+        "failed": 1,
+        "total": 3,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML explicitly states that this session produced no independent sub-artifacts.",
+          "passed": false,
+          "evidence": "empty-artifact statement",
+          "manual": false
+        },
+        {
+          "text": "The main HTML contains no artifact download or placeholder links.",
+          "passed": true,
+          "evidence": "0 hrefs, broken=[]",
+          "manual": false
+        },
+        {
+          "text": "The footer includes /tmp/no-artifacts and implicit-session-10.",
+          "passed": true,
+          "evidence": "provenance found: ['/tmp/no-artifacts', 'implicit-session-10']",
+          "manual": false
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output is a single self-contained HTML file",
+          "passed": true,
+          "evidence": "no external http resources",
+          "manual": false
+        },
+        {
+          "text": "The first visible content is a one-line verdict, not a table",
+          "passed": true,
+          "evidence": "verdict-first structure",
+          "manual": false
+        },
+        {
+          "text": "Bulk detail content sits behind collapsible sections or on-demand filters",
+          "passed": true,
+          "evidence": "collapsible present",
+          "manual": false
+        },
+        {
+          "text": "Search, sort, clickable rows, checklist, and copy affordances all still function",
+          "passed": true,
+          "evidence": "checklist affordance",
+          "manual": false
+        },
+        {
+          "text": "No section renders its full data table expanded on page load",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output produces a main.html plus multiple sub-*.html files, not one monolith",
+          "passed": true,
+          "evidence": "main.html: yes",
+          "manual": false
+        },
+        {
+          "text": "main.html is verdict-first with a one-line summary per section",
+          "passed": true,
+          "evidence": "main.html: yes",
+          "manual": false
+        },
+        {
+          "text": "main.html references sub pages via relative-path links or iframes",
+          "passed": true,
+          "evidence": "main.html: yes",
+          "manual": false
+        },
+        {
+          "text": "Each sub HTML is self-contained and independently openable",
+          "passed": true,
+          "evidence": "no external http resources",
+          "manual": false
+        },
+        {
+          "text": "main.html stays under 50KB and does not inline sub content",
+          "passed": true,
+          "evidence": "main.html: yes",
+          "manual": false
+        },
+        {
+          "text": "Opening the deliverable offline from a local folder shows all pages",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The SPA has a fixed changes bar, default collapsed to one slim row under 40px tall",
+          "passed": true,
+          "evidence": "changes bar signal",
+          "manual": false
+        },
+        {
+          "text": "Collapsed bar shows 'N \u5904\u6539\u52a8' verdict plus one clickable tag per change",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        },
+        {
+          "text": "Expanded bar shows per-change rows with summary + jump link + checkbox + copy-markdown",
+          "passed": true,
+          "evidence": "copy-md affordance",
+          "manual": false
+        },
+        {
+          "text": "Each change is marked with an id=chg-N badge injected in the render template, surviving view switching",
+          "passed": true,
+          "evidence": "chg tags: ['chg-1', 'chg-2', 'chg-3', 'chg-4']",
+          "manual": false
+        },
+        {
+          "text": "Jumping to a change in another sub-view clicks the nav and waits for render before locating",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        },
+        {
+          "text": "Locating uses flash animation + persistent outline, not hash anchors or scrollIntoView alone",
+          "passed": true,
+          "evidence": "locate feedback",
+          "manual": false
+        },
+        {
+          "text": "Switching target clears the previous locate highlight",
+          "passed": true,
+          "evidence": "clear-prev logic",
+          "manual": false
+        },
+        {
+          "text": "Original nav switching still works with zero console errors",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML contains direct links to report.html, qa.json, run.webm, and trace.zip using real relative paths.",
+          "passed": true,
+          "evidence": "linked/referenced: ['report.html', 'qa.json', 'run.webm', 'trace.zip']",
+          "manual": false
+        },
+        {
+          "text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+          "passed": true,
+          "evidence": "video+controls: True, details blocks: 1",
+          "manual": false
+        },
+        {
+          "text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+          "passed": true,
+          "evidence": "9 hrefs, broken=[]",
+          "manual": false
+        },
+        {
+          "text": "The page includes source project absolute path and a Pi session ID in its footer.",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The primary video run.webm is visible in the main body through a video element with controls and is not only inside a details element.",
+          "passed": true,
+          "evidence": "video+controls: True, details blocks: 0",
+          "manual": false
+        },
+        {
+          "text": "The main HTML directly links both run.webm and failure.webm and report.html, while hero.svg is inline or used as page artwork rather than omitted silently.",
+          "passed": true,
+          "evidence": "linked/referenced: ['run.webm', 'failure.webm', 'report.html', 'hero.svg']",
+          "manual": false
+        },
+        {
+          "text": "The output does not invent links or include unrelated artifacts that were not provided by the prompt or fixture directory.",
+          "passed": true,
+          "evidence": "10 hrefs, broken=[]",
+          "manual": false
+        },
+        {
+          "text": "The page includes source project absolute path and a Pi session ID in its footer.",
+          "passed": true,
+          "evidence": "manual check advised",
+          "manual": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 7,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML directly links qa.json.",
+          "passed": true,
+          "evidence": "linked/referenced: ['qa.json']",
+          "manual": false
+        },
+        {
+          "text": "The main HTML does not link or copy failure.webm because the prompt says it belongs to an old session.",
+          "passed": true,
+          "evidence": "excluded but referenced/copied: []",
+          "manual": false
+        },
+        {
+          "text": "The page does not invent any artifact URL or placeholder link.",
+          "passed": true,
+          "evidence": "1 hrefs, broken=[]",
+          "manual": false
+        },
+        {
+          "text": "The footer includes /tmp/scoped-handoff and eval-session-7.",
+          "passed": true,
+          "evidence": "provenance found: ['/tmp/scoped-handoff', 'eval-session-7']",
+          "manual": false
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 8,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML directly links report.html, qa.json, run.webm, and trace.zip using portable relative paths.",
+          "passed": true,
+          "evidence": "linked/referenced: ['report.html', 'qa.json', 'run.webm', 'trace.zip']",
+          "manual": false
+        },
+        {
+          "text": "run.webm is rendered in a controls-enabled video player outside any details element.",
+          "passed": false,
+          "evidence": "video+controls: False, details blocks: 0",
+          "manual": false
+        },
+        {
+          "text": "The artifact links are visible in the main page rather than present only inside collapsed details.",
+          "passed": true,
+          "evidence": "4 links outside details",
+          "manual": false
+        },
+        {
+          "text": "The footer includes /tmp/pitch-video and implicit-session-8.",
+          "passed": true,
+          "evidence": "provenance found: ['/tmp/pitch-video', 'implicit-session-8']",
+          "manual": false
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 9,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The main HTML directly links current-report.html and current-qa.json.",
+          "passed": true,
+          "evidence": "linked/referenced: ['current-report.html', 'current-qa.json']",
+          "manual": false
+        },
+        {
+          "text": "The output does not link or copy old-failure.webm.",
+          "passed": true,
+          "evidence": "excluded but referenced/copied: []",
+          "manual": false
+        },
+        {
+          "text": "The artifact links are visible in the main page rather than present only inside collapsed details.",
+          "passed": true,
+          "evidence": "2 links outside details",
+          "manual": false
+        },
+        {
+          "text": "The footer includes /tmp/scoped-recap and implicit-session-9.",
+          "passed": true,
+          "evidence": "provenance found: ['/tmp/scoped-recap', 'implicit-session-9']",
+          "manual": false
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.942,
+        "stddev": 0.1237,
+        "min": 0.67,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.06",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": []
+}

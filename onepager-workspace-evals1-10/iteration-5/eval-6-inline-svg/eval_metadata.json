@@ -1,0 +1,12 @@
+{
+  "eval_id": 6,
+  "eval_name": "inline-svg-sub-artifact",
+  "prompt": "为某 AI 产品（WinBrain OS：数据本体 → 业务专家 → 持续进化）生成 uat-artifacts/pitch-scripts.html：4 个视频录制脚本，每个含镜头表（时间/画面/旁白）、录制依赖警告、转场要点、勾选批准框（打勾即标记可录制）；页面可搜索过滤、可复制 Markdown、可勾选进度。需要一个 hero SVG 品牌图（渐变品牌条 + 产品标识 + 标语 + 本体→专家方块链图标）。",
+  "assertions": [
+    "svg_inline: 页面内 hero SVG 以内联 <svg> 或 data URI 呈现，无 <img src=\"*.svg\"> 外链",
+    "no_external_assets: 产物无外链资源（grep src= 非 data: 为 0）",
+    "delivery_listing: 交付汇报逐条列出全部产物文件绝对路径 + 内联声明",
+    "onepager_core: 结论前置 + 搜索框 + 可勾选清单 + 复制按钮 + details 折叠",
+    "self_contained: 单文件无 CDN 无外链脚本"
+  ]
+}

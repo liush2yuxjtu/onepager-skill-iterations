@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>会话 Handoff · eval-session-7</title>
+<style>
+  :root {
+    --ink: #1a2332;
+    --muted: #5b6b82;
+    --line: #dfe5ee;
+    --bg: #f7f9fc;
+    --card: #ffffff;
+    --accent: #286149;
+    --accent-soft: #e7f0ea;
+    --ok: #1d7a44;
+    --warn: #a16207;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 20px 60px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .verdict {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+  .verdict strong { color: var(--accent); }
+  h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .artifact-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+  }
+  .artifact-meta { min-width: 0; }
+  .artifact-name { font-weight: 600; font-size: 15px; }
+  .artifact-desc { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .artifact-tag {
+    display: inline-block;
+    font-size: 12px;
+    padding: 1px 8px;
+    border-radius: 99px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .btn {
+    flex: none;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    padding: 8px 14px;
+    border-radius: 8px;
+  }
+  .btn:hover { background: #1e4d38; }
+  details.preview {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+  }
+  details.preview summary {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  details.preview pre {
+    margin: 12px 0 0;
+    padding: 12px 14px;
+    background: #f0f4f8;
+    border-radius: 6px;
+    font-size: 13px;
+    overflow-x: auto;
+    color: var(--ink);
+  }
+  .scope-note {
+    font-size: 13px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .scope-note .excluded { color: var(--warn); }
+  footer {
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer code { font-size: 12px; background: #eef2f7; padding: 1px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>会话 Handoff</h1>
+  <p class="sub">eval-session-7 · 交接给下一个会话接续</p>
+
+  <div class="verdict">
+    本会话确认产物 <strong>1 个</strong>：<strong>qa.json</strong>（QA 通过，errors 为空）。
+  </div>
+
+  <h2>会话产物</h2>
+  <div class="artifact-card">
+    <div class="artifact-meta">
+      <div class="artifact-name">qa.json <span class="artifact-tag">已确认 · 通过</span></div>
+      <div class="artifact-desc">QA 结果：{"passed":true,"errors":[]}</div>
+    </div>
+    <a class="btn" href="qa.json" download>打开 qa.json</a>
+  </div>
+
+  <details class="preview">
+    <summary>查看 qa.json 原始内容</summary>
+    <pre>{"passed":true,"errors":[]}</pre>
+  </details>
+
+  <div class="scope-note">
+    <strong>归集口径（诚实说明）：</strong>只收录本次会话聊天有证据确认的产物。输入目录里的
+    <span class="excluded">failure.webm</span> 属于旧会话，聊天未将其归属到当前会话，因此<b>不</b>列入本页；
+    未引用任何未经确认的占位或虚构链接。
+  </div>
+
+  <footer>
+    来源项目：<code>/tmp/scoped-handoff</code> · 会话 ID：<code>eval-session-7</code><br>
+    产物目录：<code>session-artifacts/</code> · 生成方式：按聊天证据主动归集当前会话产物
+  </footer>
+</main>
+</body>
+</html>

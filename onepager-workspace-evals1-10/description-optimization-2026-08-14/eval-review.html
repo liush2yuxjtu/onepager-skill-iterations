@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Set Review - onepager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Lora', Georgia, serif; background: #faf9f5; padding: 2rem; color: #141413; }
+    h1 { font-family: 'Poppins', sans-serif; margin-bottom: 0.5rem; font-size: 1.5rem; }
+    .description { color: #b0aea5; margin-bottom: 1.5rem; font-style: italic; max-width: 900px; }
+    .controls { margin-bottom: 1rem; display: flex; gap: 0.5rem; }
+    .btn { font-family: 'Poppins', sans-serif; padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; }
+    .btn-add { background: #6a9bcc; color: white; }
+    .btn-add:hover { background: #5889b8; }
+    .btn-export { background: #d97757; color: white; }
+    .btn-export:hover { background: #c4613f; }
+    table { width: 100%; max-width: 1100px; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    th { font-family: 'Poppins', sans-serif; background: #141413; color: #faf9f5; padding: 0.75rem 1rem; text-align: left; font-size: 0.875rem; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e8e6dc; vertical-align: top; }
+    tr:nth-child(even) td { background: #faf9f5; }
+    tr:hover td { background: #f3f1ea; }
+    .section-header td { background: #e8e6dc; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.8rem; color: #141413; text-transform: uppercase; letter-spacing: 0.05em; }
+    .query-input { width: 100%; padding: 0.4rem; border: 1px solid #e8e6dc; border-radius: 4px; font-size: 0.875rem; font-family: 'Lora', Georgia, serif; resize: vertical; min-height: 60px; }
+    .query-input:focus { outline: none; border-color: #d97757; box-shadow: 0 0 0 2px rgba(217,119,87,0.15); }
+    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider { position: absolute; inset: 0; background: #b0aea5; border-radius: 24px; cursor: pointer; transition: 0.2s; }
+    .toggle .slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+    .toggle input:checked + .slider { background: #d97757; }
+    .toggle input:checked + .slider::before { transform: translateX(20px); }
+    .btn-delete { background: #c44; color: white; padding: 0.3rem 0.6rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-family: 'Poppins', sans-serif; }
+    .btn-delete:hover { background: #a33; }
+    .summary { margin-top: 1rem; color: #b0aea5; font-size: 0.875rem; }
+  </style>
+</head>
+<body>
+  <h1>Eval Set Review: <span id="skill-name">onepager</span></h1>
+  <p class="description">Current description: <span id="skill-desc">用「窄门」哲学（SMALL_INTERFACE）设计交互式 HTML：结论前置，以搜索、筛选、排序、折叠、行动、复制或 状态回传等窄网关按需交换最小信息。仅当用户明确要求交互式 HTML / dashboard / diagnosis page，或交互、 状态、按需下钻能明显改善任务完成时使用；也用于保留交互地瘦身臃肿报告、归集当前会话产物的 HTML recap、 超长 HTML 改动预览、设计稿与 WebApp 漂移评测，以及需要密码、API key、token、2FA 或二维码的人机凭据页。 不因 report、summary、plan、explainer 或 HTML 等单个词自动触发；普通文字报告、领导汇报、短总结、静态计划、 代码修改和产品 UI 小改动保持其最小合适格式，除非用户明确要求交互式 HTML。</span></p>
+
+  <div class="controls">
+    <button class="btn btn-add" onclick="addRow()">+ Add Query</button>
+    <button class="btn btn-export" onclick="exportEvalSet()">Export Eval Set</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:65%">Query</th>
+        <th style="width:18%">Should Trigger</th>
+        <th style="width:10%">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="eval-body"></tbody>
+  </table>
+
+  <p class="summary" id="summary"></p>
+
+  <script>
+    const EVAL_DATA = [{"query": "我的 MacBook 这两天一开本地 agent 就发烫。请采集当前 CPU、内存和进程数据，做一个离线可打开的交互式诊断页：顶部先告诉我主要热源，进程可以搜索和按 CPU 排序，修复动作可以勾选并复制成 Markdown。", "should_trigger": true}, {"query": "帮我从零做一个采购审批的可点击单页原型。左边是待处理申请，右边看详情并填写意见，要能通过、驳回、切换已处理状态，还要演示空队列和校验失败。最终给我一个直接双击就能打开的文件，我不准备起前端项目。", "should_trigger": true}, {"query": "运营同学每天排查投放异常很痛苦，能不能给他们一个很小的浏览器工具：按渠道和日期筛异常，展开证据，只勾选需要重跑的任务，然后把选择结果复制给 agent。数据可以先写死，重点是交互流程能跑。", "should_trigger": true}, {"query": "`~/Downloads/Q3-acceptance.html` 有 480KB、六个 tab，每页几十行表，评审说信息太多，但搜索、排序、点行看证据和勾选整改项都不能丢。请把它重构成结论优先、细节按需展开的轻量交互式 HTML。", "should_trigger": true}, {"query": "把这次 UAT 会话产生的 report.html、qa.json、run.webm 和 trace.zip 整理成一个 HTML handoff。最终录像要直接在正文播放，其他产物有真实链接；只收本次聊天能证明属于当前会话的文件。", "should_trigger": true}, {"query": "我改了一个 600KB 的 hash-router SPA 原型，改动分别藏在 chat、experts、projects 三个视图。做个评审入口：默认只显示一条很窄的改动栏，点每个 tag 能先切到对应视图再闪烁定位，评审结果能勾选和复制。", "should_trigger": true}, {"query": "设计稿在 `/tmp/design-intent.html`，实际 WebApp 导出的交互清单在 `/tmp/implemented-actions.json`。请做一个可浏览的对比页，按 domain 标出 full / partial / gap / overflow，先给意图实现率，再允许点进每个域看证据。", "should_trigger": true}, {"query": "部署脚本现在停在人工认证：先输云平台密码，再填 sk- 开头的 key，有时还要 6 位短信码或扫码。请做一个本地凭据接力页，默认遮蔽、格式错误可重试、二维码有过期倒计时，完成状态能复制回 agent，不能向远程地址发送任何内容。", "should_trigger": true}, {"query": "need a onepager for our incident war room — one sentence verdict first, then a searchable owner list, collapsible evidence, checkboxes for mitigations, and a copy button so i can paste the current state back into the claude session. single html pls, offline.", "should_trigger": true}, {"query": "给我做一个 MCP 与专家创建、技能进化、诊断模块之间的交互关系页面。我要在浏览器里点某个 MCP 只高亮它实际连接的模块，节点详情按需展开，全部放在一个离线 HTML 里，不要依赖图表 CDN。", "should_trigger": true}, {"query": "请直接改 `frontend/src/components/ApprovalPanel.tsx`：按钮圆角改成 8px，驳回按钮 hover 变深红，移动端间距缩到 12px，并补上现有 Vitest 测试。不要另做 demo 或 HTML 报告。", "should_trigger": false}, {"query": "我们要重做企业后台的审批体验。请先给一份 UX 需求文档：列角色、任务流、信息架构、错误状态和无障碍验收标准，Markdown 就好，暂时不要原型和页面。", "should_trigger": false}, {"query": "用 Skill Creator 自带的 eval viewer 展示我这批 skill run 的 outputs、grading.json 和 benchmark.json。必须用 generate_review.py，别重新设计一个评测页面。", "should_trigger": false}, {"query": "把本周研发进度整理成给 VP 的五段式周报：目标、完成、风险、下周计划、需要决策。只在聊天输出，控制在 500 字以内，不要 HTML。", "should_trigger": false}, {"query": "给数据库迁移写一个三阶段执行计划，包含负责人、回滚条件和检查清单。放到 `docs/migration-plan.md`，这是静态文档，不需要筛选或状态回传。", "should_trigger": false}, {"query": "法务给了 `privacy-policy.html`，请只修正其中三处错别字和一个失效链接，保持现有结构和样式，直接编辑原文件，不要转换成交互页面。", "should_trigger": false}, {"query": "在当前 Next.js 产品里实现一个新的客户列表页面，数据从 `/api/customers` 获取，使用现有 design system、路由和权限中间件，并补加载/空/错误状态。请直接写 React 代码并跑测试。", "should_trigger": false}, {"query": "现有 analytics dashboard 的 Recharts 折线图缺少 tooltip 和同比序列，请直接修改 `apps/web/app/analytics/page.tsx`，复用项目颜色 token，不要生成独立报告。", "should_trigger": false}, {"query": "review `reports/security-audit.html` for XSS and accessibility issues, then give me findings with file:line references. do not modify the file and don't build a separate review UI.", "should_trigger": false}, {"query": "用三句话比较方案 A 的 Redis 队列和方案 B 的数据库轮询，最后推荐一个。不要图、不要页面、不要 artifact，我只需要快速判断。", "should_trigger": false}];
+
+    let evalItems = [...EVAL_DATA];
+
+    function render() {
+      const tbody = document.getElementById('eval-body');
+      tbody.innerHTML = '';
+
+      // Sort: should-trigger first, then should-not-trigger
+      const sorted = evalItems
+        .map((item, origIdx) => ({ ...item, origIdx }))
+        .sort((a, b) => (b.should_trigger ? 1 : 0) - (a.should_trigger ? 1 : 0));
+
+      let lastGroup = null;
+      sorted.forEach(item => {
+        const group = item.should_trigger ? 'trigger' : 'no-trigger';
+        if (group !== lastGroup) {
+          const headerRow = document.createElement('tr');
+          headerRow.className = 'section-header';
+          headerRow.innerHTML = `<td colspan="3">${item.should_trigger ? 'Should Trigger' : 'Should NOT Trigger'}</td>`;
+          tbody.appendChild(headerRow);
+          lastGroup = group;
+        }
+
+        const idx = item.origIdx;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><textarea class="query-input" onchange="updateQuery(${idx}, this.value)">${escapeHtml(item.query)}</textarea></td>
+          <td>
+            <label class="toggle">
+              <input type="checkbox" ${item.should_trigger ? 'checked' : ''} onchange="updateTrigger(${idx}, this.checked)">
+              <span class="slider"></span>
+            </label>
+            <span style="margin-left:8px;font-size:0.8rem;color:#b0aea5">${item.should_trigger ? 'Yes' : 'No'}</span>
+          </td>
+          <td><button class="btn-delete" onclick="deleteRow(${idx})">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      updateSummary();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function updateQuery(idx, value) { evalItems[idx].query = value; updateSummary(); }
+    function updateTrigger(idx, value) { evalItems[idx].should_trigger = value; render(); }
+    function deleteRow(idx) { evalItems.splice(idx, 1); render(); }
+
+    function addRow() {
+      evalItems.push({ query: '', should_trigger: true });
+      render();
+      const inputs = document.querySelectorAll('.query-input');
+      inputs[inputs.length - 1].focus();
+    }
+
+    function updateSummary() {
+      const trigger = evalItems.filter(i => i.should_trigger).length;
+      const noTrigger = evalItems.filter(i => !i.should_trigger).length;
+      document.getElementById('summary').textContent =
+        `${evalItems.length} queries total: ${trigger} should trigger, ${noTrigger} should not trigger`;
+    }
+
+    function exportEvalSet() {
+      const valid = evalItems.filter(i => i.query.trim() !== '');
+      const data = valid.map(i => ({ query: i.query.trim(), should_trigger: i.should_trigger }));
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'eval_set.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    render();
+  </script>
+</body>
+</html>

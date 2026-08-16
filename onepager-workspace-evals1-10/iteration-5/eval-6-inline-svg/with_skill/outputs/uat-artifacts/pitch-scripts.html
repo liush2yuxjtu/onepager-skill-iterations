@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WinBrain OS · 视频录制脚本集（UAT 批准用）</title>
+<style>
+  :root{
+    --bg:#0f1220; --panel:#171b2e; --panel2:#1d2340; --line:#2a3156;
+    --text:#e8ecff; --muted:#9aa3c9; --accent:#4f8cff; --accent2:#9a5cff;
+    --cyan:#2dd4bf; --gold:#fbbf24; --red:#f87171; --green:#34d399;
+    --ok-bg:rgba(52,211,153,.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.6; padding:20px 16px 60px; max-width:1080px; margin:0 auto;
+  }
+  /* ---------- hero ---------- */
+  .hero{width:100%; border-radius:16px; overflow:hidden; border:1px solid var(--line); box-shadow:0 8px 40px rgba(0,0,0,.4)}
+  .tldr{
+    margin:14px 0 18px; padding:12px 16px; border-left:4px solid var(--accent2);
+    background:linear-gradient(90deg, rgba(154,92,255,.15), rgba(79,140,255,.06));
+    border-radius:0 10px 10px 0; color:var(--text);
+  }
+  .tldr b{color:var(--cyan)}
+  h1{font-size:1.5rem; margin-top:16px}
+  .sub{color:var(--muted); font-size:.92rem; margin:4px 0 14px}
+  /* ---------- 控制条 ---------- */
+  .controls{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:18px;
+  }
+  .controls input[type=search]{
+    flex:1 1 240px; min-width:180px; background:var(--panel2); color:var(--text);
+    border:1px solid var(--line); border-radius:8px; padding:9px 12px; font-size:.95rem; outline:none;
+  }
+  .controls input[type=search]:focus{border-color:var(--accent)}
+  .btn{
+    background:linear-gradient(90deg, var(--accent), var(--accent2)); color:#fff; border:none;
+    border-radius:8px; padding:9px 16px; font-size:.9rem; font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  .btn:hover{filter:brightness(1.12)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--muted); font-weight:500}
+  .btn.ghost:hover{color:var(--text); border-color:var(--accent)}
+  .progress{flex:1 1 100%; display:flex; align-items:center; gap:10px; font-size:.85rem; color:var(--muted)}
+  .bar{flex:1; height:8px; background:var(--panel2); border-radius:99px; overflow:hidden; border:1px solid var(--line)}
+  .bar>span{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--accent2)); transition:width .3s}
+  /* ---------- 脚本卡片 ---------- */
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:16px 18px; margin-bottom:16px;
+  }
+  .card.approved{border-color:var(--green); box-shadow:0 0 0 1px rgba(52,211,153,.35)}
+  .card.hidden{display:none}
+  .card-head{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between}
+  .card-title{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .badge{
+    font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:99px; letter-spacing:.04em;
+  }
+  .badge.s1{background:rgba(79,140,255,.18); color:#8fb4ff}
+  .badge.s2{background:rgba(154,92,255,.18); color:#c9a6ff}
+  .badge.s3{background:rgba(45,212,191,.16); color:#6fe0d0}
+  .badge.s4{background:rgba(251,191,36,.16); color:#fcd34d}
+  .approved-tag{
+    display:none; font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:99px;
+    background:var(--ok-bg); color:var(--green); border:1px solid rgba(52,211,153,.4);
+  }
+  .card.approved .approved-tag{display:inline-block}
+  .meta{font-size:.82rem; color:var(--muted); margin:2px 0 10px}
+  .goal{font-size:.92rem; color:var(--text); margin-bottom:10px}
+  .goal b{color:var(--cyan)}
+  /* 批准框 */
+  .approve{
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
+    background:var(--panel2); border:1px dashed var(--line); margin-bottom:12px; cursor:pointer; user-select:none;
+  }
+  .card.approved .approve{border-color:var(--green); border-style:solid; background:var(--ok-bg)}
+  .approve input{width:20px; height:20px; accent-color:var(--green); cursor:pointer; flex:none}
+  .approve .lbl{font-size:.9rem; font-weight:600}
+  .approve .hint{font-size:.78rem; color:var(--muted)}
+  /* 依赖警告 */
+  .warn{
+    border:1px solid rgba(248,113,113,.45); background:rgba(248,113,113,.08);
+    border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:.86rem; color:#fecaca;
+  }
+  .warn summary{font-weight:700; cursor:pointer; color:#fca5a5}
+  .warn ul{margin:8px 0 0 18px}
+  .warn li{margin:3px 0}
+  /* 转场要点 */
+  .trans{
+    border:1px solid var(--line); background:var(--panel2); border-radius:10px;
+    padding:10px 12px; margin-bottom:12px; font-size:.86rem;
+  }
+  .trans summary{font-weight:600; cursor:pointer; color:var(--cyan)}
+  .trans ul{margin:8px 0 0 18px; color:var(--muted)}
+  .trans li{margin:3px 0}
+  /* 镜头表 */
+  details.shots{border:1px solid var(--line); border-radius:10px; background:var(--panel2)}
+  details.shots>summary{
+    padding:10px 12px; font-weight:600; cursor:pointer; color:var(--accent);
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  details.shots>summary .cnt{font-size:.76rem; color:var(--muted); font-weight:500}
+  details.shots[open]>summary{border-bottom:1px solid var(--line)}
+  .table-wrap{overflow-x:auto}
+  table{width:100%; border-collapse:collapse; font-size:.85rem; min-width:620px}
+  th{background:var(--panel); color:var(--muted); text-align:left; padding:8px 10px; font-weight:600; position:sticky; top:0}
+  td{padding:8px 10px; border-top:1px solid var(--line); vertical-align:top}
+  td.time{white-space:nowrap; color:var(--cyan); font-variant-numeric:tabular-nums}
+  td.vis{color:var(--text); min-width:180px}
+  td.vo{color:var(--muted); min-width:220px}
+  td.done{width:44px; text-align:center}
+  td.done input{width:17px; height:17px; accent-color:var(--green); cursor:pointer}
+  tr.shot-done td.vis, tr.shot-done td.vo{opacity:.45; text-decoration:line-through}
+  /* 页脚 */
+  footer{margin-top:26px; font-size:.78rem; color:var(--muted); border-top:1px solid var(--line); padding-top:14px; word-break:break-all}
+  footer code{background:var(--panel2); padding:1px 6px; border-radius:5px}
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+    background:#1e2b52; border:1px solid var(--accent); color:var(--text);
+    padding:10px 18px; border-radius:10px; font-size:.88rem; opacity:0; transition:all .25s; z-index:99;
+    box-shadow:0 6px 24px rgba(0,0,0,.5); pointer-events:none;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .empty{display:none; text-align:center; color:var(--muted); padding:40px 0}
+  @media (max-width:640px){
+    body{padding:12px 10px 50px}
+    .card{padding:12px}
+    h1{font-size:1.25rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HERO（内联 SVG：渐变品牌条 + 产品标识 + 标语 + 本体→专家方块链） ================= -->
+<svg class="hero" viewBox="0 0 960 300" role="img" aria-label="WinBrain OS 品牌图：数据本体 → 业务专家 → 持续进化">
+  <defs>
+    <linearGradient id="brandbar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset=".45" stop-color="#4f8cff"/>
+      <stop offset="1" stop-color="#9a5cff"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141a33"/>
+      <stop offset="1" stop-color="#0b0e1d"/>
+    </linearGradient>
+    <linearGradient id="chain" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4f8cff"/>
+      <stop offset=".5" stop-color="#9a5cff"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 + 品牌条 -->
+  <rect x="0" y="0" width="960" height="300" fill="url(#bg)"/>
+  <rect x="0" y="0" width="960" height="8" fill="url(#brandbar)"/>
+  <circle cx="880" cy="40" r="90" fill="#4f8cff" opacity=".07"/>
+  <circle cx="90" cy="270" r="120" fill="#2dd4bf" opacity=".06"/>
+
+  <!-- 产品标识（左侧徽标） -->
+  <rect x="42" y="52" width="86" height="86" rx="20" fill="none" stroke="url(#chain)" stroke-width="3.5"/>
+  <path d="M62 92 L85 68 L108 92 L85 116 Z" fill="url(#brandbar)" filter="url(#glow)"/>
+  <circle cx="85" cy="92" r="12" fill="#0b0e1d" opacity=".85"/>
+  <circle cx="85" cy="92" r="5" fill="#fff"/>
+  <text x="42" y="172" font-size="30" font-weight="800" fill="#fff" font-family="Arial,Helvetica,sans-serif">WinBrain OS</text>
+  <text x="44" y="196" font-size="15" fill="#9aa3c9" font-family="Arial,Helvetica,sans-serif">业务数据 · 认知操作系统</text>
+
+  <!-- 标语（右下） -->
+  <text x="46" y="252" font-size="17" fill="#e8ecff" font-family="Arial,Helvetica,sans-serif" font-weight="600">数据本体 → 业务专家 → 持续进化</text>
+
+  <!-- 本体→专家 方块链图标（右侧三块 + 渐变箭头） -->
+  <!-- 块1 数据本体 -->
+  <rect x="560" y="96" width="110" height="62" rx="14" fill="#4f8cff" opacity=".16" stroke="#4f8cff" stroke-width="2.5"/>
+  <rect x="576" y="112" width="18" height="30" rx="4" fill="#4f8cff" opacity=".9"/>
+  <text x="604" y="126" font-size="15" fill="#8fb4ff" font-family="Arial,Helvetica,sans-serif" font-weight="700">数据本体</text>
+  <text x="604" y="144" font-size="11" fill="#9aa3c9" font-family="Arial,Helvetica,sans-serif">DATA ONTOLOGY</text>
+  <!-- 箭头1 -->
+  <line x1="676" y1="127" x2="706" y2="127" stroke="url(#chain)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M706 120 L720 127 L706 134 Z" fill="url(#chain)"/>
+  <!-- 块2 业务专家 -->
+  <rect x="724" y="96" width="110" height="62" rx="14" fill="#9a5cff" opacity=".16" stroke="#9a5cff" stroke-width="2.5"/>
+  <circle cx="748" cy="125" r="9" fill="none" stroke="#c9a6ff" stroke-width="2.5"/>
+  <circle cx="748" cy="121" r="3.5" fill="#c9a6ff"/>
+  <path d="M742 132 q6 -6 12 0" stroke="#c9a6ff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <text x="766" y="126" font-size="15" fill="#c9a6ff" font-family="Arial,Helvetica,sans-serif" font-weight="700">业务专家</text>
+  <text x="766" y="144" font-size="11" fill="#9aa3c9" font-family="Arial,Helvetica,sans-serif" font-weight="700">BUSINESS EXPERT</text>
+  <!-- 箭头2 -->
+  <line x1="840" y1="127" x2="870" y2="127" stroke="url(#chain)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M870 120 L884 127 L870 134 Z" fill="url(#chain)"/>
+  <!-- 块3 持续进化 -->
+  <rect x="888" y="96" width="110" height="62" rx="14" fill="#2dd4bf" opacity=".16" stroke="#2dd4bf" stroke-width="2.5"/>
+  <path d="M928 110 l20 0 l-8 -8 M948 110 l-8 8 l8 8" stroke="#6fe0d0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="938" y="126" font-size="15" fill="#6fe0d0" font-family="Arial,Helvetica,sans-serif" font-weight="700">持续进化</text>
+  <text x="938" y="144" font-size="11" fill="#9aa3c9" font-family="Arial,Helvetica,sans-serif" font-weight="700">EVOLVE</text>
+  <text x="900" y="138" font-size="11" fill="#9aa3c9" font-family="Arial,Helvetica,sans-serif" font-weight="700">EVOLVE</text>
+  <!-- 循环弧线：进化回到本体（持续进化闭环） -->
+  <path d="M916 158 A60 40 0 0 0 560 158" stroke="url(#chain)" stroke-width="2" stroke-dasharray="5 6" fill="none" opacity=".55"/>
+  <text x="735" y="188" font-size="11.5" fill="#6fe0d0" font-family="Arial,Helvetica,sans-serif" opacity=".85">学习回流 · 越用越懂业务</text>
+</svg>
+
+<div class="tldr">
+  <b>结论：</b>4 个录制脚本齐备（本体宣言 60s · 专家工作台 90s · 进化引擎 75s · 业务回响 60s），勾选右下角批准框即标记「可录制」；录制前必须先核对每个脚本的红色<b>依赖警告</b>——环境、数据与合规前置不到位时，先录后补只会返工。
+</div>
+
+<h1>WinBrain OS · 视频录制脚本集</h1>
+<div class="sub">4 个脚本 · 合计约 285s · 用于产品 UAT 录屏与上线宣传片</div>
+
+<!-- ================= 控制条 ================= -->
+<div class="controls">
+  <input type="search" id="q" placeholder="搜索脚本 / 镜头 / 旁白关键词…（如：本体 / 专家 / 进化 / 报表）" autocomplete="off">
+  <button class="btn" id="copyAll">复制 Markdown ⤓</button>
+  <button class="btn ghost" id="reset">重置勾选</button>
+  <div class="progress">
+    <span id="pText">已批准 0/4 · 已录镜头 0/24</span>
+    <div class="bar"><span id="pBar"></span></div>
+  </div>
+</div>
+<div class="empty" id="empty">没有匹配「<b id="emptyQ"></b>」的脚本，换个词试试。</div>
+
+<!-- ================= S1 ================= -->
+<section class="card" id="s1" data-tags="本体 宣言 总览 数据 图谱 血缘 60s">
+  <div class="card-head">
+    <div class="card-title">
+      <span class="badge s1">S1</span>
+      <h2 style="font-size:1.1rem">本体宣言 · 平台总览</h2>
+      <span class="approved-tag">✓ 可录制</span>
+    </div>
+    <div class="meta">时长 ≈ 60s · 定位：产品第一印象 · 标签：本体/图谱/血缘</div>
+  </div>
+  <div class="goal">目标：<b>5 秒内让观众看懂</b>「裸数据不是能力，数据本体才是」——多源数据编译成可消费的本体，专家问、本体答。</div>
+
+  <label class="approve">
+    <input type="checkbox" class="approve-cb" data-s="s1">
+    <span class="lbl">批准本脚本可录制</span>
+    <span class="hint">勾选 = 排期可进棚，进度条与 Markdown 导出同步更新</span>
+  </label>
+
+  <details class="warn" open>
+    <summary>⚠ 录制依赖警告（4 项）</summary>
+    <ul>
+      <li><b>[阻断] 演示环境</b>：本体样例库需预先装载（含商品/渠道/库存 3 个主题域），无样例库则图谱镜头无物可拍。</li>
+      <li><b>[阻断] 网络</b>：演示走企业内网，需提前确认录屏机可访问本体查询服务；断网时图谱渲染为空。</li>
+      <li><b>[高] 设备</b>：4K 录屏 + 外接降噪麦克风，旁白后期单轨补录。</li>
+      <li><b>[中] 数据脱敏</b>：图谱高亮镜头避免出现真实客户名，改用演示别名。</li>
+    </ul>
+  </details>
+
+  <details class="trans">
+    <summary>转场要点</summary>
+    <ul>
+      <li>镜头1→2：logo 定格后推镜入场，用品牌渐变条扫过衔接「数据源接入」。</li>
+      <li>镜头2→3：多源汇入动画收束时叠化为图谱全貌（0.6s 叠化）。</li>
+      <li>镜头3→4：图谱上点选一个实体，无缝切到问答面板（同源实体保持高亮）。</li>
+      <li>镜头4→5：问答结果渐隐，回到标语画面，配品牌音效收尾。</li>
+    </ul>
+  </details>
+
+  <details class="shots">
+    <summary>镜头表（5 镜） <span class="cnt" id="cnt-s1">已录 0/5</span></summary>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:64px">时间</th><th>画面</th><th>旁白</th><th style="width:44px">✓</th></tr></thead>
+        <tbody>
+          <tr><td class="time">0:00–0:05</td><td class="vis">品牌条 + logo 定格，光效扫过「WinBrain OS」</td><td class="vo">数据是资产，但裸数据不是能力。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s1"></td></tr>
+          <tr><td class="time">0:05–0:15</td><td class="vis">多数据源（库表/文件/接口）汇入「本体层」动画</td><td class="vo">WinBrain OS 把分散数据，编译成可消费的数据本体。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s1"></td></tr>
+          <tr><td class="time">0:15–0:30</td><td class="vis">本体图谱浏览：实体高亮、关系连线、血缘可追溯</td><td class="vo">业务语言定义，血缘清晰可查——业务专家看得懂。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s1"></td></tr>
+          <tr><td class="time">0:30–0:45</td><td class="vis">演示一次自然语言问答，答案从本体实时取数</td><td class="vo">专家问，本体答——不再靠写 SQL 的人传话。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s1"></td></tr>
+          <tr><td class="time">0:45–1:00</td><td class="vis">画面收束至标语「数据本体 → 业务专家 → 持续进化」</td><td class="vo">从数据本体出发，WinBrain OS。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s1"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<!-- ================= S2 ================= -->
+<section class="card" id="s2" data-tags="专家 工作台 自然语言 问数 SQL 看板 下钻 反馈 90s">
+  <div class="card-head">
+    <div class="card-title">
+      <span class="badge s2">S2</span>
+      <h2 style="font-size:1.1rem">专家工作台 · 业务专家工作流</h2>
+      <span class="approved-tag">✓ 可录制</span>
+    </div>
+    <div class="meta">时长 ≈ 90s · 定位：核心产品演示 · 标签：专家/问数/看板/反馈</div>
+  </div>
+  <div class="goal">目标：<b>复现「从提问到结论」的完整闭环</b>——业务专家用母语提问、自动转译查询、结果回填看板、专家反馈回流本体。</div>
+
+  <label class="approve">
+    <input type="checkbox" class="approve-cb" data-s="s2">
+    <span class="lbl">批准本脚本可录制</span>
+    <span class="hint">勾选 = 排期可进棚，进度条与 Markdown 导出同步更新</span>
+  </label>
+
+  <details class="warn" open>
+    <summary>⚠ 录制依赖警告（4 项）</summary>
+    <ul>
+      <li><b>[阻断] 专家账号</b>：需业务专家角色演示账号（含问数/看板/反馈三权限），缺权限则镜头 3/4 无法演示。</li>
+      <li><b>[阻断] 演示数据</b>：按脚本预置「华北门店 Q3 退货率」问题集，保证镜头 2 的 SQL 转译结果稳定可复现。</li>
+      <li><b>[高] 敏感数据</b>：录屏前关闭个人消息/邮件推送，避免弹窗入画。</li>
+      <li><b>[中] 缓存</b>：录制前清空浏览器缓存，避免首查卡顿 3 秒以上。</li>
+    </ul>
+  </details>
+
+  <details class="trans">
+    <summary>转场要点</summary>
+    <ul>
+      <li>镜头1→2：光标从标题栏滑入提问框（入画即打字），全程无剪辑感。</li>
+      <li>镜头2→3：SQL 转译过程用「译码条」动画，结果弹出用 0.3s 缩放入场。</li>
+      <li>镜头3→4：看板下钻用滑移切换（左滑 = 更细粒度）。</li>
+      <li>镜头4→5：反馈标注动作完成后，画面切到「团队空间」卡片墙，最后一张卡是本次结论。</li>
+    </ul>
+  </details>
+
+  <details class="shots">
+    <summary>镜头表（5 镜） <span class="cnt" id="cnt-s2">已录 0/5</span></summary>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:64px">时间</th><th>画面</th><th>旁白</th><th style="width:44px">✓</th></tr></thead>
+        <tbody>
+          <tr><td class="time">0:00–0:08</td><td class="vis">专家工作台主界面：左侧导航 + 右侧「问数」入口高亮</td><td class="vo">业务专家，终于可以用母语问自己的数据。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s2"></td></tr>
+          <tr><td class="time">0:08–0:22</td><td class="vis">输入「华北门店 Q3 退货率为什么上升」，意图解析 + 自动生成 SQL</td><td class="vo">一句话，意图被解析，查询被自动转译。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s2"></td></tr>
+          <tr><td class="time">0:22–0:45</td><td class="vis">结果回填看板：图表 + 明细下钻到单店级</td><td class="vo">结果直接回填看板，一次点击下钻到明细。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s2"></td></tr>
+          <tr><td class="time">0:45–1:10</td><td class="vis">专家对结论做修正/标注：「原因归类为物流」并打回</td><td class="vo">专家的判断，被记回本体——这是进化的燃料。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s2"></td></tr>
+          <tr><td class="time">1:10–1:30</td><td class="vis">把本次分析分享到团队空间，成员可见可复用</td><td class="vo">结论即资产：一次分析，全团队复用。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s2"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<!-- ================= S3 ================= -->
+<section class="card" id="s3" data-tags="进化 引擎 时间轴 版本 反馈 血缘 回滚 准确率 75s">
+  <div class="card-head">
+    <div class="card-title">
+      <span class="badge s3">S3</span>
+      <h2 style="font-size:1.1rem">进化引擎 · 持续进化闭环</h2>
+      <span class="approved-tag">✓ 可录制</span>
+    </div>
+    <div class="meta">时长 ≈ 75s · 定位：差异化卖点 · 标签：进化/版本/血缘/回滚</div>
+  </div>
+  <div class="goal">目标：<b>证明「本体不是静止的」</b>——每次使用都在改进本体，变化可审计、可回滚，进化前后效果可对比。</div>
+
+  <label class="approve">
+    <input type="checkbox" class="approve-cb" data-s="s3">
+    <span class="lbl">批准本脚本可录制</span>
+    <span class="hint">勾选 = 排期可进棚，进度条与 Markdown 导出同步更新</span>
+  </label>
+
+  <details class="warn" open>
+    <summary>⚠ 录制依赖警告（3 项）</summary>
+    <ul>
+      <li><b>[阻断] 进化数据</b>：演示账号需包含 ≥3 个版本的进化历史（含 1 次回滚记录），空账号无法演示时间轴。</li>
+      <li><b>[高] 回滚演示</b>：回滚操作前在测试库执行，正式录屏前由运维确认快照已打。</li>
+      <li><b>[中] 指标口径</b>：镜头 4 的准确率对比需用预置基准数据集，旁白口径与脚本一致，不得现场编数字。</li>
+    </ul>
+  </details>
+
+  <details class="trans">
+    <summary>转场要点</summary>
+    <ul>
+      <li>镜头1→2：时间轴横向平移，停在「v2.1 本体更新」节点放大。</li>
+      <li>镜头2→3：更新触发动画收束后，切到变更日志详情（同屏继承高亮行）。</li>
+      <li>镜头3→4：血缘图渐隐，左右分屏对比「进化前 vs 进化后」准确率。</li>
+      <li>镜头4→5：对比条动画完成后淡出，回到标语画面。</li>
+    </ul>
+  </details>
+
+  <details class="shots">
+    <summary>镜头表（5 镜） <span class="cnt" id="cnt-s3">已录 0/5</span></summary>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:64px">时间</th><th>画面</th><th>旁白</th><th style="width:44px">✓</th></tr></thead>
+        <tbody>
+          <tr><td class="time">0:00–0:08</td><td class="vis">进化时间轴视图：版本节点 v1.0 → v2.0 → v2.1</td><td class="vo">本体不是静止的——它在持续进化。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s3"></td></tr>
+          <tr><td class="time">0:08–0:30</td><td class="vis">一次专家反馈触发本体更新：新关系/新口径被采纳</td><td class="vo">每一次使用，都在留下改进信号。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s3"></td></tr>
+          <tr><td class="time">0:30–0:55</td><td class="vis">变更日志 + 血缘高亮：谁改的、改了什么、影响哪些查询</td><td class="vo">变化可审计、可回溯、可回滚。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s3"></td></tr>
+          <tr><td class="time">0:55–1:10</td><td class="vis">左右分屏：进化前后同一问题的回答准确率对比</td><td class="vo">越用越懂业务——准确率随进化提升。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s3"></td></tr>
+          <tr><td class="time">1:10–1:15</td><td class="vis">收束至标语 + 品牌条</td><td class="vo">持续进化，是 WinBrain OS 的默认状态。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s3"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<!-- ================= S4 ================= -->
+<section class="card" id="s4" data-tags="价值 落地 报表 时效 CTA 合规 场景 60s">
+  <div class="card-head">
+    <div class="card-title">
+      <span class="badge s4">S4</span>
+      <h2 style="font-size:1.1rem">业务回响 · 价值落地与行动号召</h2>
+      <span class="approved-tag">✓ 可录制</span>
+    </div>
+    <div class="meta">时长 ≈ 60s · 定位：转化收口 · 标签：价值/报表/CTA/合规</div>
+  </div>
+  <div class="goal">目标：<b>用「3 天 → 3 分钟」的对比制造落差</b>，收口到 CTA；指标只出现已审计数字，字幕需合规校对。</div>
+
+  <label class="approve">
+    <input type="checkbox" class="approve-cb" data-s="s4">
+    <span class="lbl">批准本脚本可录制</span>
+    <span class="hint">勾选 = 排期可进棚，进度条与 Markdown 导出同步更新</span>
+  </label>
+
+  <details class="warn" open>
+    <summary>⚠ 录制依赖警告（4 项）</summary>
+    <ul>
+      <li><b>[阻断] 真实场景账号</b>：需一套已接入真实业务数据的演示环境（可与 S2 复用），空库无法拍「实景操作」。</li>
+      <li><b>[阻断] 合规审核</b>：旁白中的价值指标（如「报表 3 天→3 分钟」）需先过法务/市场审核，字幕文案同步送审。</li>
+      <li><b>[高] 演示脚本走查</b>：正式录制前按本镜头表走查 1 遍，确认录屏无无关弹窗。</li>
+      <li><b>[中] 字幕校对</b>：后期字幕需双人校对，避免术语错字（如「本体」误写「本体性」）。</li>
+    </ul>
+  </details>
+
+  <details class="trans">
+    <summary>转场要点</summary>
+    <ul>
+      <li>镜头1→2：痛点场景全程灰调滤镜，镜头 2 操作开始时恢复彩色（对比冲击）。</li>
+      <li>镜头2→3：报表生成动画完成后，切到价值指标字幕条（同帧上浮）。</li>
+      <li>镜头3→4：指标条淡出，logo 定格 + CTA 按钮上滑入场。</li>
+    </ul>
+  </details>
+
+  <details class="shots">
+    <summary>镜头表（4 镜） <span class="cnt" id="cnt-s4">已录 0/4</span></summary>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:64px">时间</th><th>画面</th><th>旁白</th><th style="width:44px">✓</th></tr></thead>
+        <tbody>
+          <tr><td class="time">0:00–0:10</td><td class="vis">业务痛点开场：灰调画面，分析师对着报表苦等</td><td class="vo">过去，一份跨部门报表要等 3 天。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s4"></td></tr>
+          <tr><td class="time">0:10–0:30</td><td class="vis">实景操作：一次问答，报表 3 分钟生成并分享</td><td class="vo">现在，一次提问，3 分钟拿到结论。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s4"></td></tr>
+          <tr><td class="time">0:30–0:45</td><td class="vis">价值指标字幕条：时效 ↓90% · 分析人力释放 · 结论复用率</td><td class="vo">时效、人力、复用——三重价值，都已验证。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s4"></td></tr>
+          <tr><td class="time">0:45–1:00</td><td class="vis">logo 定格 + CTA：「让数据本体成为业务专家的副驾」+ 联系入口</td><td class="vo">让数据本体，成为业务专家的副驾。</td><td class="done"><input type="checkbox" class="shot-cb" data-s="s4"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<footer>
+  来源项目：onepager skill（窄门单页法则 v1）<br>
+  产物绝对路径：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-5/eval-6-inline-svg/with_skill/outputs/uat-artifacts/pitch-scripts.html<br>
+  会话：opencode · eval-6-inline-svg · 生成于 2026-08-10 ｜ 生成后未经修改，可复现。<br>
+  内联声明：本页无任何外链资源——hero SVG 以内联 <code>&lt;svg&gt;</code> 标签呈现，无 <code>&lt;img&gt;</code>、无 CDN、无外链脚本；勾选状态存于浏览器 localStorage（可刷新恢复，换机需重新勾选）。
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var approveCbs = Array.prototype.slice.call(document.querySelectorAll(".approve-cb"));
+  var shotCbs = Array.prototype.slice.call(document.querySelectorAll(".shot-cb"));
+  var q = document.getElementById("q");
+  var empty = document.getElementById("empty");
+  var emptyQ = document.getElementById("emptyQ");
+  var pText = document.getElementById("pText");
+  var pBar = document.getElementById("pBar");
+  var toast = document.getElementById("toast");
+  var tTimer = null;
+
+  var STORE_KEY = "wbos-pitch-scripts-v1";
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); } catch(e){ saved = null; }
+
+  function save(){
+    var st = {approve:{}, shots:{}};
+    approveCbs.forEach(function(cb){ st.approve[cb.dataset.s] = cb.checked; });
+    shotCbs.forEach(function(cb){
+      st.shots[cb.dataset.s] = st.shots[cb.dataset.s] || [];
+      st.shots[cb.dataset.s].push(cb.checked);
+    });
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(st)); } catch(e){}
+  }
+
+  function restore(){
+    if(!saved) return;
+    approveCbs.forEach(function(cb){ if(saved.approve && saved.approve[cb.dataset.s] === true) cb.checked = true; });
+    shotCbs.forEach(function(cb){
+      var arr = saved.shots && saved.shots[cb.dataset.s];
+      if(!arr) return;
+      var idx = 0;
+      shotCbs.forEach(function(c2){ if(c2.dataset.s === cb.dataset.s && c2 !== cb) idx++; });
+      cb.checked = !!(arr[idx]);
+    });
+  }
+
+  function refresh(){
+    approveCbs.forEach(function(cb){ document.getElementById(cb.dataset.s).classList.toggle("approved", cb.checked); });
+    var appr = approveCbs.filter(function(c){ return c.checked; }).length;
+    var done = shotCbs.filter(function(c){ return c.checked; }).length;
+    var total = shotCbs.length;
+    cards.forEach(function(card){
+      var list = shotCbs.filter(function(c){ return c.dataset.s === card.id; });
+      var n = list.filter(function(c){ return c.checked; }).length;
+      var cnt = document.getElementById("cnt-" + card.id);
+      if(cnt) cnt.textContent = "已录 " + n + "/" + list.length;
+      list.forEach(function(cb){
+        var tr = cb.closest("tr");
+        if(tr) tr.classList.toggle("shot-done", cb.checked);
+      });
+    });
+    pText.textContent = "已批准 " + appr + "/" + approveCbs.length + " · 已录镜头 " + done + "/" + total;
+    pBar.style.width = Math.round(((appr / approveCbs.length) * 50) + ((done / total) * 50)) + "%";
+  }
+
+  function doSearch(){
+    var term = (q.value || "").trim().toLowerCase();
+    var any = false;
+    cards.forEach(function(card){
+      var hit = !term ||
+        (card.dataset.tags || "").toLowerCase().indexOf(term) > -1 ||
+        (card.querySelector("h2") ? card.querySelector("h2").textContent.toLowerCase().indexOf(term) > -1 : false) ||
+        Array.prototype.some.call(card.querySelectorAll("td"), function(td){ return td.textContent.toLowerCase().indexOf(term) > -1; });
+      card.classList.toggle("hidden", !hit);
+      if(hit) any = true;
+    });
+    empty.style.display = any ? "none" : "block";
+    emptyQ.textContent = q.value;
+  }
+
+  function mdEscape(s){ return (s||"").replace(/\|/g, "\\|"); }
+
+  function buildMarkdown(){
+    var appr = approveCbs.filter(function(c){ return c.checked; }).length;
+    var out = ["# WinBrain OS · 视频录制脚本集", ""];
+    out.push("- 导出时间：" + new Date().toLocaleString("zh-CN"));
+    out.push("- 批准状态：已批准 " + appr + "/" + approveCbs.length + "（✅=可录制 / ⬜=未批准）");
+    out.push("- 来源文件：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-5/eval-6-inline-svg/with_skill/outputs/uat-artifacts/pitch-scripts.html");
+    out.push("");
+    cards.forEach(function(card){
+      var cb = card.querySelector(".approve-cb");
+      var mark = cb && cb.checked ? "✅" : "⬜";
+      var title = card.querySelector("h2").textContent.trim();
+      var goal = card.querySelector(".goal").textContent.trim();
+      var meta = card.querySelector(".meta").textContent.trim();
+      out.push("## " + mark + " " + title);
+      out.push("");
+      out.push("- " + meta);
+      out.push("- 目标：" + goal);
+      out.push("");
+      var warnLis = card.querySelectorAll(".warn li");
+      if(warnLis.length){
+        out.push("### 录制依赖警告");
+        warnLis.forEach(function(li){ out.push("- " + li.textContent.trim()); });
+        out.push("");
+      }
+      var transLis = card.querySelectorAll(".trans li");
+      if(transLis.length){
+        out.push("### 转场要点");
+        transLis.forEach(function(li){ out.push("- " + li.textContent.trim()); });
+        out.push("");
+      }
+      out.push("### 镜头表");
+      out.push("| 时间 | 画面 | 旁白 | 已录 |");
+      out.push("|---|---|---|---|");
+      var rows = card.querySelectorAll("tbody tr");
+      rows.forEach(function(tr){
+        var tds = tr.querySelectorAll("td");
+        var sDone = tr.querySelector(".shot-cb") && tr.querySelector(".shot-cb").checked ? "✅" : "⬜";
+        out.push("| " + mdEscape(tds[0].textContent.trim()) + " | " + mdEscape(tds[1].textContent.trim()) + " | " + mdEscape(tds[2].textContent.trim()) + " | " + sDone + " |");
+      });
+      out.push("");
+    });
+    return out.join("\n");
+  }
+
+  function copyText(txt){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(txt);
+    }
+    var ta = document.createElement("textarea");
+    ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch(e){}
+    document.body.removeChild(ta);
+    return Promise.resolve();
+  }
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(tTimer);
+    tTimer = setTimeout(function(){ toast.classList.remove("show"); }, 2200);
+  }
+
+  approveCbs.forEach(function(cb){ cb.addEventListener("change", function(){ refresh(); save(); }); });
+  shotCbs.forEach(function(cb){ cb.addEventListener("change", function(){ refresh(); save(); }); });
+  q.addEventListener("input", doSearch);
+
+  document.getElementById("copyAll").addEventListener("click", function(){
+    copyText(buildMarkdown()).then(function(){ showToast("Markdown 已复制到剪贴板 ✓"); });
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    approveCbs.forEach(function(cb){ cb.checked = false; });
+    shotCbs.forEach(function(cb){ cb.checked = false; });
+    refresh(); save(); showToast("已重置全部勾选");
+  });
+
+  restore();
+  refresh();
+})();
+</script>
+</body>
+</html>

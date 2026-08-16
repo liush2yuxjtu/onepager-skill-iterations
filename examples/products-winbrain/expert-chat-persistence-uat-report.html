@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>winBrain 专家聊天持久化 UAT 汇报</title>
+    <style>
+      :root {
+        --bg: #f5f6f2;
+        --paper: #fff;
+        --ink: #17211b;
+        --muted: #667168;
+        --line: #dfe5df;
+        --green: #19704a;
+        --green2: #eaf6ef;
+        --blue: #315eae;
+        --amber: #9a6811;
+        --shadow: 0 16px 48px rgba(30, 50, 38, 0.09);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.65 system-ui,
+          -apple-system,
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+      }
+      .wrap {
+        width: min(1040px, calc(100% - 28px));
+        margin: auto;
+        padding: 34px 0 64px;
+      }
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        align-items: start;
+      }
+      .eyebrow {
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+      }
+      h1 {
+        font-size: clamp(28px, 5vw, 48px);
+        line-height: 1.12;
+        margin: 8px 0 10px;
+        letter-spacing: -0.03em;
+      }
+      .stamp {
+        border: 1px solid #acd1bc;
+        background: var(--green2);
+        color: var(--green);
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-weight: 800;
+      }
+      .tldr {
+        margin: 28px 0;
+        background: var(--paper);
+        border-left: 5px solid var(--green);
+        border-radius: 13px;
+        padding: 20px 22px;
+        box-shadow: var(--shadow);
+        font-size: 18px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .card {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 20px;
+      }
+      .card h2 {
+        font-size: 16px;
+        margin: 0 0 12px;
+      }
+      .metric {
+        font-size: 30px;
+        font-weight: 850;
+        line-height: 1;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .flow {
+        margin: 26px 0;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px;
+      }
+      .flow svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .media {
+        margin-top: 26px;
+        background: #111814;
+        color: #fff;
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+      .media h2 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+      .media video {
+        width: 100%;
+        border-radius: 10px;
+        background: #000;
+        max-height: 620px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+      a.btn,
+      button {
+        border: 1px solid currentColor;
+        border-radius: 9px;
+        padding: 9px 13px;
+        background: transparent;
+        color: inherit;
+        text-decoration: none;
+        font: inherit;
+        cursor: pointer;
+      }
+      .checklist {
+        margin-top: 26px;
+      }
+      .check {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .check input {
+        margin-top: 6px;
+      }
+      .progress {
+        height: 8px;
+        background: #e6ebe7;
+        border-radius: 999px;
+        overflow: hidden;
+        margin: 12px 0;
+      }
+      .progress span {
+        display: block;
+        height: 100%;
+        width: 100%;
+        background: var(--green);
+      }
+      details {
+        margin-top: 22px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 16px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 750;
+      }
+      code {
+        background: #eef1ee;
+        padding: 0.12em 0.35em;
+        border-radius: 5px;
+      }
+      footer {
+        margin-top: 30px;
+        color: var(--muted);
+        font-size: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 18px;
+      }
+      .toast {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        background: #17211b;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 9px;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: 0.2s;
+      }
+      .toast.on {
+        opacity: 1;
+        transform: none;
+      }
+      @media (max-width: 720px) {
+        header {
+          grid-template-columns: 1fr;
+        }
+        .stamp {
+          justify-self: start;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .wrap {
+          padding-top: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header>
+        <div>
+          <div class="eyebrow">WINBRAIN · UAT EVIDENCE</div>
+          <h1>专家聊天持久化<br />验收汇报</h1>
+          <p class="muted">同一专家下的多会话保存、切换、恢复与继续。</p>
+        </div>
+        <div class="stamp">PASS · 7/7</div>
+      </header>
+
+      <section class="tldr">
+        <strong>结论：</strong
+        >专家聊天已具备可靠的会话连续性。刷新后能恢复原对话，新建会话后可从历史切回并继续追加消息，两条对话不串线；损坏快照不会造成白屏。
+      </section>
+
+      <section class="grid" aria-label="关键结果">
+        <article class="card">
+          <h2>会话恢复</h2>
+          <div class="metric">t101</div>
+          <p class="muted">刷新后恢复原会话，Session ID 已持久化。</p>
+        </article>
+        <article class="card">
+          <h2>会话隔离</h2>
+          <div class="metric">t101 ≠ t102</div>
+          <p class="muted">新旧对话编号不同，恢复后消息仍写回原会话。</p>
+        </article>
+        <article class="card">
+          <h2>消息连续性</h2>
+          <div class="metric">2 → 4</div>
+          <p class="muted">第一轮 2 条消息；历史恢复后继续追加至 4 条。</p>
+        </article>
+        <article class="card">
+          <h2>容错启动</h2>
+          <div class="metric">安全修复</div>
+          <p class="muted">本地快照损坏时自动恢复，不出现白屏。</p>
+        </article>
+      </section>
+
+      <section class="flow">
+        <h2>一眼看懂验收链路</h2>
+        <svg
+          viewBox="0 0 920 180"
+          role="img"
+          aria-label="第一轮对话、刷新恢复、新建会话、切回继续、损坏快照安全启动的流程"
+        >
+          <defs>
+            <marker
+              id="a"
+              markerWidth="8"
+              markerHeight="8"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L0,6 L7,3 z" fill="#7d9183" />
+            </marker>
+          </defs>
+          <g fill="#f3f8f4" stroke="#95b6a0" stroke-width="2">
+            <rect x="10" y="52" width="142" height="70" rx="12" />
+            <rect x="197" y="52" width="142" height="70" rx="12" />
+            <rect x="384" y="52" width="142" height="70" rx="12" />
+            <rect x="571" y="52" width="142" height="70" rx="12" />
+            <rect x="758" y="52" width="152" height="70" rx="12" />
+          </g>
+          <g stroke="#7d9183" stroke-width="2" marker-end="url(#a)">
+            <path d="M152 87H190" />
+            <path d="M339 87H377" />
+            <path d="M526 87H564" />
+            <path d="M713 87H751" />
+          </g>
+          <g fill="#17211b" font-family="system-ui" text-anchor="middle">
+            <text x="81" y="80" font-size="15" font-weight="700">
+              第一轮对话
+            </text>
+            <text x="81" y="103" font-size="12">t101 · 2 条</text>
+            <text x="268" y="80" font-size="15" font-weight="700">
+              刷新恢复
+            </text>
+            <text x="268" y="103" font-size="12">消息仍在</text>
+            <text x="455" y="80" font-size="15" font-weight="700">
+              新建对话
+            </text>
+            <text x="455" y="103" font-size="12">t102 · 隔离</text>
+            <text x="642" y="80" font-size="15" font-weight="700">
+              历史切回
+            </text>
+            <text x="642" y="103" font-size="12">回到 t101</text>
+            <text x="834" y="80" font-size="15" font-weight="700">
+              继续追加
+            </text>
+            <text x="834" y="103" font-size="12">4 条 · 不串线</text>
+          </g>
+        </svg>
+      </section>
+
+      <section class="media">
+        <h2>完整验收录屏</h2>
+        <video
+          controls
+          preload="metadata"
+          src="../uat-artifacts/chat-persistence/2026-08-14T04-05-32-165Z/videos/46f9b7917a40e369a8de465169f84427.webm"
+        ></video>
+        <div class="actions">
+          <a
+            class="btn"
+            download
+            href="../uat-artifacts/chat-persistence/2026-08-14T04-05-32-165Z/videos/46f9b7917a40e369a8de465169f84427.webm"
+            >下载 WebM</a
+          ><a
+            class="btn"
+            href="../uat-artifacts/chat-persistence/2026-08-14T04-05-32-165Z/trace.zip"
+            >下载 Trace</a
+          >
+        </div>
+      </section>
+
+      <section class="card checklist">
+        <h2>验收清单 <span class="muted">7/7</span></h2>
+        <div class="progress"><span></span></div>
+        <label class="check"
+          ><input type="checkbox" checked />专家聊天 Session ID 已保存</label
+        >
+        <label class="check"
+          ><input type="checkbox" checked />刷新后自动恢复当前对话</label
+        >
+        <label class="check"
+          ><input type="checkbox" checked />可新建另一条独立对话</label
+        >
+        <label class="check"
+          ><input type="checkbox" checked />可从历史记录切回旧对话</label
+        >
+        <label class="check"
+          ><input type="checkbox" checked />旧消息完整恢复并可继续追加</label
+        >
+        <label class="check"
+          ><input type="checkbox" checked />两条对话不会串线</label
+        >
+        <label class="check"
+          ><input type="checkbox" checked />损坏快照安全修复、不白屏</label
+        >
+        <div class="actions"><button id="copy">复制汇报摘要</button></div>
+      </section>
+
+      <details>
+        <summary>证据与口径</summary>
+        <p>
+          自动化结果：<code>status=PASS</code>；专家：<code>expert-expert-test-001</code>；快照键：<code>wb10.chatSnapshot.v1</code>；完成时间：2026-08-14
+          12:05:55 +0800。
+        </p>
+        <p>
+          本次脚本验证会话连续性和消息归属，不要求专家在第二轮主动复述第一轮随机标记。
+        </p>
+        <p>
+          <a
+            href="../uat-artifacts/chat-persistence/2026-08-14T04-05-32-165Z/result.json"
+            >查看原始 result.json</a
+          >
+        </p>
+      </details>
+
+      <footer>
+        来源项目：winbrain_os-ink-agent-sdk-clean<br />绝对路径：/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean<br />Pi
+        session ID：HERDR w5H:p34<br />报告生成：2026-08-14
+      </footer>
+    </main>
+    <div class="toast" role="status" aria-live="polite">已复制</div>
+    <script>
+      document.querySelector("#copy").onclick = async () => {
+        const text =
+          "winBrain 专家聊天持久化 UAT：PASS（7/7）。刷新恢复、新建/切回会话、恢复后继续追加、会话隔离、损坏快照安全启动均通过。";
+        await navigator.clipboard.writeText(text);
+        const t = document.querySelector(".toast");
+        t.classList.add("on");
+        setTimeout(() => t.classList.remove("on"), 1400);
+      };
+    </script>
+  </body>
+</html>

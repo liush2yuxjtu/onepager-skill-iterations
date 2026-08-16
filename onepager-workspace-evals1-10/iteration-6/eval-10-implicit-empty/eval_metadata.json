@@ -1,0 +1,10 @@
+{
+  "eval_id": 10,
+  "eval_name": "implicit-empty",
+  "prompt": "Read the attached Pi transcript and create the requested concise session recap Onepager. Follow the transcript’s final user request.",
+  "assertions": [
+    "The main HTML explicitly states that this session produced no independent sub-artifacts.",
+    "The main HTML contains no artifact download or placeholder links.",
+    "The footer includes /tmp/no-artifacts and implicit-session-10."
+  ]
+}

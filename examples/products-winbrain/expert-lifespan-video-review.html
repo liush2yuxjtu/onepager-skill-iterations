@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>专家全生命周期视频审阅</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#172033;--muted:#687386;--line:#dde2ea;--blue:#2867d8;--green:#17824f;--amber:#ad6500;--red:#bd3a3a}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}main{max-width:1040px;margin:auto;padding:28px 18px 56px}h1{font-size:25px;margin:0 0 4px}.sub{color:var(--muted);margin:0 0 16px}.verdict,.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px}.verdict{border-left:5px solid var(--green);font-size:16px}.verdict b{color:var(--green)}h2{font-size:16px;margin:0 0 12px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{border:1px solid var(--line);border-radius:10px;padding:12px}.stat strong{display:block;font-size:21px}.stat span,.muted{color:var(--muted);font-size:12px}video{width:100%;border:1px solid var(--line);border-radius:10px;background:#111}.flow{width:100%;height:auto;display:block}.finding{display:grid;grid-template-columns:90px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}.finding:last-child{border:0}.tag{font-weight:700}.pass{color:var(--green)}.warn{color:var(--amber)}.sev{font-size:11px;border-radius:99px;padding:2px 8px;background:#eef2f7;color:var(--muted)}details{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}summary{cursor:pointer;font-weight:650}.actions label{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}progress{width:100%;height:8px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}button,input{font:inherit}button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 10px;cursor:pointer}input[type=search]{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px}.evidence{width:100%;border-collapse:collapse}.evidence th,.evidence td{text-align:left;padding:8px;border-bottom:1px solid var(--line)}.evidence th{color:var(--muted)}footer{color:var(--muted);font-size:11px;margin-top:20px;border-top:1px solid var(--line);padding-top:12px;word-break:break-all}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.finding{grid-template-columns:70px 1fr}.sev{grid-column:2}.flow{min-width:760px}.scroll{overflow-x:auto}}
+</style>
+</head>
+<body><main>
+<h1>专家全生命周期视频审阅</h1>
+<p class="sub">对象：expert-lifespan-onepager.html 所引用 21MB WebM · 审阅日期 2026-08-12</p>
+<section class="verdict"><b>结论：功能证据可信，生命周期闭环成立；作为评审演示视频可通过。</b> 主要短板不是功能，而是叙事：前半段等待和静态画面偏长，阶段切换缺少显式字幕，退休终态只靠间接证据，不够一眼可验。</section>
+
+<section class="card">
+<h2>视频原件</h2>
+<video controls preload="metadata" src="../uat-artifacts/expert-lifespan/expert-lifespan-6d6058b6.webm"></video>
+<div class="toolbar"><a href="../uat-artifacts/expert-lifespan/expert-lifespan-6d6058b6.webm"><button>打开 / 下载 WebM</button></a><a href="../uat-artifacts/expert-lifespan-onepager.html"><button>打开原始 onepager</button></a><a href="../uat-artifacts/expert-lifespan/trace-b2e0fa37.zip"><button>下载 trace</button></a></div>
+</section>
+
+<section class="stats">
+<div class="stat"><strong>5:50</strong><span>时长（350.2 秒）</span></div><div class="stat"><strong>1440×900</strong><span>画面尺寸</span></div><div class="stat"><strong>25 fps</strong><span>帧率</span></div><div class="stat"><strong>8/8</strong><span>声明阶段 PASS</span></div>
+</section>
+
+<section class="card"><h2>一图看审阅</h2><div class="scroll"><svg class="flow" viewBox="0 0 900 158" role="img" aria-label="视频证据流与审阅强度">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8b95a5"/></marker></defs>
+<text x="18" y="22" font-size="12" fill="#687386">证据清晰度</text>
+<g font-size="11" text-anchor="middle"><rect x="18" y="48" width="94" height="42" rx="9" fill="#eaf6ef" stroke="#17824f"/><text x="65" y="65">创建 / 发布</text><text x="65" y="81" fill="#17824f">清晰</text><line x1="113" y1="69" x2="132" y2="69" stroke="#8b95a5" marker-end="url(#arr)"/>
+<rect x="136" y="48" width="94" height="42" rx="9" fill="#fff4df" stroke="#ad6500"/><text x="183" y="65">API / 等待</text><text x="183" y="81" fill="#ad6500">偏静态</text><line x1="231" y1="69" x2="250" y2="69" stroke="#8b95a5" marker-end="url(#arr)"/>
+<rect x="254" y="48" width="94" height="42" rx="9" fill="#eaf6ef" stroke="#17824f"/><text x="301" y="65">首次对话</text><text x="301" y="81" fill="#17824f">可读</text><line x1="349" y1="69" x2="368" y2="69" stroke="#8b95a5" marker-end="url(#arr)"/>
+<rect x="372" y="48" width="94" height="42" rx="9" fill="#eaf6ef" stroke="#17824f"/><text x="419" y="65">进化</text><text x="419" y="81" fill="#17824f">过程可见</text><line x1="467" y1="69" x2="486" y2="69" stroke="#8b95a5" marker-end="url(#arr)"/>
+<rect x="490" y="48" width="94" height="42" rx="9" fill="#eaf6ef" stroke="#17824f"/><text x="537" y="65">真实测试</text><text x="537" y="81" fill="#17824f">通过信号</text><line x1="585" y1="69" x2="604" y2="69" stroke="#8b95a5" marker-end="url(#arr)"/>
+<rect x="608" y="48" width="94" height="42" rx="9" fill="#eaf6ef" stroke="#17824f"/><text x="655" y="65">v2 发布</text><text x="655" y="81" fill="#17824f">冻结可见</text><line x1="703" y1="69" x2="722" y2="69" stroke="#8b95a5" marker-end="url(#arr)"/>
+<rect x="726" y="48" width="94" height="42" rx="9" fill="#eaf6ef" stroke="#17824f"/><text x="773" y="65">新版对话</text><text x="773" y="81" fill="#17824f">结果可读</text><line x1="821" y1="69" x2="840" y2="69" stroke="#8b95a5" marker-end="url(#arr)"/>
+<rect x="844" y="48" width="50" height="42" rx="9" fill="#fff4df" stroke="#ad6500"/><text x="869" y="65">退休</text><text x="869" y="81" fill="#ad6500">弱</text></g>
+<text x="18" y="122" font-size="11" fill="#687386">采样观察：0–140 秒多次停留同一页面；约 163 秒进入对话；约 187 秒进入专家进化；约 350 秒展示新版业务回答。</text><text x="18" y="143" font-size="11" fill="#687386">判断：功能闭环强，演示节奏中等，退休归档的视觉闭环最弱。</text></svg></div></section>
+
+<section class="card"><h2>关键发现</h2><input id="search" type="search" placeholder="筛选发现，例如：退休、节奏、字幕">
+<div id="findings">
+<div class="finding" data-text="功能证据 生命周期 创建 发布 对话 进化 测试 新版"><span class="tag pass">通过</span><span><b>核心功能链成立。</b> 视频与 11 张截图共同覆盖创建、首次对话、进化、真实测试、候选版本冻结、新版对话；result.json 给出 8 阶段 PASS 和 v2.0.0。</span><span class="sev">高置信</span></div>
+<div class="finding" data-text="节奏 等待 静态 冗长 剪辑"><span class="tag warn">需优化</span><span><b>前半段节奏偏慢。</b> 均匀采样显示 0–140 秒长期停留在同一工作台布局，状态变化需要观众自行寻找。可压缩等待或加速无操作片段。</span><span class="sev">中</span></div>
+<div class="finding" data-text="字幕 阶段 导航 标题 进度"><span class="tag warn">需优化</span><span><b>缺少阶段字幕与进度标识。</b> 画面本身信息密度高，但没有“阶段 4/8：进化”之类覆盖层；首次观看者难判断当前动作和成功条件。</span><span class="sev">中</span></div>
+<div class="finding" data-text="退休 归档 终态 versions 证据"><span class="tag warn">需补强</span><span><b>退休终态视觉证据不足。</b> 原报告声明 active 目录移除并归档到 <code>.versions/</code>，但视频末帧主要展示新版回答；建议在结尾明确展示专家从活动列表消失及归档路径。</span><span class="sev">高</span></div>
+<div class="finding" data-text="可读性 分辨率 缩放 字体"><span class="tag pass">通过</span><span><b>画面清晰度合格。</b> 1440×900、25fps；关键回答和状态卡可读。缩放到窄屏时细字仍会吃力，原始桌面尺寸观看最佳。</span><span class="sev">高置信</span></div>
+<div class="finding" data-text="隐私 敏感 token 密钥"><span class="tag pass">通过</span><span><b>采样帧未见明显密钥或个人敏感信息。</b> 展示内容以测试专家、业务样例和 UI 状态为主；结论基于均匀采样与关键截图，不替代逐帧敏感信息扫描。</span><span class="sev">采样判断</span></div>
+</div></section>
+
+<section class="card actions"><h2>发布前最小行动</h2><progress id="progress" value="0" max="3"></progress><p id="count" class="muted">0/3 完成</p>
+<label><input type="checkbox">剪掉或 4× 加速无操作等待段，目标总时长 3–4 分钟</label>
+<label><input type="checkbox">加入 8 个阶段字幕：动作、成功条件、结果</label>
+<label><input type="checkbox">补录 10–15 秒退休终态：活动目录消失 + <code>.versions/</code> 快照</label>
+<div class="toolbar"><button id="copy">复制 Markdown 清单</button></div></section>
+
+<section class="card"><h2>证据与边界</h2><details><summary>展开可审计证据</summary><table class="evidence"><tr><th>项目</th><th>值</th></tr><tr><td>视频</td><td>21,434,685 bytes · WebM · 350.2 秒 · 8755 帧</td></tr><tr><td>采样</td><td>16 个均匀时间点 + 3 张关键截图人工审阅</td></tr><tr><td>结构证据</td><td>result.json：status=PASS，new_version=v2.0.0，lifespan 8 阶段</td></tr><tr><td>辅助证据</td><td>11 张 PNG、126MB trace ZIP、原始 onepager</td></tr><tr><td>限制</td><td>未做音轨转写；未逐帧 OCR；环境无 ffprobe，媒体参数由 OpenCV 与文件系统读取</td></tr></table></details></section>
+<footer>来源项目：winbrain_os-ink-agent-sdk-clean<br>原件绝对路径：/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean/uat-artifacts/expert-lifespan-onepager.html<br>视频绝对路径：/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean/uat-artifacts/expert-lifespan/expert-lifespan-6d6058b6.webm<br>报告绝对路径：/Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean/onepager/expert-lifespan-video-review.html<br>生成者：Claude Code 当前会话 · 页面无 CDN；SVG 内联；大媒体按相对路径引用。</footer>
+</main><script>
+const checks=[...document.querySelectorAll('.actions input')],progress=document.querySelector('#progress'),count=document.querySelector('#count');function update(){const n=checks.filter(x=>x.checked).length;progress.value=n;count.textContent=`${n}/${checks.length} 完成`}checks.forEach(x=>x.addEventListener('change',update));document.querySelector('#copy').onclick=async()=>{const md=checks.map(x=>`- [${x.checked?'x':' '}] ${x.parentElement.textContent.trim()}`).join('\n');await navigator.clipboard.writeText(md);document.querySelector('#copy').textContent='已复制';setTimeout(()=>document.querySelector('#copy').textContent='复制 Markdown 清单',1200)};document.querySelector('#search').addEventListener('input',e=>{const q=e.target.value.trim().toLowerCase();document.querySelectorAll('.finding').forEach(x=>x.style.display=!q||x.innerText.toLowerCase().includes(q)||x.dataset.text.includes(q)?'grid':'none')});
+</script></body></html>

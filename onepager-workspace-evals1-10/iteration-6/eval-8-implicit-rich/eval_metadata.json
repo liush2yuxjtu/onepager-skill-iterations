@@ -1,0 +1,11 @@
+{
+  "eval_id": 8,
+  "eval_name": "implicit-rich",
+  "prompt": "Read the attached Pi transcript and create the requested session recap Onepager. Follow the transcript’s final user request.",
+  "assertions": [
+    "The main HTML directly links report.html, qa.json, run.webm, and trace.zip using portable relative paths.",
+    "run.webm is rendered in a controls-enabled video player outside any details element.",
+    "The artifact links are visible in the main page rather than present only inside collapsed details.",
+    "The footer includes /tmp/pitch-video and implicit-session-8."
+  ]
+}

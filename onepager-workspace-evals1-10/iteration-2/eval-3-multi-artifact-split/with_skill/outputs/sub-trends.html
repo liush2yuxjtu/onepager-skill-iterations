@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>周趋势图表 · MySQL 性能诊断</title>
+<style>
+  :root{--ink:#1a2332;--mut:#6b7686;--acc:#0f6bff;--bg:#f6f7f9;--card:#fff;--line:#e3e7ee;--bad:#d93025;--warn:#e8a100;--good:#18864b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header{padding:18px 20px;background:#fff;border-bottom:1px solid var(--line)}
+  .wrap{max-width:1000px;margin:0 auto;padding:18px 20px 40px}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:16px;margin:22px 0 4px}
+  .meta{color:var(--mut);font-size:13px}
+  .tldr{background:#eef4ff;border:1px solid #c9d9ff;border-left:4px solid var(--acc);border-radius:6px;padding:12px 14px;margin:16px 0;font-size:14px}
+  .tldr b{color:var(--acc)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 14px 6px;margin:12px 0}
+  .legend{font-size:12px;color:var(--mut);margin:4px 0 8px}
+  .legend label{margin-right:14px;cursor:pointer}
+  .legend input{margin-right:3px}
+  svg{max-width:100%;height:auto;display:block}
+  .tip{position:fixed;pointer-events:none;background:#141a26;color:#e8eef6;font-size:12px;padding:6px 9px;border-radius:6px;opacity:0;transition:opacity .1s;z-index:9;white-space:nowrap}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .heat{margin:4px 0}
+  .heat td{padding:1px}
+  .heat .c{height:18px;border-radius:3px}
+  .hlabel{font-size:10px;color:var(--mut)}
+  .foot{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:var(--mut);font-size:12px}
+  .note{font-size:12px;color:var(--warn);margin:4px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding-bottom:0">
+    <h1>周趋势图表</h1>
+    <div class="meta">窗口：2026-08-02 ~ 2026-08-08（近 7 天）· 聚合自 slow_log + performance_schema · <b>模拟数据</b></div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="tldr"><b>结论：</b>工作日慢查询日均 <b>405 次</b>，周末降至 145 次（↓64%）。唯一异常尖峰在 <b>08-05 02:00</b>（527 次 / 均值 1.82s）——由批量对账任务触发，属<b>计划性瞬时尖峰，非持续恶化</b>；当日 avg latency 比其他天高 47%，但未复现，判定无累积性问题。</div>
+
+  <div class="card">
+    <h2>每日慢查询量 &amp; 平均耗时（双轴）</h2>
+    <div class="legend">
+      <label><input type="checkbox" id="sCount" checked>慢查询次数（柱状）</label>
+      <label><input type="checkbox" id="sLat" checked>平均耗时 ms（折线）</label>
+      <span>悬停查看数值</span>
+    </div>
+    <svg id="trend" viewBox="0 0 760 300" role="img" aria-label="每日慢查询趋势"></svg>
+    <p class="note">⚠ 08-05 尖峰已核实为 02:00 定时批量对账，非应用持续回归；建议后续把该批次迁出慢日志阈值或拆分批次。</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Top 5 慢 SQL 7 天总耗时（库时）</h2>
+      <svg id="top5" viewBox="0 0 380 250" role="img" aria-label="Top5 总耗时柱状图"></svg>
+    </div>
+    <div class="card">
+      <h2>按问题模式分布</h2>
+      <svg id="pie" viewBox="0 0 380 250" role="img" aria-label="问题模式分布图"></svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>逐小时热力（08-03 周一）</h2>
+    <table class="heat" id="heat"></table>
+    <p style="font-size:12px;color:var(--mut);margin:4px 0">颜色越深 = 该小时慢查询越多；02:00 批次峰值明显，白天读流量分散。</p>
+  </div>
+
+  <div class="foot">
+    <p>来源：模拟生成（虚构数据，用于演示诊断流程）· 采集：<code>slow_log</code> 按 DATE_TRUNC(hour) 聚合 + <code>events_statements_summary_by_digest</code></p>
+    <p>文件：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-2/eval-3-multi-artifact-split/with_skill/outputs/sub-trends.html · 会话：eval-3-multi-artifact-split</p>
+  </div>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+const tip=document.getElementById("tip");
+function showTip(ev,html){tip.innerHTML=html;tip.style.opacity=1;tip.style.left=(ev.clientX+12)+"px";tip.style.top=(ev.clientY+12)+"px";}
+function hideTip(){tip.style.opacity=0;}
+document.addEventListener("mousemove",e=>{if(tip.style.opacity==="1"){tip.style.left=(e.clientX+12)+"px";tip.style.top=(e.clientY+12)+"px";}});
+
+const days=["08-02 周日","08-03 周一","08-04 周二","08-05 周三","08-06 周四","08-07 周五","08-08 周六"];
+const counts=[134,312,358,527,489,341,156];
+const lats=[690,1180,1240,1820,1560,1190,720];
+
+function lineChart(){
+  const W=760,H=300,ml=46,mr=18,mt=14,mb=30;
+  const iw=W-ml-mr,ih=H-mt-mb;
+  const maxC=Math.max(...counts),maxL=Math.max(...lats);
+  const bw=iw/counts.length;
+  const svg=document.getElementById("trend");
+  let s="<text x='8' y='18' font-size='11' fill='#6b7686'>次数</text><text x='8' y='34' font-size='11' fill='#0f6bff'>耗时ms</text>";
+  for(let g=0;g<=4;g++){const y=mt+ih-g*ih/4;s+=`<line x1='${ml}' y1='${y}' x2='${W-mr}' y2='${y}' stroke='#eceff4'/><text x='${ml-6}' y='${y+4}' text-anchor='end' font-size='10' fill='#9aa3b2'>${Math.round(maxC*g/4)}</text><text x='${ml+iw+6}' y='${y+4}' font-size='10' fill='#9aa3b2'>${Math.round(maxL*g/4)}</text>`;}
+  days.forEach((d,i)=>{
+    const x=ml+i*bw+4,w=bw-8,y=mt+ih-(counts[i]/maxC)*ih,h=(counts[i]/maxC)*ih;
+    s+=`<rect id='c${i}' x='${x}' y='${y}' width='${w}' height='${h}' rx='2' fill='${i===3?'#d93025':'#bcd3ff'}'><title>${d} 慢查询 ${counts[i]} 次 / 均值 ${lats[i]}ms</title></rect>`;
+    s+=`<text x='${ml+i*bw+bw/2}' y='${mt+ih+14}' text-anchor='middle' font-size='10' fill='#6b7686'>${d.slice(5)}</text>`;
+  });
+  let pts=days.map((d,i)=>`${ml+i*bw+bw/2},${mt+ih-(lats[i]/maxL)*ih}`).join(" ");
+  s+=`<polyline id='lat' points='${pts}' fill='none' stroke='#0f6bff' stroke-width='2.5'/>`;
+  days.forEach((d,i)=>{s+=`<circle id='p${i}' cx='${ml+i*bw+bw/2}' cy='${mt+ih-(lats[i]/maxL)*ih}' r='4' fill='#0f6bff'><title>${d} 平均耗时 ${lats[i]}ms</title></circle>`;});
+  svg.innerHTML=s;
+  const sync=()=>{
+    const sc=document.getElementById("sCount").checked,sl=document.getElementById("sLat").checked;
+    document.querySelectorAll("#trend rect").forEach((r,i)=>{if(i<7)r.style.opacity=sc?1:.12});
+    document.getElementById("lat").style.opacity=sl?1:.1;
+    document.querySelectorAll("#trend circle").forEach(c=>c.style.opacity=sl?1:.1);
+  };
+  document.getElementById("sCount").addEventListener("change",sync);
+  document.getElementById("sLat").addEventListener("change",sync);
+}
+
+function top5(){
+  const data=[["q-17",12.6,"深分页"],["q-15",12.2,"INSERT…SELECT"],["q-20",11.4,"相关子查询"],["q-13",10.5,"NOT IN"],["q-11",9.0,"LEFT JOIN 派生表"]];
+  const W=380,H=250,ml=44,mr=12,mt=10,mb=26,max=Math.max(...data.map(d=>d[1]));
+  const ih=H-mt-mb,row=ih/data.length;
+  let s="";
+  data.forEach((d,i)=>{
+    const bw=(d[1]/max)*(W-ml-mr)*0.85,y=mt+i*row+6,h=row-12;
+    s+=`<rect x='${ml}' y='${y}' width='${bw}' height='${h}' rx='3' fill='#d4e2ff'><title>${d[0]} ${d[1]} 库时</title></rect>`;
+    s+=`<text x='${ml-6}' y='${y+h/2+4}' text-anchor='end' font-size='10' fill='#6b7686'>${d[0]}</text>`;
+    s+=`<text x='${ml+bw+4}' y='${y+h/2+4}' font-size='10' fill='#1a2332'>${d[1]}h</text>`;
+    s+=`<text x='${ml+bw+34}' y='${y+h/2+4}' font-size='10' fill='#9aa3b2'>${d[2]}</text>`;
+  });
+  document.getElementById("top5").innerHTML=s;
+}
+
+function pie(){
+  const data=[["全表扫描",12,"#d93025"],["range 回表大",5,"#e8a100"],["filesort/temporary",9,"#0f6bff"],["子查询改写",3,"#18864b"]];
+  const W=380,H=250,cx=105,cy=125,R=72;
+  const total=data.reduce((a,d)=>a+d[1],0);
+  let ang=-Math.PI/2,s="";
+  data.forEach((d,i)=>{
+    const a1=ang,a2=ang+d[1]/total*2*Math.PI,mid=(a1+a2)/2;
+    const x1=cx+R*Math.cos(a1),y1=cy+R*Math.sin(a1),x2=cx+R*Math.cos(a2),y2=cy+R*Math.sin(a2);
+    const large=d[1]/total>0.5?1:0;
+    s+=`<path d='M${cx},${cy} L${x1},${y1} A${R},${R} 0 ${large} 1 ${x2},${y2} Z' fill='${d[2]}'><title>${d[0]} ${d[1]}</title></path>`;
+    const lx=cx+(R+16)*Math.cos(mid),ly=cy+(R+16)*Math.sin(mid);
+    s+=`<text x='${lx}' y='${ly}' text-anchor='middle' font-size='10' fill='#1a2332'>${d[0]} ${Math.round(d[1]/total*100)}%</text>`;
+    ang=a2;
+  });
+  s+=`<text x='${cx}' y='${cy-2}' text-anchor='middle' font-size='16' font-weight='700' fill='#1a2332'>${total}</text><text x='${cx}' y='${cy+16}' text-anchor='middle' font-size='10' fill='#6b7686'>条含特征</text>`;
+  s+=`<g transform='translate(200,40)'><rect x='0' y='0' width='170' height='150' fill='#f8f9fb' rx='6'/>${data.map((d,i)=>`<text x='10' y='${24+i*26}' font-size='11' fill='#1a2332'><tspan fill='${d[2]}'>■</tspan> ${d[0]}</text><text x='150' y='${24+i*26}' text-anchor='end' font-size='11' font-weight='700' fill='#1a2332'>${d[1]}</text>`).join("")}</g>`;
+  document.getElementById("pie").innerHTML=s;
+}
+
+function heat(){
+  const hourly=[2,1,1,1,0,0,1,2,6,14,22,28,26,24,18,17,19,23,20,12,8,6,4,3];
+  const max=Math.max(...hourly);
+  const cell=(v)=>{
+    const a=Math.round(70+v/max*185);
+    return `<div class="c" style="background:rgba(15,107,255,${v/max})"></div>`;
+  };
+  const s=["<tr>"];
+  for(let h=0;h<24;h++){
+    const t=`${String(h).padStart(2,"0")}:00`;
+    s.push(`<td title="${t} ${hourly[h]} 次">${cell(hourly[h])}<div class="hlabel" style="text-align:center">${String(h).padStart(2,"0")}</div></td>`);
+  }
+  s.push("</tr>");
+  document.getElementById("heat").innerHTML=s.join("");
+}
+
+lineChart();top5();pie();heat();
+</script>
+</body>
+</html>

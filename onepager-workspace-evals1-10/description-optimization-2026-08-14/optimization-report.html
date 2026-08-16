@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>onepager — Skill Description Optimization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', Georgia, serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #faf9f5;
+            color: #141413;
+        }
+        h1 { font-family: 'Poppins', sans-serif; color: #141413; }
+        .explainer {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+            color: #b0aea5;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .summary {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+        }
+        .summary p { margin: 5px 0; }
+        .best { color: #788c5d; font-weight: bold; }
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e8e6dc;
+            border-radius: 6px;
+            font-size: 12px;
+            min-width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #e8e6dc;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        th {
+            font-family: 'Poppins', sans-serif;
+            background: #141413;
+            color: #faf9f5;
+            font-weight: 500;
+        }
+        th.test-col {
+            background: #6a9bcc;
+        }
+        th.query-col { min-width: 200px; }
+        td.description {
+            font-family: monospace;
+            font-size: 11px;
+            word-wrap: break-word;
+            max-width: 400px;
+        }
+        td.result {
+            text-align: center;
+            font-size: 16px;
+            min-width: 40px;
+        }
+        td.test-result {
+            background: #f0f6fc;
+        }
+        .pass { color: #788c5d; }
+        .fail { color: #c44; }
+        .rate {
+            font-size: 9px;
+            color: #b0aea5;
+            display: block;
+        }
+        tr:hover { background: #faf9f5; }
+        .score {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .score-good { background: #eef2e8; color: #788c5d; }
+        .score-ok { background: #fef3c7; color: #d97706; }
+        .score-bad { background: #fceaea; color: #c44; }
+        .train-label { color: #b0aea5; font-size: 10px; }
+        .test-label { color: #6a9bcc; font-size: 10px; font-weight: bold; }
+        .best-row { background: #f5f8f2; }
+        th.positive-col { border-bottom: 3px solid #788c5d; }
+        th.negative-col { border-bottom: 3px solid #c44; }
+        th.test-col.positive-col { border-bottom: 3px solid #788c5d; }
+        th.test-col.negative-col { border-bottom: 3px solid #c44; }
+        .legend { font-family: 'Poppins', sans-serif; display: flex; gap: 20px; margin-bottom: 10px; font-size: 13px; align-items: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-swatch { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
+        .swatch-positive { background: #141413; border-bottom: 3px solid #788c5d; }
+        .swatch-negative { background: #141413; border-bottom: 3px solid #c44; }
+        .swatch-test { background: #6a9bcc; }
+        .swatch-train { background: #141413; }
+    </style>
+</head>
+<body>
+    <h1>onepager — Skill Description Optimization</h1>
+    <div class="explainer">
+        <strong>Optimizing your skill's description.</strong> This page updates automatically as Claude tests different versions of your skill's description. Each row is an iteration — a new description attempt. The columns show test queries: green checkmarks mean the skill triggered correctly (or correctly didn't trigger), red crosses mean it got it wrong. The "Train" score shows performance on queries used to improve the description; the "Test" score shows performance on held-out queries the optimizer hasn't seen. When it's done, Claude will apply the best-performing description to your skill.
+    </div>
+
+    <div class="summary">
+        <p><strong>Original:</strong> 用「窄门」哲学（SMALL_INTERFACE）设计交互式 HTML：结论前置，以搜索、筛选、排序、折叠、行动、复制或状态回传等窄网关按需交换最小信息。仅当用户明确要求交互式 HTML / dashboard / diagnosis page，或交互、状态、按需下钻能明显改善任务完成时使用；也用于保留交互地瘦身臃肿报告、归集当前会话产物的 HTML recap、超长 HTML 改动预览、设计稿与 WebApp 漂移评测，以及需要密码、API key、token、2FA 或二维码的人机凭据页。不因 report、summary、plan、explainer 或 HTML 等单个词自动触发；普通文字报告、领导汇报、短总结、静态计划、代码修改和产品 UI 小改动保持其最小合适格式，除非用户明确要求交互式 HTML。</p>
+        <p class="best"><strong>Best:</strong> 用「窄门」哲学（SMALL_INTERFACE）设计交互式 HTML：结论前置，以搜索、筛选、排序、折叠、行动、复制或状态回传等窄网关按需交换最小信息。仅当用户明确要求交互式 HTML / dashboard / diagnosis page，或交互、状态、按需下钻能明显改善任务完成时使用；也用于保留交互地瘦身臃肿报告、归集当前会话产物的 HTML recap、超长 HTML 改动预览、设计稿与 WebApp 漂移评测，以及需要密码、API key、token、2FA 或二维码的人机凭据页。不因 report、summary、plan、explainer 或 HTML 等单个词自动触发；普通文字报告、领导汇报、短总结、静态计划、代码修改和产品 UI 小改动保持其最小合适格式，除非用户明确要求交互式 HTML。</p>
+        <p><strong>Best Score:</strong> 8/8 (test)</p>
+        <p><strong>Iterations:</strong> 1 | <strong>Train:</strong> 12 | <strong>Test:</strong> 8</p>
+    </div>
+
+    <div class="legend">
+        <span style="font-weight:600">Query columns:</span>
+        <span class="legend-item"><span class="legend-swatch swatch-positive"></span> Should trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-negative"></span> Should NOT trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-train"></span> Train</span>
+        <span class="legend-item"><span class="legend-swatch swatch-test"></span> Test</span>
+    </div>
+
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Iter</th>
+                <th>Train</th>
+                <th>Test</th>
+                <th class="query-col">Description</th>
+                <th class="positive-col">我的 MacBook 这两天一开本地 agent 就发烫。请采集当前 CPU、内存和进程数据，做一个离线可打开的交互式诊断页：顶部先告诉我主要热源，进程可以搜索和按 CPU 排序，修复动作可以勾选并复制成 Markdown。</th>
+                <th class="positive-col">帮我从零做一个采购审批的可点击单页原型。左边是待处理申请，右边看详情并填写意见，要能通过、驳回、切换已处理状态，还要演示空队列和校验失败。最终给我一个直接双击就能打开的文件，我不准备起前端项目。</th>
+                <th class="positive-col">把这次 UAT 会话产生的 report.html、qa.json、run.webm 和 trace.zip 整理成一个 HTML handoff。最终录像要直接在正文播放，其他产物有真实链接；只收本次聊天能证明属于当前会话的文件。</th>
+                <th class="positive-col">我改了一个 600KB 的 hash-router SPA 原型，改动分别藏在 chat、experts、projects 三个视图。做个评审入口：默认只显示一条很窄的改动栏，点每个 tag 能先切到对应视图再闪烁定位，评审结果能勾选和复制。</th>
+                <th class="positive-col">设计稿在 `/tmp/design-intent.html`，实际 WebApp 导出的交互清单在 `/tmp/implemented-actions.json`。请做一个可浏览的对比页，按 domain 标出 full / partial / gap / overflow，先给意图实现率，再允许点进每个域看证据。</th>
+                <th class="positive-col">给我做一个 MCP 与专家创建、技能进化、诊断模块之间的交互关系页面。我要在浏览器里点某个 MCP 只高亮它实际连接的模块，节点详情按需展开，全部放在一个离线 HTML 里，不要依赖图表 CDN。</th>
+                <th class="negative-col">请直接改 `frontend/src/components/ApprovalPanel.tsx`：按钮圆角改成 8px，驳回按钮 hover 变深红，移动端间距缩到 12px，并补上现有 Vitest 测试。不要另做 demo 或 HTML 报告。</th>
+                <th class="negative-col">我们要重做企业后台的审批体验。请先给一份 UX 需求文档：列角色、任务流、信息架构、错误状态和无障碍验收标准，Markdown 就好，暂时不要原型和页面。</th>
+                <th class="negative-col">在当前 Next.js 产品里实现一个新的客户列表页面，数据从 `/api/customers` 获取，使用现有 design system、路由和权限中间件，并补加载/空/错误状态。请直接写 React 代码并跑测试。</th>
+                <th class="negative-col">现有 analytics dashboard 的 Recharts 折线图缺少 tooltip 和同比序列，请直接修改 `apps/web/app/analytics/page.tsx`，复用项目颜色 token，不要生成独立报告。</th>
+                <th class="negative-col">review `reports/security-audit.html` for XSS and accessibility issues, then give me findings with file:line references. do not modify the file and don&#x27;t build a separate review UI.</th>
+                <th class="negative-col">用三句话比较方案 A 的 Redis 队列和方案 B 的数据库轮询，最后推荐一个。不要图、不要页面、不要 artifact，我只需要快速判断。</th>
+                <th class="test-col positive-col">运营同学每天排查投放异常很痛苦，能不能给他们一个很小的浏览器工具：按渠道和日期筛异常，展开证据，只勾选需要重跑的任务，然后把选择结果复制给 agent。数据可以先写死，重点是交互流程能跑。</th>
+                <th class="test-col positive-col">`~/Downloads/Q3-acceptance.html` 有 480KB、六个 tab，每页几十行表，评审说信息太多，但搜索、排序、点行看证据和勾选整改项都不能丢。请把它重构成结论优先、细节按需展开的轻量交互式 HTML。</th>
+                <th class="test-col positive-col">部署脚本现在停在人工认证：先输云平台密码，再填 sk- 开头的 key，有时还要 6 位短信码或扫码。请做一个本地凭据接力页，默认遮蔽、格式错误可重试、二维码有过期倒计时，完成状态能复制回 agent，不能向远程地址发送任何内容。</th>
+                <th class="test-col positive-col">need a onepager for our incident war room — one sentence verdict first, then a searchable owner list, collapsible evidence, checkboxes for mitigations, and a copy button so i can paste the current state back into the claude session. single html pls, offline.</th>
+                <th class="test-col negative-col">用 Skill Creator 自带的 eval viewer 展示我这批 skill run 的 outputs、grading.json 和 benchmark.json。必须用 generate_review.py，别重新设计一个评测页面。</th>
+                <th class="test-col negative-col">把本周研发进度整理成给 VP 的五段式周报：目标、完成、风险、下周计划、需要决策。只在聊天输出，控制在 500 字以内，不要 HTML。</th>
+                <th class="test-col negative-col">给数据库迁移写一个三阶段执行计划，包含负责人、回滚条件和检查清单。放到 `docs/migration-plan.md`，这是静态文档，不需要筛选或状态回传。</th>
+                <th class="test-col negative-col">法务给了 `privacy-policy.html`，请只修正其中三处错别字和一个失效链接，保持现有结构和样式，直接编辑原文件，不要转换成交互页面。</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="best-row">
+                <td>1</td>
+                <td><span class="score score-good">36/36</span></td>
+                <td><span class="score score-good">24/24</span></td>
+                <td class="description">用「窄门」哲学（SMALL_INTERFACE）设计交互式 HTML：结论前置，以搜索、筛选、排序、折叠、行动、复制或状态回传等窄网关按需交换最小信息。仅当用户明确要求交互式 HTML / dashboard / diagnosis page，或交互、状态、按需下钻能明显改善任务完成时使用；也用于保留交互地瘦身臃肿报告、归集当前会话产物的 HTML recap、超长 HTML 改动预览、设计稿与 WebApp 漂移评测，以及需要密码、API key、token、2FA 或二维码的人机凭据页。不因 report、summary、plan、explainer 或 HTML 等单个词自动触发；普通文字报告、领导汇报、短总结、静态计划、代码修改和产品 UI 小改动保持其最小合适格式，除非用户明确要求交互式 HTML。</td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">3/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">3/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">3/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">3/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+</body>
+</html>

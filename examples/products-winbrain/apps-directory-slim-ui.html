@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>winBrain Apps 目录瘦身</title>
+    <style>
+      :root {
+        --ink: #14231b;
+        --green: #176b47;
+        --muted: #69776f;
+        --line: #dce6df;
+        --bg: #f6f9f6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.6 system-ui,
+          "PingFang SC",
+          sans-serif;
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: auto;
+        padding: 36px 22px 60px;
+      }
+      h1 {
+        font:
+          700 clamp(34px, 6vw, 62px)/1.02 Georgia,
+          "Songti SC",
+          serif;
+        margin: 8px 0 12px;
+        max-width: 850px;
+      }
+      .eyebrow {
+        color: var(--green);
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        font-size: 12px;
+      }
+      .sub {
+        color: var(--muted);
+        max-width: 720px;
+      }
+      .verdict {
+        margin: 24px 0;
+        background: #edf7f0;
+        border-left: 5px solid var(--green);
+        padding: 17px 20px;
+        border-radius: 5px 14px 14px 5px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+      .tab {
+        border: 1px solid var(--line);
+        background: white;
+        border-radius: 99px;
+        padding: 9px 15px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .tab.active {
+        background: var(--ink);
+        color: white;
+      }
+      .panel {
+        display: none;
+      }
+      .panel.active {
+        display: block;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      .card {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 12px 35px #173c2b12;
+      }
+      .card h2 {
+        margin: 0 0 6px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .wall {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 15px;
+      }
+      .mini {
+        border: 1px solid var(--line);
+        padding: 10px;
+        border-radius: 10px;
+        min-height: 78px;
+      }
+      .mini b,
+      .mini small {
+        display: block;
+      }
+      .mini small {
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .hero {
+        background: #173c2b;
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+      }
+      .hero small {
+        color: #b9d4c5;
+        display: block;
+      }
+      .hero button,
+      .copy {
+        border: 0;
+        border-radius: 9px;
+        padding: 10px 15px;
+        font-weight: 800;
+      }
+      .hero button {
+        background: #daf6e6;
+        color: #154c33;
+      }
+      .list {
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 4px 14px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        padding: 12px 0;
+        border-bottom: 1px solid #edf1ee;
+        align-items: center;
+      }
+      .row:last-child {
+        border: 0;
+      }
+      .status {
+        font-size: 11px;
+        background: #e1f3e8;
+        color: var(--green);
+        padding: 3px 8px;
+        border-radius: 99px;
+      }
+      .more {
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px dashed #aebfb4;
+        background: #f7faf8;
+        border-radius: 10px;
+      }
+      .rules {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .rule {
+        display: flex;
+        gap: 12px;
+      }
+      .n {
+        width: 30px;
+        height: 30px;
+        flex: none;
+        display: grid;
+        place-items: center;
+        background: var(--ink);
+        color: white;
+        border-radius: 9px;
+        font-weight: 800;
+      }
+      .checks label {
+        display: flex;
+        gap: 10px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      input {
+        accent-color: var(--green);
+      }
+      .progress {
+        height: 8px;
+        background: #e5ebe7;
+        border-radius: 99px;
+        overflow: hidden;
+        margin: 12px 0;
+      }
+      .bar {
+        height: 100%;
+        background: var(--green);
+        transition: 0.2s;
+      }
+      .copy {
+        width: 100%;
+        background: var(--green);
+        color: white;
+        cursor: pointer;
+      }
+      .flow {
+        width: 100%;
+        margin-top: 15px;
+      }
+      .footer {
+        margin-top: 28px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        font-size: 11px;
+        color: var(--muted);
+      }
+      @media (max-width: 760px) {
+        .grid,
+        .rules {
+          grid-template-columns: 1fr;
+        }
+        .wall {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="eyebrow">SMALL INTERFACE · UI ONEPAGER</div>
+      <h1>别再让用户面对一墙 App。</h1>
+      <p class="sub">
+        把当前平铺目录改成“1 个主入口 + 3 个最近使用 +
+        折叠历史”。不删数据，不重做业务工厂，只重建选择层级。
+      </p>
+      <section class="verdict">
+        <b>建议：采用「1 + 3 + 历史」目录模型。</b><br /><span class="muted"
+          >主 App 负责决策，最近使用负责效率，草稿与测试 App
+          保留但不抢注意力。</span
+        >
+      </section>
+      <nav class="tabs">
+        <button class="tab active" data-id="visual">界面对比</button
+        ><button class="tab" data-id="rules">设计原则</button
+        ><button class="tab" data-id="decision">决策清单</button>
+      </nav>
+      <section id="visual" class="panel active">
+        <div class="grid">
+          <article class="card">
+            <h2 style="color: #a63a35">当前：所有 App 同级</h2>
+            <p class="muted">用户必须先理解全量目录，才能做一个简单选择。</p>
+            <div class="wall">
+              <div class="mini">
+                <b>素材打分看板</b><small>DASHBOARD · Project</small>
+              </div>
+              <div class="mini">
+                <b>千川分析助手</b><small>AI APP · Project</small>
+              </div>
+              <div class="mini">
+                <b>测试 App 03</b><small>AI APP · Project</small>
+              </div>
+              <div class="mini">
+                <b>素材诊断</b><small>DASHBOARD · Project</small>
+              </div>
+              <div class="mini">
+                <b>草稿应用</b><small>AI APP · Project</small>
+              </div>
+              <div class="mini">
+                <b>测试 App 07</b><small>AI APP · Project</small>
+              </div>
+              <div class="mini">
+                <b>投放复盘</b><small>DASHBOARD · Project</small>
+              </div>
+              <div class="mini">
+                <b>素材助手</b><small>AI APP · Project</small>
+              </div>
+              <div class="mini">
+                <b>构建实验</b><small>AI APP · Project</small>
+              </div>
+            </div>
+          </article>
+          <article class="card">
+            <h2 style="color: var(--green)">建议：一个明确主入口</h2>
+            <p class="muted">5 秒内知道该打开什么，历史仍可找回。</p>
+            <div class="hero">
+              <div><small>主要 App · 已发布</small><b>素材优化工作台</b></div>
+              <button>打开 App</button>
+            </div>
+            <div class="list">
+              <div class="row">
+                <b>素材诊断看板</b><span class="status">可用</span
+                ><button>打开</button>
+              </div>
+              <div class="row">
+                <b>千川投放分析</b><span class="status">可用</span
+                ><button>打开</button>
+              </div>
+              <div class="row">
+                <b>素材评分助手</b><span class="status">草稿</span
+                ><button>继续</button>
+              </div>
+            </div>
+            <button class="more" id="more">更多应用 12 · 展开</button>
+            <div class="list" id="history" hidden>
+              <div class="row">
+                <b>测试与历史 App</b><span class="status">已折叠</span
+                ><button>管理</button>
+              </div>
+            </div>
+          </article>
+        </div>
+        <article class="card" style="margin-top: 18px">
+          <h2>三道窄门</h2>
+          <svg
+            class="flow"
+            viewBox="0 0 920 145"
+            role="img"
+            aria-label="主App到最近使用再到历史"
+          >
+            <defs>
+              <marker
+                id="a"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path d="M0 0L8 4 0 8Z" fill="#789083" />
+              </marker>
+            </defs>
+            <g font-family="sans-serif">
+              <rect
+                x="15"
+                y="28"
+                width="245"
+                height="85"
+                rx="17"
+                fill="#173c2b"
+              />
+              <text x="38" y="58" fill="#b9d4c5" font-size="13">
+                窄门 1 · 默认决策
+              </text>
+              <text x="38" y="88" fill="white" font-size="21" font-weight="700">
+                1 个主 App
+              </text>
+              <line
+                x1="270"
+                y1="70"
+                x2="330"
+                y2="70"
+                stroke="#789083"
+                stroke-width="2"
+                marker-end="url(#a)"
+              />
+              <rect
+                x="345"
+                y="28"
+                width="245"
+                height="85"
+                rx="17"
+                fill="white"
+                stroke="#b9cbbf"
+              />
+              <text x="368" y="58" fill="#69776f" font-size="13">
+                窄门 2 · 高频效率
+              </text>
+              <text
+                x="368"
+                y="88"
+                fill="#173c2b"
+                font-size="21"
+                font-weight="700"
+              >
+                3 个最近使用
+              </text>
+              <line
+                x1="600"
+                y1="70"
+                x2="660"
+                y2="70"
+                stroke="#789083"
+                stroke-width="2"
+                marker-end="url(#a)"
+              />
+              <rect
+                x="675"
+                y="28"
+                width="230"
+                height="85"
+                rx="17"
+                fill="#f1f5f2"
+                stroke="#b9cbbf"
+                stroke-dasharray="6 5"
+              />
+              <text x="698" y="58" fill="#69776f" font-size="13">
+                窄门 3 · 保留降噪
+              </text>
+              <text
+                x="698"
+                y="88"
+                fill="#173c2b"
+                font-size="21"
+                font-weight="700"
+              >
+                折叠历史 / 草稿
+              </text>
+            </g>
+          </svg>
+        </article>
+      </section>
+      <section id="rules" class="panel">
+        <div class="rules">
+          <article class="card rule">
+            <span class="n">1</span>
+            <div>
+              <b>主次先于美化</b>
+              <div class="muted">
+                不是换卡片皮肤，而是让一个主 App 获得最高视觉权重。
+              </div>
+            </div>
+          </article>
+          <article class="card rule">
+            <span class="n">2</span>
+            <div>
+              <b>按状态分组</b>
+              <div class="muted">
+                可用、构建中、草稿、归档，不按创建顺序平铺。
+              </div>
+            </div>
+          </article>
+          <article class="card rule">
+            <span class="n">3</span>
+            <div>
+              <b>卡片只留最小信息</b>
+              <div class="muted">名称、类型、状态、更新时间和一个主操作。</div>
+            </div>
+          </article>
+          <article class="card rule">
+            <span class="n">4</span>
+            <div>
+              <b>搜索延迟出现</b>
+              <div class="muted">超过 8 个 App 再显示搜索与筛选。</div>
+            </div>
+          </article>
+          <article class="card rule">
+            <span class="n">5</span>
+            <div>
+              <b>归档代替删除</b>
+              <div class="muted">
+                测试与历史 App 默认折叠，保留审计和用户数据。
+              </div>
+            </div>
+          </article>
+          <article class="card rule">
+            <span class="n">6</span>
+            <div>
+              <b>对话留在构建页</b>
+              <div class="muted">
+                AI Elements 适合 Agent 对话，不适合目录导航。
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section id="decision" class="panel">
+        <div class="grid">
+          <article class="card checks">
+            <h2>首版签收范围</h2>
+            <label
+              ><input
+                type="checkbox"
+                checked
+                data-text="置顶一个主要 App，并提供唯一醒目的打开按钮"
+              />主 App 置顶</label
+            ><label
+              ><input
+                type="checkbox"
+                checked
+                data-text="只展示最近使用的 3 个 App"
+              />最近使用 3 个</label
+            ><label
+              ><input
+                type="checkbox"
+                checked
+                data-text="草稿、失败和测试 App 收进更多应用"
+              />历史折叠</label
+            ><label
+              ><input
+                type="checkbox"
+                data-text="App 超过 8 个时增加搜索与状态筛选"
+              />搜索与筛选</label
+            ><label
+              ><input
+                type="checkbox"
+                data-text="增加主 App 设置与归档管理"
+              />管理能力</label
+            >
+          </article>
+          <aside class="card">
+            <h2 id="count">3/5 已选择</h2>
+            <div class="progress"><div class="bar" id="bar"></div></div>
+            <button class="copy" id="copy">复制实施清单</button>
+            <p class="muted">首版建议保持 3 项；搜索和管理等规模需要时再加。</p>
+          </aside>
+        </div>
+      </section>
+      <footer class="footer">
+        来源项目：winBrain ·
+        /Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean<br />目标页面：http://192.168.26.254:4173/index.html#/factory/project/qianchuan-material-optimizer/apps<br />Pi
+        session：019ffa0b-a23b-7331-b211-2edad5440598 · 单文件自包含，无
+        CDN、无外部请求。
+      </footer>
+    </main>
+    <script>
+      const tabs = [...document.querySelectorAll(".tab")],
+        panels = [...document.querySelectorAll(".panel")];
+      tabs.forEach(
+        (t) =>
+          (t.onclick = () => {
+            tabs.forEach((x) => x.classList.toggle("active", x === t));
+            panels.forEach((x) =>
+              x.classList.toggle("active", x.id === t.dataset.id),
+            );
+          }),
+      );
+      const more = document.querySelector("#more"),
+        history = document.querySelector("#history");
+      more.onclick = () => {
+        history.hidden = !history.hidden;
+        more.textContent = history.hidden
+          ? "更多应用 12 · 展开"
+          : "更多应用 12 · 收起";
+      };
+      const cs = [...document.querySelectorAll(".checks input")],
+        bar = document.querySelector("#bar"),
+        count = document.querySelector("#count");
+      function refresh() {
+        let n = cs.filter((x) => x.checked).length;
+        count.textContent = n + "/5 已选择";
+        bar.style.width = n * 20 + "%";
+      }
+      cs.forEach((x) => (x.onchange = refresh));
+      refresh();
+      document.querySelector("#copy").onclick = () =>
+        navigator.clipboard.writeText(
+          [
+            "# winBrain Apps 目录瘦身实施清单",
+            "",
+            ...cs.map(
+              (x) => "- [" + (x.checked ? "x" : " ") + "] " + x.dataset.text,
+            ),
+          ].join("\n"),
+        );
+    </script>
+  </body>
+</html>

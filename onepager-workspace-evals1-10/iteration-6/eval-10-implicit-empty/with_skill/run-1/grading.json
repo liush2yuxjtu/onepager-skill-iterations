@@ -1,0 +1,28 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML explicitly states that this session produced no independent sub-artifacts.",
+      "passed": true,
+      "evidence": "empty-artifact statement",
+      "manual": false
+    },
+    {
+      "text": "The main HTML contains no artifact download or placeholder links.",
+      "passed": true,
+      "evidence": "0 hrefs, broken=[]",
+      "manual": false
+    },
+    {
+      "text": "The footer includes /tmp/no-artifacts and implicit-session-10.",
+      "passed": true,
+      "evidence": "provenance found: ['/tmp/no-artifacts', 'implicit-session-10']",
+      "manual": false
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  }
+}

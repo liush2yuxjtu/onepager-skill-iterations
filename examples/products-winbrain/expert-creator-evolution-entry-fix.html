@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>专家创建师：进化入口修复方案</title>
+    <style>
+      :root {
+        --paper: #f5f2ea;
+        --card: #fffdf8;
+        --ink: #17211d;
+        --muted: #66716b;
+        --line: #d9ddd6;
+        --green: #176746;
+        --green2: #e5f3ec;
+        --blue: #215b85;
+        --blue2: #e8f1f8;
+        --amber: #8a5515;
+        --amber2: #fff1d8;
+        --shadow: 0 16px 50px rgba(33, 45, 39, 0.09);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 100% 0, #dcebe3 0, transparent 30rem),
+          var(--paper);
+        color: var(--ink);
+        font:
+          15px/1.65 ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+      }
+      .wrap {
+        width: min(1040px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 34px 0 48px;
+      }
+      .hero,
+      .section {
+        background: rgba(255, 253, 248, 0.93);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+      }
+      .hero {
+        padding: clamp(24px, 5vw, 56px);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero:after {
+        content: "";
+        position: absolute;
+        right: -70px;
+        bottom: -100px;
+        width: 280px;
+        height: 280px;
+        border: 1px solid #b8d4c6;
+        border-radius: 50%;
+      }
+      .eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--green);
+        font-weight: 800;
+      }
+      .hero h1 {
+        max-width: 820px;
+        font-size: clamp(32px, 6vw, 66px);
+        line-height: 1.04;
+        letter-spacing: -0.04em;
+        margin: 12px 0 18px;
+      }
+      .lede {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 17px;
+      }
+      .verdict {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 14px;
+        align-items: start;
+        margin-top: 26px;
+        padding: 18px;
+        border: 1px solid #acd1bd;
+        border-left: 6px solid var(--green);
+        border-radius: 15px;
+        background: var(--green2);
+      }
+      .tag {
+        display: inline-flex;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: var(--green);
+        color: white;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .verdict p {
+        margin: 5px 0 0;
+        color: #405149;
+      }
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .fact {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+      }
+      .fact b {
+        display: block;
+        font-size: 22px;
+        color: var(--green);
+      }
+      .fact span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .section {
+        margin-top: 18px;
+        padding: clamp(20px, 4vw, 38px);
+      }
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 20px;
+      }
+      .section h2 {
+        font-size: clamp(24px, 4vw, 38px);
+        line-height: 1.15;
+        letter-spacing: -0.025em;
+        margin: 7px 0;
+      }
+      .section-head p {
+        max-width: 430px;
+        color: var(--muted);
+        margin: 0;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 16px;
+      }
+      .card {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 19px;
+        background: #fff;
+      }
+      .card h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .bad {
+        border-top: 5px solid #b55a46;
+      }
+      .good {
+        border-top: 5px solid var(--green);
+      }
+      .ascii {
+        margin-top: 14px;
+        padding: 16px;
+        overflow: auto;
+        border-radius: 13px;
+        background: #17211d;
+        color: #dcebe3;
+        font:
+          13px/1.7 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        white-space: pre;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .tab {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 999px;
+        padding: 9px 14px;
+        color: var(--ink);
+        font-weight: 750;
+        cursor: pointer;
+      }
+      .tab.on {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      .flow {
+        display: none;
+      }
+      .flow.on {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .step {
+        position: relative;
+        min-height: 132px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+      }
+      .step b {
+        display: block;
+        margin-bottom: 8px;
+      }
+      .step small {
+        color: var(--muted);
+      }
+      .step:not(:last-child):after {
+        content: "→";
+        position: absolute;
+        right: -12px;
+        top: 48px;
+        z-index: 2;
+        width: 23px;
+        height: 23px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--green);
+        color: #fff;
+      }
+      .rule {
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        gap: 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .rule:last-child {
+        border: 0;
+      }
+      .n {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--blue2);
+        color: var(--blue);
+        font-weight: 900;
+      }
+      .code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: #eef1ed;
+        padding: 2px 5px;
+        border-radius: 5px;
+      }
+      .scope {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+      .scope .card strong {
+        overflow-wrap: anywhere;
+        display: block;
+        color: var(--green);
+        margin-bottom: 6px;
+      }
+      .check {
+        display: flex;
+        gap: 10px;
+        align-items: start;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .check input {
+        margin-top: 5px;
+        accent-color: var(--green);
+      }
+      .decision {
+        background: linear-gradient(135deg, #17211d, #264c3c);
+        color: #fff;
+        border-radius: 18px;
+        padding: 24px;
+      }
+      .decision p {
+        color: #cbd8d1;
+      }
+      .btn {
+        border: 0;
+        border-radius: 12px;
+        padding: 11px 15px;
+        background: #fff;
+        color: #17211d;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .status {
+        display: inline-block;
+        margin-left: 10px;
+        color: #bfe5d0;
+        font-size: 13px;
+      }
+      .links a {
+        color: var(--blue);
+        font-weight: 750;
+      }
+      .meta {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+      .prototype-toolbar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .prototype-toolbar button {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-weight: 750;
+      }
+      .proto-shell {
+        position: relative;
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        min-height: 480px;
+        overflow: hidden;
+        border: 1px solid #cdd5cf;
+        border-radius: 18px;
+        background: #f6f8f6;
+        box-shadow: 0 18px 45px rgba(26, 39, 33, 0.12);
+      }
+      .proto-nav {
+        padding: 20px 14px;
+        background: #1b2923;
+        color: #dce8e1;
+      }
+      .proto-brand {
+        font-size: 18px;
+        font-weight: 900;
+        margin-bottom: 24px;
+      }
+      .proto-nav span {
+        display: block;
+        padding: 9px 11px;
+        border-radius: 9px;
+        color: #aebdb5;
+        font-size: 12px;
+      }
+      .proto-nav span.on {
+        background: #2b4438;
+        color: #fff;
+      }
+      .proto-main {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .proto-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px 18px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .proto-avatar {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: var(--green2);
+        color: var(--green);
+        font-weight: 900;
+      }
+      .proto-title {
+        flex: 1;
+        min-width: 0;
+      }
+      .proto-title b,
+      .proto-title small {
+        display: block;
+      }
+      .proto-title small {
+        color: var(--muted);
+      }
+      .mode-chip {
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: var(--amber2);
+        color: var(--amber);
+        font-size: 11px;
+        font-weight: 850;
+      }
+      .mode-chip.evolve {
+        background: var(--green2);
+        color: var(--green);
+      }
+      .proto-context {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 18px;
+        border-bottom: 1px solid var(--line);
+        background: #fbfcfb;
+        font-size: 12px;
+      }
+      .proto-context strong {
+        margin-right: auto;
+      }
+      .proto-action {
+        border: 1px solid #a9c9b8;
+        border-radius: 9px;
+        background: var(--green2);
+        color: var(--green);
+        padding: 7px 10px;
+        cursor: pointer;
+        font-weight: 800;
+      }
+      .proto-action.secondary {
+        border-color: var(--line);
+        background: #fff;
+        color: var(--ink);
+      }
+      .proto-chat {
+        flex: 1;
+        padding: 22px;
+        background: linear-gradient(180deg, #f8faf8, #eef3ef);
+      }
+      .proto-bubble {
+        max-width: 76%;
+        margin-bottom: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 4px 14px 14px;
+        background: #fff;
+        font-size: 13px;
+      }
+      .proto-bubble.user {
+        margin-left: auto;
+        border: 0;
+        border-radius: 14px 4px 14px 14px;
+        background: #244c3b;
+        color: #fff;
+      }
+      .proto-compose {
+        margin-top: 20px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: #fff;
+        color: #9aa39e;
+      }
+      .proto-overlay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        background: rgba(16, 27, 22, 0.55);
+      }
+      .proto-dialog {
+        width: min(430px, 100%);
+        border-radius: 16px;
+        padding: 19px;
+        background: #fff;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+      }
+      .proto-dialog h3 {
+        margin: 0 0 5px;
+      }
+      .proto-dialog p {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .expert-option {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 8px;
+        padding: 11px;
+        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: #fff;
+        cursor: pointer;
+      }
+      .expert-option:hover,
+      .expert-option:focus {
+        border-color: var(--green);
+        background: var(--green2);
+      }
+      .expert-option span {
+        flex: 1;
+      }
+      .expert-option b,
+      .expert-option small {
+        display: block;
+      }
+      .expert-option small {
+        color: var(--muted);
+      }
+      .proto-input {
+        width: 100%;
+        margin: 10px 0 14px;
+        padding: 11px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+      }
+      .proto-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+      @media (max-width: 760px) {
+        .facts,
+        .grid2,
+        .scope,
+        .flow.on {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .section-head {
+          display: block;
+        }
+        .step:not(:last-child):after {
+          content: "↓";
+          right: auto;
+          left: 20px;
+          top: auto;
+          bottom: -13px;
+        }
+        .verdict {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 38px;
+        }
+        .proto-shell {
+          grid-template-columns: 1fr;
+          min-height: 560px;
+        }
+        .proto-nav {
+          display: none;
+        }
+        .proto-context {
+          align-items: flex-start;
+          flex-wrap: wrap;
+        }
+        .proto-context strong {
+          width: 100%;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="hero">
+        <div class="eyebrow">UX decision · smallest safe fix</div>
+        <h1>不要让用户猜“切换工作对象”会不会进化专家。</h1>
+        <p class="lede">
+          当前行为不是后端坏了：新建模式的 Creator Sandbox
+          按设计看不到宿主专家目录；真正的问题是 UI
+          把“普通对话”和“进化已有专家”藏在两个不同入口，却没有在创建师会话里说明。
+        </p>
+        <div class="verdict">
+          <span class="tag">推荐 A</span>
+          <div>
+            <strong>显式模式切换 + 复用现有进化链路</strong>
+            <p>
+              在专家创建师会话中显示当前模式，并提供「选择已有专家进化」按钮。选择目标后仍走现有确认框、Creator
+              Chat Port 和隔离 Sandbox；不新增 API、数据库、依赖或宿主目录读取。
+            </p>
+          </div>
+        </div>
+        <div class="facts">
+          <div class="fact"><b>1 + 1</b><span>运行时文件 + 契约测试</span></div>
+          <div class="fact"><b>0</b><span>后端 / API 改动</span></div>
+          <div class="fact"><b>0</b><span>自然语言意图猜测</span></div>
+          <div class="fact"><b>保留</b><span>双重 Sandbox 安全门</span></div>
+        </div>
+      </header>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">01 · diagnosis</div>
+            <h2>用户没做错，入口语义错了</h2>
+          </div>
+          <p>
+            截图中的线程标题已经给出证据：它是「创建新专家」，不是「进化某专家」。
+          </p>
+        </div>
+        <div class="grid2">
+          <article class="card bad">
+            <h3>现在</h3>
+            <p>
+              创建师会话里只有「更换工作对象」。选专家会开始普通业务对话；继续问创建师，它仍处于空白
+              create Sandbox。
+            </p>
+            <div class="ascii">
+              创建新专家线程 ├─ 更换工作对象 → 普通专家对话 └─ 问“有哪些专家” →
+              Sandbox 无宿主目录权限 结果：用户以为已选择进化目标，实际没有
+            </div>
+          </article>
+          <article class="card good">
+            <h3>修复后</h3>
+            <p>
+              创建师上下文直接标出「新建模式」，另给独立的「选择已有专家进化」动作；普通对话入口仍保留。
+            </p>
+            <div class="ascii">
+              专家创建师 · 新建模式 ├─ 继续新建专家 ├─ 选择已有专家进化 →
+              目标确认 → 进化线程 └─ 切换普通对话 → 与专家对话
+              结果：每个按钮只表达一个动作
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">02 · interaction</div>
+            <h2>两个模式，两个明确路径</h2>
+          </div>
+          <p>切换标签查看建议的用户路径。进化模式只列出在职、非平台专家。</p>
+        </div>
+        <div class="tabs" role="tablist">
+          <button
+            class="tab on"
+            data-flow="create"
+            role="tab"
+            aria-selected="true"
+          >
+            新建专家</button
+          ><button
+            class="tab"
+            data-flow="evolve"
+            role="tab"
+            aria-selected="false"
+          >
+            进化已有专家
+          </button>
+        </div>
+        <div class="flow on" data-panel="create">
+          <div class="step">
+            <b>1 · 模式标识</b><small>专家创建师 · 新建专家</small>
+          </div>
+          <div class="step">
+            <b>2 · 描述需求</b><small>继续当前 create 线程</small>
+          </div>
+          <div class="step">
+            <b>3 · 生成草稿</b><small>空 Sandbox 创建 Plugin</small>
+          </div>
+          <div class="step">
+            <b>4 · 测试发布</b><small>沿用现有 Creator 流程</small>
+          </div>
+        </div>
+        <div class="flow" data-panel="evolve">
+          <div class="step">
+            <b>1 · 显式按钮</b><small>选择已有专家进化</small>
+          </div>
+          <div class="step">
+            <b>2 · 安全过滤</b><small>在职 + 专家 + 非平台资产</small>
+          </div>
+          <div class="step">
+            <b>3 · 目标确认</b><small>复用进化草稿名称对话框</small>
+          </div>
+          <div class="step">
+            <b>4 · 隔离进化</b
+            ><small>seed Plugin 副本，线程标题「进化 X」</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">03 · clickable prototype</div>
+            <h2>直接点一遍修复后的入口</h2>
+          </div>
+          <p>
+            这是交互提案，不连接真实 API。点击绿色动作，完整体验从 create 到
+            evolve 的模式转换。
+          </p>
+        </div>
+        <div class="prototype-toolbar" aria-label="原型状态快捷切换">
+          <button data-proto-state="create">1 新建模式</button>
+          <button data-proto-state="picker">2 选择专家</button>
+          <button data-proto-state="confirm">3 确认草稿</button>
+          <button data-proto-state="evolved">4 进化线程</button>
+        </div>
+        <div id="prototype-stage" aria-live="polite"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">04 · implementation</div>
+            <h2>修在入口，不扩大模型权限</h2>
+          </div>
+          <p>
+            最小根因修复：前端明确选择 intent，现有后端已经支持 create /
+            evolve。
+          </p>
+        </div>
+        <div class="rule">
+          <span class="n">1</span>
+          <div>
+            <b>创建师上下文条</b><br />当
+            <span class="code">CHAT.oid === "skill-expert-creator"</span
+            >，显示模式徽标；create 线程展示「选择已有专家进化」。
+          </div>
+        </div>
+        <div class="rule">
+          <span class="n">2</span>
+          <div>
+            <b>专用进化选择器</b><br />增加 picker purpose
+            <span class="code">evolve</span>；只展示 lifecycle active、level
+            专家、非平台专家，按钮文案为「进化此专家」。
+          </div>
+        </div>
+        <div class="rule">
+          <span class="n">3</span>
+          <div>
+            <b>复用已有链路</b><br />选择后调用
+            <span class="code">openEvolveConfirmById(id)</span>，确认后继续调用
+            <span class="code">openCreatorConversation("evolve", id, name)</span
+            >。
+          </div>
+        </div>
+        <div class="rule">
+          <span class="n">4</span>
+          <div>
+            <b>不做的事</b><br />不让模型扫描
+            <span class="code">workspace/experts</span>；不解析“帮我进化
+            X”自然语言；不动态改写正在运行的 Sandbox target。
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">05 · scope</div>
+            <h2>代码切片与验收</h2>
+          </div>
+          <p>
+            避免触碰并行实例正在修改的视觉 CSS；优先复用现有按钮和选择器样式。
+          </p>
+        </div>
+        <div class="scope">
+          <article class="card">
+            <strong>frontend/src/adapters/browser/workbench-ui.js</strong>
+            <p>
+              模式徽标、专用 evolve picker purpose、过滤与 action；普通 picker
+              行为不变。
+            </p>
+          </article>
+          <article class="card">
+            <strong>test/frontend.test.tsx</strong>
+            <p>
+              契约：create 与 evolve 路径分离、有效目标过滤、existing expert id
+              写入 creatorTarget。
+            </p>
+          </article>
+        </div>
+        <div style="margin-top: 18px">
+          <label class="check"
+            ><input type="checkbox" /><span
+              >创建师 create 线程始终显示「新建专家模式」。</span
+            ></label
+          ><label class="check"
+            ><input type="checkbox" /><span
+              >可从该线程选择
+              <span class="code">expert-msn1bi5s</span> 并进入「进化
+              千川账号追投分析专家」。</span
+            ></label
+          ><label class="check"
+            ><input type="checkbox" /><span
+              >平台专家、员工、草稿和退休专家不出现在进化目标列表。</span
+            ></label
+          ><label class="check"
+            ><input type="checkbox" /><span
+              >普通「切换工作对象」仍只创建普通对话，不改变语义。</span
+            ></label
+          ><label class="check"
+            ><input type="checkbox" /><span
+              >真实 UAT：选择目标 → 进化对话 → 草稿落盘 → 测试发布 →
+              下游对话。</span
+            ></label
+          >
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="decision">
+          <div class="eyebrow" style="color: #9ad5b7">Recommendation</div>
+          <h2>采用 A：显式模式切换</h2>
+          <p>
+            它解决截图中的真实困惑，同时保持最小权限和最少代码。不要用“给
+            Creator 更多目录读取权限”掩盖入口问题。
+          </p>
+          <button class="btn" id="copy">复制实施结论</button
+          ><span class="status" id="status" role="status"></span>
+        </div>
+        <div class="links" style="margin-top: 18px">
+          <b>相关产物：</b>
+          <a href="expert-chat-persistence-design.html"
+            >专家对话刷新持久化实施报告</a
+          >
+        </div>
+        <footer class="meta">
+          来源项目：winBrain Creator OS ·
+          /Users/liushiyuwin/projects/winbrain_os-ink-agent-sdk-clean<br />Pi
+          session ID：019ffa0b-aa45-7cfa-aca7-a2d912280d64 ·
+          生成时间：2026-08-14 14:44 +0800
+        </footer>
+      </section>
+    </main>
+    <script>
+      document.querySelectorAll(".tab").forEach((button) =>
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".tab").forEach((item) => {
+            const on = item === button;
+            item.classList.toggle("on", on);
+            item.setAttribute("aria-selected", String(on));
+          });
+          document
+            .querySelectorAll(".flow")
+            .forEach((panel) =>
+              panel.classList.toggle(
+                "on",
+                panel.dataset.panel === button.dataset.flow,
+              ),
+            );
+        }),
+      );
+      const prototypeStage = document.querySelector("#prototype-stage");
+      const make = (tag, className, text) => {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text) node.textContent = text;
+        return node;
+      };
+      const action = (text, state, secondary = false) => {
+        const button = make(
+          "button",
+          `proto-action${secondary ? " secondary" : ""}`,
+          text,
+        );
+        if (state) button.dataset.proto = state;
+        return button;
+      };
+      function expertOption(avatar, name, detail, state) {
+        const button = make("button", "expert-option");
+        if (state) button.dataset.proto = state;
+        const copy = make("span");
+        copy.append(make("b", "", name), make("small", "", detail));
+        button.append(
+          make("span", "proto-avatar", avatar),
+          copy,
+          make("b", "", "进化 →"),
+        );
+        return button;
+      }
+      function renderPrototype(state = "create") {
+        const evolved = state === "evolved";
+        const shell = make("div", "proto-shell");
+        const nav = make("aside", "proto-nav");
+        nav.append(make("div", "proto-brand", "winBrain OS"));
+        ["AI 对话", "专家团", "项目组", "业务工作台"].forEach((label, index) =>
+          nav.append(make("span", index === 0 ? "on" : "", label)),
+        );
+        const main = make("div", "proto-main");
+        const head = make("header", "proto-head");
+        const title = make("div", "proto-title");
+        title.append(
+          make("b", "", "专家创建师"),
+          make(
+            "small",
+            "",
+            evolved ? "进化 千川账号追投分析专家" : "创建新专家",
+          ),
+        );
+        head.append(
+          make("span", "proto-avatar", "创"),
+          title,
+          make(
+            "span",
+            `mode-chip${evolved ? " evolve" : ""}`,
+            evolved ? "进化专家模式" : "新建专家模式",
+          ),
+        );
+        const context = make("div", "proto-context");
+        context.append(
+          make("span", "", "当前任务"),
+          make(
+            "strong",
+            "",
+            evolved ? "进化：千川账号追投分析专家" : "创建全新专家 Plugin",
+          ),
+        );
+        if (evolved) context.append(action("更换进化目标", "picker", true));
+        else
+          context.append(
+            action("选择已有专家进化", "picker"),
+            action("切换普通对话", "", true),
+          );
+        const chat = make("main", "proto-chat");
+        chat.append(
+          make(
+            "div",
+            "proto-bubble",
+            evolved
+              ? "已载入 expert-msn1bi5s 的 Plugin 副本。请描述这次希望进化的能力。"
+              : "当前是新建专家模式。我会在空白 Sandbox 中创建新的专家 Plugin。",
+          ),
+        );
+        if (evolved)
+          chat.append(
+            make(
+              "div",
+              "proto-bubble user",
+              "增加千川账户追投异常诊断，并保留现有员工分工。",
+            ),
+          );
+        chat.append(make("div", "proto-compose", "输入消息…"));
+        main.append(head, context, chat);
+        shell.append(nav, main);
+        if (state === "picker") {
+          const overlay = make("div", "proto-overlay");
+          const dialog = make("section", "proto-dialog");
+          dialog.setAttribute("role", "dialog");
+          dialog.append(
+            make("h3", "", "选择要进化的专家"),
+            make("p", "", "仅展示在职、非平台专家；选择后不会修改原版本。"),
+            expertOption(
+              "千",
+              "千川账号追投分析专家",
+              "expert-msn1bi5s · 在职",
+              "confirm",
+            ),
+            expertOption("云", "云图素材分析专家", "在职 · 组织专家"),
+          );
+          overlay.append(dialog);
+          shell.append(overlay);
+        } else if (state === "confirm") {
+          const overlay = make("div", "proto-overlay");
+          const dialog = make("section", "proto-dialog");
+          dialog.setAttribute("role", "dialog");
+          const label = make("label");
+          const input = make("input", "proto-input");
+          input.value = "追投异常诊断增强";
+          label.append(make("b", "", "进化草稿名称"), input);
+          const actions = make("div", "proto-dialog-actions");
+          actions.append(
+            action("返回", "picker", true),
+            action("与专家创建师对话", "evolved"),
+          );
+          dialog.append(
+            make("h3", "", "进化「千川账号追投分析专家」"),
+            make("p", "", "创建独立进化草稿，原版本继续可用。"),
+            label,
+            actions,
+          );
+          overlay.append(dialog);
+          shell.append(overlay);
+        }
+        prototypeStage.replaceChildren(shell);
+      }
+      document.addEventListener("click", (event) => {
+        const target = event.target.closest("[data-proto],[data-proto-state]");
+        if (target)
+          renderPrototype(target.dataset.proto || target.dataset.protoState);
+      });
+      renderPrototype();
+      document.querySelector("#copy").addEventListener("click", async () => {
+        const text =
+          '采用推荐 A：在专家创建师会话中显式区分“新建专家”和“进化已有专家”。新增专用 evolve picker，只展示在职、非平台专家；选择后复用 openEvolveConfirmById → openCreatorConversation("evolve")。不新增 API、数据库、依赖或宿主目录读取。';
+        await navigator.clipboard.writeText(text);
+        document.querySelector("#status").textContent = "已复制";
+      });
+    </script>
+  </body>
+</html>

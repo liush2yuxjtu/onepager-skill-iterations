@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>调试会话回顾 · eval-session-6</title>
+<style>
+  :root{
+    --green:#286149;
+    --green-soft:#eef4f0;
+    --ink:#1c2420;
+    --muted:#5b6b62;
+    --line:#dde5e0;
+    --card:#ffffff;
+    --red:#b3403a;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font:16px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    color:var(--ink);
+    background:#f6f8f6;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 64px}
+  header{
+    display:flex;align-items:center;gap:16px;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 24px;
+  }
+  header .hero-art{flex:0 0 auto}
+  header h1{margin:0;font-size:22px;letter-spacing:.5px}
+  header .meta{margin:2px 0 0;color:var(--muted);font-size:13px}
+  .badge{
+    margin-left:auto;padding:6px 14px;border-radius:999px;
+    background:var(--green);color:#fff;font-weight:600;font-size:14px;white-space:nowrap;
+  }
+  .verdict{
+    display:flex;gap:10px;align-items:baseline;
+    margin:20px 0 6px;
+  }
+  .verdict .tick{color:var(--green);font-weight:700}
+  section{margin-top:28px}
+  h2{font-size:17px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+  h2 .n{color:var(--muted);font-weight:400;font-size:13px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  /* 主录像 */
+  .main-video .card{padding:16px}
+  video{display:block;width:100%;border-radius:10px;background:#0d1117}
+  .cap{display:flex;justify-content:space-between;gap:10px;margin-top:10px;color:var(--muted);font-size:13px}
+  .cap a{color:var(--green);font-weight:600;text-decoration:none}
+  .cap a:hover{text-decoration:underline}
+  /* 报告 / 证据 */
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:720px){.row{grid-template-columns:1fr}}
+  .report .target{font-size:30px;margin:4px 0 12px}
+  .report a.go{
+    display:inline-block;margin-top:6px;padding:8px 18px;border-radius:999px;
+    background:var(--green);color:#fff;text-decoration:none;font-weight:600;
+  }
+  .report a.go:hover{background:#1f4e3a}
+  .evidence video{margin-top:4px}
+  .evidence .file-link{display:inline-flex;align-items:center;gap:6px;margin-top:8px;color:var(--red);font-weight:600;text-decoration:none}
+  .evidence .file-link:hover{text-decoration:underline}
+  /* 产物清单 */
+  ul.artifacts{list-style:none;margin:0;padding:0}
+  ul.artifacts li{
+    display:flex;align-items:center;gap:12px;padding:12px 4px;
+    border-bottom:1px solid var(--line);
+  }
+  ul.artifacts li:last-child{border-bottom:0}
+  .ext{
+    flex:0 0 auto;font-size:11px;font-weight:700;letter-spacing:.4px;
+    padding:3px 9px;border-radius:6px;color:var(--green);background:var(--green-soft);
+    text-transform:uppercase;
+  }
+  .ext.webm{color:#7a2c9e;background:#f4ecf7}
+  .ext.html{color:#1a5fb4;background:#eaf1fb}
+  ul.artifacts a{color:var(--ink);text-decoration:none;font-weight:600}
+  ul.artifacts a:hover{color:var(--green)}
+  .desc{margin-left:auto;color:var(--muted);font-size:13px}
+  footer{
+    margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:13px;
+    display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+  footer code{background:var(--green-soft);padding:2px 8px;border-radius:6px;color:var(--green);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="hero-art">
+      <svg xmlns="http://www.w3.org/2000/svg" width="120" height="60"><rect width="120" height="60" fill="#286149"/></svg>
+    </div>
+    <div>
+      <h1>调试会话回顾</h1>
+      <p class="meta">eval-session-6 · 来源项目 /tmp/debug-session</p>
+    </div>
+    <span class="badge">PASS</span>
+  </header>
+
+  <p class="verdict"><span class="tick">✓</span> 调试成功，UAT 验收通过（qa.json: passed）。以下为本次会话全部产物，最终录像直接可看。</p>
+
+  <section class="main-video">
+    <h2><span class="n">01</span> 最终成功录像</h2>
+    <div class="card">
+      <video controls preload="metadata" src="run.webm">
+        您的浏览器不支持视频播放，请下载 <a href="run.webm">run.webm</a> 查看。
+      </video>
+      <div class="cap">
+        <span>run.webm — 修复后的完整运行录像</span>
+        <a href="run.webm" download>下载原始文件 ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="row">
+    <section class="report">
+      <h2><span class="n">02</span> 验收报告</h2>
+      <div class="card">
+        <div class="target">report.html</div>
+        <p style="margin:0;color:var(--muted);font-size:14px">UAT 结论：<strong style="color:var(--green)">PASS</strong>。打开报告查看完整验收明细。</p>
+        <a class="go" href="report.html">打开 UAT 报告 →</a>
+      </div>
+    </section>
+
+    <section class="evidence">
+      <h2><span class="n">03</span> 失败证据</h2>
+      <div class="card">
+        <video controls preload="metadata" src="failure.webm" style="max-height:150px;object-fit:cover">
+          您的浏览器不支持视频播放，请下载 <a href="failure.webm">failure.webm</a> 查看。
+        </video>
+        <a class="file-link" href="failure.webm" download>↧ 下载 failure.webm（失败前录像）</a>
+      </div>
+    </section>
+  </div>
+
+  <section>
+    <h2><span class="n">04</span> 会话产物入口</h2>
+    <div class="card">
+      <ul class="artifacts">
+        <li><span class="ext webm">WEBM</span><a href="run.webm">run.webm</a><span class="desc">最终成功录像</span></li>
+        <li><span class="ext webm">WEBM</span><a href="failure.webm">failure.webm</a><span class="desc">失败证据录像</span></li>
+        <li><span class="ext html">HTML</span><a href="report.html">report.html</a><span class="desc">UAT 验收报告</span></li>
+        <li><span class="ext json">JSON</span><a href="qa.json">qa.json</a><span class="desc">验收结果（passed: true）</span></li>
+        <li><span class="ext zip">ZIP</span><a href="trace.zip">trace.zip</a><span class="desc">会话轨迹导出</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>来源项目：<code>/tmp/debug-session</code></span>
+    <span>Session ID：<code>eval-session-6</code></span>
+    <span>生成时间：2026-08-12</span>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "标题下 5 秒内出现一句话结论（verdict / TL;DR / 结论）",
+      "passed": true,
+      "evidence": "class=\"verdict"
+    },
+    {
+      "text": "存在搜索框（input class 含 search）",
+      "passed": true,
+      "evidence": "<input type=\"search\" id=\"search\" class=\"search\""
+    },
+    {
+      "text": "表头可点击排序（data-k/data-sort/onclick + 排序 JS）",
+      "passed": true,
+      "evidence": "<th data-key=\"id\""
+    },
+    {
+      "text": "存在可勾选行动清单（input[type=checkbox]，含 JS 动态渲染）",
+      "passed": true,
+      "evidence": "<input type=\"checkbox\" '+(t.done?'checked':'')+ ' onchange=\"toggleTask('+i+',this)\">"
+    },
+    {
+      "text": "存在复制按钮（navigator.clipboard 或 id=copybtn）",
+      "passed": true,
+      "evidence": "copybtn"
+    },
+    {
+      "text": "全量证据在 <details> 折叠区，默认收起",
+      "passed": true,
+      "evidence": "<details"
+    },
+    {
+      "text": "无 CDN / 外链资源（仅允许 data: 与本地回环）",
+      "passed": true,
+      "evidence": "无外链"
+    },
+    {
+      "text": "页脚有来源标注（项目名 / 绝对路径 / 会话 ID）",
+      "passed": true,
+      "evidence": "<footer> 来源项目：onepager 评测工作区（子代理评测 / without_skill 分支）<br> 产物路径：/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-1/eval-2/without_skill/output"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

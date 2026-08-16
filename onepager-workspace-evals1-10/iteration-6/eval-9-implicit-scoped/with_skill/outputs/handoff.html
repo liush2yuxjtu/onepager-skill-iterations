@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>会话交接 · implicit-session-9 · scoped-recap</title>
+<style>
+  :root{
+    --bg:#f5f4f0; --card:#ffffff; --ink:#1c1c1c; --muted:#6b6b6b;
+    --line:#e2e0d8; --accent:#c8532e; --ok:#2e7d4f; --warn:#b7791f;
+    --tag:#f0ece3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,"PingFang SC","Helvetica Neue",sans-serif}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 40px}
+  .hero{background:linear-gradient(135deg,#2b2b2b,#171717);color:#fff;
+    border-radius:14px;padding:22px 22px 18px;margin-bottom:18px}
+  .hero h1{margin:0 0 6px;font-size:22px}
+  .hero .verdict{margin:0;font-size:15px;color:#f3c9b8}
+  .hero .meta{margin:8px 0 0;font-size:12px;color:#b9b4a8}
+  h2{font-size:16px;margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+  h2 .count{font-size:12px;color:var(--muted);font-weight:400}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .toolbar{display:flex;gap:8px;margin-bottom:10px}
+  .toolbar input{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:8px;
+    font-size:14px;background:#fff}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;cursor:pointer;user-select:none;white-space:nowrap}
+  th .arrow{font-size:11px;margin-left:3px}
+  td a{color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap}
+  td a:hover{text-decoration:underline}
+  .pill{display:inline-block;font-size:11px;padding:1px 8px;border-radius:20px;background:var(--tag);
+    color:var(--muted);margin-left:6px}
+  .pill.ok{background:#e6f2ea;color:var(--ok)}
+  .row-hidden{display:none}
+  /* checklist */
+  .check{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px dashed var(--line)}
+  .check:last-child{border-bottom:none}
+  .check input{width:17px;height:17px;accent-color:var(--ok)}
+  .check label{flex:1;cursor:pointer}
+  .check .state{font-size:12px;color:var(--muted);min-width:120px;text-align:right}
+  .progress{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin:10px 0 6px}
+  .progress>div{height:100%;width:0;background:var(--ok);transition:width .2s}
+  .actions{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+  button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;
+    padding:6px 12px;font-size:13px}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  details{margin-top:18px;border:1px solid var(--line);border-radius:10px;background:#fff}
+  summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14px;color:var(--muted)}
+  details[open] summary{border-bottom:1px solid var(--line)}
+  details .body{padding:12px 14px;font-size:13px;color:#444}
+  code,pre{font-family:"SF Mono",Menlo,monospace;font-size:12px;background:#f3f1ea;border-radius:4px}
+  code{padding:1px 5px}
+  pre{padding:10px;overflow-x:auto}
+  .excl{background:#fdf3e8;border:1px solid #ecd9b8;border-radius:8px;padding:8px 10px;
+    font-size:12px;color:#7a5a1e;margin-top:8px}
+  footer{margin-top:26px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;line-height:1.7}
+  @media(max-width:600px){
+    .hero h1{font-size:19px}
+    th,td{padding:8px 5px}
+    .check .state{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>会话交接 · scoped-recap</h1>
+    <p class="verdict"><strong>结论：</strong>本会话交付就绪 —— 报告已生成（current-report.html），QA 通过（current-qa.json）。共 2 项产物，均为本会话归属且已核实存在，无遗留风险。</p>
+    <p class="meta">Pi session <code>implicit-session-9</code> · cwd <code>/tmp/scoped-recap</code> · 2026-08-12</p>
+  </header>
+
+  <h2>会话产物 <span class="count">2 项 · 全部可打开</span></h2>
+  <div class="card">
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="搜索产物…（名称 / 类型 / 状态）">
+    </div>
+    <table id="art">
+      <thead>
+        <tr>
+          <th data-k="name">名称 <span class="arrow"></span></th>
+          <th data-k="type">类型 <span class="arrow"></span></th>
+          <th data-k="status">状态 <span class="arrow"></span></th>
+          <th>打开</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-name="current-report.html" data-type="主报告" data-status="已交付">
+          <td>current-report.html</td>
+          <td>主报告 · 本会话交付</td>
+          <td><span class="pill ok">已交付</span></td>
+          <td><a href="current-report.html">打开 ↗</a></td>
+        </tr>
+        <tr data-name="current-qa.json" data-type="QA" data-status="通过">
+          <td>current-qa.json</td>
+          <td>QA 结果 · <code>{"passed":true}</code></td>
+          <td><span class="pill ok">通过</span></td>
+          <td><a href="current-qa.json">打开 ↗</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>交接核对</h2>
+  <div class="card">
+    <div class="check"><input type="checkbox" id="c1"><label for="c1">报告已交付并链接（current-report.html）</label><span class="state">主产物</span></div>
+    <div class="check"><input type="checkbox" id="c2"><label for="c2">QA 结果已确认通过（current-qa.json）</label><span class="state">passed: true</span></div>
+    <div class="check"><input type="checkbox" id="c3"><label for="c3">产物范围已核对，未混入他会话内容</label><span class="state">范围说明见下</span></div>
+    <div class="progress"><div id="bar"></div></div>
+    <div class="actions">
+      <span id="cnt" style="font-size:13px;color:var(--muted)">0 / 3</span>
+      <button id="copy">复制 Markdown 清单</button>
+    </div>
+  </div>
+
+  <details>
+    <summary>证据与范围说明（来源 / 采集 / 排除项）</summary>
+    <div class="body">
+      <p><strong>会话头</strong></p>
+      <pre>session-header cwd: /tmp/scoped-recap
+Pi session ID: implicit-session-9
+最终请求: make a onepager handoff for what we did.</pre>
+
+      <p><strong>产物归属（本会话明确写入）</strong></p>
+      <ul style="margin:4px 0">
+        <li><code>current-report.html</code> —— 主报告，本会话写入</li>
+        <li><code>current-qa.json</code> —— QA 结果，本会话写入，<code>passed: true</code></li>
+      </ul>
+
+      <p><strong>采集命令</strong></p>
+      <pre>ls -la &lt;证据目录&gt;/implicit-scoped/   # 确认产物存在
+cat current-report.html current-qa.json  # 核实内容</pre>
+
+      <div class="excl">
+        <strong>范围说明：</strong>本会话仅写入上述 2 项产物。tool 输出里 artifact_list 历史条目含一个 <em>old-failure.webm</em>（另一会话的视频），本会话未创建、未引用它 —— 已核对后<strong>排除</strong>，不链接、不复制，不列入本交接页。
+      </div>
+    </div>
+  </details>
+
+  <footer>
+    来源项目：onepager evals · implicit-scoped<br>
+    证据目录：<code>/Users/liushiyuwin/.agents/skills/onepager/evals/files/implicit-scoped/</code><br>
+    会话：Pi session <code>implicit-session-9</code> · cwd <code>/tmp/scoped-recap</code> · 生成于 2026-08-12<br>
+    交付物：本单文件自包含 HTML，无 CDN / 无外链 / 离线可开；产物链接为相对路径，随目录携带可用。
+  </footer>
+</div>
+
+<script>
+(function(){
+  // 搜索即窄门：输入即过滤，页面不搬运全量
+  var q=document.getElementById('q');
+  q.addEventListener('input',function(){
+    var k=q.value.trim().toLowerCase();
+    document.querySelectorAll('#art tbody tr').forEach(function(tr){
+      tr.classList.toggle('row-hidden', !!k && (tr.dataset.name+tr.dataset.type+tr.dataset.status).toLowerCase().indexOf(k)<0);
+    });
+  });
+
+  // 可排序表头
+  var dir={name:1,type:1,status:1};
+  document.querySelectorAll('#art th[data-k]').forEach(function(th){
+    th.addEventListener('click',function(){
+      var k=th.dataset.k,d=dir[k]; dir[k]=-d;
+      var rows=Array.prototype.slice.call(document.querySelectorAll('#art tbody tr'));
+      rows.sort(function(a,b){return a.dataset[k].localeCompare(b.dataset[k])*d;});
+      var tb=document.querySelector('#art tbody');
+      rows.forEach(function(r){tb.appendChild(r);});
+      document.querySelectorAll('#art th .arrow').forEach(function(a){a.textContent='';});
+      th.querySelector('.arrow').textContent = d>0?'▲':'▼';
+    });
+  });
+
+  // 行动清单：勾选 + 进度 + 复制 Markdown
+  var boxes=document.querySelectorAll('.check input'),bar=document.getElementById('bar'),cnt=document.getElementById('cnt');
+  function upd(){
+    var n=0; boxes.forEach(function(b){ if(b.checked)n++; });
+    bar.style.width=(n/boxes.length*100)+'%';
+    cnt.textContent=n+' / '+boxes.length;
+  }
+  boxes.forEach(function(b){ b.addEventListener('change',upd); });
+
+  document.getElementById('copy').addEventListener('click',function(){
+    var lines=['## 交接核对 · implicit-session-9'];
+    boxes.forEach(function(b){
+      var label=b.parentElement.querySelector('label').textContent.trim();
+      lines.push('- ['+(b.checked?'x':' ')+'] '+label);
+    });
+    var ta=document.createElement('textarea'); ta.value=lines.join('\n');
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  });
+})();
+</script>
+</body>
+</html>

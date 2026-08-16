@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>执行计划分析 (EXPLAIN)</title>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="back" href="main.html">← 返回总结论</a>
+    <h1>执行计划分析 (EXPLAIN)</h1>
+    <p>从 Top 20 中选取 6 条代表性慢 SQL，逐条解读执行计划与根因。</p>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>阅读说明</h2>
+    <div class="sub">关注三个信号：<code>type=ALL</code>（全表扫描）、<code>key=NULL</code>（无索引可用）、<code>Extra</code> 中 <code>Using filesort / Using temporary</code>（排序/聚合未走索引）。</div>
+  </div>
+
+  <div class="card">
+    <h3>#1 · order_info 深分页查询 <span class="badge b-red">P0</span></h3>
+    <pre><code>SELECT * FROM order_info
+WHERE status = 0 AND created_at BETWEEN '2026-08-01' AND '2026-08-07'
+ORDER BY created_at DESC LIMIT 20 OFFSET 12000;</code></pre>
+    <table>
+      <thead><tr><th>id</th><th>select_type</th><th>table</th><th>type</th><th>possible_keys</th><th>key</th><th>rows</th><th>filtered</th><th>Extra</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>SIMPLE</td><td>order_info</td><td><b>ALL</b></td><td>NULL</td><td>NULL</td><td class="num">1,840,232</td><td class="num">5.0%</td><td>Using where; <b>Using filesort</b></td></tr>
+      </tbody>
+    </table>
+    <div class="callout bad">
+      <b>诊断：</b>没有 <code>(status, created_at)</code> 复合索引，优化器选择全表扫描 184 万行；<code>OFFSET 12000</code> 需先跳过 12000 行再取 20 行，叠加 filesort。深分页是慢的主因，索引只能解决「过滤 + 排序」，深分页需改 keyset 游标。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>#4 · product_sku 组合筛选 <span class="badge b-amber">P1</span></h3>
+    <pre><code>SELECT * FROM product_sku WHERE brand_id = 88 AND category_id = 210 ORDER BY sale_count DESC;</code></pre>
+    <table>
+      <thead><tr><th>id</th><th>select_type</th><th>table</th><th>type</th><th>possible_keys</th><th>key</th><th>rows</th><th>filtered</th><th>Extra</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>SIMPLE</td><td>product_sku</td><td><b>ALL</b></td><td>NULL</td><td>NULL</td><td class="num">1,266,000</td><td class="num">10.0%</td><td>Using where</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <b>诊断：</b>brand/category 均无索引，走全表扫描再过滤，且按 <code>sale_count</code> 排序需 filesort。加 <code>(brand_id, category_id)</code> 复合索引后扫描行数降为个位数级。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>#5 · operation_log 大表范围查询 <span class="badge b-red">P0</span></h3>
+    <pre><code>SELECT * FROM operation_log WHERE biz_type = 'PAY_CALLBACK' AND log_time >= '2026-08-01 00:00:00'
+ORDER BY log_time DESC LIMIT 50;</code></pre>
+    <table>
+      <thead><tr><th>id</th><th>select_type</th><th>table</th><th>type</th><th>possible_keys</th><th>key</th><th>rows</th><th>filtered</th><th>Extra</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>SIMPLE</td><td>operation_log</td><td><b>ALL</b></td><td>idx_biz_type</td><td>NULL</td><td class="num">9,780,000</td><td class="num">8.3%</td><td>Using where</td></tr>
+      </tbody>
+    </table>
+    <div class="callout bad">
+      <b>诊断：</b>表约 1,200 万行。虽有单列 <code>idx_biz_type</code>，但该列区分度低（约 40% 行为 PAY_CALLBACK），优化器放弃索引改全表扫描；且 <code>SELECT *</code> 返回大字段。加 <code>(biz_type, log_time)</code> 复合索引 + 收敛返回列。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>#12 · ad_campaign_stat 区间聚合 <span class="badge b-amber">P1</span></h3>
+    <pre><code>SELECT date, SUM(click), SUM(impression) FROM ad_campaign_stat
+WHERE date BETWEEN '2026-08-01' AND '2026-08-07' GROUP BY date;</code></pre>
+    <table>
+      <thead><tr><th>id</th><th>select_type</th><th>table</th><th>type</th><th>possible_keys</th><th>key</th><th>rows</th><th>filtered</th><th>Extra</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>SIMPLE</td><td>ad_campaign_stat</td><td><b>ALL</b></td><td>NULL</td><td>NULL</td><td class="num">3,520,000</td><td class="num">11.1%</td><td>Using where; <b>Using temporary; Using filesort</b></td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <b>诊断：</b>对 352 万行做全表聚合，产生临时表 + filesort。加 <code>(date)</code> 覆盖索引可将 <code>GROUP BY date</code> 走索引有序扫描，去掉 Using temporary。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>#15 · order_no 隐式转换索引失效 <span class="badge b-amber">P1</span></h3>
+    <pre><code>SELECT * FROM order_info WHERE order_no = 20260812000012345;  /* order_no 为 VARCHAR，传入数字 */</code></pre>
+    <table>
+      <thead><tr><th>id</th><th>select_type</th><th>table</th><th>type</th><th>possible_keys</th><th>key</th><th>rows</th><th>filtered</th><th>Extra</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>SIMPLE</td><td>order_info</td><td><b>ALL</b></td><td>uk_order_no</td><td>NULL</td><td class="num">1,840,232</td><td class="num">10.0%</td><td>Using where</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <b>诊断：</b>字段为 <code>VARCHAR</code>、参数传数字，MySQL 对字段做隐式转换，唯一索引 <code>uk_order_no</code> 失效。修复应用层传参类型（字符串化 order_no）。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>#16 · promotion_rule 表达式导致索引失效 <span class="badge b-amber">P1</span></h3>
+    <pre><code>SELECT * FROM promotion_rule
+WHERE is_active = 1 AND start_time &lt;= NOW() AND end_time &gt;= NOW();</code></pre>
+    <table>
+      <thead><tr><th>id</th><th>select_type</th><th>table</th><th>type</th><th>possible_keys</th><th>key</th><th>rows</th><th>filtered</th><th>Extra</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>SIMPLE</td><td>promotion_rule</td><td><b>ALL</b></td><td>idx_start_time</td><td>NULL</td><td class="num">84,000</td><td class="num">16.7%</td><td>Using where</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <b>诊断：</b>索引列上使用 <code>NOW()</code> 表达式比较，无法范围利用单列索引；且等值+范围组合需要 <code>(is_active, start_time, end_time)</code> 复合索引。
+    </div>
+  </div>
+
+  <div class="callout good">
+    汇总：6 条中 4 条为「缺索引/索引失效」，2 条叠加「深分页 / 大 IN」问题。索引修复见 <a href="sub-index.html">索引优化建议 →</a>，深分页等应用层改造见 <a href="sub-dba.html">DBA 行动清单 →</a>。
+  </div>
+</main>
+
+<footer>MySQL 慢查询性能诊断报告 · 执行计划分析 · 数据为虚构演示数据</footer>
+</body>
+</html>

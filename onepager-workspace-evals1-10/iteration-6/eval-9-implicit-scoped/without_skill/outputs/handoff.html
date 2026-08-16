@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handoff · implicit-session-9</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+    color: #1c1c1e;
+    background: #fafafa;
+  }
+  header { margin-bottom: 28px; }
+  .kicker { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6e6e73; }
+  h1 { font-size: 26px; margin-top: 6px; }
+  h2 { font-size: 16px; margin: 26px 0 10px; }
+  p { font-size: 14px; color: #3a3a3c; }
+  .meta {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    margin-top: 12px; padding: 12px 14px;
+    background: #fff; border: 1px solid #e3e3e6; border-radius: 10px;
+    font-size: 13px;
+  }
+  .meta dt { color: #6e6e73; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta dd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
+  .artifacts { list-style: none; margin-top: 6px; }
+  .artifacts li {
+    display: flex; align-items: baseline; gap: 10px;
+    background: #fff; border: 1px solid #e3e3e6; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 10px;
+  }
+  .artifacts a { font-size: 14px; font-weight: 600; color: #0a5cd4; text-decoration: none; }
+  .artifacts a:hover { text-decoration: underline; }
+  .artifacts .desc { font-size: 13px; color: #6e6e73; }
+  .badge {
+    display: inline-block; margin-left: auto; flex: none;
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+  }
+  .badge.ok { color: #137333; background: #e6f4ea; }
+  .badge.report { color: #1a73e8; background: #e8f0fe; }
+  .scope-note {
+    font-size: 12.5px; color: #6e6e73;
+    background: #fff8e6; border: 1px solid #f0e2b6; border-radius: 10px;
+    padding: 10px 14px; margin-top: 14px;
+  }
+  footer {
+    margin-top: 40px; padding-top: 16px; border-top: 1px solid #e3e3e6;
+    font-size: 12px; color: #8e8e93; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kicker">Engineering handoff</div>
+  <h1>Session recap: report + QA verification</h1>
+  <p>This handoff summarizes what the session produced: a current report page and a passing QA check. Both artifacts are linked below.</p>
+</header>
+
+<section>
+  <h2>Artifacts</h2>
+  <ul class="artifacts">
+    <li>
+      <a href="current-report.html">current-report.html</a>
+      <span class="badge report">report</span>
+      <span class="desc">Current report page generated this session.</span>
+    </li>
+    <li>
+      <a href="current-qa.json">current-qa.json</a>
+      <span class="badge ok">passed</span>
+      <span class="desc">QA verification result for the current report.</span>
+    </li>
+  </ul>
+  <div class="scope-note">
+    Scope: only this session&#39;s outputs are included. Stale artifacts surfaced by the global
+    history list but never created or referenced by this session (e.g. an old <code>failure.webm</code>)
+    are excluded from this handoff.
+  </div>
+</section>
+
+<section>
+  <h2>Status</h2>
+  <p>QA check <strong>passed</strong> (<code>{"passed": true}</code>). Nothing is pending; the report is ready for review.</p>
+</section>
+
+<footer>
+  cwd /tmp/scoped-recap &middot; session implicit-session-9
+</footer>
+
+</body>
+</html>

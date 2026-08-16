@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pitch-video-project · fresh UAT 会话 Recap</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2230; --muted:#6b7280;
+    --line:#e5e7eb; --brand:#286149; --brand-soft:#e7f0ec; --pass:#15803d; --pass-soft:#eaf7ef;
+    --warn:#b45309; --focus:#fbbf24;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.55}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 16px 40px}
+  .hero{display:flex;gap:14px;align-items:center;margin-bottom:6px}
+  .hero svg{flex:0 0 auto}
+  h1{font-size:22px;margin:0}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  .tldr{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);
+    border-radius:10px;padding:14px 16px;margin:18px 0}
+  .tldr b{color:var(--brand)}
+  .badge{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;vertical-align:middle}
+  .badge.pass{background:var(--pass-soft);color:var(--pass)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-top:16px}
+  .card h2{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  .card h2 .cnt{color:var(--muted);font-weight:500;font-size:12px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .controls input[type=search]{flex:1 1 200px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap}
+  th .arrow{font-size:10px}
+  tr:last-child td{border-bottom:none}
+  .name{font-weight:600}
+  .a-btn{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);border:1px solid var(--brand);
+    border-radius:8px;padding:3px 10px;text-decoration:none;white-space:nowrap}
+  .a-btn:hover{background:var(--brand-soft)}
+  .a-btn.ghost{color:var(--muted);border-color:var(--line)}
+  .a-btn.ghost:hover{background:var(--bg)}
+  .video-zone{margin-top:10px}
+  .video-zone video{width:100%;max-width:560px;border-radius:8px;background:#000;display:block}
+  .cap{color:var(--muted);font-size:12px;margin-top:6px}
+  .act-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .act-row:last-child{border-bottom:none}
+  .act-row input{width:16px;height:16px;margin-top:2px;accent-color:var(--brand)}
+  .act-row .done{text-decoration:line-through;color:var(--muted)}
+  .progress{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin:8px 0}
+  .progress i{display:block;height:100%;background:var(--brand);width:0;transition:width .2s}
+  details{font-size:13px;margin-top:6px}
+  details summary{cursor:pointer;color:var(--brand);font-weight:600;padding:6px 0}
+  details pre{background:#f0f2f5;border-radius:8px;padding:10px 12px;overflow:auto;font-size:12px;margin:6px 0 0}
+  .foot{margin-top:24px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+  .foot code{background:#f0f2f5;border-radius:4px;padding:1px 5px}
+  .foot .row{margin:4px 0}
+  .empty{color:var(--muted);text-align:center;padding:16px 0;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 结论前置 -->
+  <div class="hero">
+    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" role="img" aria-label="UAT PASS">
+      <rect width="120" height="60" rx="8" fill="#286149"/>
+      <text x="60" y="37" font-family="Arial" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">PASS</text>
+    </svg>
+    <div>
+      <h1>pitch-video-project · fresh UAT 会话 Recap</h1>
+      <div class="sub">会话 ID：<code>eval-session-5</code> · 归集产物：4 项</div>
+    </div>
+  </div>
+
+  <div class="tldr">
+    <b>结论：</b>本次 fresh UAT <span class="badge pass">全部通过</span>——UAT 报告 <code>PASS</code>，QA 校验 <code>passed: true</code>、0 错误。会话产出 4 项产物已归集：UAT 报告、QA 结果、运行录屏（正文直接可播）、执行 trace 归档。下载 / 查看入口均在本页。
+  </div>
+
+  <!-- 会话产物窄门 -->
+  <div class="card">
+    <h2>会话产物 <span class="cnt" id="cnt">4 项</span></h2>
+    <div class="controls">
+      <input type="search" id="q" placeholder="搜索产物名 / 类型 / 状态…">
+    </div>
+    <table id="art">
+      <thead>
+        <tr>
+          <th data-k="name">产物 <span class="arrow"></span></th>
+          <th data-k="type">类型 <span class="arrow"></span></th>
+          <th data-k="status">状态 <span class="arrow"></span></th>
+          <th data-k="size">大小 <span class="arrow"></span></th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">report.html</td>
+          <td>UAT 报告</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td>53 B</td>
+          <td><a class="a-btn" href="report.html" target="_blank">打开报告 →</a>
+              <button class="a-btn ghost" data-copy="report.html">复制路径</button></td>
+        </tr>
+        <tr>
+          <td class="name">qa.json</td>
+          <td>QA 校验结果</td>
+          <td><span class="badge pass">passed</span></td>
+          <td>28 B</td>
+          <td><a class="a-btn" href="qa.json" target="_blank">查看 →</a>
+              <button class="a-btn ghost" data-copy="qa.json">复制路径</button></td>
+        </tr>
+        <tr>
+          <td class="name">run.webm</td>
+          <td>UAT 运行录屏（主视频）</td>
+          <td><span class="badge pass">已生成</span></td>
+          <td>18 B</td>
+          <td><a class="a-btn" href="run.webm" download>下载录屏</a>
+              <button class="a-btn ghost" data-copy="run.webm">复制路径</button></td>
+        </tr>
+        <tr>
+          <td class="name">trace.zip</td>
+          <td>执行 trace 归档</td>
+          <td><span class="badge pass">已生成</span></td>
+          <td>126 B</td>
+          <td><a class="a-btn" href="trace.zip" download>下载 trace</a>
+              <button class="a-btn ghost" data-copy="trace.zip">复制路径</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty" id="empty">无匹配产物</div>
+  </div>
+
+  <!-- 主视频：正文直接可见，不藏折叠区 -->
+  <div class="card">
+    <h2>运行录屏 <span class="cnt">run.webm</span></h2>
+    <div class="video-zone">
+      <video controls preload="metadata" src="run.webm"></video>
+      <div class="cap">本次 fresh UAT 的运行录屏。若浏览器无法内联播放，请使用「下载录屏」入口；原始文件位于同目录 <code>run.webm</code>。</div>
+    </div>
+  </div>
+
+  <!-- 行动闭环 -->
+  <div class="card">
+    <h2>核对清单 <span class="cnt" id="progText">0 / 4</span></h2>
+    <div class="progress"><i id="bar"></i></div>
+    <div id="acts">
+      <div class="act-row"><input type="checkbox" data-a="report"><span>打开 <b>report.html</b> 确认 UAT 结论为 PASS</span></div>
+      <div class="act-row"><input type="checkbox" data-a="qa"><span>核对 <b>qa.json</b>：passed 为 true、errors 为空</span></div>
+      <div class="act-row"><input type="checkbox" data-a="run"><span>播放 <b>run.webm</b> 运行录屏，确认关键操作流</span></div>
+      <div class="act-row"><input type="checkbox" data-a="trace"><span>下载 <b>trace.zip</b> 归档，留存执行 trace</span></div>
+    </div>
+    <div class="controls" style="margin:10px 0 0">
+      <button class="a-btn" id="copyMd">复制核对单 (Markdown)</button>
+    </div>
+  </div>
+
+  <!-- 证据收窄门 -->
+  <div class="card">
+    <h2>证据 <span class="cnt">原始内容</span></h2>
+    <details>
+      <summary>qa.json 原始内容</summary>
+      <pre>{"passed":true,"errors":[]}</pre>
+    </details>
+    <details>
+      <summary>report.html 原始内容</summary>
+      <pre>&lt;!doctype html&gt;&lt;title&gt;UAT report&lt;/title&gt;&lt;h1&gt;PASS&lt;/h1&gt;</pre>
+    </details>
+    <details>
+      <summary>产物清单（manifest）</summary>
+      <pre>report.html · UAT 报告 · 53 B · 主产物
+qa.json    · QA 校验结果 · 28 B
+run.webm   · 运行录屏 · 18 B · 主视频（正文可播）
+trace.zip  · trace 归档 · 126 B</pre>
+    </details>
+  </div>
+
+  <!-- 页脚：来源 + 生命周期 -->
+  <div class="foot">
+    <div class="row">来源项目：pitch-video-project · <code>/tmp/pitch-video-project</code></div>
+    <div class="row">Pi session：<code>eval-session-5</code> · 归集时间：2026-08-12</div>
+    <div class="row">生成：onepager skill（窄门单页）· 单文件自包含、无 CDN、离线可开</div>
+    <div class="row">产物已复制至本交付目录，页面内为真实相对路径链接。</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // 搜索过滤（窄网关：只返回匹配行）
+  var q=document.getElementById('q'), rows=[].slice.call(document.querySelectorAll('#art tbody tr')),
+      empty=document.getElementById('empty'), cnt=document.getElementById('cnt');
+  q.addEventListener('input',function(){
+    var s=q.value.trim().toLowerCase(), n=0;
+    rows.forEach(function(r){
+      var hit=!s || r.textContent.toLowerCase().indexOf(s)>-1;
+      r.style.display=hit?'':'none'; if(hit)n++;
+    });
+    cnt.textContent=n+' 项'; empty.style.display=n?'none':'block';
+  });
+
+  // 可排序表头
+  var sortDir={}; [].slice.call(document.querySelectorAll('#art th[data-k]')).forEach(function(th){
+    th.addEventListener('click',function(){
+      var k=th.getAttribute('data-k');
+      sortDir[k] = sortDir[k]==='asc' ? 'desc' : 'asc';
+      rows.forEach(function(r){ r.style.display='' }); cnt.textContent=rows.length+' 项';
+      rows.sort(function(a,b){
+        var av=a.children[0].textContent.trim(), bv=b.children[0].textContent.trim();
+        if(k==='name'){ av=a.children[0].textContent.trim(); bv=b.children[0].textContent.trim(); }
+        else if(k==='type'){ av=a.children[1].textContent.trim(); bv=b.children[1].textContent.trim(); }
+        else if(k==='status'){ av=a.children[2].textContent.trim(); bv=b.children[2].textContent.trim(); }
+        else if(k==='size'){ av=parseInt(a.children[3].textContent)||0; bv=parseInt(b.children[3].textContent)||0; return sortDir[k]==='asc'?av-bv:bv-av; }
+        var c = av< bv?-1:av>bv?1:0;
+        return sortDir[k]==='asc'?c:-c;
+      });
+      var tb=document.querySelector('#art tbody'); rows.forEach(function(r){ tb.appendChild(r) });
+      [].slice.call(document.querySelectorAll('#art th .arrow')).forEach(function(s){ s.textContent='' });
+      th.querySelector('.arrow').textContent = sortDir[k]==='asc'?'↑':'↓';
+    });
+  });
+
+  // 复制路径
+  [].slice.call(document.querySelectorAll('[data-copy]')).forEach(function(b){
+    b.addEventListener('click',function(){
+      var p=b.getAttribute('data-copy');
+      (navigator.clipboard ? navigator.clipboard.writeText(p) : Promise.reject()).then(function(){
+        var old=b.textContent; b.textContent='已复制 ✓'; setTimeout(function(){ b.textContent=old },1200);
+      },function(){
+        var ta=document.createElement('textarea'); ta.value=p; document.body.appendChild(ta); ta.select();
+        try{document.execCommand('copy')}catch(e){} document.body.removeChild(ta);
+        var old=b.textContent; b.textContent='已复制 ✓'; setTimeout(function(){ b.textContent=old },1200);
+      });
+    });
+  });
+
+  // 行动清单：勾选 + 进度 + 复制 Markdown
+  var checks=[].slice.call(document.querySelectorAll('#acts input')), bar=document.getElementById('bar'),
+      progText=document.getElementById('progText'), names=['report.html','qa.json','run.webm','trace.zip'];
+  function refresh(){
+    var done=checks.filter(function(c){return c.checked}).length;
+    bar.style.width=(done/checks.length*100)+'%';
+    progText.textContent=done+' / '+checks.length;
+    var rows=document.querySelectorAll('#acts .act-row');
+    checks.forEach(function(c,i){ rows[i].querySelector('span').classList.toggle('done',c.checked) });
+  }
+  checks.forEach(function(c){ c.addEventListener('change',refresh) }); refresh();
+  document.getElementById('copyMd').addEventListener('click',function(){
+    var lines=checks.map(function(c,i){
+      return (c.checked?'- [x] ':'- [ ] ')+'核对 '+names[i];
+    });
+    var md='## pitch-video-project · fresh UAT 核对单\n\n'+lines.join('\n');
+    (navigator.clipboard ? navigator.clipboard.writeText(md) : Promise.reject()).then(ok,function(){
+      var ta=document.createElement('textarea'); ta.value=md; document.body.appendChild(ta); ta.select();
+      try{document.execCommand('copy')}catch(e){} document.body.removeChild(ta); ok();
+    });
+    function ok(){ var b=document.getElementById('copyMd'), old=b.textContent; b.textContent='已复制 ✓'; setTimeout(function(){ b.textContent=old },1200); }
+  });
+})();
+</script>
+</body>
+</html>

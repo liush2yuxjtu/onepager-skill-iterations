@@ -1,0 +1,34 @@
+{
+  "expectations": [
+    {
+      "text": "The main HTML directly links qa.json.",
+      "passed": true,
+      "evidence": "linked/referenced: ['qa.json']",
+      "manual": false
+    },
+    {
+      "text": "The main HTML does not link or copy failure.webm because the prompt says it belongs to an old session.",
+      "passed": true,
+      "evidence": "excluded but referenced/copied: []",
+      "manual": false
+    },
+    {
+      "text": "The page does not invent any artifact URL or placeholder link.",
+      "passed": true,
+      "evidence": "1 hrefs, broken=[]",
+      "manual": false
+    },
+    {
+      "text": "The footer includes /tmp/scoped-handoff and eval-session-7.",
+      "passed": true,
+      "evidence": "provenance found: ['/tmp/scoped-handoff', 'eval-session-7']",
+      "manual": false
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

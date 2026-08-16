@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Top 20 慢 SQL 明细</title>
+<style>
+  :root{--bg:#0f1420;--card:#171e2e;--card2:#1d2637;--ink:#e7ecf3;--mut:#93a1b5;--line:#2a3550;
+    --accent:#4da3ff;--ok:#2fd07c;--warn:#ffb454;--bad:#ff5c6c;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px 18px 60px}
+  a.back{color:var(--accent);font-size:12.5px;text-decoration:none}
+  h1{font-size:22px;margin:10px 0 4px}
+  .sub{color:var(--mut);font-size:12.5px;margin-bottom:16px}
+  .verdict{background:linear-gradient(135deg,#1b2436,#14203a);border:1px solid #2e4a75;border-left:4px solid var(--bad);border-radius:10px;padding:12px 16px;margin:12px 0 18px;font-size:13.5px}
+  .verdict b{color:var(--bad)}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .search{flex:1;min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--ink);font-size:13.5px}
+  .search:focus{outline:none;border-color:var(--accent)}
+  .pill{font-size:12px;color:var(--mut);padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer}
+  .pill.on{color:var(--accent);border-color:var(--accent)}
+  .tbl-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;min-width:920px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap}
+  th{cursor:pointer;color:var(--mut);font-weight:600;user-select:none;font-size:12px;position:sticky;top:0;background:var(--card2);z-index:1}
+  th:hover{color:var(--ink)}
+  td.qid{font-family:var(--mono);color:var(--accent);font-size:12px}
+  td.mono,td.num{font-family:var(--mono);font-size:12px}
+  td.num{text-align:right}
+  .risk{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600}
+  .risk.hi{background:rgba(255,92,108,.15);color:var(--bad)}
+  .risk.mid{background:rgba(255,180,84,.15);color:var(--warn)}
+  .risk.lo{background:rgba(47,208,124,.15);color:var(--ok)}
+  tr.detail-row td{background:var(--card2);padding:12px 14px;white-space:normal}
+  tr.detail-row{display:none}
+  tr.detail-row.open{display:table-row}
+  .fpt{font-family:var(--mono);font-size:12px;color:#c9d4e4;background:#101626;border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:4px 0 10px;white-space:pre-wrap;word-break:break-all}
+  .dr b{color:var(--accent)}
+  .dr{font-size:12.5px}
+  .dr .g{color:var(--ok)} .dr .w{color:var(--warn)}
+  .expand{cursor:pointer;color:var(--accent);font-size:12px}
+  .count{font-size:12px;color:var(--mut)}
+  .foot{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:11.5px;color:var(--mut)}
+  .foot code{font-family:var(--mono);background:var(--card2);padding:1px 6px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="main.html">← 返回结论页</a>
+  <h1>Top 20 慢 SQL 明细</h1>
+  <div class="sub">按累计耗时排序 · 数据窗口 2026-08-05 ~ 08-11 · 模拟数据</div>
+
+  <div class="verdict">Top 20 累计耗时 <b>1,404s</b>。前 4 条贡献 48%：Q01 订单列表 5 表 JOIN 缺索引（105.3s）、Q02 批量状态更新 range 扫（392.3s 最高累计）、Q03 LIKE 前导通配（140.2s）、Q04 深分页（139.5s）。<b>8 条访问类型为全表扫描</b>，最该先治。</div>
+
+  <div class="bar">
+    <input class="search" id="q" placeholder="搜索：库名 / 指纹关键词 / 风险等级（如 order、LIKE、HI）" oninput="render()">
+    <span class="pill" data-f="hi" onclick="flt(this)">仅高危</span>
+    <span class="pill" data-f="scan" onclick="flt(this)">仅全表扫描</span>
+    <span class="count" id="cnt"></span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table id="tbl">
+      <thead><tr>
+        <th data-k="id">#</th>
+        <th data-k="qid">ID</th>
+        <th data-k="name">指纹（缩写）</th>
+        <th data-k="db">库</th>
+        <th data-k="at">avg(ms)</th>
+        <th data-k="mt">max(ms)</th>
+        <th data-k="n">次数</th>
+        <th data-k="total">累计(s)</th>
+        <th data-k="rows">扫描行</th>
+        <th data-k="risk">风险</th>
+        <th></th>
+      </tr></thead>
+      <tbody id="body"></tbody>
+    </table>
+  </div>
+
+  <div class="foot">来源：<code>onepager</code> · <code>sub-top20.html</code> · 采集示意：<code>pt-query-digest slow.log</code>（模拟数据）</div>
+</div>
+
+<script>
+const ROWS=[
+ {id:1,qid:"Q01",name:"订单列表 5 表 LEFT JOIN",db:"order_service",at:842,mt:5120,n:12480,total:105.3,rows:"486M",risk:"hi",acc:"ALL",fpt:"SELECT o.id,o.no,u.name,oi.sku,i.title,ad.city,p.pay_at\nFROM orders o\nLEFT JOIN users u ON u.id=o.user_id\nLEFT JOIN order_items oi ON oi.order_id=o.id\nLEFT JOIN products p ON p.id=oi.product_id\nLEFT JOIN addresses ad ON ad.id=o.addr_id\nLEFT JOIN pay_records pr ON pr.order_id=o.id\nWHERE o.status='PAID' ORDER BY o.created_at DESC LIMIT 50;",
+   dr:"order_items.user_id / orders.status 缺索引 → 驱动表全扫；5 次 JOIN 累计 rows 486M。建议：composite (status, created_at, id)，见 sub-index Q01。"},
+ {id:2,qid:"Q02",name:"批量状态更新 range 扫",db:"order_service",at:1203,mt:9800,n:3260,total:392.3,rows:"212M",risk:"hi",acc:"range",fpt:"UPDATE order_archive SET status='ARCHIVED', archived_at=NOW()\nWHERE created_at BETWEEN '2026-07-01' AND '2026-07-31'\n  AND status IN ('PAID','SHIPPED');",
+   dr:"created_at 无索引，BETWEEN 退化为全表 range，回表 212M。批量任务并发触发。建议：索引 (created_at, status)，并分批 LIMIT 提交避免长锁。"},
+ {id:3,qid:"Q03",name:"商品名 LIKE 前导通配",db:"product_service",at:655,mt:4120,n:21400,total:140.2,rows:"890M",risk:"mid",acc:"ALL",fpt:"SELECT id,name,price,cover FROM products\nWHERE name LIKE CONCAT('%',?, '%') AND status=1\nORDER BY sales DESC LIMIT 30;",
+   dr:"%kw% 前导通配无法走索引 → 全表扫 890M，高频触发 2.1 万次/周。建议：全文索引 FULLTEXT(name) 或引入 ES；至少改后缀匹配。"},
+ {id:4,qid:"Q04",name:"订单列表深分页 OFFSET",db:"order_service",at:3410,mt:15200,n:4090,total:139.5,rows:"1.02G",risk:"hi",acc:"ALL",fpt:"SELECT id,no,user_id,total,status,created_at FROM orders\nWHERE created_at BETWEEN ? AND ?\nORDER BY id DESC LIMIT 20 OFFSET 1000000;",
+   dr:"OFFSET 1000000 需要扫描丢弃 100 万行 → 单条最高 15.2s。建议：游标分页 WHERE id < ? 或 keyset 分页；历史页缓存。"},
+ {id:5,qid:"Q05",name:"相关子查询 COUNT",db:"order_service",at:918,mt:7600,n:9150,total:84.0,rows:"412M",risk:"mid",acc:"subquery",fpt:"SELECT o.id,o.no,\n (SELECT COUNT(*) FROM order_items oi WHERE oi.order_id=o.id) AS item_cnt\nFROM orders o WHERE o.user_id=? LIMIT 50;",
+   dr:"每行触发相关子查询，order_items.order_id 无索引 → 412M 次索引查找。建议：LEFT JOIN + GROUP BY，或物化子查询；补索引 order_items(order_id)。"},
+ {id:6,qid:"Q06",name:"OR 条件破坏索引",db:"order_service",at:1540,mt:11000,n:2140,total:32.9,rows:"395M",risk:"mid",acc:"ALL",fpt:"SELECT * FROM orders\nWHERE status='PENDING' OR status='FAILED'\n  AND created_at > ?  ORDER BY created_at DESC LIMIT 100;",
+   dr:"OR 分支合并后优化器放弃单列索引 → 全表扫 395M；括号优先级也让意图可疑。建议：改写为 status IN (...) 并加复合索引，或 UNION ALL。"},
+ {id:7,qid:"Q07",name:"GROUP BY 客户分段",db:"analytics",at:2890,mt:18400,n:940,total:27.2,rows:"1.85G",risk:"mid",acc:"temp",fpt:"SELECT seg, COUNT(*) c, SUM(amount) amt\nFROM fact_orders f\nJOIN dim_customer c ON c.id=f.cust_id\nWHERE f.day>=DATE_SUB(CURDATE(),INTERVAL 30 DAY)\nGROUP BY c.segment ORDER BY amt DESC;",
+   dr:"GROUP BY + JOIN 无覆盖索引 → 临时表 1.85G 落盘。建议：覆盖索引 (day, cust_id) + (cust_id, segment)；或改物化视图。"},
+ {id:8,qid:"Q08",name:"COUNT(*) 全表扫日志",db:"log_service",at:3940,mt:22100,n:860,total:33.9,rows:"3.2G",risk:"hi",acc:"ALL",fpt:"SELECT COUNT(*) FROM event_log WHERE level='ERROR'\n  AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY);",
+   dr:"event_log 3.2G 无索引全扫，每扫一次 3.9s。建议：count 走独立计数表 / 分区表 / 近似 count(rows)；至少建 (level, created_at) 覆盖索引。"},
+ {id:9,qid:"Q09",name:"JSON 字段过滤",db:"order_service",at:1120,mt:6300,n:5420,total:60.7,rows:"320M",risk:"mid",acc:"ALL",fpt:"SELECT id,payload FROM order_events\nWHERE payload->'$.type'='refund'\n  AND created_at > DATE_SUB(NOW(),INTERVAL 7 DAY);",
+   dr:"JSON 路径过滤无法走普通索引 → 全扫 320M。建议：改虚拟列 + 索引（MySQL 5.7+）或抽列存储。"},
+ {id:10,qid:"Q10",name:"函数包裹破坏索引",db:"order_service",at:1860,mt:9500,n:2840,total:52.8,rows:"501M",risk:"mid",acc:"ALL",fpt:"SELECT id,no,status FROM orders\nWHERE DATE(created_at)=CURDATE() AND status='PAID';",
+   dr:"DATE() 包裹索引列 → 索引失效全扫 501M。改写为范围：created_at >= CURDATE() AND created_at < CURDATE()+INTERVAL 1 DAY。"},
+ {id:11,qid:"Q11",name:"隐式类型转换",db:"order_service",at:720,mt:5300,n:15600,total:112.3,rows:"268M",risk:"hi",acc:"ALL",fpt:"SELECT id,order_no FROM orders\nWHERE order_no = ?  -- 传参为数字，order_no 为 VARCHAR\n  AND user_id=?;",
+   dr:"VARCHAR order_no 与数值比较 → 隐式转换放弃索引全扫，高频 1.56 万次/周。建议：应用层统一传字符串。"},
+ {id:12,qid:"Q12",name:"DISTINCT 大表 JOIN",db:"analytics",at:2420,mt:13700,n:1520,total:36.8,rows:"620M",risk:"mid",acc:"join",fpt:"SELECT DISTINCT u.uid FROM user_action u\nJOIN campaign c ON c.uid=u.uid\nWHERE u.ts>? AND c.channel='APP';",
+   dr:"DISTINCT 在 620M 结果上排序去重。建议：改 EXISTS 语义或 GROUP BY 走覆盖索引 (uid, ts)。"},
+ {id:13,qid:"Q13",name:"嵌套 IN 子查询",db:"order_service",at:2150,mt:12400,n:1180,total:25.4,rows:"455M",risk:"mid",acc:"subquery",fpt:"SELECT * FROM orders WHERE user_id IN (\n  SELECT id FROM users WHERE vip_level>5 AND register_dt>?) \n  AND created_at>? ORDER BY id LIMIT 200;",
+   dr:"子查询未物化、结果集大 → 455M 扫描。改写 JOIN + DISTINCT 并确保 users(vip_level, register_dt) 有索引。"},
+ {id:14,qid:"Q14",name:"库存 UPDATE 锁竞争",db:"inventory_service",at:1340,mt:14900,n:4870,total:65.3,rows:"96M",risk:"hi",acc:"lock",fpt:"SELECT stock FROM inventory WHERE sku=? FOR UPDATE;\nUPDATE inventory SET stock=stock-? WHERE sku=? AND stock>=?;",
+   dr:"热点 SKU 行锁排队，max 14.9s。建议：合并为单条 UPDATE（原子减）+ 乐观锁重试；热点拆行 / Redis 预扣减。"},
+ {id:15,qid:"Q15",name:"UNION 两张 500M 行表",db:"analytics",at:4210,mt:20800,n:620,total:26.1,rows:"1.1G",risk:"mid",acc:"join",fpt:"SELECT uid,ts FROM t_click WHERE ts>?\nUNION\nSELECT uid,ts FROM t_view  WHERE ts>?\nORDER BY ts DESC LIMIT 100;",
+   dr:"UNION 需物化去重再排序，1.1G。可改为 UNION ALL（语义允许）或两张表合并查询；加 (ts) 索引。"},
+ {id:16,qid:"Q16",name:"LEFT JOIN 驱动顺序错误",db:"order_service",at:980,mt:6700,n:8340,total:81.7,rows:"610M",risk:"mid",acc:"join",fpt:"SELECT o.no,u.name FROM orders o\nLEFT JOIN users u ON u.id=o.user_id\nLEFT JOIN order_items oi ON oi.order_id=o.id\nWHERE o.user_id=?;",
+   dr:"驱动顺序导致 order_items 被大范围探测，610M。建议：加 order_items(order_id)、users(id) 索引并人工指定 STRAIGHT_JOIN。"},
+ {id:17,qid:"Q17",name:"sku IN 数百项",db:"product_service",at:610,mt:3900,n:32500,total:198.2,rows:"240M",risk:"mid",acc:"range",fpt:"SELECT sku,price,stock FROM product_sku\nWHERE sku IN (?,?,?,...)  -- 数百个值, 拼接\nORDER BY sku;",
+   dr:"IN 列表数百项 → 多次 range + filesort，240M，超高频 3.25 万次/周。建议：改临时表 JOIN，去掉 ORDER BY 或补 (sku) 已存在则查执行计划。"},
+ {id:18,qid:"Q18",name:"明细表关联无索引 FK",db:"order_service",at:890,mt:5900,n:11300,total:100.6,rows:"534M",risk:"hi",acc:"join",fpt:"SELECT d.* FROM order_detail d\nJOIN orders o ON o.id=d.order_id\nWHERE o.user_id=? AND o.status='PAID';",
+   dr:"order_detail.order_id 无索引，反查被扫 534M。建议：order_detail 补索引 (order_id)；此索引同时覆盖 Q05。"},
+ {id:19,qid:"Q19",name:"price RANGE 非索引列",db:"product_service",at:1050,mt:7800,n:2760,total:29.0,rows:"215M",risk:"mid",acc:"ALL",fpt:"SELECT id,name,price FROM products\nWHERE price BETWEEN ? AND ? AND status=1\nORDER BY price LIMIT 20;",
+   dr:"price 无索引 → 全扫 215M 再排序。建议：索引 (status, price) 覆盖查询。"},
+ {id:20,qid:"Q20",name:"GROUP BY + HAVING 聚合过滤",db:"analytics",at:3300,mt:19600,n:730,total:24.1,rows:"890M",risk:"mid",acc:"temp",fpt:"SELECT cust_id,SUM(amount) a FROM fact_orders\nWHERE day>?\nGROUP BY cust_id HAVING a>100000\nORDER BY a DESC LIMIT 50;",
+   dr:"先聚合 890M 再 HAVING 过滤，临时表 + 排序。建议：覆盖索引 (day, cust_id, amount)；HAVING 改用子查询下推过滤。"}
+];
+let f="",riskF="";
+const $=id=>document.getElementById(id);
+function risk(t){return t=="hi"?"高危":t=="mid"?"中":t=="lo"?"低":t}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function fmt(n){return n.toLocaleString()}
+function render(){
+  const kw=$("q").value.trim().toLowerCase();
+  const rows=ROWS.filter(r=>{
+    if(f && r.risk!==f) return false;
+    if(kw && ![r.name,r.db,r.qid,r.acc,risk(r.risk)].join(" ").toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  $("cnt").textContent=rows.length+"/"+ROWS.length+" 条";
+  $("body").innerHTML=rows.map((r,i)=>`
+    <tr>
+      <td class="num">${r.id}</td>
+      <td class="qid">${r.qid}</td>
+      <td>${esc(r.name)}</td>
+      <td class="mono">${r.db}</td>
+      <td class="num">${fmt(r.at)}</td>
+      <td class="num">${fmt(r.mt)}</td>
+      <td class="num">${fmt(r.n)}</td>
+      <td class="num">${r.total.toFixed(1)}</td>
+      <td class="num">${r.rows}</td>
+      <td><span class="risk ${r.risk}">${risk(r.risk)}</span></td>
+      <td><span class="expand" onclick="toggle(this,${r.id})">详情 ▾</span></td>
+    </tr>
+    <tr class="detail-row" id="d${r.id}">
+      <td colspan="11">
+        <div class="dr"><b>访问类型</b>：${r.acc}　<b>DB</b>：${r.db}　<b>执行次数</b>：${fmt(r.n)}/周　<b>平均</b>：${fmt(r.at)}ms　<b>峰值</b>：${fmt(r.mt)}ms</div>
+        <div class="fpt">${esc(r.fpt)}</div>
+        <div class="dr"><b>诊断</b>：${r.dr}</div>
+      </td>
+    </tr>`).join("");
+}
+function toggle(el,id){
+  const d=$("d"+id); d.classList.toggle("open");
+  el.textContent=d.classList.contains("open")?"详情 ▴":"详情 ▾";
+}
+function flt(el){
+  el.classList.toggle("on");
+  f = el.classList.contains("on") ? el.dataset.f : "";
+  render();
+}
+let sortK="",sortDir=1;
+document.querySelectorAll("th[data-k]").forEach(th=>{
+  th.onclick=()=>{
+    const k=th.dataset.k;
+    if(sortK===k) sortDir=-sortDir; else {sortK=k;sortDir=1;}
+    ROWS.sort((a,b)=>{
+      const x=a[k],y=b[k];
+      if(typeof x==="number") return (x-y)*sortDir;
+      return String(x).localeCompare(String(y))*sortDir;
+    });
+    render();
+  };
+});
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "run_id": "eval-3-multi-artifact-split-with_skill",
+  "expectations": [
+    {
+      "text": "split_main_exists: 存在 main.html 主入口",
+      "passed": true,
+      "evidence": "main=main.html"
+    },
+    {
+      "text": "sub_files_exist: 至少 3 个独立 sub-*.html",
+      "passed": true,
+      "evidence": "['sub-index.html', 'sub-plans.html', 'sub-top20.html', 'sub-trends.html']"
+    },
+    {
+      "text": "main_verdict_first: main 标题下 5 秒内出现结论",
+      "passed": true,
+      "evidence": "verdict/TL;DR/结论 in main"
+    },
+    {
+      "text": "main_summaries: main 中每个 sub 有一行摘要 + 链接",
+      "passed": true,
+      "evidence": "3+ sub links found"
+    },
+    {
+      "text": "main_lean: main.html < 50KB",
+      "passed": true,
+      "evidence": "9741B"
+    },
+    {
+      "text": "sub_self_contained: 每个 sub 含完整 <html> 结构",
+      "passed": true,
+      "evidence": "4 subs with html structure"
+    },
+    {
+      "text": "relative_paths: main→sub 用相对路径",
+      "passed": true,
+      "evidence": "relative href=sub-*.html"
+    },
+    {
+      "text": "sub_interactive: 至少一个 sub 有交互组件",
+      "passed": true,
+      "evidence": "search/checkbox/clipboard/sort found in subs"
+    },
+    {
+      "text": "no_cdn: 所有 HTML 无外链脚本资源",
+      "passed": true,
+      "evidence": "no external script/CDN"
+    },
+    {
+      "text": "provenance_footer: main 与 sub 有来源标注",
+      "passed": true,
+      "evidence": "provenance in main + subs"
+    }
+  ]
+}

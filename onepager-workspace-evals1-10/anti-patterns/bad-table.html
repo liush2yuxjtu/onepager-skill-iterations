@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--
+  ⚠️ 反面教材 anti-pattern — 仅供教学对照，请勿模仿。
+  踩坑：① 无搜索无排序（静态表）② 长表全渲染（100 行）③ 数字不对齐（无 tabular-nums/右对齐）④ 无空状态处理（筛选无结果时白屏）
+  来源项目：onepager skill 评测 · /Users/liushiyuwin/.agents/skills/onepager-workspace/anti-patterns/bad-table.html
+  Pi Session ID: ses_01f5c8264ffeHN5Qp1V36b
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>进程资源统计表（示例）</title>
+<style>
+  body{font-family:-apple-system,'PingFang SC',sans-serif;margin:0;padding:20px;background:#fff;color:#222}
+  h1{font-size:18px}
+  .hint{font-size:12px;color:#666;margin:8px 0 12px}
+  /* 坑①：无任何 <input> 搜索、无排序表头 —— 用户只能肉眼扫表 */
+  /* 坑③：数字列用普通字体（比例数字），没有 tabular-nums，也没有右对齐 */
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{background:#f1f3f5;text-align:left;padding:6px 8px;border-bottom:2px solid #dee2e6}
+  td{padding:6px 8px;border-bottom:1px solid #f1f3f5}
+  tr:nth-child(even){background:#fafbfc}
+  .bad{color:#c92a2a;font-weight:600}
+  .warn{color:#e67700}
+  .good{color:#2b8a3e}
+  .num{color:#555}
+  /* 坑④：无空状态样式 —— 一旦 tbody 为空，页面直接白板 */
+</style>
+</head>
+<body>
+
+<h1>进程资源统计表</h1>
+<p class="hint">共 100 行。无搜索框、无排序、无分页 —— 请自行滚动查找。若您用浏览器搜索（Ctrl+F），算您赢。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>进程名</th>
+      <th>CPU%</th>
+      <th>内存%</th>
+      <th>PID</th>
+      <th>内存占用 (MB)</th>
+      <th>状态</th>
+    </tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<script>
+/* 坑②：100 行数据一次性全渲染，无分页/虚拟滚动/懒加载 */
+/* 坑④：此 filter 函数无结果时直接清空 tbody，不显示任何空状态提示 */
+function renderAll(){
+  const names=['opencode','claude','chrome','trustd','sysmond','launchd','WindowServer','ChatGPT.app','herdr','coreaudiod'];
+  const states=['运行中','运行中','运行中','空闲','空闲','已退出','运行中','异常'];
+  let html='';
+  for(let i=1;i<=100;i++){
+    const name=names[i%names.length];
+    const cpu=(Math.random()*95).toFixed(2);
+    const mem=(Math.random()*30).toFixed(2);
+    const pid=1000+i;
+    const mb=(Math.random()*6000).toFixed(0);
+    const st=states[i%states.length];
+    const cls=cpu>80?'bad':(cpu>40?'warn':'good');
+    /* 坑③：数字列直接内联，无右对齐、无等宽数字、无千分位 */
+    html+='<tr><td>'+name+'</td><td class="num">'+cpu+'</td><td class="num">'+mem+'</td><td class="num">'+pid+'</td><td class="num">'+mb+'</td><td class="'+cls+'">'+st+'</td></tr>';
+  }
+  document.getElementById('rows').innerHTML=html;
+}
+
+/* 坑④：唯一"交互"——输入即删行，无结果时白屏、无匹配计数、无清空按钮 */
+function filterRows(q){
+  const rows=document.querySelectorAll('#rows tr');
+  let shown=0;
+  rows.forEach(r=>{
+    const hit=r.textContent.toLowerCase().indexOf(q.toLowerCase())>=0;
+    r.style.display=hit?'':'none';
+    if(hit)shown++;
+  });
+  /* 没有任何 shown===0 时的空状态提示 —— 页面直接空白表格 */
+  /* 连"无匹配结果"这种最基本的反馈都没有 */
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  renderAll();
+  /* 假搜索框：功能是"删行"，且无空状态 —— 比没有搜索框更误导 */
+  const box=document.createElement('input');
+  box.style.cssText='width:100%;box-sizing:border-box;padding:8px;margin:0 0 10px;font-size:13px;border:1px solid #ccc;border-radius:4px';
+  box.placeholder='假装可以搜索（实际只会隐藏不匹配行，无空状态）';
+  document.querySelector('h1').after(box);
+  box.addEventListener('input',e=>filterRows(e.target.value));
+});
+</script>
+
+</body>
+</html>

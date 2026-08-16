@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>电商中台·交易域升级 — 项目验收报告（精炼版）</title>
+<style>
+  :root{
+    --ink:#1f2328; --muted:#59636e; --line:#d1d9e0; --bg:#f6f8fa;
+    --pass:#1a7f37; --passbg:#e6f4ea; --warn:#9a6700; --warnbg:#fff8c5;
+    --open:#c62828; --openbg:#fdecea; --accent:#0969da; --accentbg:#ddf4ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+       color:var(--ink);background:var(--bg);line-height:1.55}
+  .wrap{max-width:980px;margin:0 auto;padding:18px 14px 60px}
+  h1{font-size:22px;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  /* ── 结论前置 ── */
+  .verdict{background:linear-gradient(135deg,#e6fffa,#eef6ff);border:1px solid #9fd6cb;border-left:5px solid var(--pass);
+           border-radius:8px;padding:14px 16px;margin:10px 0 14px}
+  .verdict b{font-size:17px}
+  .verdict .why{color:var(--muted);font-size:13px;margin-top:4px}
+  .stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .stat{flex:1 1 130px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:120px}
+  .stat .n{font-size:20px;font-weight:700}
+  .stat .l{font-size:12px;color:var(--muted)}
+  .stat.ok .n{color:var(--pass)} .stat.warn .n{color:var(--warn)} .stat.open .n{color:var(--open)}
+  /* ── 通用 ── */
+  h2{font-size:15px;margin:22px 0 8px;display:flex;align-items:center;gap:8px}
+  .pill{display:inline-block;background:var(--accentbg);color:var(--accent);border-radius:999px;font-size:11px;padding:1px 8px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 10px;font-size:13px;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn:disabled{opacity:.5;cursor:default}
+  .scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:13px;background:#fff}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#f0f3f6;white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0}
+  th:hover{background:#e4e9ee}
+  tr.odd td{background:#fafbfc}
+  .st{display:inline-block;font-size:11px;border-radius:999px;padding:0 8px;font-weight:600}
+  .st.pass{color:var(--pass);background:var(--passbg)}
+  .st.warn{color:var(--warn);background:var(--warnbg)}
+  .st.open{color:var(--open);background:var(--openbg)}
+  .muted{color:var(--muted);font-size:12px}
+  .rowbtn{font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--muted)}
+  .rowbtn:hover{border-color:var(--accent);color:var(--accent)}
+  tr.clickable td{cursor:pointer}
+  tr.clickable td:first-child{white-space:nowrap}
+  tr.detail{display:none}
+  tr.detail.open{display:table-row}
+  tr.detail td{background:#f7f9fb;color:#374151;font-size:12px}
+  /* ── 窄网关：搜索 + 筛选 chips ── */
+  .gate{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px}
+  .search{width:100%;padding:8px 10px;font-size:14px;border:1px solid var(--line);border-radius:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 11px;font-size:12px;cursor:pointer}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .gatebar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .expandall{color:var(--accent);background:none;border:none;font-size:12px;cursor:pointer;text-decoration:underline;padding:0}
+  /* ── 行动清单 ── */
+  .checklist{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .check{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .check:last-of-type{border-bottom:none}
+  .check input{margin-top:3px;flex:none}
+  .check small{display:block;color:var(--muted);font-size:12px}
+  .check.done .t{color:var(--muted);text-decoration:line-through}
+  .progbar{height:8px;background:#eaeef2;border-radius:999px;overflow:hidden;margin:8px 0}
+  .progbar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+  /* ── 折叠证据 ── */
+  details{background:#fff;border:1px solid var(--line);border-radius:8px;margin-bottom:10px}
+  summary{cursor:pointer;padding:9px 12px;font-size:14px;font-weight:600;list-style:none}
+  summary::before{content:"▸ ";color:var(--accent)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:0 12px 12px}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#222;color:#fff;border-radius:6px;
+         padding:7px 14px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
+  .toast.show{opacity:1}
+  footer{margin-top:26px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+  footer code{background:#f0f3f6;padding:1px 5px;border-radius:4px;font-size:11px}
+  @media (max-width:640px){ h1{font-size:18px} .stat{flex-basis:44%} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>电商中台·交易域升级 — 项目验收报告</h1>
+  <div class="sub">精炼交互式单页 · 由原 6-tab 版重构（结论前置 / 细节折叠 / 交互全保留）· 验收日期 2026-08-12</div>
+
+  <!-- ── 1. 结论前置（5 秒内可决策） ── -->
+  <div class="verdict">
+    <b>验收结论：准予通过</b> — 核心交付物 8/8、验收用例通过 129/132（97.7%）。<br>
+    <span class="why">3 项遗留缺陷（1 P0 + 2 P1）须 15 个工作日内整改闭环，已挂责任人；不阻塞签字，但整改项须在验收单附件中列出。</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat ok"><div class="n">8/8</div><div class="l">核心交付物 · 100%</div></div>
+    <div class="stat ok"><div class="n">129/132</div><div class="l">验收用例通过 · 97.7%</div></div>
+    <div class="stat open"><div class="n">3</div><div class="l">遗留缺陷 · 1 P0 + 2 P1</div></div>
+    <div class="stat warn"><div class="n">8/9</div><div class="l">里程碑按期 · M9 延期 12 天</div></div>
+    <div class="stat warn"><div class="n">92%</div><div class="l">预算使用 486/528 万 · 结余 42 万</div></div>
+  </div>
+
+  <!-- ── 2. 行动闭环：可勾选 + 进度 + 复制 Markdown ── -->
+  <h2>评审行动清单 <span class="pill" id="actCount">0/5 已完成</span></h2>
+  <div class="checklist" id="checklist">
+    <label class="check"><input type="checkbox" data-note="责任人：张伟（交易组）；限期 15 个工作日">
+      <span class="t">复核缺陷 #D-07（P0·支付对账差额）整改方案与责任人<small>数据源：缺陷跟踪 D-07；限期 15 个工作日</small></span></label>
+    <label class="check"><input type="checkbox" data-note="已出影响分析初稿，待评审">
+      <span class="t">评估里程碑 M9 延期 12 天对下期迭代的影响<small>数据源：里程碑 M9；延期 2026-07-20 → 08-02</small></span></label>
+    <label class="check"><input type="checkbox" data-note="归档路径 docs/acceptance/2026-07">
+      <span class="t">在验收单上签字并回传项目部<small>数据源：验收流程；附件含整改清单</small></span></label>
+    <label class="check"><input type="checkbox" data-note="含 3 项在跟踪缺陷">
+      <span class="t">归档验收测试报告与缺陷清单至知识库<small>数据源：测试报告 / 缺陷清单</small></span></label>
+    <label class="check"><input type="checkbox" data-note="预算使用率 92%">
+      <span class="t">通知财务关账，预算结余 42 万转下期备用金<small>数据源：成本 CO-04</small></span></label>
+    <div class="progbar"><i id="progBar"></i></div>
+    <button class="btn primary" id="copyActs">复制行动清单（Markdown）</button>
+    <button class="btn" id="resetActs">重置勾选</button>
+  </div>
+
+  <!-- ── 3. 窄网关：验收项浏览器（替代原 6 个 tab） ── -->
+  <h2>验收项浏览器 <span class="pill" id="matchCount"></span></h2>
+  <div class="gate">
+    <input class="search" id="q" type="search" placeholder="搜索编号 / 名称 / 责任人…（输入即过滤，不搬运全量）">
+    <div class="chips" id="catChips"></div>
+    <div class="chips" id="stChips"></div>
+    <div class="gatebar">
+      <span class="muted" id="hint">默认只显示前 8 条，搜索或筛选以缩小范围</span>
+      <button class="expandall" id="expandBtn">展开全部</button>
+    </div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th data-k="id">编号</th>
+          <th data-k="cat">分类</th>
+          <th data-k="name">条目</th>
+          <th data-k="owner">责任人</th>
+          <th data-k="status">状态</th>
+          <th data-k="mval" title="数值排序">关键指标</th>
+          <th style="cursor:default">窄操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ── 4. 全量证据收窄门（默认折叠，点击展开对应旧 tab 明细） ── -->
+  <h2>全量证据（按需展开）</h2>
+  <details><summary>交付物明细（8 项）</summary><div class="body"><div class="scroll" id="evDeliver"></div></div></details>
+  <details><summary>里程碑明细（9 项）</summary><div class="body"><div class="scroll" id="evMile"></div></div></details>
+  <details><summary>测试用例明细（8 项）</summary><div class="body"><div class="scroll" id="evTest"></div></div></details>
+  <details><summary>缺陷跟踪明细（3 项）</summary><div class="body"><div class="scroll" id="evDefect"></div></div></details>
+  <details><summary>成本与文档明细（10 项）</summary><div class="body"><div class="scroll" id="evCost"></div></div></details>
+
+  <!-- ── 5. 诚实可审计 ── -->
+  <footer>
+    <b>来源：</b>电商中台·交易域升级项目验收报告（原 6-tab 版，2026-07 交付）· 本页为其精炼交互式重构<br>
+    <b>数据说明：</b>任务未附原报告文件，验收明细为按典型验收报告结构整理的示例数据（编号 / 指标 / 时间戳自洽，标注为合成样例）· 采集命令：无（静态报告）<br>
+    <b>生成：</b>onepager skill（窄门法则）· 会话 iteration-6 / eval-2-slim-redesign / with_skill<br>
+    <b>输出：</b><code>/Users/liushiyuwin/.agents/skills/onepager-workspace/iteration-6/eval-2-slim-redesign/with_skill/outputs/acceptance-onepager.html</code><br>
+    <b>后台服务：</b>无（纯静态单文件，离线可开，无需停止命令）· <b>窗口聚焦：</b>herdr 不可用 → "—"
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══ 数据（合成样例，与原 6-tab 结构对应） ══ */
+var CATS = [
+  ["deliver","交付物"],["mile","里程碑"],["test","测试"],["defect","缺陷"],["cost","成本"],["doc","文档"]
+];
+var STS = [["pass","通过"],["warn","关注"],["open","整改中"]];
+var D = [
+  // 交付物
+  {id:"DL-01",cat:"deliver",name:"订单服务（下单/拆单/合并）",owner:"交易组",status:"pass",mval:100,metric:"100% · 接口全通过",detail:"含 3 大接口，SIT/UAT 用例 24 项全通过；发布 2026-07-20。"},
+  {id:"DL-02",cat:"deliver",name:"支付网关适配（4 通道）",owner:"支付组",status:"pass",mval:100,metric:"100% · 4/4 通道",detail:"微信/支付宝/银联/货到付款；3 通道对账存差异，见缺陷 D-07。"},
+  {id:"DL-03",cat:"deliver",name:"库存预占 / 释放模块",owner:"库存组",status:"pass",mval:100,metric:"100% · 交付",detail:"预占超时未释放场景见缺陷 D-12。"},
+  {id:"DL-04",cat:"deliver",name:"售后工单服务",owner:"客服组",status:"pass",mval:100,metric:"100% · 交付",detail:"状态回推延迟场景见缺陷 D-31。"},
+  {id:"DL-05",cat:"deliver",name:"对账报表系统（日对账）",owner:"数据组",status:"pass",mval:100,metric:"100% · 交付",detail:"日对账任务 2026-08-01 起稳定运行。"},
+  {id:"DL-06",cat:"deliver",name:"运维监控面板",owner:"运维组",status:"pass",mval:100,metric:"100% · 交付",detail:"含 12 项告警规则，接入 on-call。"},
+  {id:"DL-07",cat:"deliver",name:"移动端 H5 下单页",owner:"前端组",status:"pass",mval:100,metric:"100% · 交付",detail:"兼容 iOS/Android 主流浏览器，首屏 <2s。"},
+  {id:"DL-08",cat:"deliver",name:"双写迁移工具（旧库→新库）",owner:"数据组",status:"pass",mval:100,metric:"100% · 交付",detail:"历史数据迁移完成率 100%，对账追平见 M9。"},
+  // 里程碑
+  {id:"M1",cat:"mile",name:"需求冻结",owner:"产品组",status:"pass",mval:1,metric:"2026-02-28 · 按期",detail:"验收基线冻结，共 96 条需求。"},
+  {id:"M2",cat:"mile",name:"设计评审通过",owner:"架构组",status:"pass",mval:1,metric:"2026-03-15 · 按期",detail:"架构/接口设计评审一次通过。"},
+  {id:"M3",cat:"mile",name:"主链路开发完成",owner:"交易组",status:"pass",mval:1,metric:"2026-05-30 · 按期",detail:"下单主链路 + 8 个服务完成开发。"},
+  {id:"M4",cat:"mile",name:"联调环境就绪",owner:"运维组",status:"pass",mval:1,metric:"2026-06-10 · 按期",detail:"联调 + 压测环境交付。"},
+  {id:"M5",cat:"mile",name:"SIT 测试完成",owner:"测试组",status:"pass",mval:1,metric:"2026-06-28 · 按期",detail:"132 用例执行完毕。"},
+  {id:"M6",cat:"mile",name:"UAT 测试完成",owner:"测试组",status:"pass",mval:1,metric:"2026-07-10 · 按期",detail:"业务方 UAT 签字。"},
+  {id:"M7",cat:"mile",name:"灰度发布",owner:"运维组",status:"pass",mval:1,metric:"2026-07-15 · 按期",detail:"5% 流量灰度 3 天无事故。"},
+  {id:"M8",cat:"mile",name:"全量发布",owner:"运维组",status:"pass",mval:1,metric:"2026-07-20 · 按期",detail:"全量切换完成。"},
+  {id:"M9",cat:"mile",name:"对账追平（历史数据）",owner:"数据组",status:"warn",mval:0,metric:"延期 12 天 · 08-02 完成",detail:"计划 07-21，实际 08-02；部分历史对账需人工复核，见行动清单。"},
+  // 测试
+  {id:"TC-01",cat:"test",name:"订单主链路用例",owner:"测试组",status:"pass",mval:100,metric:"24/24 · 100%",detail:"功能 + 边界 + 幂等。"},
+  {id:"TC-02",cat:"test",name:"支付网关用例",owner:"测试组",status:"pass",mval:100,metric:"18/18 · 100%",detail:"4 通道 + 回调 + 对账。"},
+  {id:"TC-03",cat:"test",name:"库存并发用例",owner:"测试组",status:"pass",mval:100,metric:"20/20 · 100%",detail:"超卖防护 + 预占并发。"},
+  {id:"TC-04",cat:"test",name:"对账用例",owner:"测试组",status:"warn",mval:84,metric:"16/19 · 84%",detail:"3 项失败，关联缺陷 D-07（支付对账差异）。"},
+  {id:"TC-05",cat:"test",name:"售后工单用例",owner:"测试组",status:"pass",mval:100,metric:"12/12 · 100%",detail:"含状态机流转。"},
+  {id:"TC-06",cat:"test",name:"性能压测（峰值 8k QPS）",owner:"测试组",status:"pass",mval:100,metric:"12/12 · 100%",detail:"P95 < 200ms，无内存泄漏。"},
+  {id:"TC-07",cat:"test",name:"回归用例",owner:"测试组",status:"pass",mval:100,metric:"22/22 · 100%",detail:"全量发布后回归。"},
+  {id:"TC-08",cat:"test",name:"安全测试（渗透）",owner:"安全组",status:"pass",mval:100,metric:"5/5 · 100%",detail:"OWASP Top10 扫描，无高危。"},
+  // 缺陷
+  {id:"D-07",cat:"defect",name:"支付渠道对账差异",owner:"张伟",status:"open",mval:0,metric:"P0 · 整改中 · 阻塞 2 用例",detail:"3 通道日对账差额 <0.01%；根因：渠道对账文件时区错位；补丁已出，待回归后闭环（限期 15 个工作日）。"},
+  {id:"D-12",cat:"defect",name:"库存预占超时未释放",owner:"李强",status:"open",mval:1,metric:"P1 · 整改中 · 5% 场景",detail:"极端负载下 5% 预占超时未释放；已出补丁，待回归验证。"},
+  {id:"D-31",cat:"defect",name:"售后工单状态回推延迟",owner:"王芳",status:"open",mval:2,metric:"P1 · 整改中 · 峰值 8s",detail:"峰值时状态回推最大延迟 8s（SLA 5s）；已定位消费端限流，待发布。"},
+  // 成本
+  {id:"CO-01",cat:"cost",name:"人力投入",owner:"财务部",status:"pass",mval:90,metric:"396/436 万 · 90%",detail:"交付结余 40 万。"},
+  {id:"CO-02",cat:"cost",name:"云资源（ECS/RDS）",owner:"财务部",status:"pass",mval:94,metric:"58/62 万 · 94%",detail:"按量结算，含压测峰值费用。"},
+  {id:"CO-03",cat:"cost",name:"三方服务费",owner:"财务部",status:"warn",mval:107,metric:"32/30 万 · 107%",detail:"略超 2 万，已提前审批（短信通道扩容）。"},
+  {id:"CO-04",cat:"cost",name:"预算结余",owner:"财务部",status:"pass",mval:92,metric:"结余 42 万 · 转下期备用金",detail:"整体预算使用率 92%。"},
+  // 文档
+  {id:"DOC-01",cat:"doc",name:"需求规格说明书",owner:"产品组",status:"pass",mval:1,metric:"已评审 · 基线版",detail:"版本 v2.1，2026-03-01 冻结。"},
+  {id:"DOC-02",cat:"doc",name:"架构设计文档",owner:"架构组",status:"pass",mval:1,metric:"已评审",detail:"含 C4 图 + 接口清单。"},
+  {id:"DOC-03",cat:"doc",name:"接口文档（OpenAPI）",owner:"交易组",status:"pass",mval:1,metric:"已发布",detail:"48 个接口，含示例。"},
+  {id:"DOC-04",cat:"doc",name:"运维手册",owner:"运维组",status:"pass",mval:1,metric:"已评审",detail:"含部署/回滚/告警 SOP。"},
+  {id:"DOC-05",cat:"doc",name:"验收测试报告",owner:"测试组",status:"pass",mval:1,metric:"已交付 · 验收依据",detail:"本次验收依据文件。"},
+  {id:"DOC-06",cat:"doc",name:"缺陷清单",owner:"测试组",status:"pass",mval:1,metric:"3 项在跟踪",detail:"D-07 / D-12 / D-31 整改中。"}
+];
+
+/* ══ 浏览器渲染（窄网关：默认只显示前 8 条） ══ */
+var LIMIT=8, q="", cat="", st="", sortK="id", sortD=1, showAll=false, openRow=null;
+var tbody=document.getElementById("tbody");
+var catName={}; CATS.forEach(function(c){catName[c[0]]=c[1];});
+var stName={}; STS.forEach(function(s){stName[s[0]]=s[1];});
+
+function fmtStatus(s){ return '<span class="st '+s+'">'+stName[s]+'</span>'; }
+function filtered(){
+  var arr=D.filter(function(r){
+    if(cat && r.cat!==cat) return false;
+    if(st && r.status!==st) return false;
+    if(q){ var t=(r.id+r.name+r.owner+r.cat).toLowerCase(); if(t.indexOf(q.toLowerCase())<0) return false; }
+    return true;
+  });
+  arr.sort(function(a,b){
+    var x=a[sortK], y=b[sortK];
+    if(typeof x==="number") return (x-y)*sortD;
+    return String(x).localeCompare(String(y),"zh")*sortD;
+  });
+  return arr;
+}
+function rowHTML(r,i){
+  return '<tr class="clickable" data-id="'+r.id+'">'
+    +'<td>'+r.id+'</td><td>'+catName[r.cat]+'</td><td>'+r.name+'</td>'
+    +'<td>'+r.owner+'</td><td>'+fmtStatus(r.status)+'</td>'
+    +'<td>'+r.metric+'</td>'
+    +'<td><button class="rowbtn" data-act="copy">复制</button> · 点行展开 →</td>'
+    +'</tr>'
+    +'<tr class="detail" id="d-'+r.id+'"><td colspan="7"><b>'+r.id+' '+r.name+'</b> · 证据：'+r.detail+'</td></tr>';
+}
+function render(){
+  var arr=filtered(), n=arr.length, shown=showAll?n:Math.min(LIMIT,n), html="";
+  for(var i=0;i<shown;i++){ html+=rowHTML(arr[i],i); }
+  tbody.innerHTML=html;
+  document.getElementById("matchCount").textContent=n+" 项匹配";
+  var eb=document.getElementById("expandBtn");
+  eb.style.display = n>LIMIT ? "inline":"none";
+  eb.textContent = showAll ? "收起（只留前 "+LIMIT+" 条）" : "展开全部 "+n+" 项";
+  document.getElementById("hint").textContent = showAll
+    ? "已展开全部 "+n+" 项" : (n>LIMIT ? "默认只显示前 "+LIMIT+" 条，点「展开全部」看其余 "+ (n-LIMIT) +" 项" : "共 "+n+" 项");
+  if(openRow){ var el=document.getElementById("d-"+openRow); if(el) el.classList.add("open"); }
+}
+/* 搜索 + 筛选 chips */
+document.getElementById("q").addEventListener("input",function(e){ q=e.target.value; showAll=false; render(); });
+function buildChips(holder,list,get,set){
+  list.forEach(function(opt){
+    var b=document.createElement("button");
+    b.className="chip"; b.textContent=opt[1];
+    b.onclick=function(){
+      if(get()===opt[0]){ set(""); } else { set(opt[0]); }
+      render(); refreshChips();
+    };
+    holder.appendChild(b);
+  });
+}
+var setCat=function(v){cat=v;};
+var setSt=function(v){st=v;};
+buildChips(document.getElementById("catChips"), CATS, function(){return cat;}, setCat);
+buildChips(document.getElementById("stChips"), STS, function(){return st;}, setSt);
+function refreshChips(){
+  var i;
+  var cs=document.getElementById("catChips").children;
+  for(i=0;i<cs.length;i++) cs[i].classList.toggle("on", cs[i].textContent===catName[cat]);
+  var ss=document.getElementById("stChips").children;
+  for(i=0;i<ss.length;i++) ss[i].classList.toggle("on", ss[i].textContent===stName[st]);
+}
+/* 排序 */
+document.querySelectorAll("th[data-k]").forEach(function(th){
+  th.addEventListener("click",function(){
+    var k=th.getAttribute("data-k");
+    if(sortK===k){ sortD=-sortD; } else { sortK=k; sortD=1; }
+    render();
+  });
+});
+/* 展开全部 / 收起 */
+document.getElementById("expandBtn").addEventListener("click",function(){ showAll=!showAll; render(); });
+/* 行点击展开 + 行内复制 */
+tbody.addEventListener("click",function(e){
+  var cpy=e.target.closest("[data-act=copy]");
+  if(cpy){
+    var tr=cpy.closest("tr"); var id=tr.getAttribute("data-id");
+    var r=D.find(function(x){return x.id===id;});
+    copyText("- ["+(r.status==="pass"?"x":" ")+"] "+r.id+" "+r.name+" · "+stName[r.status]+" · "+r.metric);
+    return;
+  }
+  var tr=e.target.closest("tr.clickable"); if(!tr) return;
+  var id=tr.getAttribute("data-id"); var d=document.getElementById("d-"+id);
+  if(openRow && openRow!==id){ var o=document.getElementById("d-"+openRow); if(o) o.classList.remove("open"); }
+  if(d.classList.contains("open")){ d.classList.remove("open"); openRow=null; }
+  else { d.classList.add("open"); openRow=id; }
+});
+/* ══ 行动清单（勾选 + 进度 + 复制 MD） ══ */
+var actEls=[].slice.call(document.querySelectorAll("#checklist .check"));
+var progBar=document.getElementById("progBar"), actCount=document.getElementById("actCount");
+function actRefresh(){
+  var done=actEls.filter(function(c){return c.querySelector("input").checked;}).length;
+  progBar.style.width=(done/actEls.length*100)+"%";
+  actCount.textContent=done+"/"+actEls.length+" 已完成";
+  actEls.forEach(function(c){c.classList.toggle("done",c.querySelector("input").checked);});
+}
+actEls.forEach(function(c){c.querySelector("input").addEventListener("change",actRefresh);});
+document.getElementById("resetActs").addEventListener("click",function(){
+  actEls.forEach(function(c){c.querySelector("input").checked=false;});
+  actRefresh();
+});
+document.getElementById("copyActs").addEventListener("click",function(){
+  var lines=["## 项目验收 · 行动清单（2026-08-12）","","验收结论：准予通过（遗留 3 缺陷限期整改）",""];
+  actEls.forEach(function(c){
+    var box=c.querySelector("input"), t=c.querySelector(".t").textContent.split("数据源")[0].trim();
+    lines.push("- ["+(box.checked?"x":" ")+"] "+t+(box.dataset.note?"（"+box.dataset.note+"）":""));
+  });
+  copyText(lines.join("\n"));
+});
+/* ══ 全量证据表（由同一 DATA 生成，收进 details） ══ */
+function evTable(rows){
+  var h='<table><thead><tr><th>编号</th><th>条目</th><th>责任人</th><th>状态</th><th>关键指标</th><th>证据 / 说明</th></tr></thead><tbody>';
+  rows.forEach(function(r,i){
+    h+='<tr'+(i%2?' class="odd"':'')+'><td>'+r.id+'</td><td>'+r.name+'</td><td>'+r.owner+'</td><td>'+fmtStatus(r.status)+'</td><td>'+r.metric+'</td><td>'+r.detail+'</td></tr>';
+  });
+  return h+'</tbody></table>';
+}
+function mountEv(id,cat){
+  var rows=D.filter(function(r){return r.cat===cat;});
+  document.getElementById(id).innerHTML=evTable(rows);
+}
+mountEv("evDeliver","deliver");
+mountEv("evMile","mile");
+mountEv("evTest","test");
+mountEv("evDefect","defect");
+mountEv("evCost",null); // cost + doc 合并
+var docRows=D.filter(function(r){return r.cat==="doc";});
+document.getElementById("evCost").innerHTML+=evTable(docRows);
+/* ══ 复制工具（clipboard + 降级） ══ */
+var toast=document.getElementById("toast"), toastT=null;
+function copyText(t){
+  function done(){ toast.textContent="已复制"; toast.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(function(){toast.classList.remove("show");},1400); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(done).catch(function(){ fallbackCopy(t); done(); });
+  } else { fallbackCopy(t); done(); }
+}
+function fallbackCopy(t){
+  var ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity=0;
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  document.body.removeChild(ta);
+}
+/* 首屏 */
+render(); refreshChips(); actRefresh();
+</script>
+</body>
+</html>
