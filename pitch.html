@@ -518,51 +518,51 @@ footer a{color:var(--ink-soft)}
   <!-- 5 产物之门 -->
   <section id="prods">
     <div class="gate-divider reveal"><span class="t">伍 · 产物</span><span class="ln"></span></div>
-    <div class="sec-head reveal"><span class="idx">05</span><h2>产物 = N 个 sub-artifact <em>— 每轮迭代一页，页内内联全部 eval HTML</em></h2></div>
-    <p class="sec-desc reveal">产物拆成 <b>5 个 sub-artifact</b>：3 个迭代页（evals 5-15）+ <b>触发率优化</b>（63.9%→100% 原始证据）+ <b>evals 1-10 原生历史</b>；每个 sub-artifact 内嵌对应的<b>原生 /skill-creator 评测视图</b>（eval-review.html）。</p>
+    <div class="sec-head reveal"><span class="idx">05</span><h2>产物 = 5 个可点击的子产物 <em>— 每轮迭代，一页原生评测证据</em></h2></div>
+    <p class="sec-desc reveal">每轮迭代都沉淀成一页<b>可独立打开的原生评测证据</b>：3 个迭代页（evals 5-15）+ 触发率优化（63.9%→100%）+ evals 1-10 原始历史。点卡片即看——产物、打分、评语全在一处。</p>
         <div class="iter-subs">
       <a class="sub reveal" href="iter-1.html" target="_blank" rel="noopener">
-        <div class="n">Sub-Artifact 1/5</div>
+        <div class="n">子产物 1/5</div>
         <h3>iteration-1 · 会话归集</h3>
         <div class="meta">evals 5-7 · 2026-08-11 · 10 个 eval HTML</div>
         <p>主动归集 sub-artifact、主视频可见、范围排除旧产物。</p>
         <div class="kpis"><span class="">with 100%</span> <span class="good">耗时 −5.3s</span></div>
-        <span class="open">打开本迭代子产物 →</span>
+        <span class="open">查看原生评测 →</span>
       </a>
       <a class="sub reveal" href="iter-2.html" target="_blank" rel="noopener">
-        <div class="n">Sub-Artifact 2/5</div>
+        <div class="n">子产物 2/5</div>
         <h3>iteration-2 · 隐式 recap/handoff</h3>
         <div class="meta">evals 8-10 · 2026-08-11 · 9 个 eval HTML</div>
         <p>只给 transcript 的隐式任务：rich recap、scoped handoff、空态诚实。</p>
         <div class="kpis"><span class="hot">+36pp</span> <span class="good">耗时 −43.6s</span> <span class="good">token −3558</span></div>
-        <span class="open">打开本迭代子产物 →</span>
+        <span class="open">查看原生评测 →</span>
       </a>
       <a class="sub reveal" href="iter-3.html" target="_blank" rel="noopener">
-        <div class="n">Sub-Artifact 3/5</div>
+        <div class="n">子产物 3/5</div>
         <h3>iteration-3 · SVG 主动绘制</h3>
         <div class="meta">evals 11-15 · 2026-08-12 · 7 个 eval HTML</div>
         <p>有形状就手写内联 SVG（数据/界面/流程）。</p>
         <div class="kpis"><span class="">new 100%</span> <span class="good">耗时 −92.1s</span> <span class="good">token −9625</span></div>
-        <span class="open">打开本迭代子产物 →</span>
+        <span class="open">查看原生评测 →</span>
       </a>
       <a class="sub reveal" href="trigger-opt.html" target="_blank" rel="noopener">
-        <div class="n">Sub-Artifact 4/5</div>
+        <div class="n">子产物 4/5</div>
         <h3>触发率优化 · description 到 100%</h3>
         <div class="meta">description-optimization · 2026-08-14</div>
         <p>6 条真实用户查询评测触发率，改写 description 直到全过：best_test <b style="color:var(--celadon)">8/8</b> · 1 轮 all_passed —— 63.9%→100% 的原始证据。</p>
         <div class="kpis"><span class="hot">best_test 8/8</span> <span class="good">train 12/12</span> <span class="">6 queries</span></div>
-        <span class="open">打开本迭代子产物 →</span>
+        <span class="open">查看原生评测 →</span>
       </a>
       <a class="sub reveal" href="evals-1-10.html" target="_blank" rel="noopener">
-        <div class="n">Sub-Artifact 5/5</div>
+        <div class="n">子产物 5/5</div>
         <h3>evals 1-10 原生历史</h3>
         <div class="meta">原始 skill-creator 工作区 · iter-1~6 · 30 runs</div>
         <p>完整的原始评测历史（Mac 热诊断 / 臃肿瘦身 / 慢查询 / SPA 预览 / 漂移 / 内联 SVG）+ anti-patterns + 触发率优化。</p>
         <div class="kpis"><span class="">10 evals</span> <span class="">30 runs</span> <span class="good">含 anti-patterns</span></div>
-        <span class="open">打开本迭代子产物 →</span>
+        <span class="open">查看原生评测 →</span>
       </a>
     </div>
-    <p class="note-inline reveal">组合产物递归（法则 8）：<b>main</b> = 本页（结论 + 5 个 sub-artifact 链接）；<b>N 个 sub-artifact</b> = iter-1/2/3.html（evals 5-15）+ trigger-opt.html（触发率优化）+ evals-1-10.html（原始 evals 1-10 历史），每页内部 iframe 内嵌对应的<b>原生 eval-review.html</b>（generate_review.py 生成）——改一处不重写整页。</p>
+    <p class="note-inline reveal">每个子产物内嵌该轮<b>原生 skill-creator 评测视图</b>（产物输出 + 期望断言打分 + 评语），点卡片即看，无需滚动翻找证据。</p>
   </section>
 
   <!-- 6 runner -->
