@@ -466,7 +466,7 @@ footer a{color:var(--ink-soft)}
   <section id="prods">
     <div class="gate-divider reveal"><span class="t">伍 · 产物</span><span class="ln"></span></div>
     <div class="sec-head reveal"><span class="idx">05</span><h2>产物 = N 个 sub-artifact <em>— 每轮迭代一页，页内内联全部 eval HTML</em></h2></div>
-    <p class="sec-desc reveal">产物按迭代拆成 <b>3 个 sub-artifact</b>（每轮迭代一个，映射一次时间点）；每个 sub-artifact 内部把该轮<b>全部</b> eval HTML 内联为 sub-sub-artifact。 eval 产物 HTML（3 轮 iteration × 17 个评测域，含 with/without 与 new/old 对照）——都是评测运行时真实生成的。点卡片灯箱预览，或 ↗ 新标签打开。上方输入框可过滤。</p>
+    <p class="sec-desc reveal">产物按迭代拆成 <b>3 个 sub-artifact</b>（每轮迭代一页，映射一个时间点）；每个 sub-artifact 内嵌该迭代的<b>原生 /skill-creator 评测视图</b>（eval-review.html，内嵌全部输出+打分+评语）。 eval 产物 HTML（3 轮 iteration × 17 个评测域，含 with/without 与 new/old 对照）——都是评测运行时真实生成的。点卡片灯箱预览，或 ↗ 新标签打开。上方输入框可过滤。</p>
         <div class="iter-subs">
       <a class="sub reveal" href="iter-1.html" target="_blank" rel="noopener">
         <div class="n">Sub-Artifact 1/3</div>
@@ -493,7 +493,7 @@ footer a{color:var(--ink-soft)}
         <span class="open">打开本迭代子产物 →</span>
       </a>
     </div>
-    <p class="note-inline reveal">组合产物递归（法则 8）：<b>main</b> = 本页（结论 + N 个 sub-artifact 链接）；<b>N 个 sub-artifact</b> = iter-1/2/3.html，每页对应一轮迭代，内部把该轮全部 eval HTML 内联为 <b>sub-sub-artifact</b>（iframe 预览，点击可放大）——改一处不重写整页。</p>
+    <p class="note-inline reveal">组合产物递归（法则 8）：<b>main</b> = 本页（结论 + N 个 sub-artifact 链接）；<b>N 个 sub-artifact</b> = iter-1/2/3.html，每页对应一轮迭代，内部 iframe 内嵌该轮<b>原生 eval-review.html</b>（generate_review.py 生成，JS 渲染故用 iframe，脚本运行可完整交互）——改一处不重写整页。</p>
   </section>
 
   <!-- 6 runner -->

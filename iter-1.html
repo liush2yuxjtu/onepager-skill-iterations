@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>iteration-1 · 会话产物主动归集 — 全部 eval HTML 内联渲染（sub-artifact）</title>
+<title>iteration-1 · 会话产物主动归集 — 原生 skill-creator 评测视图（sub-artifact）</title>
 <script>(function(){try{var t=localStorage.getItem('it-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else document.documentElement.setAttribute('data-theme','dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
 <style>
 :root{--bg:#131009;--bg2:#1B1610;--bg3:#251E13;--ink:#EDE3CC;--ink-soft:#B3A588;--ink-faint:#7B7058;
@@ -24,7 +24,7 @@
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Fraunces","Noto Serif SC","Songti SC","STSong",Georgia,serif;font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased;background-image:radial-gradient(var(--grid) 1px,transparent 1px);background-size:26px 26px}
 ::selection{background:var(--seal);color:var(--paper-ink)}a{color:var(--seal)}a:hover{color:var(--seal-deep)}:focus-visible{outline:2px solid var(--focus)}
 .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
-.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
 .topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
 .topbar-in{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
 .brand{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;color:var(--ink-soft);text-transform:uppercase}
@@ -46,34 +46,28 @@ h1{margin:0;font-size:clamp(1.7rem,4.6vw,2.6rem);font-weight:600;line-height:1.1
 .bm .bar .tk i.lose{background:var(--ink-faint)}
 .bm .bar .v{font-size:.68rem;color:var(--ink-soft);font-family:"IBM Plex Mono",monospace;width:5em;text-align:right;font-variant-numeric:tabular-nums}
 .bm .bar .v.win{color:var(--celadon)}
-h2{margin:34px 0 6px;font-size:1.25rem;font-weight:600}
-.desc2{font-size:.84rem;color:var(--ink-soft);margin:0 0 14px;max-width:70ch}
-.ss-index{font-size:.78rem;color:var(--ink-faint);margin:0 0 18px;line-height:2}
-.ss-index a{margin-right:14px;font-family:"IBM Plex Mono",monospace;font-size:.7rem}
-.evals{display:flex;flex-direction:column;gap:20px}
-.eval-block{border:1px solid var(--line);border-radius:14px;background:var(--bg2);overflow:hidden;box-shadow:var(--shadow)}
-.eh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--bg3)}
-.eh .t{font-size:.9rem;font-weight:600}
-.eh .t .v{font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));border-radius:999px;padding:1px 9px;margin-left:8px;font-weight:400}
-.eh .go{font-family:"IBM Plex Mono",monospace;font-size:.64rem;color:var(--seal);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
-.eh .go:hover{color:var(--seal-deep)}
-.ss-slot{background:#fff}
-.ss-slot .ss-inner{width:100%}
+h2{margin:36px 0 6px;font-size:1.3rem;font-weight:600}
+.desc2{font-size:.86rem;color:var(--ink-soft);margin:0 0 16px;max-width:76ch}
+.review-frame{border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:#fff}
+.rf-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
+.rf-top .t{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rf-top .go{font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--seal);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.review-frame iframe{width:100%;height:920px;border:0;display:block;background:#fff}
 footer{border-top:1px solid var(--line);margin-top:44px;padding:22px 0 40px;color:var(--ink-faint);font-size:.76rem}
 footer .src{font-family:"IBM Plex Mono",monospace;font-size:.7rem;line-height:1.9;word-break:break-all;margin-top:8px}
-@media (max-width:760px){.wrap{padding:0 16px}.bench{flex-direction:column}}
+@media (max-width:760px){.wrap{padding:0 16px}.bench{flex-direction:column}.review-frame iframe{height:70vh}}
 </style>
 </head>
 <body>
 <div class="topbar"><div class="wrap topbar-in">
-  <div class="brand">Onepager · Sub-Artifact 1/3</div>
+  <div class="brand">Onepager · Sub-Artifact 1/3 · 原生评测视图</div>
   <div class="theme-switch" role="group" aria-label="主题"><button data-theme-set="dark" aria-pressed="true">墨</button><button data-theme-set="light" aria-pressed="false">纸</button><button data-theme-set="system" aria-pressed="false">跟随</button></div>
 </div></div>
 <div class="wrap">
 <header>
   <p class="eyebrow">Sub-Artifact 1/3 · evals 5-7 · 2026-08-11</p>
   <h1>iteration-1 · 会话产物主动归集</h1>
-  <p class="meta mono">evals 5-7 · 2026-08-11 · 10 个 eval HTML 内联渲染于本页</p>
+  <p class="meta mono">evals 5-7 · 2026-08-11 · 原生 skill-creator 评测视图</p>
   <p class="what">主动归集当前会话 sub-artifact、主视频在正文可见、范围排除旧产物。</p>
   <div class="bench"><div class="bm"><div class="lab">通过率</div>
         <div class="bar"><span class="k">带/新</span><div class="tk"><i style="width:100%"></i></div><span class="v ">with 100%</span></div>
@@ -83,556 +77,16 @@ footer .src{font-family:"IBM Plex Mono",monospace;font-size:.7rem;line-height:1.
         <div class="bar"><span class="k">不带/旧</span><div class="tk"><i class="lose" style="width:100%"></i></div><span class="v">124.6s</span></div></div></div>
 </header>
 
-<h2>本迭代全部 eval HTML — 内联渲染在本页内（sub-sub-artifact）</h2>
-<p class="desc2">每份产物已<b>真实内联渲染</b>在页面里（Shadow DOM 隔离样式，互不污染、保留各自主题），不是 iframe 隔离帧。点标题可看，点「交互原版」打开完整交互版本。</p>
-<div class="ss-index">产物索引：<a href="#ss-0">eval-5·with_skill</a> <a href="#ss-1">eval-5·with_skill</a> <a href="#ss-2">eval-5·without_skill</a> <a href="#ss-3">eval-5·without_skill</a> <a href="#ss-4">eval-6·with_skill</a> <a href="#ss-5">eval-6·with_skill</a> <a href="#ss-6">eval-6·without_skill</a> <a href="#ss-7">eval-6·without_skill</a> <a href="#ss-8">eval-7·with_skill</a> <a href="#ss-9">eval-7·without_skill</a></div>
-<div class="evals">
-      <div class="eval-block" id="ss-0">
-        <div class="eh"><span class="t">eval-5 · 会话全产物 recap<span class="v">with_skill · main.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/with_skill/run-1/outputs/main.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style>
-.ss-inner{color-scheme:dark;--bg:#0b0d10;--panel:#14181d;--line:#2a3139;--text:#f4f7f9;--muted:#9ba8b4;--green:#5de09a;--blue:#75a7ff;--amber:#ffc66d;--shadow:0 18px 60px #0006}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#163328 0,transparent 31rem),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}main{width:min(920px,calc(100% - 32px));margin:auto;padding:52px 0 38px}header{margin-bottom:28px}.eyebrow{color:var(--green);font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}h1{font-size:clamp(34px,7vw,68px);line-height:.98;letter-spacing:-.055em;margin:10px 0 18px;max-width:700px}.verdict{display:flex;gap:12px;align-items:flex-start;background:#112219;border:1px solid #27553d;border-radius:14px;padding:15px 17px;box-shadow:var(--shadow)}.pass{flex:none;color:#04130b;background:var(--green);font-weight:900;border-radius:999px;padding:3px 9px}.verdict strong{display:block}.verdict span:last-child{color:#c6d1cb}.topline{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:34px 0 12px}h2{font-size:19px;margin:0}.count,.meta{color:var(--muted);font-size:13px}.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}input,select,button{font:inherit;color:var(--text);background:#101419;border:1px solid var(--line);border-radius:9px;padding:9px 11px}input{min-width:220px;flex:1}button,.linkbtn{cursor:pointer}button:hover,.linkbtn:hover{border-color:var(--blue)}.artifacts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.artifact{display:flex;align-items:center;gap:13px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;min-width:0}.icon{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:#202731;color:var(--blue);font-weight:900}.artifact-main{min-width:0;flex:1}.artifact-main strong,.artifact-main span{display:block}.artifact-main span{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.linkbtn{flex:none;text-decoration:none;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px}.media{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.media-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:11px}.media-head p{margin:2px 0 0;color:var(--muted);font-size:13px}video{display:block;width:100%;max-height:440px;background:#050607;border-radius:9px}details{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:0 15px}summary{cursor:pointer;font-weight:750;padding:14px 0}.details-body{border-top:1px solid var(--line);padding:14px 0}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:9px 7px}th button{border:0;padding:0;background:none;color:var(--muted);font-size:12px;font-weight:800}code{color:#c8d7ff;word-break:break-all}.checks{display:grid;gap:9px}.check{display:flex;gap:9px;align-items:flex-start}.check input{min-width:auto;margin-top:5px}.progress{height:7px;background:#282f36;border-radius:9px;overflow:hidden;margin:12px 0 7px}.bar{height:100%;width:0;background:var(--green);transition:.2s}.check-actions{display:flex;justify-content:space-between;align-items:center;gap:12px}.toast{color:var(--green);font-size:13px;min-height:20px}footer{border-top:1px solid var(--line);margin-top:30px;padding-top:18px;color:var(--muted);font-size:12px}.path{word-break:break-all}body.empty .artifact{display:none}.empty-note{display:none;color:var(--muted);padding:14px}.empty-note.show{display:block}@media(max-width:680px){main{padding-top:30px}.artifacts{grid-template-columns:1fr}.media-head,.topline{align-items:flex-start;flex-direction:column}table{display:block;overflow:auto}.artifact{padding:12px}}
-</style><div class="ss-inner">
-<main>
-<header>
-  <div class="eyebrow">Pi session · eval-session-5</div>
-  <h1>Fresh UAT<br>证据已归档</h1>
-  <div class="verdict"><span class="pass">PASS</span><span><strong>本次 fresh UAT 通过。</strong><span>报告与 QA 结果一致；录像和 trace 已与主页面打包，可离线复核。</span></span></div>
-</header>
-
-<section aria-labelledby="artifact-title">
-  <div class="topline"><h2 id="artifact-title">会话产物</h2><span class="count">4 / 4 已归集</span></div>
-  <div class="tools">
-    <input id="search" type="search" placeholder="搜索产物…" aria-label="搜索产物">
-    <select id="sort" aria-label="产物排序"><option value="priority">按重要性</option><option value="name">按名称</option><option value="type">按类型</option></select>
-  </div>
-  <div id="artifacts" class="artifacts">
-    <article class="artifact" data-name="report html uat pass 报告" data-type="html" data-priority="1"><span class="icon">R</span><div class="artifact-main"><strong>report.html</strong><span>UAT 主报告 · PASS</span></div><a class="linkbtn" href="report.html">打开 →</a></article>
-    <article class="artifact" data-name="run webm video 录像 回放" data-type="video" data-priority="2"><span class="icon">▶</span><div class="artifact-main"><strong>run.webm</strong><span>fresh UAT 执行录像</span></div><a class="linkbtn" href="run.webm" download>下载 ↓</a></article>
-    <article class="artifact" data-name="qa json passed errors 结构化结果" data-type="json" data-priority="3"><span class="icon">{ }</span><div class="artifact-main"><strong>qa.json</strong><span>结构化结果 · passed: true</span></div><a class="linkbtn" href="qa.json">查看 →</a></article>
-    <article class="artifact" data-name="trace zip 调试 追踪 证据" data-type="zip" data-priority="4"><span class="icon">Z</span><div class="artifact-main"><strong>trace.zip</strong><span>运行追踪 · 含 trace.txt</span></div><a class="linkbtn" href="trace.zip" download>下载 ↓</a></article>
-  </div>
-  <div id="empty" class="empty-note">没有匹配的产物。</div>
-</section>
-
-<section class="media" aria-labelledby="video-title">
-  <div class="media-head"><div><strong id="video-title">执行录像</strong><p>关键媒体直接置于主页面；若浏览器无法解码，可使用右侧下载。</p></div><a class="linkbtn" href="run.webm" download>下载原片 ↓</a></div>
-  <video controls preload="metadata"><source src="run.webm" type="video/webm">浏览器无法播放此录像，请使用下载链接。</video>
-</section>
-
-<details>
-  <summary>证据清单与校验值</summary>
-  <div class="details-body"><table id="evidence"><thead><tr><th><button data-key="name">文件 ↕</button></th><th><button data-key="type">类型 ↕</button></th><th><button data-key="size">大小 ↕</button></th><th>SHA-256</th></tr></thead><tbody>
-  <tr data-name="report.html" data-type="HTML" data-size="53"><td><a href="report.html">report.html</a></td><td>HTML</td><td>53 B</td><td><code>8713327d…1518d</code></td></tr>
-  <tr data-name="qa.json" data-type="JSON" data-size="28"><td><a href="qa.json">qa.json</a></td><td>JSON</td><td>28 B</td><td><code>012aa279…e8500</code></td></tr>
-  <tr data-name="run.webm" data-type="VIDEO" data-size="18"><td><a href="run.webm">run.webm</a></td><td>WEBM</td><td>18 B</td><td><code>0da62f1e…934dc</code></td></tr>
-  <tr data-name="trace.zip" data-type="ZIP" data-size="126"><td><a href="trace.zip">trace.zip</a></td><td>ZIP</td><td>126 B</td><td><code>eb389820…2966f</code></td></tr>
-  </tbody></table><p class="meta">校验值在归集后计算；trace.zip 已确认包含 <code>trace.txt</code>（10 B）。</p></div>
-</details>
-
-<details>
-  <summary>复核行动 <span id="progressText" class="meta">0 / 3</span></summary>
-  <div class="details-body">
-    <div class="checks">
-      <label class="check"><input type="checkbox" value="打开 report.html，确认 UAT 主结论为 PASS"><span>打开报告，确认主结论为 PASS</span></label>
-      <label class="check"><input type="checkbox" value="回放 run.webm，抽查 fresh UAT 执行过程"><span>回放录像，抽查执行过程</span></label>
-      <label class="check"><input type="checkbox" value="保留 trace.zip，用于后续问题追踪"><span>保留 trace，用于后续问题追踪</span></label>
-    </div>
-    <div class="progress"><div id="bar" class="bar"></div></div>
-    <div class="check-actions"><span id="toast" class="toast"></span><button id="copy">复制 Markdown</button></div>
-  </div>
-</details>
-
-<footer>
-  <div>来源项目：<strong>pitch-video-project</strong></div>
-  <div class="path">绝对路径：<code>/tmp/pitch-video-project</code></div>
-  <div>Pi session ID：<code>eval-session-5</code></div>
-  <div>归集范围：仅聊天明确列出的 4 个 session-owned 输入文件；未复制同目录其他文件。</div>
-</footer>
-</main>
-<script>
-const cards=[...document.querySelectorAll('.artifact')],box=document.querySelector('#artifacts'),search=document.querySelector('#search'),sort=document.querySelector('#sort'),empty=document.querySelector('#empty');
-function render(){const q=search.value.trim().toLowerCase(),key=sort.value;cards.sort((a,b)=>key==='priority'?+a.dataset.priority-+b.dataset.priority:a.dataset[key].localeCompare(b.dataset[key]));cards.forEach(c=>{c.hidden=!c.dataset.name.includes(q);box.append(c)});empty.classList.toggle('show',cards.every(c=>c.hidden))}search.addEventListener('input',render);sort.addEventListener('change',render);
-let tableDir=1;document.querySelectorAll('#evidence th button').forEach(b=>b.onclick=()=>{const key=b.dataset.key,rows=[...document.querySelectorAll('#evidence tbody tr')];tableDir*=-1;rows.sort((a,c)=>key==='size'?(+a.dataset.size-+c.dataset.size)*tableDir:a.dataset[key].localeCompare(c.dataset[key])*tableDir).forEach(r=>r.parentNode.append(r))});
-const checks=[...document.querySelectorAll('.check input')],bar=document.querySelector('#bar'),progressText=document.querySelector('#progressText'),toast=document.querySelector('#toast');
-function update(){const n=checks.filter(x=>x.checked).length;bar.style.width=(n/checks.length*100)+'%';progressText.textContent=n+' / '+checks.length;checks.forEach((x,i)=>localStorage.setItem('uat-recap-'+i,x.checked?'1':'0'))}checks.forEach((x,i)=>{x.checked=localStorage.getItem('uat-recap-'+i)==='1';x.addEventListener('change',update)});update();
-document.querySelector('#copy').onclick=async()=>{const md=['# Fresh UAT 复核','',...checks.map(x=>`- [${x.checked?'x':' '}] ${x.value}`)].join('\n');try{await navigator.clipboard.writeText(md);toast.textContent='已复制'}catch(e){const t=document.createElement('textarea');t.value=md;document.body.append(t);t.select();document.execCommand('copy');t.remove();toast.textContent='已复制'}setTimeout(()=>toast.textContent='',1800)};
-</script>
-</div></template></div>
-      </div>
-      <div class="eval-block" id="ss-1">
-        <div class="eh"><span class="t">eval-5 · 会话全产物 recap<span class="v">with_skill · report.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/with_skill/run-1/outputs/report.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style></style><div class="ss-inner"><!doctype html><title>UAT report</title><h1>PASS</h1></div></template></div>
-      </div>
-      <div class="eval-block" id="ss-2">
-        <div class="eh"><span class="t">eval-5 · 会话全产物 recap<span class="v">without_skill · main.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/without_skill/run-1/outputs/main.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style>
-.ss-inner{color-scheme:dark;--bg:#0b0d10;--panel:#13171c;--line:#29313a;--text:#edf2f7;--muted:#93a1b2;--green:#63d69a;--amber:#f3c86a;--blue:#78b7ff;--red:#ff8a8a;--r:16px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% 0,#172438 0,transparent 34rem),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1060px,calc(100% - 28px));margin:auto;padding:36px 0 60px}header{margin-bottom:22px}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(30px,6vw,54px);line-height:1.02;margin:8px 0 14px;letter-spacing:-.045em}.verdict{border-left:4px solid var(--amber);background:#171a1d;padding:14px 16px;border-radius:0 var(--r) var(--r) 0;max-width:850px}.verdict strong{color:var(--green)}.meta,.muted{color:var(--muted)}.meta{margin-top:10px;font-size:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:color-mix(in srgb,var(--panel) 94%,transparent);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 14px 40px #0004}.card h2,.card h3{margin:0 0 10px}.card h2{font-size:20px}.span2{grid-column:1/-1}.status{display:inline-flex;gap:7px;align-items:center;color:var(--green);font-weight:800}.dot{width:9px;height:9px;background:var(--green);border-radius:50%;box-shadow:0 0 0 5px #63d69a20}.warning{color:var(--amber)}a,button{color:var(--blue)}a:hover{text-decoration:none}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}input[type=search],button,.button{border:1px solid var(--line);background:#0e1216;color:var(--text);border-radius:10px;padding:9px 11px;font:inherit}.button{display:inline-block;text-decoration:none}button{cursor:pointer}button:hover,.button:hover{border-color:var(--blue)}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}th button{padding:0;border:0;background:none;color:var(--muted);font-weight:750}.type{color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}.preview{width:100%;height:170px;border:1px solid var(--line);border-radius:12px;background:white}video{width:100%;max-height:320px;background:#050607;border-radius:12px;border:1px solid var(--line)}pre{white-space:pre-wrap;word-break:break-word;background:#0b0e12;padding:12px;border-radius:10px;border:1px solid var(--line);color:#cfe1f5}details{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}summary{cursor:pointer;font-weight:750}.check{display:flex;gap:10px;padding:8px 0}.check input{accent-color:var(--green)}.progress{height:8px;background:#0b0e12;border-radius:10px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--green);transition:.2s}footer{color:var(--muted);font-size:12px;margin-top:22px;border-top:1px solid var(--line);padding-top:18px}.hash{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;font-size:11px}.empty{display:none;color:var(--muted);padding:15px}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:3px 8px;margin-right:5px;font-size:12px;color:var(--muted)}@media(max-width:720px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}.wrap{padding-top:24px}th:nth-child(3),td:nth-child(3){display:none}.preview{height:130px}}
-</style><div class="ss-inner">
-<main class="wrap">
-<header>
-  <div class="eyebrow">Pi session · eval-session-5</div>
-  <h1>Fresh UAT 产物已归集</h1>
-  <div class="verdict"><strong>QA 与报告均声明 PASS</strong>；4 个指定产物已进入便携包并可从本页直接查看或下载。注意：视频仅 18 B、trace 内容为“fake trace”，因此当前结论只证明产物已生成与归集，不足以证明证据质量。</div>
-  <div class="meta">项目：<code>/tmp/pitch-video-project</code> · 归集时间：2026-08-11T01:27:20Z · 输入：本次会话指定目录</div>
-</header>
-
-<section class="grid" aria-label="关键证据">
-  <article class="card">
-    <h2>QA 结果</h2>
-    <div class="status"><span class="dot"></span>PASS · 0 errors</div>
-    <p class="muted">解析自 <code>qa.json</code>，不是二次推断。</p>
-    <details><summary>查看原始 JSON</summary><pre>{"passed":true,"errors":[]}</pre><a class="button" href="qa.json" download>下载 qa.json</a></details>
-  </article>
-
-  <article class="card">
-    <h2>Trace 摘要</h2>
-    <p><span class="pill">ZIP 126 B</span><span class="pill">1 file</span></p>
-    <pre>trace.txt → "fake trace"</pre>
-    <a class="button" href="trace.zip" download>下载 trace.zip</a>
-  </article>
-
-  <article class="card span2">
-    <h2>UAT 报告 · 页面内预览</h2>
-    <iframe class="preview" src="report.html" title="UAT report preview" sandbox></iframe>
-    <div class="toolbar"><a class="button" href="report.html" target="_blank" rel="noopener">独立打开报告 ↗</a></div>
-  </article>
-
-  <article class="card span2">
-    <h2>运行录像 · 页面内播放</h2>
-    <video controls preload="metadata" src="run.webm">浏览器无法播放；请<a href="run.webm" download>下载录像</a>。</video>
-    <p id="videoNote" class="warning">文件仅 18 B；若无法播放，说明现有捕获不足，需重新录制。</p>
-    <a class="button" href="run.webm" download>下载 run.webm</a>
-  </article>
-
-  <article class="card span2">
-    <h2>产物索引</h2>
-    <div class="toolbar"><input id="search" type="search" placeholder="搜索文件或类型…" aria-label="搜索产物"><span id="count" class="muted"></span></div>
-    <div style="overflow:auto"><table id="artifacts"><thead><tr><th><button data-sort="name">文件 ↕</button></th><th><button data-sort="type">用途 ↕</button></th><th><button data-sort="size">大小 ↕</button></th><th>窄操作</th></tr></thead><tbody>
-      <tr data-name="report.html" data-type="uat report" data-size="53"><td><strong>report.html</strong></td><td>UAT 报告</td><td>53 B</td><td><a href="report.html" target="_blank">打开</a></td></tr>
-      <tr data-name="qa.json" data-type="qa result" data-size="28"><td><strong>qa.json</strong></td><td>QA 结果</td><td>28 B</td><td><a href="qa.json" target="_blank">打开</a></td></tr>
-      <tr data-name="run.webm" data-type="video capture" data-size="18"><td><strong>run.webm</strong></td><td>运行录像</td><td>18 B</td><td><a href="run.webm" download>下载</a></td></tr>
-      <tr data-name="trace.zip" data-type="trace archive" data-size="126"><td><strong>trace.zip</strong></td><td>Trace 归档</td><td>126 B</td><td><a href="trace.zip" download>下载</a></td></tr>
-    </tbody></table><div id="empty" class="empty">没有匹配产物。</div></div>
-    <details><summary>完整性校验 · SHA-256</summary><pre class="hash">report.html  8713327d51e1a3e32771b889270449cf611c5843a57caf2d5463b8958911518d
-qa.json      012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500
-run.webm     0da62f1e5928525cba07cb35414f4cb4e6178c6ad72070e5d92534cafb3934dc
-trace.zip    eb389820e51295ef9bae57dbdbe51425543c1d64d6b1033448c5811ad412966f</pre></details>
-  </article>
-
-  <article class="card span2">
-    <h2>建议的验证闭环</h2>
-    <div id="checks">
-      <label class="check"><input type="checkbox" data-task="在目标浏览器中独立打开 report.html，确认 PASS 页面可见"> <span>独立打开报告，确认 PASS 页面可见</span></label>
-      <label class="check"><input type="checkbox" data-task="重新生成可播放的 run.webm，并替换当前 18 B 文件"> <span>重新生成可播放录像（当前仅 18 B）</span></label>
-      <label class="check"><input type="checkbox" data-task="用真实 trace 替换 trace.zip 中的占位内容"> <span>用真实 trace 替换占位内容</span></label>
-    </div>
-    <div class="progress" aria-label="完成进度"><i id="bar"></i></div>
-    <div class="toolbar"><span id="progressText" class="muted">0 / 3 完成</span><button id="copy">复制 Markdown 清单</button></div>
-  </article>
-</section>
-
-<footer>
-  <div>来源项目：<code>/tmp/pitch-video-project</code> · Pi session ID：<code>eval-session-5</code></div>
-  <div>归集来源：<code>/Users/liushiyuwin/.pi/skills/onepager/evals/files/session-artifacts</code></div>
-  <div>生命周期：静态离线便携包；无 CDN、无后台服务。仅复制会话指定的 4 个产物；未复制同目录的非指定文件。</div>
-</footer>
-</main>
-<script>
-const rows=[...document.querySelectorAll('#artifacts tbody tr')],search=document.querySelector('#search'),count=document.querySelector('#count'),empty=document.querySelector('#empty');
-function filter(){const q=search.value.trim().toLowerCase();let n=0;rows.forEach(r=>{const show=!q||(r.dataset.name+' '+r.dataset.type).includes(q);r.hidden=!show;if(show)n++});count.textContent=`${n} / ${rows.length} 个产物`;empty.style.display=n?'none':'block'}
-search.addEventListener('input',filter);filter();
-let direction=1,last='';document.querySelectorAll('[data-sort]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.sort;direction=last===k?-direction:1;last=k;rows.sort((a,c)=>k==='size'?(+a.dataset[k]- +c.dataset[k])*direction:a.dataset[k].localeCompare(c.dataset[k])*direction).forEach(r=>r.parentNode.appendChild(r));document.querySelectorAll('[data-sort]').forEach(x=>x.textContent=x.textContent.replace(/[↑↓]/g,'↕'));b.textContent=b.textContent.replace('↕',direction>0?'↑':'↓');filter()}));
-const boxes=[...document.querySelectorAll('#checks input')],key='onepager:eval-session-5:checks';try{const saved=JSON.parse(localStorage.getItem(key)||'[]');boxes.forEach((b,i)=>b.checked=!!saved[i])}catch(e){}
-function update(){const n=boxes.filter(b=>b.checked).length;document.querySelector('#bar').style.width=`${n/boxes.length*100}%`;document.querySelector('#progressText').textContent=`${n} / ${boxes.length} 完成`;try{localStorage.setItem(key,JSON.stringify(boxes.map(b=>b.checked)))}catch(e){}}
-boxes.forEach(b=>b.addEventListener('change',update));update();
-document.querySelector('#copy').addEventListener('click',async e=>{const text=['# eval-session-5 验证清单','',...boxes.map(b=>`- [${b.checked?'x':' '}] ${b.dataset.task}`)].join('\n');try{await navigator.clipboard.writeText(text);e.currentTarget.textContent='已复制 ✓'}catch(err){prompt('复制以下清单：',text)}setTimeout(()=>e.currentTarget.textContent='复制 Markdown 清单',1500)});
-</script>
-</div></template></div>
-      </div>
-      <div class="eval-block" id="ss-3">
-        <div class="eh"><span class="t">eval-5 · 会话全产物 recap<span class="v">without_skill · report.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-5-session-recap-all-artifacts/without_skill/run-1/outputs/report.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style></style><div class="ss-inner"><!doctype html><title>UAT report</title><h1>PASS</h1></div></template></div>
-      </div>
-      <div class="eval-block" id="ss-4">
-        <div class="eh"><span class="t">eval-6 · 主视频可见<span class="v">with_skill · main.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-6-visible-primary-video/with_skill/run-1/outputs/main.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style>
-.ss-inner{--ink:#15211c;--muted:#627069;--paper:#f5f2e9;--card:#fffdf7;--green:#286149;--lime:#c9f27b;--line:#d9ded5;--red:#a84438;--shadow:0 18px 60px #17362914}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}a{color:inherit}.wrap{width:min(1100px,calc(100% - 32px));margin:auto}.hero{padding:42px 0 24px}.hero-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(250px,.6fr);gap:22px;align-items:stretch}.intro,.stamp{border:1px solid var(--line);border-radius:24px;background:var(--card);box-shadow:var(--shadow)}.intro{padding:32px}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--green);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.dot{width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 5px #c9f27b40}h1{margin:14px 0 8px;font-size:clamp(32px,6vw,62px);line-height:1;letter-spacing:-.045em}.verdict{margin:18px 0 0;padding-left:15px;border-left:4px solid var(--green);font-size:clamp(17px,2.4vw,22px);font-weight:680}.stamp{padding:24px;display:grid;place-items:center;text-align:center;overflow:hidden}.stamp svg{width:150px;height:75px;border-radius:18px;box-shadow:0 16px 30px #28614935}.stamp strong{display:block;margin-top:13px;font-size:28px}.stamp small{color:var(--muted)}section{margin:18px 0 32px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:12px}.section-head h2{margin:0;font-size:21px}.section-head p{margin:0;color:var(--muted);font-size:13px}.primary{background:#0f1915;border-radius:24px;padding:18px;color:#f7fff9;box-shadow:var(--shadow)}.primary-label{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 10px;background:var(--lime);color:#17351f;font-weight:800;font-size:12px}.primary video{display:block;width:100%;aspect-ratio:16/9;max-height:610px;background:#050807;border-radius:16px}.video-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 4px 1px}.video-foot p{margin:0;color:#bdc8c1}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:8px 13px;border:1px solid var(--line);border-radius:11px;background:var(--card);text-decoration:none;font-weight:750;cursor:pointer}.primary .btn{border-color:#456257;background:#1d2c26;color:white}.media-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.48fr);gap:16px}.evidence,.actions,.artifacts{border:1px solid var(--line);border-radius:20px;background:var(--card);padding:18px}.evidence video{width:100%;aspect-ratio:16/9;background:#101411;border-radius:12px;display:block}.evidence h3,.actions h3{margin:0 0 12px}.evidence p{color:var(--muted);margin:10px 0 0}.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px}.bar{height:7px;border-radius:9px;background:#e3e7df;margin:8px 0 14px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:var(--green);transition:.2s}.check{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #edf0eb}.check:last-of-type{border:0}.check input{accent-color:var(--green)}.actions .btn{width:100%;margin-top:14px}.tools{display:flex;gap:8px;flex-wrap:wrap}.tools input{min-width:210px;flex:1;border:1px solid var(--line);background:white;border-radius:11px;padding:10px 12px;font:inherit}.artifacts{padding:0;overflow:hidden}.artifact-head,.artifact-row{display:grid;grid-template-columns:1.2fr .7fr .8fr;align-items:center;gap:12px}.artifact-head{padding:11px 18px;background:#ecefe8;color:var(--muted);font-size:12px;font-weight:800}.sort{border:0;background:transparent;text-align:left;padding:0;color:inherit;font:inherit;font-weight:inherit;cursor:pointer}.artifact-row{padding:15px 18px;border-top:1px solid var(--line)}.artifact-row:first-of-type{border-top:0}.name{font-weight:800}.name small{display:block;color:var(--muted);font-weight:500}.type{color:var(--muted)}.open{text-align:right}.open a{color:var(--green);font-weight:800;text-underline-offset:3px}.empty{display:none;padding:24px;text-align:center;color:var(--muted)}details{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:0 16px}summary{padding:15px 0;font-weight:800;cursor:pointer}.audit{padding:0 0 14px;color:var(--muted);font-size:13px}.audit code{overflow-wrap:anywhere;color:var(--ink)}footer{margin:38px 0 28px;color:var(--muted);font-size:12px}.toast{position:fixed;left:50%;bottom:24px;translate:-50% 20px;padding:10px 15px;border-radius:999px;background:#11251c;color:white;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;translate:-50% 0}@media(max-width:760px){.hero{padding-top:22px}.hero-grid,.media-grid{grid-template-columns:1fr}.intro{padding:24px}.stamp{display:none}.artifact-head,.artifact-row{grid-template-columns:1fr auto}.artifact-head span:nth-child(2),.artifact-row .type{display:none}.video-foot{align-items:flex-start;flex-direction:column}.open{text-align:right}.section-head{align-items:flex-start;flex-direction:column;gap:3px}}
-</style><div class="ss-inner">
-<header class="hero"><div class="wrap hero-grid">
-  <div class="intro"><div class="eyebrow"><span class="dot"></span> Debug session · completed</div><h1>调试会话已通过</h1><p class="verdict">最终报告为 <strong>PASS</strong>；优先观看成功录像，失败录像保留为前后对照证据。</p></div>
-  <aside class="stamp" aria-label="成功状态视觉标记">
-    <!-- hero.svg 已内联，避免离线外链 -->
-    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" viewBox="0 0 120 60" role="img" aria-label="绿色成功标记"><rect width="120" height="60" rx="10" fill="#286149"/><path d="m37 30 13 12 31-28" fill="none" stroke="#c9f27b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <div><strong>PASS</strong><small>最终验收状态</small></div>
-  </aside>
-</div></header>
-<main class="wrap">
-<section aria-labelledby="final-title"><div class="section-head"><div><h2 id="final-title">最终成功录像</h2><p>主产物直接可见，不藏在证据折叠区</p></div><span class="badge">● PRIMARY</span></div>
-  <div class="primary"><div class="primary-label"><strong>run.webm</strong><span>最终成功</span></div><video controls preload="metadata" playsinline><source src="run.webm" type="video/webm">浏览器无法播放 WebM，请使用下方下载链接。</video><div class="video-foot"><p class="media-status">可播放时长与画面以源文件为准。</p><a class="btn" href="run.webm" download>下载最终录像 ↓</a></div></div>
-</section>
-<section><div class="section-head"><div><h2>对照与行动</h2><p>一次只通过一扇窄门取所需信息</p></div></div><div class="media-grid">
-  <article class="evidence"><h3>失败证据 · failure.webm</h3><video controls preload="metadata" playsinline><source src="failure.webm" type="video/webm">浏览器无法播放 WebM。</video><p>用于与最终成功结果对照。<a href="failure.webm" download>下载失败录像 →</a></p></article>
-  <aside class="actions"><h3>交接检查</h3><div class="progress-meta"><span>完成进度</span><strong id="count">0 / 3</strong></div><div class="bar"><span id="bar"></span></div>
-    <label class="check"><input type="checkbox" data-item="观看最终成功录像">观看最终成功录像</label><label class="check"><input type="checkbox" data-item="按需核对失败证据">按需核对失败证据</label><label class="check"><input type="checkbox" data-item="打开最终 UAT 报告">打开最终 UAT 报告</label><button class="btn" id="copy">复制 Markdown 清单</button>
-  </aside>
-</div></section>
-<section><div class="section-head"><div><h2>全部会话产物</h2><p id="result-count">3 个已校验入口</p></div><div class="tools"><input id="search" type="search" placeholder="搜索名称、类型或用途…" aria-label="搜索会话产物"></div></div>
-  <div class="artifacts"><div class="artifact-head"><button class="sort" data-sort="name">产物 ↕</button><button class="sort" data-sort="type">类型 ↕</button><span style="text-align:right">入口</span></div><div id="rows">
-    <div class="artifact-row" data-name="run.webm 最终成功录像" data-type="视频 webm"><div class="name">run.webm<small>最终成功录像 · 主产物</small></div><div class="type">视频 · WebM</div><div class="open"><a href="run.webm">打开 / 下载 →</a></div></div>
-    <div class="artifact-row" data-name="failure.webm 失败证据录像" data-type="视频 webm"><div class="name">failure.webm<small>失败现场 · 对照证据</small></div><div class="type">视频 · WebM</div><div class="open"><a href="failure.webm">打开 / 下载 →</a></div></div>
-    <div class="artifact-row" data-name="report.html 最终 uat 报告 pass" data-type="报告 html"><div class="name">report.html<small>最终 UAT 报告 · PASS</small></div><div class="type">报告 · HTML</div><div class="open"><a href="report.html">打开报告 →</a></div></div>
-  </div><div class="empty" id="empty">没有匹配的会话产物</div></div>
-</section>
-<section><details><summary>审计信息与来源</summary><div class="audit">结论依据：输入中的最终报告内容为 “PASS”。<br>来源项目：<code>/tmp/debug-session</code><br>会话 ID：<code>eval-session-6</code><br>生成时间：<code>2026-08-11 09:27:19 +0800</code><br>归集范围：用户明确提供的 4 个输入文件；hero.svg 已内联为页面视觉素材，3 个会话产物已复制并使用相对链接。</div></details></section>
-</main>
-<footer class="wrap">离线可用 · 无 CDN · 媒体与报告使用可携带的相对路径</footer><div class="toast" id="toast" role="status">已复制</div>
-<script>
-const checks=[...document.querySelectorAll('.check input')],bar=document.querySelector('#bar'),count=document.querySelector('#count');
-function progress(){const n=checks.filter(x=>x.checked).length;count.textContent=`${n} / ${checks.length}`;bar.style.width=`${n/checks.length*100}%`;localStorage.setItem('eval-session-6-checks',JSON.stringify(checks.map(x=>x.checked)))}
-try{const saved=JSON.parse(localStorage.getItem('eval-session-6-checks'));if(Array.isArray(saved))checks.forEach((x,i)=>x.checked=!!saved[i])}catch(e){} checks.forEach(x=>x.addEventListener('change',progress));progress();
-const toast=document.querySelector('#toast');function ping(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1500)}
-document.querySelector('#copy').onclick=async()=>{const md=['# eval-session-6 交接清单',...checks.map(x=>`- [${x.checked?'x':' '}] ${x.dataset.item}`)].join('\n');try{await navigator.clipboard.writeText(md);ping('Markdown 已复制')}catch(e){const a=document.createElement('textarea');a.value=md;document.body.append(a);a.select();document.execCommand('copy');a.remove();ping('Markdown 已复制')}};
-const rows=document.querySelector('#rows'),search=document.querySelector('#search'),result=document.querySelector('#result-count'),empty=document.querySelector('#empty');function filter(){const q=search.value.trim().toLowerCase();let n=0;[...rows.children].forEach(r=>{const show=(r.dataset.name+' '+r.dataset.type).toLowerCase().includes(q);r.hidden=!show;if(show)n++});result.textContent=`${n} 个${q?'匹配':'已校验'}入口`;empty.style.display=n?'none':'block'}search.oninput=filter;
-let direction=1;document.querySelectorAll('.sort').forEach(b=>b.onclick=()=>{direction*=-1;[...rows.children].sort((a,c)=>a.dataset[b.dataset.sort].localeCompare(c.dataset[b.dataset.sort],'zh-CN')*direction).forEach(r=>rows.append(r));b.textContent=`${b.dataset.sort==='name'?'产物':'类型'} ${direction>0?'↑':'↓'}`});
-document.querySelectorAll('video').forEach(v=>v.addEventListener('error',()=>{const s=v.closest('article')?.querySelector('p')||v.parentElement.querySelector('.media-status');if(s)s.firstChild.textContent='当前浏览器无法解码此源文件；可使用下载入口。 '}));
-</script>
-</div></template></div>
-      </div>
-      <div class="eval-block" id="ss-5">
-        <div class="eh"><span class="t">eval-6 · 主视频可见<span class="v">with_skill · report.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-6-visible-primary-video/with_skill/run-1/outputs/report.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style></style><div class="ss-inner"><!doctype html><title>UAT report</title><h1>PASS</h1></div></template></div>
-      </div>
-      <div class="eval-block" id="ss-6">
-        <div class="eh"><span class="t">eval-6 · 主视频可见<span class="v">without_skill · main.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-6-visible-primary-video/without_skill/run-1/outputs/main.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style>
-.ss-inner{--ink:#15231d;--muted:#647169;--paper:#f5f3ed;--card:#fffefa;--green:#286149;--green2:#dce9df;--red:#9b413b;--red2:#f5e2df;--line:#d9ddd7;--gold:#d5a63d;--shadow:0 16px 42px #1b362514}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}header{padding:28px 0 20px}.brand{display:flex;align-items:center;gap:12px;color:var(--green);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px}.brand svg{width:60px;height:30px;border-radius:8px}.hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:end;margin-top:28px}.eyebrow{color:var(--green);font-size:13px;font-weight:800;margin:0 0 8px}.hero h1{font-family:Georgia,serif;font-size:clamp(34px,6vw,68px);line-height:.98;letter-spacing:-.045em;margin:0;max-width:750px}.verdict{max-width:760px;font-size:18px;margin:18px 0 0}.badge{display:inline-flex;align-items:center;gap:8px;background:var(--green2);color:var(--green);padding:7px 12px;border-radius:999px;font-weight:800}.dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 5px #28614918}.meta{text-align:right;color:var(--muted);font-size:13px}.meta strong{display:block;color:var(--ink);font-size:15px}.section{margin:18px 0 34px}.section-title{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}.section-title h2{font:700 23px/1.2 Georgia,serif;margin:0}.section-title p{margin:0;color:var(--muted);font-size:13px}.primary{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}.primary-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.primary-head h3{margin:0;font-size:18px}.status{background:var(--green);color:white;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800}.video-shell{background:#111;border-radius:15px;overflow:hidden;min-height:280px;display:grid;place-items:center}.video-shell video{display:block;width:100%;max-height:620px;min-height:280px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:white;text-decoration:none;font-weight:750;cursor:pointer;font:inherit}.btn:hover,.btn:focus{border-color:var(--green);outline:2px solid #28614922}.btn.main{background:var(--green);border-color:var(--green);color:white}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.card h3{margin:0 0 6px;font-size:17px}.card p{color:var(--muted);margin:0 0 12px}.failure{border-top:4px solid var(--red)}.report{border-top:4px solid var(--gold)}.mini-video{background:#111;border-radius:11px;width:100%;min-height:180px;display:block}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}.search{flex:1;min-width:220px;border:1px solid var(--line);background:white;border-radius:10px;padding:10px 12px;font:inherit}.table-wrap{overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}tr:last-child td{border:0}th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);cursor:pointer;user-select:none}th:hover{color:var(--green)}td:first-child{font-weight:800}.type{display:inline-block;border-radius:999px;padding:3px 8px;background:#edf0ed;font-size:12px}.small-link{color:var(--green);font-weight:800;text-underline-offset:3px}.empty{display:none;color:var(--muted);padding:20px;text-align:center}.check-card{background:#173a2d;color:#f7fbf8;border-radius:20px;padding:20px}.progress-line{display:flex;align-items:center;gap:12px;margin:12px 0 16px}.bar{height:8px;background:#ffffff24;border-radius:99px;overflow:hidden;flex:1}.bar span{display:block;height:100%;width:0;background:#baddc4;transition:width .2s}.checks{display:grid;gap:8px}.check{display:flex;gap:10px;align-items:flex-start;background:#ffffff0c;padding:10px;border-radius:10px}.check input{margin-top:4px;accent-color:#baddc4}.check label{cursor:pointer}.check:has(input:checked) label{text-decoration:line-through;color:#b7c7bf}.check-card .btn{margin-top:14px;background:transparent;color:white;border-color:#ffffff52}.copy-note{font-size:12px;color:#c5d4cc;margin-left:8px}details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 15px;margin:12px 0}summary{cursor:pointer;font-weight:800;padding:13px 0}details p{color:var(--muted)}footer{border-top:1px solid var(--line);padding:23px 0 36px;color:var(--muted);font-size:12px}.source{overflow-wrap:anywhere}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:white;padding:10px 14px;border-radius:10px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:720px){.hero{grid-template-columns:1fr}.meta{text-align:left}.grid{grid-template-columns:1fr}.wrap{width:min(100% - 20px,1120px)}.video-shell,.video-shell video{min-height:190px}.section-title{align-items:start;flex-direction:column}.primary{padding:12px}}
-</style><div class="ss-inner">
-<header class="wrap">
-  <div class="brand" aria-label="会话标识">
-    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" viewBox="0 0 120 60" role="img" aria-label="绿色会话素材"><rect width="120" height="60" rx="12" fill="#286149"/><path d="M22 30h26m12 0h38" stroke="#f5f3ed" stroke-width="5" stroke-linecap="round"/><circle cx="54" cy="30" r="7" fill="#d5a63d"/></svg>
-    Debug session / artifact index
-  </div>
-  <div class="hero">
-    <div>
-      <p class="eyebrow">FINAL HANDOFF</p>
-      <h1>调试闭环已形成</h1>
-      <p class="verdict"><span class="badge"><span class="dot"></span>最终结果：成功</span>　最终录像已置于首屏；失败证据与 UAT 报告均可直接进入。</p>
-    </div>
-    <div class="meta"><span>SESSION</span><strong>eval-session-6</strong><span>3 个会话产物</span></div>
-  </div>
-</header>
-
-<main class="wrap">
-  <section class="section" aria-labelledby="final-title">
-    <div class="section-title"><h2 id="final-title">最终成功录像</h2><p>首要证据 · 页面打开即可见</p></div>
-    <article class="primary">
-      <div class="primary-head"><h3>run.webm</h3><span class="status">SUCCESS RUN</span></div>
-      <div class="video-shell"><video controls preload="metadata" aria-label="最终成功录像"><source src="run.webm" type="video/webm">浏览器无法播放此 WebM；请使用下方按钮打开或下载。</video></div>
-      <div class="actions"><a class="btn main" href="run.webm" target="_blank">打开录像 ↗</a><a class="btn" href="run.webm" download>下载 run.webm</a></div>
-    </article>
-  </section>
-
-  <section class="section" aria-labelledby="related-title">
-    <div class="section-title"><h2 id="related-title">其余产物</h2><p>失败 → 修复 → 报告，一条最短审计路径</p></div>
-    <div class="grid">
-      <article class="card failure">
-        <h3>失败证据 · failure.webm</h3><p>用于对照成功录像，保留问题发生时的可视证据。</p>
-        <video class="mini-video" controls preload="metadata" aria-label="失败证据录像"><source src="failure.webm" type="video/webm">浏览器无法播放此 WebM。</video>
-        <div class="actions"><a class="btn" href="failure.webm" target="_blank">打开失败录像 ↗</a><a class="btn" href="failure.webm" download>下载</a></div>
-      </article>
-      <article class="card report">
-        <h3>最终报告 · report.html</h3><p>UAT 结果：<strong>PASS</strong>。报告作为独立页面保留，可离线打开。</p>
-        <div class="actions"><a class="btn main" href="report.html">进入报告 →</a><a class="btn" href="report.html" download>下载</a></div>
-        <details><summary>报告最小摘要</summary><p>报告标题为 “UAT report”，结论为 “PASS”。完整原件未改写。</p></details>
-      </article>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="index-title">
-    <div class="section-title"><h2 id="index-title">产物入口</h2><p>搜索只显示需要的条目；点击表头排序</p></div>
-    <div class="toolbar"><input id="search" class="search" type="search" placeholder="搜索名称、类型或作用…" aria-label="搜索产物"><button class="btn" id="reset" type="button">清除</button></div>
-    <div class="table-wrap">
-      <table id="artifacts">
-        <thead><tr><th data-key="name">名称 ↕</th><th data-key="type">类型 ↕</th><th data-key="purpose">作用 ↕</th><th>入口</th></tr></thead>
-        <tbody>
-          <tr><td>run.webm</td><td><span class="type">视频</span></td><td>最终成功录像</td><td><a class="small-link" href="run.webm" target="_blank">打开 →</a></td></tr>
-          <tr><td>failure.webm</td><td><span class="type">视频</span></td><td>失败对照证据</td><td><a class="small-link" href="failure.webm" target="_blank">打开 →</a></td></tr>
-          <tr><td>report.html</td><td><span class="type">报告</span></td><td>最终 UAT 报告</td><td><a class="small-link" href="report.html">打开 →</a></td></tr>
-        </tbody>
-      </table>
-      <div id="empty" class="empty">没有匹配产物。</div>
-    </div>
-  </section>
-
-  <section class="section check-card" aria-labelledby="handoff-title">
-    <div class="section-title"><h2 id="handoff-title">交付核验</h2><p style="color:#c5d4cc">状态只保存在当前浏览器</p></div>
-    <div class="progress-line"><div class="bar"><span id="bar"></span></div><strong id="count">0 / 3</strong></div>
-    <div class="checks">
-      <div class="check"><input id="c1" type="checkbox"><label for="c1">已观看最终成功录像 run.webm</label></div>
-      <div class="check"><input id="c2" type="checkbox"><label for="c2">已核对失败证据 failure.webm</label></div>
-      <div class="check"><input id="c3" type="checkbox"><label for="c3">已确认最终报告 report.html 为 PASS</label></div>
-    </div>
-    <button id="copy" class="btn" type="button">复制 Markdown 清单</button><span id="copyNote" class="copy-note"></span>
-  </section>
-
-  <details><summary>审计说明</summary><p>页面仅汇总本次输入明确列出的会话产物。视频与报告以原件复制，hero.svg 已直接内联到页头；未引入 CDN、字体或其他网络资源。录像内容未被转码或改写。</p></details>
-</main>
-
-<footer><div class="wrap source">来源项目：<strong>/tmp/debug-session</strong><br>Session ID：<strong>eval-session-6</strong><br>输入产物目录：/Users/liushiyuwin/.pi/skills/onepager/evals/files/session-artifacts<br>生成方式：基于用户提供的 4 个输入文件建立相对链接便携包；hero.svg 内联，3 个可导航产物复制到本目录。</div></footer>
-<div id="toast" class="toast" role="status" aria-live="polite">已复制</div>
-<script>
-const rows=[...document.querySelectorAll('#artifacts tbody tr')],search=document.querySelector('#search'),empty=document.querySelector('#empty');
-function filter(){const q=search.value.trim().toLowerCase();let n=0;rows.forEach(r=>{const show=r.textContent.toLowerCase().includes(q);r.hidden=!show;if(show)n++});empty.style.display=n?'none':'block'}
-search.addEventListener('input',filter);document.querySelector('#reset').onclick=()=>{search.value='';filter();search.focus()};
-let sortKey='',dir=1;document.querySelectorAll('th[data-key]').forEach((th,i)=>th.onclick=()=>{dir=sortKey===th.dataset.key?-dir:1;sortKey=th.dataset.key;rows.sort((a,b)=>a.cells[i].textContent.trim().localeCompare(b.cells[i].textContent.trim(),'zh-CN')*dir).forEach(r=>r.parentNode.appendChild(r));document.querySelectorAll('th[data-key]').forEach(x=>x.textContent=x.textContent.replace(/[↑↓↕]/g,'').trim()+' ↕');th.textContent=th.textContent.replace('↕',dir>0?'↑':'↓');filter()});
-const checks=[...document.querySelectorAll('.checks input')],bar=document.querySelector('#bar'),count=document.querySelector('#count');
-function update(){const n=checks.filter(x=>x.checked).length;bar.style.width=(n/checks.length*100)+'%';count.textContent=n+' / '+checks.length;checks.forEach(x=>localStorage.setItem('eval-session-6:'+x.id,x.checked?'1':'0'))}
-checks.forEach(x=>{x.checked=localStorage.getItem('eval-session-6:'+x.id)==='1';x.addEventListener('change',update)});update();
-document.querySelector('#copy').onclick=async()=>{const md=['# eval-session-6 交付核验',...checks.map(x=>`- [${x.checked?'x':' '}] ${x.labels[0].textContent}`)].join('\n');try{await navigator.clipboard.writeText(md)}catch(e){const t=document.createElement('textarea');t.value=md;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}const toast=document.querySelector('#toast');toast.classList.add('show');document.querySelector('#copyNote').textContent='已复制当前状态';setTimeout(()=>toast.classList.remove('show'),1400)};
-</script>
-</div></template></div>
-      </div>
-      <div class="eval-block" id="ss-7">
-        <div class="eh"><span class="t">eval-6 · 主视频可见<span class="v">without_skill · report.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-6-visible-primary-video/without_skill/run-1/outputs/report.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style></style><div class="ss-inner"><!doctype html><title>UAT report</title><h1>PASS</h1></div></template></div>
-      </div>
-      <div class="eval-block" id="ss-8">
-        <div class="eh"><span class="t">eval-7 · 范围排除旧产物<span class="v">with_skill · main.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-7-scope-excludes-old-artifact/with_skill/run-1/outputs/main.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style>
-    .ss-inner{--bg:#0b1020;--panel:#121a2d;--panel2:#172238;--text:#eef4ff;--muted:#9baac2;--line:#2a3852;--cyan:#67e8f9;--green:#62e6a7;--amber:#f8c76a;--shadow:0 18px 50px #02061166}
-    *{box-sizing:border-box} .ss-inner{scroll-behavior:smooth} .ss-inner{margin:0;background:radial-gradient(circle at 90% 0,#173154 0,transparent 28rem),var(--bg);color:var(--text);font:15px/1.6 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    a{color:var(--cyan);text-underline-offset:3px} button,input{font:inherit} button{cursor:pointer}
-    .shell{width:min(980px,calc(100% - 32px));margin:auto;padding:58px 0 36px}
-    .eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-    h1{font-size:clamp(32px,7vw,62px);line-height:1.02;letter-spacing:-.045em;margin:10px 0 18px;max-width:800px}
-    .verdict{display:grid;grid-template-columns:auto 1fr;gap:13px;align-items:start;padding:17px 18px;background:#10253a;border:1px solid #265774;border-radius:16px;box-shadow:var(--shadow);font-size:17px}
-    .mark{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#062217;font-weight:900}
-    .verdict strong{color:var(--green)} .sub{color:var(--muted);margin:4px 0 0}
-    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 34px}
-    .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}.stat b{display:block;font-size:24px}.stat span{color:var(--muted);font-size:12px}
-    section{margin-top:34px} .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:13px} h2{font-size:20px;margin:0}.hint{color:var(--muted);font-size:13px}
-    .toolbar{display:flex;gap:10px;margin-bottom:10px}.search{width:100%;padding:11px 13px;border-radius:11px;background:#0d1526;border:1px solid var(--line);color:var(--text);outline:none}.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #67e8f91a}
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow)}table{width:100%;border-collapse:collapse;min-width:620px}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted);background:#0e1729}th button{padding:0;border:0;background:none;color:inherit;font-weight:700}tr:last-child td{border-bottom:0}.type{display:inline-block;padding:3px 8px;border:1px solid #3b526f;border-radius:999px;color:#c9d8ed;font-size:11px}.artifact-name{font-weight:800}.purpose{color:var(--muted);font-size:13px}.open{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:9px;background:var(--cyan);color:#06202b;text-decoration:none;font-weight:800;white-space:nowrap}.empty{display:none;padding:26px;text-align:center;color:var(--muted)}
-    details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:0 16px;margin-top:10px}summary{cursor:pointer;padding:14px 0;font-weight:750}details[open] summary{border-bottom:1px solid var(--line)}.detail-body{padding:14px 0}.json{margin:0;background:#09101e;border:1px solid #25334b;border-radius:10px;padding:13px;overflow:auto;color:#c9f7df}.audit{display:grid;grid-template-columns:150px 1fr;gap:8px 16px;margin:0}.audit dt{color:var(--muted)}.audit dd{margin:0;word-break:break-word}.good{color:var(--green)}.warn{color:var(--amber)}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em}
-    .actions{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}.progress-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}.track{height:8px;flex:1;border-radius:9px;background:#26344c;overflow:hidden}.fill{width:0;height:100%;background:var(--green);transition:width .2s}.count{color:var(--muted);font-size:12px;white-space:nowrap}.check{display:flex;gap:10px;align-items:flex-start;padding:10px 0}.check input{accent-color:var(--green);margin-top:5px}.check small{display:block;color:var(--muted)}.copy{margin-top:13px;border:1px solid #3e5977;background:#172841;color:var(--text);border-radius:10px;padding:9px 13px;font-weight:750}.copy:hover{border-color:var(--cyan)}
-    footer{border-top:1px solid var(--line);margin-top:42px;padding-top:20px;color:var(--muted);font-size:12px}.foot-grid{display:grid;grid-template-columns:110px 1fr;gap:6px 12px}.foot-grid b{color:#cad5e6}.foot-grid span{word-break:break-all}
-    .toast{position:fixed;right:18px;bottom:18px;background:#e7fff4;color:#08291c;padding:10px 14px;border-radius:10px;font-weight:800;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:none}
-    @media(max-width:640px){.shell{width:min(100% - 22px,980px);padding-top:34px}.stats{grid-template-columns:1fr}.section-head{display:block}.hint{margin-top:4px}.audit{grid-template-columns:1fr;gap:2px}.audit dd{margin-bottom:8px}.verdict{font-size:15px}}
-  </style><div class="ss-inner">
-  <main class="shell">
-    <header>
-      <div class="eyebrow">Session handoff · eval-session-7</div>
-      <h1>范围清楚，QA 已通过。</h1>
-      <div class="verdict">
-        <span class="mark" aria-hidden="true">✓</span>
-        <div><strong>本次会话唯一有归属证据的产物是 qa.json，结果 passed。</strong><p class="sub">旧会话视频未纳入；交付包只复制了当前会话所需文件。</p></div>
-      </div>
-      <div class="stats" aria-label="交接摘要">
-        <div class="stat"><b>1</b><span>已归集会话产物</span></div>
-        <div class="stat"><b>0</b><span>QA errors</span></div>
-        <div class="stat"><b>28 B</b><span>便携附件体积</span></div>
-      </div>
-    </header>
-
-    <section aria-labelledby="artifacts-title">
-      <div class="section-head"><h2 id="artifacts-title">会话产物</h2><span class="hint">搜索或排序，只取所需信息</span></div>
-      <div class="toolbar"><input id="search" class="search" type="search" placeholder="搜索名称、类型或用途…" aria-label="搜索会话产物"></div>
-      <div class="table-wrap">
-        <table id="artifactTable">
-          <thead><tr><th><button data-key="name">名称 ↕</button></th><th><button data-key="type">类型 ↕</button></th><th><button data-key="size">大小 ↕</button></th><th>操作</th></tr></thead>
-          <tbody><tr data-name="qa.json" data-type="json" data-size="28"><td><div class="artifact-name">qa.json</div><div class="purpose">当前会话确认的 QA 结果</div></td><td><span class="type">JSON</span></td><td>28 B</td><td><a class="open" href="qa.json" download>打开 / 下载 →</a></td></tr></tbody>
-        </table>
-        <div id="empty" class="empty">没有匹配的会话产物。</div>
-      </div>
-      <details>
-        <summary>查看 QA 最小证据</summary>
-        <div class="detail-body"><pre class="json"><code>{"passed":true,"errors":[]}</code></pre></div>
-      </details>
-      <details>
-        <summary>查看归集边界与审计</summary>
-        <div class="detail-body">
-          <dl class="audit">
-            <dt>纳入依据</dt><dd>当前聊天明确确认 <code>qa.json</code></dd>
-            <dt>完整性</dt><dd><span class="good">SHA-256</span> <code>012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500</code></dd>
-            <dt>排除项</dt><dd><span class="warn">failure.webm</span>：目录中存在，但聊天未将其归属当前会话；未复制、未链接、未嵌入。</dd>
-            <dt>项目检查</dt><dd><code>/tmp/scoped-handoff</code> 在采集时不存在；保留为来源项目标识，不据此推断额外产物。</dd>
-            <dt>采集时间</dt><dd>2026-08-11T09:27:10+0800</dd>
-            <dt>采集方法</dt><dd><code>read qa.json</code>；<code>stat</code> 两个明确输入；<code>test -d /tmp/scoped-handoff</code>；<code>shasum -a 256 qa.json</code></dd>
-          </dl>
-        </div>
-      </details>
-    </section>
-
-    <section aria-labelledby="actions-title">
-      <div class="section-head"><h2 id="actions-title">接手清单</h2><span class="hint">状态仅保存在本机浏览器</span></div>
-      <div class="actions">
-        <div class="progress-row"><div class="track" aria-hidden="true"><div id="fill" class="fill"></div></div><span id="count" class="count">0 / 2</span></div>
-        <label class="check"><input type="checkbox" data-action="确认 qa.json：passed=true，errors=[]"><span>确认 QA 结果<small>读取 qa.json，确认 passed=true 且 errors 为空。</small></span></label>
-        <label class="check"><input type="checkbox" data-action="保持产物范围：不要引入 failure.webm"><span>保持会话边界<small>后续交接不要将无当前会话归属证据的视频混入。</small></span></label>
-        <button id="copy" class="copy" type="button">复制 Markdown 清单</button>
-      </div>
-    </section>
-
-    <footer>
-      <div class="foot-grid"><b>来源项目</b><span>/tmp/scoped-handoff</span><b>Session ID</b><span>eval-session-7</span><b>生成时间</b><span>2026-08-11T09:27:10+0800</span><b>交付说明</b><span>离线可用；无 CDN、无外链资源、无后台服务。</span></div>
-    </footer>
-  </main>
-  <div id="toast" class="toast" role="status" aria-live="polite">已复制</div>
-  <script>
-    const search=document.querySelector('#search'), tbody=document.querySelector('tbody'), empty=document.querySelector('#empty');
-    const rows=()=>[...tbody.querySelectorAll('tr')];
-    search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();let n=0;rows().forEach(r=>{const show=r.textContent.toLowerCase().includes(q);r.hidden=!show;if(show)n++});empty.style.display=n?'none':'block'});
-    let sortState={key:'',dir:1};
-    document.querySelectorAll('th button').forEach(btn=>btn.addEventListener('click',()=>{const key=btn.dataset.key;sortState.dir=sortState.key===key?-sortState.dir:1;sortState.key=key;const list=rows().sort((a,b)=>{const av=key==='size'?+a.dataset[key]:a.dataset[key],bv=key==='size'?+b.dataset[key]:b.dataset[key];return (av>bv?1:av<bv?-1:0)*sortState.dir});list.forEach(r=>tbody.appendChild(r));document.querySelectorAll('th button').forEach(b=>b.textContent=b.textContent.replace(/[↑↓↕]/,'↕'));btn.textContent=btn.textContent.replace('↕',sortState.dir===1?'↑':'↓')}));
-    const checks=[...document.querySelectorAll('.check input')], fill=document.querySelector('#fill'), count=document.querySelector('#count'), store='handoff:eval-session-7';
-    try{const saved=JSON.parse(localStorage.getItem(store)||'[]');checks.forEach((c,i)=>c.checked=!!saved[i])}catch(e){}
-    function update(){const done=checks.filter(c=>c.checked).length;fill.style.width=(done/checks.length*100)+'%';count.textContent=`${done} / ${checks.length}`;try{localStorage.setItem(store,JSON.stringify(checks.map(c=>c.checked)))}catch(e){}}
-    checks.forEach(c=>c.addEventListener('change',update));update();
-    const toast=document.querySelector('#toast');
-    document.querySelector('#copy').addEventListener('click',async()=>{const md=['# eval-session-7 接手清单','',...checks.map(c=>`- [${c.checked?'x':' '}] ${c.dataset.action}`),'','产物：qa.json（SHA-256: 012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500）'].join('\n');try{await navigator.clipboard.writeText(md)}catch(e){const t=document.createElement('textarea');t.value=md;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1400)});
-  </script>
-</div></template></div>
-      </div>
-      <div class="eval-block" id="ss-9">
-        <div class="eh"><span class="t">eval-7 · 范围排除旧产物<span class="v">without_skill · main.html</span></span><a class="go" href="onepager-workspace/iteration-1/eval-7-scope-excludes-old-artifact/without_skill/run-1/outputs/main.html" target="_blank" rel="noopener">交互原版 ↗</a></div>
-        <div class="ss-slot"><template class="ss-tpl"><style>
-.ss-inner{color-scheme:dark;--bg:#0b1020;--panel:#121a2d;--panel2:#172139;--text:#eef4ff;--muted:#9eabc2;--line:#293651;--good:#63e6a5;--blue:#7cb7ff;--amber:#ffc86b;--shadow:0 18px 50px #03071366}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0,#18305c 0,transparent 34rem),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{width:min(960px,calc(100% - 32px));margin:0 auto;padding:54px 0 34px}header{margin-bottom:24px}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(30px,6vw,54px);line-height:1.05;margin:9px 0 14px;letter-spacing:-.035em}.verdict{max-width:780px;margin:0;color:#dce7f8;font-size:clamp(17px,2.5vw,21px)}.verdict strong{color:var(--good)}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:19px}.chip{border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--muted);background:#0b1121aa;font-size:12px}.chip.good{border-color:#29694e;color:var(--good)}.panel{background:linear-gradient(145deg,var(--panel),#0f1729);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin:16px 0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}.panel h2{font-size:17px;margin:0}.count{color:var(--muted);font-variant-numeric:tabular-nums}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}input[type=search]{min-width:220px;flex:1;border:1px solid var(--line);background:#0b1121;color:var(--text);padding:10px 12px;border-radius:10px;outline:none}input[type=search]:focus{border-color:var(--blue);box-shadow:0 0 0 3px #7cb7ff22}button,.button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:9px 11px;font:inherit;cursor:pointer;text-decoration:none}button:hover,.button:hover{border-color:var(--blue)}.sort[aria-pressed=true]{color:var(--blue);border-color:#467ab4}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:13px 10px;border-top:1px solid var(--line)}th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}.name{font-weight:750}.sub{display:block;color:var(--muted);font-size:12px;font-weight:400}.ok{color:var(--good);font-weight:800}.empty{display:none;color:var(--muted);padding:18px 4px}.progress-row{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:8px}.track{height:7px;background:#0a1020;border-radius:99px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--good));transition:width .2s}.checks{display:grid;gap:9px;margin:16px 0}.check{display:flex;gap:10px;align-items:flex-start;background:#0c1324;border:1px solid var(--line);padding:11px;border-radius:10px}.check input{margin-top:4px;accent-color:#58d99a}.check:has(input:checked) span{text-decoration:line-through;color:var(--muted)}details{border-top:1px solid var(--line);padding:14px 0}details:last-child{padding-bottom:0}summary{cursor:pointer;font-weight:700;color:#dce7f8}.detail{color:var(--muted);padding:9px 0 0;overflow-wrap:anywhere}.detail code{color:#d6e6ff}.audit-grid{display:grid;grid-template-columns:130px 1fr;gap:7px 12px}.label{color:var(--muted)}footer{color:var(--muted);font-size:12px;padding:15px 2px;overflow-wrap:anywhere}.toast{position:fixed;right:18px;bottom:18px;background:#eaf5ff;color:#0b1020;padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:none}@media(max-width:620px){.wrap{width:min(100% - 20px,960px);padding-top:32px}.panel{padding:15px}.panel-head{align-items:flex-start}.audit-grid{grid-template-columns:1fr}.label{margin-top:5px}}
-</style><div class="ss-inner">
-<main class="wrap">
-<header>
-  <div class="eyebrow">Scoped session handoff</div>
-  <h1>eval-session-7 交接</h1>
-  <p class="verdict"><strong>当前会话可交接：</strong>唯一有会话归属证据的产物是 <code>qa.json</code>，QA 已通过且无错误；未获聊天确认的旧视频未纳入交付包。</p>
-  <div class="meta"><span class="chip good">QA PASS</span><span class="chip">1 个归属产物</span><span class="chip">离线可用</span></div>
-</header>
-
-<section class="panel" aria-labelledby="artifacts-title">
-  <div class="panel-head"><h2 id="artifacts-title">当前会话产物</h2><span class="count" id="resultCount">1 / 1</span></div>
-  <div class="toolbar">
-    <input id="search" type="search" placeholder="搜索名称、类型或状态…" aria-label="搜索产物">
-    <button class="sort" data-key="name" aria-pressed="false">名称 ↕</button>
-    <button class="sort" data-key="size" aria-pressed="false">大小 ↕</button>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>产物</th><th>状态</th><th>大小</th><th>窄操作</th></tr></thead>
-      <tbody id="artifactRows">
-        <tr data-name="qa.json" data-size="28" data-search="qa.json json pass passed true 无错误">
-          <td><span class="name">qa.json</span><span class="sub">JSON · SHA-256 012aa279…e8500</span></td>
-          <td><span class="ok">PASS</span><span class="sub">0 errors</span></td>
-          <td>28 B</td>
-          <td><a class="button" href="qa.json" target="_blank" rel="noopener">打开 →</a></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="empty" id="empty">没有匹配的会话产物。</div>
-</section>
-
-<section class="panel" aria-labelledby="actions-title">
-  <div class="panel-head"><h2 id="actions-title">接手清单</h2><button id="copy">复制 Markdown</button></div>
-  <div class="progress-row"><span>交接进度</span><span id="progressText">0 / 3</span></div>
-  <div class="track" aria-hidden="true"><div class="fill" id="progressFill"></div></div>
-  <div class="checks" id="checks">
-    <label class="check"><input type="checkbox"><span>打开 <code>qa.json</code> 并确认 <code>passed: true</code></span></label>
-    <label class="check"><input type="checkbox"><span>确认错误列表为空</span></label>
-    <label class="check"><input type="checkbox"><span>基于 QA 通过状态继续后续工作</span></label>
-  </div>
-</section>
-
-<section class="panel" aria-labelledby="evidence-title">
-  <div class="panel-head"><h2 id="evidence-title">证据与边界</h2><span class="count">按需展开</span></div>
-  <details>
-    <summary>查看纳入依据</summary>
-    <div class="detail audit-grid"><span class="label">聊天证据</span><span>任务明确确认产物 <code>qa.json</code>。</span><span class="label">内容证据</span><span><code>{"passed":true,"errors":[]}</code></span><span class="label">完整性</span><span>SHA-256: <code>012aa279653fbb2bf666258d253ec5e0d296b7f35a4c92afaac671564b1e8500</code></span></div>
-  </details>
-  <details>
-    <summary>查看排除边界</summary>
-    <div class="detail">输入目录中的 <code>failure.webm</code> 没有被聊天归属到当前会话，并被明确描述为旧会话文件，因此未复制、未链接、未纳入本交接包。</div>
-  </details>
-  <details>
-    <summary>查看采集方法</summary>
-    <div class="detail">最小采集：读取已确认 JSON；以文件 stat 与 SHA-256 校验完整性；只复制有明确会话归属的文件。未扫描或搬运来源项目的其他内容。</div>
-  </details>
-</section>
-
-<footer>
-  来源项目：<strong>/tmp/scoped-handoff</strong><br>
-  会话 ID：<strong>eval-session-7</strong> · 页面与链接均为本地相对路径 · 无 CDN / 无后台服务
-</footer>
-</main>
-<div class="toast" id="toast" role="status" aria-live="polite">已复制</div>
-<script>
-(() => {
-  const rows = [...document.querySelectorAll('#artifactRows tr')];
-  const tbody = document.querySelector('#artifactRows');
-  const search = document.querySelector('#search');
-  const count = document.querySelector('#resultCount');
-  const empty = document.querySelector('#empty');
-  let sortState = { key: '', dir: 1 };
-
-  function filterRows() {
-    const q = search.value.trim().toLowerCase();
-    let visible = 0;
-    rows.forEach(row => {
-      const show = !q || row.dataset.search.includes(q);
-      row.hidden = !show;
-      if (show) visible++;
-    });
-    count.textContent = `${visible} / ${rows.length}`;
-    empty.style.display = visible ? 'none' : 'block';
-  }
-  search.addEventListener('input', filterRows);
-
-  document.querySelectorAll('.sort').forEach(button => button.addEventListener('click', () => {
-    const key = button.dataset.key;
-    sortState.dir = sortState.key === key ? -sortState.dir : 1;
-    sortState.key = key;
-    rows.sort((a, b) => key === 'size'
-      ? (Number(a.dataset.size) - Number(b.dataset.size)) * sortState.dir
-      : a.dataset.name.localeCompare(b.dataset.name) * sortState.dir);
-    rows.forEach(row => tbody.appendChild(row));
-    document.querySelectorAll('.sort').forEach(b => {
-      const active = b === button;
-      b.setAttribute('aria-pressed', active);
-      b.textContent = `${b.dataset.key === 'name' ? '名称' : '大小'} ${active ? (sortState.dir > 0 ? '↑' : '↓') : '↕'}`;
-    });
-  }));
-
-  const checkboxes = [...document.querySelectorAll('#checks input')];
-  const progressText = document.querySelector('#progressText');
-  const progressFill = document.querySelector('#progressFill');
-  function updateProgress() {
-    const done = checkboxes.filter(box => box.checked).length;
-    progressText.textContent = `${done} / ${checkboxes.length}`;
-    progressFill.style.width = `${done / checkboxes.length * 100}%`;
-  }
-  checkboxes.forEach(box => box.addEventListener('change', updateProgress));
-
-  const toast = document.querySelector('#toast');
-  document.querySelector('#copy').addEventListener('click', async () => {
-    const lines = ['# eval-session-7 handoff', '', ...checkboxes.map(box => `- [${box.checked ? 'x' : ' '}] ${box.parentElement.innerText.trim()}`), '', '- Artifact: qa.json (PASS, 0 errors)'];
-    try {
-      await navigator.clipboard.writeText(lines.join('\n'));
-      toast.textContent = 'Markdown 已复制';
-    } catch (_) {
-      const area = document.createElement('textarea'); area.value = lines.join('\n'); document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove();
-      toast.textContent = 'Markdown 已复制';
-    }
-    toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1600);
-  });
-})();
-</script>
-</div></template></div>
-      </div>
-<div class="eval-block" id="review">
-        <div class="eh"><span class="t">本迭代 · 打分+评语 视图<span class="v">eval-review.html（体积大，链接打开）</span></span><a class="go" href="onepager-workspace/iteration-1/eval-review.html" target="_blank" rel="noopener">打开 ↗</a></div>
-        <div class="ss-slot"></div></div>
+<h2>原生 /skill-creator 评测视图（eval-review.html）</h2>
+<p class="desc2">这是 <span class="mono">generate_review.py</span> 生成的原生评测页：内嵌本迭代全部评测输出 + 期望断言打分 + 评语 + Benchmark。iframe 内嵌，脚本运行、可完整交互；右上角「原版 ↗」可新标签打开。</p>
+<div class="review-frame">
+  <div class="rf-top"><span class="t mono">onepager-workspace/iteration-1/eval-review.html</span><a class="go" href="onepager-workspace/iteration-1/eval-review.html" target="_blank" rel="noopener">原版 ↗</a></div>
+  <iframe src="onepager-workspace/iteration-1/eval-review.html" loading="lazy" title="原生 eval-review"></iframe>
 </div>
 
 <footer>
-  来源：iteration-1 的评测产出 · 完整数据见 <span class="mono">onepager-workspace/iteration-1/benchmark.md</span> · 父页 pitch.html<br>
-  <span class="src">本页为 sub-artifact，遵守法则 8：main 只放结论+链接，本页把该轮全部 eval HTML 内联渲染为 sub-sub-artifact。</span>
+  来源：iteration-1 的原生评测视图（skill-creator generate_review.py 生成）· 完整数据 <span class="mono">onepager-workspace/iteration-1/benchmark.md</span> · 父页 pitch.html<br>
+  <span class="src">本页为 sub-artifact，遵守法则 8：main 只放结论+链接，本页内嵌该迭代的原生 eval-review。</span>
 </footer>
 </div>
 
@@ -644,12 +98,6 @@ document.querySelector('#copy').onclick=async()=>{const md=['# eval-session-6 �
   function apply(t){root.removeAttribute('data-theme');if(t==='light')root.setAttribute('data-theme','light');if(t==='dark')root.setAttribute('data-theme','dark');btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-set')===t));});}
   apply(stored||'dark');
   btns.forEach(function(b){b.addEventListener('click',function(){apply(b.getAttribute('data-theme-set'));try{localStorage.setItem('it-theme',b.getAttribute('data-theme-set'));}catch(e){}});});
-
-  // 内联渲染：把每个 eval 的模板克隆进 shadow root（样式隔离，真·渲染在页内）
-  document.querySelectorAll('.eval-block').forEach(function(b){
-    var tpl=b.querySelector('.ss-tpl'), slot=b.querySelector('.ss-slot');
-    if(tpl&&slot){var rt=slot.attachShadow({mode:'open'}); rt.appendChild(tpl.content.cloneNode(true));}
-  });
 })();
 </script>
 </body>
