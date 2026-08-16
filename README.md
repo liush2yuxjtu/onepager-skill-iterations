@@ -63,7 +63,6 @@ onepager-skill-iterations/
 > 注意：`eval-review.html` 的 viewer 对 HTML 产物用 `iframe src=/files/<run_id>/<name>`（依赖 generate_review.py 的 HTTP 服务）。静态部署时 `/files/` 会 404 导致子产物不渲染——本仓库已把这些路径改写为真实相对路径（见各 `eval-review.html`）。
 
 ---
----
 
 ## 迭代如何改进 onepager（核心）
 
