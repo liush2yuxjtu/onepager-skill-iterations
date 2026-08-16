@@ -243,6 +243,23 @@ footer a{color:var(--ink-soft)}
 .sub .open{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.08em;color:var(--seal);text-transform:uppercase;margin-top:auto}
 .sub:hover .open{color:var(--seal-deep)}
 @media (max-width:820px){.iter-subs{grid-template-columns:1fr}}
+
+.trigger-vis{border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:20px 20px 16px;box-shadow:var(--shadow);margin-top:18px}
+.tv-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.tv-head h3{margin:0;font-size:1.02rem;font-weight:600}
+.tv-head .score{font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--celadon);border:1px solid color-mix(in srgb,var(--celadon) 45%,var(--line));border-radius:999px;padding:3px 12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tv-legend{font-size:.7rem;color:var(--ink-faint);margin-bottom:10px;font-family:"IBM Plex Mono",monospace}
+.tv-queries{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.q{font-size:.73rem;padding:7px 10px;border-radius:8px;border:1px solid var(--line);color:var(--ink-soft);line-height:1.4;background:var(--bg3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q.good{border-color:color-mix(in srgb,var(--celadon) 40%,var(--line));color:var(--ink)}
+.q.good .s{color:var(--celadon);font-family:"IBM Plex Mono",monospace;margin-right:6px}
+.q.bad{color:var(--ink-faint)}
+.q.bad .s{color:var(--ink-faint);font-family:"IBM Plex Mono",monospace;margin-right:6px}
+.tv-iter{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap;font-size:.76rem;color:var(--ink-soft)}
+.tv-iter .step{font-family:"IBM Plex Mono",monospace;font-size:.66rem;border:1px solid var(--line);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.tv-iter .step.pass{color:var(--celadon);border-color:color-mix(in srgb,var(--celadon) 50%,var(--line));font-weight:500}
+.tv-iter .arrow{color:var(--ink-faint)}
+@media (max-width:760px){.tv-queries{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -462,11 +479,47 @@ footer a{color:var(--ink-soft)}
     </div>
   </section>
 
+    <div class="trigger-vis reveal">
+      <div class="tv-head">
+        <h3>触发率优化 · 20 条真实用户查询（10 应触发 + 10 不应触发）</h3>
+        <span class="score">best 20/20 · train 12/12 · test 8/8</span>
+      </div>
+      <div class="tv-legend">✓ = 应触发 onepager（交互式 HTML） · ✗ = 不应触发（保持原格式）——description 优化后全部判对</div>
+      <div class="tv-queries">
+    <div class="q good"><span class="s">✓</span>Mac 发热诊断页</div>
+    <div class="q good"><span class="s">✓</span>采购审批可点击原型</div>
+    <div class="q good"><span class="s">✓</span>投放异常排查工具</div>
+    <div class="q good"><span class="s">✓</span>480KB 报告瘦身</div>
+    <div class="q good"><span class="s">✓</span>UAT 会话 handoff</div>
+    <div class="q good"><span class="s">✓</span>SPA 改动评审</div>
+    <div class="q good"><span class="s">✓</span>设计稿 vs WebApp 漂移</div>
+    <div class="q good"><span class="s">✓</span>部署人工认证凭据页</div>
+    <div class="q good"><span class="s">✓</span>Incident war room onepager</div>
+    <div class="q good"><span class="s">✓</span>MCP 与专家关系可视化</div>
+    <div class="q bad"><span class="s">✗</span>改组件圆角（代码修改）</div>
+    <div class="q bad"><span class="s">✗</span>UX 需求文档</div>
+    <div class="q bad"><span class="s">✗</span>用 eval viewer 展示</div>
+    <div class="q bad"><span class="s">✗</span>VP 五段式周报</div>
+    <div class="q bad"><span class="s">✗</span>数据库迁移计划</div>
+    <div class="q bad"><span class="s">✗</span>修 privacy-policy 错别字</div>
+    <div class="q bad"><span class="s">✗</span>Next.js 客户列表页</div>
+    <div class="q bad"><span class="s">✗</span>Recharts 加 tooltip</div>
+    <div class="q bad"><span class="s">✗</span>review security-audit.html</div>
+    <div class="q bad"><span class="s">✗</span>三句话比较方案（不要页面）</div>
+      </div>
+      <div class="tv-iter">
+        <span class="step">原始 description</span><span class="arrow">→</span>
+        <span class="step">skill-creator 提示&修改</span><span class="arrow">→</span>
+        <span class="step">评测 20 条查询（train 12 + test 8）</span><span class="arrow">→</span>
+        <span class="step pass">all_passed · 100%</span>
+      </div>
+    </div>
+
   <!-- 5 产物之门 -->
   <section id="prods">
     <div class="gate-divider reveal"><span class="t">伍 · 产物</span><span class="ln"></span></div>
     <div class="sec-head reveal"><span class="idx">05</span><h2>产物 = N 个 sub-artifact <em>— 每轮迭代一页，页内内联全部 eval HTML</em></h2></div>
-    <p class="sec-desc reveal">产物拆成 <b>5 个 sub-artifact</b>：3 个迭代页（evals 5-15）+ <b>触发率优化</b>（63.9%→100% 原始证据）+ <b>evals 1-10 原生历史</b>；每个 sub-artifact 内嵌对应的<b>原生 /skill-creator 评测视图</b>（eval-review.html）。 eval 产物 HTML（3 轮 iteration × 17 个评测域，含 with/without 与 new/old 对照）——都是评测运行时真实生成的。点卡片灯箱预览，或 ↗ 新标签打开。上方输入框可过滤。</p>
+    <p class="sec-desc reveal">产物拆成 <b>5 个 sub-artifact</b>：3 个迭代页（evals 5-15）+ <b>触发率优化</b>（63.9%→100% 原始证据）+ <b>evals 1-10 原生历史</b>；每个 sub-artifact 内嵌对应的<b>原生 /skill-creator 评测视图</b>（eval-review.html）。</p>
         <div class="iter-subs">
       <a class="sub reveal" href="iter-1.html" target="_blank" rel="noopener">
         <div class="n">Sub-Artifact 1/5</div>
