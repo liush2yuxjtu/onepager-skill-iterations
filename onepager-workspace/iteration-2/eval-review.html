@@ -804,7 +804,7 @@
           iframe.src = file.path;
           content.appendChild(iframe);
         } else if (file.type === "text") {
-          if (file.content != null) {
+          if (file.content != null && /<(\/?)(html|body|!doctype)/i.test(file.content) && file.content.length < 1500000) { const __f=document.createElement("iframe"); __f.className="html-frame"; __f.srcdoc=file.content; content.appendChild(__f); } else if (file.content != null) {
             const pre = document.createElement("pre");
             pre.textContent = file.content;
             content.appendChild(pre);

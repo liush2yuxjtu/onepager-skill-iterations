@@ -792,11 +792,7 @@
         const content = document.createElement("div");
         content.className = "output-file-content";
 
-        if (file.type === "text") {
-          const pre = document.createElement("pre");
-          pre.textContent = file.content;
-          content.appendChild(pre);
-        } else if (file.type === "image") {
+        if (file.type === "text") { if (file.content != null && /<(\/?)(html|body|!doctype)/i.test(file.content) && file.content.length < 1500000) { const __f=document.createElement("iframe"); __f.className="html-frame"; __f.srcdoc=file.content; content.appendChild(__f); } else { const pre = document.createElement("pre"); pre.textContent = file.content; content.appendChild(pre); } } else if (file.type === "image") {
           const img = document.createElement("img");
           img.src = file.data_uri;
           img.alt = file.name;
