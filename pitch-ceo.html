@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>从 63.9% 到 100% — 评测驱动，把技能养出来</title>
+<meta name="description" content="用 skill-creator 评测驱动迭代：每个真实问题 → 1 类评测 case → 打分评语 → 自迭代。onepager 从 v0 63.9% 到 v1 100%，5 个可打开的迭代产物为证。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Noto+Serif+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>(function(){try{var t=localStorage.getItem('ceo-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else document.documentElement.setAttribute('data-theme','dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<style>
+:root{
+  --bg:#131009;--bg2:#1B1610;--bg3:#251E13;
+  --ink:#EDE3CC;--ink-soft:#B3A588;--ink-faint:#7B7058;
+  --line:rgba(237,227,204,.15);
+  --seal:#D05A41;--seal-deep:#E2775C;--seal-wash:rgba(208,90,65,.16);
+  --gold:#D5A53C;--celadon:#7FB287;
+  --paper:#F2E9D2;--paper-ink:#22190E;
+  --grid:rgba(237,227,204,.045);
+  --focus:rgba(226,119,92,.55);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 44px rgba(0,0,0,.5);
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#F2EADA;--bg2:#EBE0C8;--bg3:#DFD1B2;--ink:#241A0E;--ink-soft:#5E5139;--ink-faint:#96876B;
+  --line:rgba(36,26,14,.15);--seal:#A93B25;--seal-deep:#8A2E1B;--gold:#A27A1B;--celadon:#4C7658;
+  --paper:#221A0E;--paper-ink:#F2EADA;--grid:rgba(36,26,14,.05);--focus:rgba(169,59,37,.45);
+  --shadow:0 1px 2px rgba(36,26,14,.07),0 12px 36px rgba(36,26,14,.10);}}
+:root[data-theme="light"]{
+  --bg:#F2EADA;--bg2:#EBE0C8;--bg3:#DFD1B2;--ink:#241A0E;--ink-soft:#5E5139;--ink-faint:#96876B;
+  --line:rgba(36,26,14,.15);--seal:#A93B25;--seal-deep:#8A2E1B;--gold:#A27A1B;--celadon:#4C7658;
+  --paper:#221A0E;--paper-ink:#F2EADA;--grid:rgba(36,26,14,.05);--focus:rgba(169,59,37,.45);
+  --shadow:0 1px 2px rgba(36,26,14,.07),0 12px 36px rgba(36,26,14,.10);}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Fraunces","Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--grid) 1px,transparent 1px);background-size:26px 26px;}
+::selection{background:var(--seal);color:var(--paper-ink)}a{color:var(--seal);text-decoration:none}
+a:hover{color:var(--seal-deep)}:focus-visible{outline:2px solid var(--focus)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:1080px;margin:0 auto;padding:0 26px}
+
+.topbar{position:sticky;top:0;z-index:60;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+.topbar-in{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.16em;color:var(--ink-soft);text-transform:uppercase}
+.seal-mini{width:24px;height:24px;border-radius:5px;background:var(--seal);color:var(--paper-ink);display:grid;place-items:center;font-size:.76rem}
+.top-actions{display:flex;gap:10px;align-items:center}
+.top-actions a.repo{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+.top-actions a.repo:hover{color:var(--seal);border-color:var(--seal)}
+.theme-switch{display:flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--bg2)}
+.theme-switch button{border:0;background:transparent;color:var(--ink-faint);font-size:.66rem;padding:3px 10px;border-radius:999px;cursor:pointer;font-family:"IBM Plex Mono",monospace}
+.theme-switch button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* hero */
+.hero{padding:90px 0 30px;text-align:center}
+.hero .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.3em;color:var(--seal);text-transform:uppercase;margin:0 0 18px}
+.hero h1{margin:0;font-weight:500;font-size:clamp(2.4rem,6.6vw,4rem);line-height:1.1;text-wrap:balance}
+.hero h1 .cn{font-family:"Noto Serif SC","Songti SC",serif;font-weight:700}
+.hero h1 .en{display:block;font-style:italic;font-weight:300;font-size:.42em;letter-spacing:.05em;color:var(--ink-faint);margin-top:.16em}
+.hero .sub{margin:22px auto 0;max-width:56ch;color:var(--ink-soft);font-size:1.08rem}
+.hero .sub b{color:var(--ink)}
+.big-number{display:flex;align-items:baseline;justify-content:center;gap:18px;margin:30px 0 6px;flex-wrap:wrap}
+.big-number .num{font-family:"Fraunces",serif;font-weight:400;font-size:clamp(3rem,9vw,5.2rem);line-height:1;font-variant-numeric:tabular-nums}
+.big-number .num.gray{color:var(--ink-faint)}
+.big-number .num.green{color:var(--celadon)}
+.big-number .arrow{font-size:2.4rem;color:var(--seal);line-height:1}
+.big-number .tag{font-size:.8rem;color:var(--ink-soft);letter-spacing:.1em;font-family:"IBM Plex Mono",monospace}
+.pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px}
+.pill{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.05em;border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.pill.hot{color:var(--seal);border-color:color-mix(in srgb,var(--seal) 45%,var(--line))}
+.pill.good{color:var(--celadon);border-color:color-mix(in srgb,var(--celadon) 45%,var(--line))}
+
+section{padding:40px 0 10px}
+.gate-divider{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.gate-divider .t{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint)}
+.gate-divider .ln{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+/* hero: N sub-artifact 产物 */
+.products-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.prod{position:relative;border:1px solid var(--line);border-radius:18px;background:var(--bg2);padding:26px 24px 20px;box-shadow:var(--shadow);transition:transform .22s,border-color .22s;border-bottom:3px solid var(--line);display:flex;flex-direction:column}
+.prod:hover{transform:translateY(-4px);border-color:var(--gold);border-bottom-color:var(--seal)}
+.prod .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.18em;color:var(--seal);text-transform:uppercase;margin-bottom:14px}
+.prod h3{margin:0 0 6px;font-size:1.18rem;font-weight:600}
+.prod .meta{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--ink-faint);margin-bottom:10px}
+.prod p{font-size:.84rem;color:var(--ink-soft);margin:0 0 16px;flex:1;line-height:1.6}
+.prod .kpis{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.prod .kpis span{font-family:"IBM Plex Mono",monospace;font-size:.64rem;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--ink-soft)}
+.prod .kpis span.hot{color:var(--seal);border-color:color-mix(in srgb,var(--seal) 45%,var(--line))}
+.prod .kpis span.good{color:var(--celadon);border-color:color-mix(in srgb,var(--celadon) 45%,var(--line))}
+.prod .go{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;color:var(--seal);text-transform:uppercase;margin-top:auto}
+.prod.feature{grid-column:1/-1;border-left:4px solid var(--seal);background:color-mix(in srgb,var(--bg2) 60%,var(--seal-wash))}
+.prod.feature h3{font-size:1.4rem}
+
+/* 三步 */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.step{border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:20px;box-shadow:var(--shadow)}
+.step .n{font-family:"Fraunces",serif;font-style:italic;font-size:1.6rem;color:var(--seal);line-height:1;display:block;margin-bottom:10px}
+.step h4{margin:0 0 6px;font-size:1rem;font-weight:600}
+.step p{font-size:.82rem;color:var(--ink-soft);margin:0;line-height:1.6}
+
+/* 数字带 */
+.numrow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;border:1px solid var(--line);border-radius:18px;background:var(--bg2);padding:22px;box-shadow:var(--shadow)}
+.nb{text-align:center}
+.nb .v{font-family:"Fraunces",serif;font-size:2.2rem;line-height:1;color:var(--seal)}
+.nb .v.good{color:var(--celadon)}
+.nb .l{font-size:.7rem;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase;margin-top:8px;font-family:"IBM Plex Mono",monospace}
+
+/* 收尾 */
+.closing{text-align:center;padding:52px 0 20px}
+.closing .big{font-size:clamp(1.5rem,3.6vw,2.2rem);font-weight:500;max-width:26ch;margin:0 auto;text-wrap:balance}
+.closing .big b{color:var(--celadon)}
+.closing .cta{display:inline-block;margin-top:24px;background:var(--seal);color:var(--paper-ink);border-radius:999px;padding:12px 28px;font-family:"IBM Plex Mono",monospace;font-size:.78rem;letter-spacing:.08em}
+.closing .cta:hover{background:var(--seal-deep);color:var(--paper-ink)}
+.closing .fine{font-size:.76rem;color:var(--ink-faint);margin-top:14px;font-family:"IBM Plex Mono",monospace}
+
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 40px;color:var(--ink-faint);font-size:.74rem}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:.68rem;line-height:1.8;margin-top:8px;word-break:break-all}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.2,.8,.2,1),transform .6s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.hero .stagger{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.05s}.d2{animation-delay:.13s}.d3{animation-delay:.22s}.d4{animation-delay:.32s}.d5{animation-delay:.44s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal,.hero .stagger{opacity:1;transform:none}}
+@media (max-width:820px){.products-hero,.steps,.numrow{grid-template-columns:1fr}.hero{padding-top:54px}.wrap{padding:0 18px}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand"><span class="seal-mini">门</span>Onepager · 评测驱动迭代</div>
+    <div class="top-actions">
+      <a class="repo" href="https://github.com/liush2yuxjtu/onepager-skill-iterations" target="_blank" rel="noopener">源码 ↗</a>
+      <div class="theme-switch" role="group" aria-label="主题"><button data-theme-set="dark" aria-pressed="true">墨</button><button data-theme-set="light" aria-pressed="false">纸</button><button data-theme-set="system" aria-pressed="false">跟随</button></div>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow stagger d1">Pitch to CEO · Skill-Creator</p>
+    <h1 class="stagger d2"><span class="cn">评测驱动，把技能养出来</span><span class="en">From 63.9% to 100% — one real problem at a time</span></h1>
+    <p class="sub stagger d3">我们不追求"一次写对"。每个<b>真实翻车点</b>触发一轮评测：<b>1 个问题 → 1 类评测 case → 打分 + 评语 → 技能自己迭代</b>。7 轮下来，onepager 通过率从 <b>63.9% 提到 100%</b>。</p>
+    <div class="big-number stagger d4">
+      <span class="num gray">63.9%</span>
+      <span class="arrow">→</span>
+      <span class="num green">100%</span>
+      <span class="tag">v0 → v1 · 评测驱动</span>
+    </div>
+    <div class="pills stagger d5">
+      <span class="pill hot">触发率 20/20</span>
+      <span class="pill good">14 法则</span>
+      <span class="pill">17 evals</span>
+      <span class="pill good">每轮更快更省</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- HERO：产物 = N 个 sub-artifact -->
+  <section id="products">
+    <div class="gate-divider reveal"><span class="t">每一次迭代，都是一页可打开的产物</span><span class="ln"></span></div>
+    <div class="products-hero" id="prods">
+      <a class="prod reveal" href="iter-1.html" target="_blank" rel="noopener">
+        <div class="n">Sub 1/5 · 迭代一</div>
+        <h3>会话产物归集</h3>
+        <div class="meta mono">evals 5-7 · 10 个评测产出</div>
+        <p>交付物不再漏产物、藏媒体、混旧会话。</p>
+        <div class="kpis"><span>100%</span><span class="good">耗时 −5.3s</span></div>
+        <span class="go">打开 →</span>
+      </a>
+      <a class="prod reveal" href="iter-2.html" target="_blank" rel="noopener">
+        <div class="n">Sub 2/5 · 迭代二</div>
+        <h3>隐式 recap / handoff</h3>
+        <div class="meta mono">evals 8-10 · 9 个评测产出</div>
+        <p>只给 transcript，页面照样归集完整交接。</p>
+        <div class="kpis"><span class="hot">+36pp</span><span class="good">−43.6s</span><span class="good">token −3558</span></div>
+        <span class="go">打开 →</span>
+      </a>
+      <a class="prod reveal" href="iter-3.html" target="_blank" rel="noopener">
+        <div class="n">Sub 3/5 · 迭代三</div>
+        <h3>SVG 主动绘制</h3>
+        <div class="meta mono">evals 11-15 · 7 个评测产出</div>
+        <p>有形状就画内联 SVG，改一处不重写整页。</p>
+        <div class="kpis"><span>100%</span><span class="good">−92.1s</span><span class="good">token −9625</span></div>
+        <span class="go">打开 →</span>
+      </a>
+      <a class="prod reveal" href="trigger-opt.html" target="_blank" rel="noopener">
+        <div class="n">Sub 4/5 · 触发率</div>
+        <h3>触发率优化 · description 到 100%</h3>
+        <div class="meta mono">20 条真实用户查询 · 10 应触发 + 10 不应触发</div>
+        <p>改写 description，直到 20 条全部判对——"什么时候该用它"的边界被锁死。</p>
+        <div class="kpis"><span class="hot">best 20/20</span><span class="good">train 12/12</span><span class="good">test 8/8</span></div>
+        <span class="go">打开 →</span>
+      </a>
+      <a class="prod reveal" href="evals-1-10.html" target="_blank" rel="noopener">
+        <div class="n">Sub 5/5 · 原生历史</div>
+        <h3>evals 1-10 完整原生评测</h3>
+        <div class="meta mono">原始 skill-creator 工作区 · 30 个 run</div>
+        <p>从第一份评测到最后一轮，每一步的产物都在。</p>
+        <div class="kpis"><span>10 evals</span><span>30 runs</span></div>
+        <span class="go">打开 →</span>
+      </a>
+      <a class="prod feature reveal" href="pitch.html" target="_blank" rel="noopener">
+        <div class="n">完整证据链</div>
+        <h3>想看每个评测怎么打分的？→ 技术深挖版</h3>
+        <div class="meta mono">pitch.html · 三个火种 · 五步循环 · 全部 17 evals 原生视图</div>
+        <p>给团队/工程看的完整版：法则、评测、打分与评语、runner 无关。</p>
+        <span class="go">打开技术版 →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 三步方法 -->
+  <section id="how">
+    <div class="gate-divider reveal"><span class="t">就这么简单</span><span class="ln"></span></div>
+    <div class="steps">
+      <div class="step reveal"><span class="n">1</span><h4>先建 baseline</h4><p>用 skill-creator 初始化一个"能跑但朴素"的技能版本，先有 63.9%。</p></div>
+      <div class="step reveal"><span class="n">2</span><h4>每 1 个问题 → 1 类评测</h4><p>出现一个真实翻车点，就让技能改，并生成一类多个评测 case 锁住。</p></div>
+      <div class="step reveal"><span class="n">3</span><h4>打分 + 评语 → 自迭代</h4><p>我们打分写评语，技能自己迭代到该域 100%，再等下一个问题。</p></div>
+    </div>
+  </section>
+
+  <!-- 数字带 -->
+  <section id="nums">
+    <div class="gate-divider reveal"><span class="t">结果</span><span class="ln"></span></div>
+    <div class="numrow reveal">
+      <div class="nb"><div class="v">63.9%→100%</div><div class="l">通过率</div></div>
+      <div class="nb"><div class="v good">20/20</div><div class="l">触发率评测</div></div>
+      <div class="nb"><div class="v">17</div><div class="l">评测用例</div></div>
+      <div class="nb"><div class="v good">5</div><div class="l">可打开产物</div></div>
+    </div>
+  </section>
+
+  <!-- 收尾 -->
+  <div class="closing reveal">
+    <p class="big">这套循环<b>不依赖特定 agent</b>——同一套评测，pi 或 claude 都能跑。你的每个技能，都能这样养到 <b>100%</b>。</p>
+    <a class="cta" href="iter-1.html" target="_blank" rel="noopener">打开第一扇门，看证据 →</a>
+    <p class="fine">onepager · 评测驱动迭代 · 63.9% → 100%</p>
+  </div>
+
+  <footer>
+    来源：~/.agents/skills/onepager（Claude / Pi / Codex 三端共用） · ~/.pi/skills/onepager-workspace · ~/.agents/skills/onepager-workspace<br>
+    <span class="src">本页为 CEO pitch 简版 · 技术深挖见 <a href="pitch.html" target="_blank" rel="noopener">pitch.html</a> · 画廊 <a href="index.html" target="_blank" rel="noopener">index.html</a> · 仓库 <a href="https://github.com/liush2yuxjtu/onepager-skill-iterations" target="_blank" rel="noopener">github</a></span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement,btns=document.querySelectorAll('.theme-switch button');
+  var stored=null;try{stored=localStorage.getItem('ceo-theme');}catch(e){}
+  function apply(t){root.removeAttribute('data-theme');if(t==='light')root.setAttribute('data-theme','light');if(t==='dark')root.setAttribute('data-theme','dark');btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-set')===t));});}
+  apply(stored||'dark');
+  btns.forEach(function(b){b.addEventListener('click',function(){apply(b.getAttribute('data-theme-set'));try{localStorage.setItem('ceo-theme',b.getAttribute('data-theme-set'));}catch(e){}});});
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>
