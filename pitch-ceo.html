@@ -139,6 +139,8 @@ footer .src{font-family:"IBM Plex Mono",monospace;font-size:.68rem;line-height:1
 .spark .out{font-size:.72rem;font-family:"IBM Plex Mono",monospace;color:var(--ink-faint);border-top:1px dashed var(--line);padding-top:10px}
 .spark .out a{color:var(--gold)}
 @media (max-width:820px){.sparks{grid-template-columns:1fr}}
+.spark.wide{grid-column:1/-1;border-left:4px solid var(--seal);background:color-mix(in srgb,var(--bg2) 60%,var(--seal-wash))}
+.spark.wide h3{font-size:1.2rem}
 </style>
 </head>
 <body>
@@ -177,7 +179,7 @@ footer .src{font-family:"IBM Plex Mono",monospace;font-size:.68rem;line-height:1
 
   <!-- 初心 hero：三个真实痛点 -->
   <section id="sparks">
-    <div class="gate-divider reveal"><span class="t">壹 · 初心：三个真实痛点，逼出整套迭代</span><span class="ln"></span></div>
+    <div class="gate-divider reveal"><span class="t">壹 · 初心：四个真实痛点，逼出整套迭代</span><span class="ln"></span></div>
     <div class="sparks">
       <div class="spark reveal">
         <span class="s-num">Ⅰ</span><span class="ico">📄</span>
@@ -199,6 +201,13 @@ footer .src{font-family:"IBM Plex Mono",monospace;font-size:.68rem;line-height:1
         <p class="pain">需要<b>密码、API key、验证码</b>时页面卡住，不知道填什么，填完还要手动回传。</p>
         <p class="fix">想改成：<b>一键打开链接</b> → 复制凭据进页面 → <b>一键把所有密钥+人工输入复制成一个 prompt</b> 回传 agent。</p>
         <div class="out">→ 落地为 HITL 凭据窄门（<a href="pitch.html" target="_blank" rel="noopener">evals 16-17</a>）</div>
+      </div>
+      <div class="spark wide reveal">
+        <span class="s-num">Ⅳ</span><span class="ico">🧭</span>
+        <h3>改设计，不该重做原型</h3>
+        <p class="pain">过去改一个设计细节，就要把<b>整个原型/交付物重做一遍</b>——没必要。</p>
+        <p class="fix">初心：先<b>一次性用 /onepager 说好设计方案</b>（交互、子产物、凭据流程…），<b>再把方案扔给 AI 执行</b>——之后改的只是方案，不是整个原型。</p>
+        <div class="out">→ /onepager 本身就是「说好方案 → 交给 AI 执行」的载体（<a href="pitch.html" target="_blank" rel="noopener">详见技术版</a>）</div>
       </div>
     </div>
   </section>
